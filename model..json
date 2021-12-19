@@ -1,0 +1,12 @@
+{
+    "status" : "Boolean",
+    "receiver_id" : "String",
+    "sender_id" : "String",
+    "courier_id" : "String",
+    "sender" : "Sender",
+    "receiver" : "Receiver",
+    "courier" : "Courier",
+    "date" : "Timestamp",
+    "Status" : "Status",
+    "patients" : []
+}

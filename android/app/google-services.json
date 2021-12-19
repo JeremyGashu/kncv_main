@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "669099784203",
+    "project_id": "kncv-360",
+    "storage_bucket": "kncv-360.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669099784203:android:64ed3e5fb454a0252f2f0e",
+        "android_client_info": {
+          "package_name": "com.example.kncv_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "669099784203-a0eo94piu2hiuhhvj8t894qh4kp85ar9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmD5iOzZqfWqdOW_uKqyDLwbJmmFlAnVY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "669099784203-a0eo94piu2hiuhhvj8t894qh4kp85ar9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
