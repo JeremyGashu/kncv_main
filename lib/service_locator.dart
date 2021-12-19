@@ -14,7 +14,7 @@ Future<void> serviceLocatorInit() async {
   sl.registerFactory(() => AuthBloc(sl()));
 
   /// Repositories
-  sl.registerFactory<OrderRepository>(() => OrderRepository(sl()));
+  sl.registerFactory<OrderRepository>(() => OrderRepository(sl(), sl()));
   sl.registerFactory<AuthRepository>(() => AuthRepository(sl()));
 
   /// FirebaseAuth instance

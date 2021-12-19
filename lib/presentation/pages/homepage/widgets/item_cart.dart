@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/data/models/models.dart';
 
-Widget orderCard() {
+Widget orderCard(Order order) {
   return Container(
     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -20,7 +21,7 @@ Widget orderCard() {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '21 01 01 347 / Woreda 13 Clinic',
+                order.tester_name ?? '',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -31,7 +32,7 @@ Widget orderCard() {
                 height: 7,
               ),
               Text(
-                '1 Specimen',
+                '${order.patients!.length} Patients',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -50,7 +51,7 @@ Widget orderCard() {
                   color: Colors.green,
                 ),
                 child: Text(
-                  'Draft',
+                  '${order.status}',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -71,7 +72,7 @@ Widget orderCard() {
               onPressed: () {},
             ),
             Text(
-              'Jul 20',
+              '${order.created_at}',
               style: TextStyle(
                 color: kTextColorLight.withOpacity(0.5),
                 fontSize: 14,

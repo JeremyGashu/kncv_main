@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:kncv_flutter/data/models/order.dart';
-import 'package:kncv_flutter/data/models/patient.dart';
-import 'package:kncv_flutter/data/models/specimen.dart';
+import 'package:kncv_flutter/data/models/models.dart';
 
 class OrderEvents extends Equatable {
   @override
@@ -9,20 +7,32 @@ class OrderEvents extends Equatable {
 }
 
 class LoadOrders extends OrderEvents {
-  final String userId;
-
-  LoadOrders({required this.userId});
-
   @override
-  List<Object> get props => [userId];
+  List<Object> get props => [];
 }
 
 class AddOrder extends OrderEvents {
-  final OrderModel order;
+  final String tester_id;
+  final String courier_id;
+  final String courier_name;
+  final String tester_name;
 
-  AddOrder({required this.order});
+  AddOrder(
+      {required this.courier_id,
+      required this.tester_id,
+      required this.courier_name,
+      required this.tester_name});
   @override
-  List<Object> get props => [order];
+  List<Object> get props => [tester_id, courier_id];
+}
+
+class LoadSingleOrder extends OrderEvents {
+  final String orderId;
+
+  LoadSingleOrder({required this.orderId});
+
+  @override
+  List<Object> get props => [orderId];
 }
 
 class DeleteOrders extends OrderEvents {
@@ -36,7 +46,7 @@ class DeleteOrders extends OrderEvents {
 
 class AddPatientToOrder extends OrderEvents {
   final String orderId;
-  final PatientModel patient;
+  final Patient patient;
 
   AddPatientToOrder({required this.orderId, required this.patient});
 
@@ -45,9 +55,9 @@ class AddPatientToOrder extends OrderEvents {
 }
 
 class EditPtientInfo extends OrderEvents {
-  final OrderModel order;
+  final Order order;
   final String patientId;
-  final PatientModel patient;
+  final Patient patient;
   EditPtientInfo(
       {required this.order, required this.patientId, required this.patient});
   @override
@@ -57,7 +67,7 @@ class EditPtientInfo extends OrderEvents {
 class AddSpecimenToPatient extends OrderEvents {
   final String orderId;
   final String patientId;
-  final SpecimenType specimen;
+  final Specimen specimen;
 
   AddSpecimenToPatient(
       {required this.orderId, required this.patientId, required this.specimen});

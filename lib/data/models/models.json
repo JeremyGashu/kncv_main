@@ -1,0 +1,37 @@
+{
+    "order_id": "",
+    "sender_id": "",
+    "courier_id": "",
+    "test_center_id": "",
+    "courier": "",
+    "test_center": "",
+    "sender": "",
+    "timestamp": "",
+    "patients": [
+        {
+            "MR": "String",
+            "name": "String",
+            "sex": "String",
+            "age": 20,
+            "zone": "zone",
+            "woreda": "woreda",
+            "phone": "",
+            "TB": "DR-TB DS-TB",
+            "childhood": true,
+            "HIV": "String",
+            "pneumonia": true,
+            "recurrent_pneumonia": true,
+            "malnutrition": true,
+            "DM": true,
+            "doctor_in_charge": "",
+            "anatomic_location": "Plulmonary Extrapulmonary",
+            "exam_purpose": "",
+            "specimens": [
+                {
+                    "type": "stool",
+                    "id": "123"
+                }
+            ]
+        }
+    ]
+}

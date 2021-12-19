@@ -6,11 +6,13 @@ import 'package:kncv_flutter/presentation/pages/intros/intro_page_three.dart';
 import 'package:kncv_flutter/presentation/pages/intros/intro_page_two.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
+import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
 
 class AppRouter {
   static Route? onGenerateRoute(RouteSettings settings) {
+    dynamic args = settings.arguments;
     switch (settings.name) {
       case IntroPageOne.introPageOneRouteName:
         return PageRouteBuilder(
@@ -44,9 +46,15 @@ class AppRouter {
       case HomePage.homePageRouteName:
         return MaterialPageRoute(builder: (_) => HomePage());
       case OrderDetailPage.orderDetailPageRouteName:
-        return MaterialPageRoute(builder: (_) => OrderDetailPage());
+        return MaterialPageRoute(
+            builder: (_) => OrderDetailPage(
+                  orderId: args,
+                ));
       case SplashPage.splashPageRouteName:
         return MaterialPageRoute(builder: (_) => SplashPage());
+      case PatientInfoPage.patientInfoPageRouteName:
+        return MaterialPageRoute(
+            builder: (_) => PatientInfoPage(orderId: args));
     }
   }
 }
