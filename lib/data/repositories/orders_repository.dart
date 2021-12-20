@@ -92,21 +92,74 @@ class OrderRepository {
 
   Future<Order?> loadSingleOrder({required String orderId}) async {
     var order = await database.collection('orders').doc(orderId).get();
-    if (order != null) {
-      return Order.fromJson({...?order.data(), 'id': order.id});
-    }
-    return null;
+    return Order.fromJson({...?order.data(), 'id': order.id});
   }
 
   static Future getTestCenters() async {}
-  Future deleteOrder({required String orderId}) async {
-    //TODO delete saved order if it has not been fetched by the courier
+
+  Future<Map<String, dynamic>> deleteOrder({required String orderId}) async {
+    var orderRef = database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+
+    if (order.exists) {
+      if (order.data()!['status'] == 'Draft' ||
+          order.data()!['status'] == 'Waiting Confirmation') {
+        await orderRef.delete();
+        return {'success': true};
+      } else {
+        return {'success': false, 'message': 'You cant delete this order!'};
+      }
+    }
+    return {'success': false, 'message': 'No data with the given ID!'};
   }
 
   Future addPatient({required String orderId, required Patient patient}) async {
     await database.collection('orders').doc(orderId).update({
       "patients": FieldValue.arrayUnion([patient.toJson()])
     });
+  }
+
+  Future deletePatient(
+      {required String orderId, required Patient patient}) async {
+    var orderRef = database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+
+    if (order.exists) {
+      if (order.data()!['status'] == 'Draft' ||
+          order.data()!['status'] == 'Waiting Confirmation') {
+        await orderRef.update({
+          "patients": FieldValue.arrayRemove([patient.toJson()]),
+        });
+        return {'success': true};
+      } else {
+        return {'success': false, 'message': 'Cant delete patient!!'};
+      }
+    }
+    return {'success': false, 'message': 'No data with the given ID!'};
+  }
+
+  Future<Map<String, dynamic>?> getInstitutionDataFromUserId() async {
+    String? currentUserId = auth.currentUser?.uid;
+    var user = await database
+        .collection('users')
+        .where('user_id', isEqualTo: currentUserId)
+        .limit(1)
+        .get();
+    if (user.docs.length > 0) {
+      return user.docs[0].data();
+    }
+    return null;
+  }
+
+  Future placeOrder({required String orderId}) async {
+    var orderRef = database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists && order.data()!['status'] == 'Draft') {
+      await orderRef.update({'status': 'Waiting Confirmation'});
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future editPatientInfo(
@@ -116,15 +169,4 @@ class OrderRepository {
     //TODO edit existing patient information to order
   }
 
-  Future addSpecimenToPatient(
-      {required String orderId,
-      required String patientId,
-      required Specimen specimen}) async {
-    //TODO add new specimen type of the three types
-  }
-
-  Future deletePatient(
-      {required String orderId, required String patientId}) async {
-    //TODO delete user from order including its speciments and all the others
-  }
 }

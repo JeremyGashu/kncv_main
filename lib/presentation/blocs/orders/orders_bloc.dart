@@ -30,8 +30,31 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         yield ErrorState(message: 'Error sending order!');
       }
     } else if (event is DeleteOrders) {
-      yield LoadingState();
-      //TODO
+      yield DeletingOrder();
+      try {
+        var status = await orderRepository.deleteOrder(orderId: event.orderId);
+        if (status['success']) {
+          yield DeletedOrder();
+        } else {
+          yield ErrorState(message: status['message']);
+        }
+      } catch (e) {
+        yield ErrorState(message: 'Error deleting order!');
+      }
+    } else if (event is DeletePatient) {
+      yield DeletingOrder();
+      try {
+        var status = await orderRepository.deletePatient(
+            orderId: event.orderId, patient: event.patient);
+        if (status['success']) {
+          print(status);
+          yield DeletedPatient();
+        } else {
+          yield ErrorState(message: status['message']);
+        }
+      } catch (e) {
+        yield ErrorState(message: 'Error deleting patient!');
+      }
     } else if (event is LoadSingleOrder) {
       yield LoadingState();
       try {
@@ -57,12 +80,16 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is EditPtientInfo) {
       yield LoadingState();
       //TODO
-    } else if (event is AddSpecimenToPatient) {
-      yield LoadingState();
-      //TODO
-    } else if (event is DeletePatient) {
-      yield LoadingState();
-      //TODO
+    } else if (event is PlaceOrder) {
+      yield PlacingOrder();
+      try {
+        bool success = await orderRepository.placeOrder(orderId: event.orderId);
+        if (success) {
+          yield PlacedOrder();
+        } else {
+          yield ErrorState(message: 'Error placing order...');
+        }
+      } catch (e) {}
     }
   }
 }

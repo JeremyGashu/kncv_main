@@ -5,14 +5,24 @@ import 'package:kncv_flutter/presentation/blocs/auth/auth_states.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/homepage.dart';
 import 'package:kncv_flutter/presentation/pages/intros/intro_page_one.dart';
 
-class SplashPage extends StatelessWidget {
+class SplashPage extends StatefulWidget {
   static const String splashPageRouteName = 'splash page route name';
+
+  @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
-        if (state is UnauthenticatedState) {
+        if (state is UnauthenticatedState || state is InitialState) {
           Navigator.pushNamedAndRemoveUntil(
               context, IntroPageOne.introPageOneRouteName, (route) => false);
         } else if (state is AuthenticatedState) {

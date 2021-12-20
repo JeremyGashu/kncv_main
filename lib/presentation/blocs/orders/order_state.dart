@@ -17,6 +17,18 @@ class AddingPatient extends OrderState {}
 
 class AddedPatient extends OrderState {}
 
+class DeletingOrder extends OrderState {}
+
+class DeletedOrder extends OrderState {}
+
+class DeletingPatient extends OrderState {}
+
+class DeletedPatient extends OrderState {}
+
+class PlacingOrder extends OrderState {}
+
+class PlacedOrder extends OrderState {}
+
 class LoadingSingleOrder extends OrderState {}
 
 class LoadedSingleOrder extends OrderState {

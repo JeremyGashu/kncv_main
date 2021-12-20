@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 
 import 'intro_page_one.dart';
 import 'intro_page_three.dart';
@@ -143,7 +144,10 @@ class InstroPageTwo extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(left: 20),
                               child: TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, LoginPage.loginPageRouteName);
+                                },
                                 child: Text(
                                   'Skip Now',
                                   style: TextStyle(

@@ -44,6 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event is LogOutUser) {
       yield LoadingState();
       await authRepository.logoutUser();
+      yield InitialState();
     }
   }
 }
