@@ -40,11 +40,24 @@ class LoadedSingleOrder extends OrderState {
 }
 
 class SentOrder extends OrderState {
+  final String orderId;
+
+  SentOrder({required this.orderId});
+  @override
+  List<Object> get props => [orderId];
+}
+
+class SendingOrder extends OrderState {
   @override
   List<Object> get props => [];
 }
 
-class SendingOrder extends OrderState {
+class EditingPatientState extends OrderState {
+  @override
+  List<Object> get props => [];
+}
+
+class EditedPatientState extends OrderState {
   @override
   List<Object> get props => [];
 }

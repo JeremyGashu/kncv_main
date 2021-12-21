@@ -64,13 +64,13 @@ class AddPatientToOrder extends OrderEvents {
 }
 
 class EditPtientInfo extends OrderEvents {
-  final Order order;
-  final String patientId;
+  final String orderId;
   final Patient patient;
+  final int index;
   EditPtientInfo(
-      {required this.order, required this.patientId, required this.patient});
+      {required this.index, required this.patient, required this.orderId});
   @override
-  List<Object> get props => [order, patientId, patient];
+  List<Object> get props => [index, patient, patient];
 }
 
 class AddSpecimenToPatient extends OrderEvents {
@@ -84,7 +84,7 @@ class AddSpecimenToPatient extends OrderEvents {
 
 class DeletePatient extends OrderEvents {
   final String orderId;
-  final Patient patient;
+  final int index;
 
-  DeletePatient({required this.orderId, required this.patient});
+  DeletePatient({required this.orderId, required this.index});
 }

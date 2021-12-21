@@ -6,6 +6,8 @@ import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/pages/homepage/homepage.dart';
+import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
@@ -36,7 +38,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             await Future.delayed(Duration(seconds: 1));
             // ScaffoldMessenger.of(context)
             //     .showSnackBar(SnackBar(content: Text('Order Delted!')));
-            Navigator.pop(context, true);
+            Navigator.pushNamedAndRemoveUntil(
+                context, HomePage.homePageRouteName, (route) => false);
           } else if (state is ErrorState) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
@@ -53,6 +56,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             // ScaffoldMessenger.of(context)
             //     .showSnackBar(SnackBar(content: Text('Order Placed!')));
             ordersBloc.add(LoadOrders());
+            Navigator.pop(context, true);
           }
         },
         builder: (ctx, state) {
@@ -122,13 +126,13 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             // AlertDialog(),
                           },
                         ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.edit_outlined,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {},
-                  ),
+                  // IconButton(
+                  //   icon: Icon(
+                  //     Icons.edit_outlined,
+                  //     color: Colors.black,
+                  //   ),
+                  //   onPressed: () {},
+                  // ),
                 ],
               ),
               body: state is LoadedSingleOrder
@@ -154,16 +158,16 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                             AsyncSnapshot<Map<String, dynamic>?>
                                                 snapshot) {
                                           if (!snapshot.hasData) {
-                                            return Center(
-                                                child:
-                                                    CircularProgressIndicator());
+                                            // return Center(
+                                            //     child:
+                                            //         CircularProgressIndicator());
                                           }
                                           if (snapshot.hasData &&
                                               snapshot.data != null) {
                                             return ListTile(
                                               leading: CircleAvatar(
                                                 backgroundColor: Colors.blue,
-                                                radius: 25,
+                                                radius: 18,
                                                 child: Text(
                                                   'S',
                                                   style: TextStyle(
@@ -193,7 +197,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                     ListTile(
                                       leading: CircleAvatar(
                                         backgroundColor: Colors.blue,
-                                        radius: 25,
+                                        radius: 18,
                                         child: Text(
                                           'C',
                                           style: TextStyle(
@@ -217,7 +221,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                     ListTile(
                                       leading: CircleAvatar(
                                         backgroundColor: Colors.blue,
-                                        radius: 25,
+                                        radius: 18,
                                         child: Text(
                                           'T',
                                           style: TextStyle(
@@ -283,14 +287,27 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
                               SliverToBoxAdapter(
                                 child: state.order.patients!.length > 0
-                                    ? ListView(
+                                    ?
+                                    // ListView(
+                                    //     shrinkWrap: true,
+                                    //     physics: NeverScrollableScrollPhysics(),
+                                    //     children: state.order.patients!
+                                    //         .map((e) => buildPatients(
+                                    //             e, widget.orderId))
+                                    //         .toList(),
+                                    //   )
+                                    ListView.builder(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
-                                        children: state.order.patients!
-                                            .map((e) => buildPatients(
-                                                e, widget.orderId))
-                                            .toList(),
-                                      )
+                                        itemCount: state.order.patients!.length,
+                                        itemBuilder: (ctx, index) {
+                                          return buildPatients(
+                                            context,
+                                            state.order.patients![index],
+                                            widget.orderId,
+                                            index,
+                                          );
+                                        })
                                     : Center(
                                         child: Text('No patient added!'),
                                       ),
@@ -351,7 +368,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         });
   }
 
-  Container buildPatients(Patient patient, String orderId) {
+  Container buildPatients(
+      BuildContext context, Patient patient, String orderId, int index) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -425,8 +443,29 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      ordersBloc.add(
-                          DeletePatient(orderId: orderId, patient: patient));
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Delete Patient?'),
+                              content: Text('Delete patient ${patient.name}'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      ordersBloc.add(DeletePatient(
+                                          orderId: orderId, index: index));
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('Yes')),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('No')),
+                              ],
+                            );
+                          });
+
                       // print(orderId);
                       // print('${patient.toJson()}');
                     },
@@ -449,18 +488,32 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   SizedBox(
                     width: 10,
                   ),
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: kColorsOrangeLight,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.edit_outlined,
-                        color: Colors.white,
-                        size: 20,
+                  GestureDetector(
+                    onTap: () {
+                      print(index);
+                      print(patient);
+                      print(orderId);
+                      Navigator.pushNamed(
+                          context, EditPatientInfoPage.editPatientInfoRouteName,
+                          arguments: {
+                            'patient': patient,
+                            'orderId': orderId,
+                            'index': index
+                          });
+                    },
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: kColorsOrangeLight,
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.edit_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ),

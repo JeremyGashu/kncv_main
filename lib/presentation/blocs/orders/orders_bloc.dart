@@ -20,12 +20,12 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is AddOrder) {
       yield SendingOrder();
       try {
-        await orderRepository.addOrder(
+        String newOrderId = await orderRepository.addOrder(
             courier_id: event.courier_id,
             tester_id: event.tester_id,
             courier_name: event.courier_name,
             tester_name: event.tester_name);
-        yield SentOrder();
+        yield SentOrder(orderId: newOrderId);
       } catch (e) {
         yield ErrorState(message: 'Error sending order!');
       }
@@ -44,13 +44,12 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is DeletePatient) {
       yield DeletingOrder();
       try {
-        var status = await orderRepository.deletePatient(
-            orderId: event.orderId, patient: event.patient);
-        if (status['success']) {
-          print(status);
+        bool success = await orderRepository.deletePatientInfo(
+            orderId: event.orderId, index: event.index);
+        if (success) {
           yield DeletedPatient();
         } else {
-          yield ErrorState(message: status['message']);
+          yield ErrorState(message: 'Erro deleting patinet!');
         }
       } catch (e) {
         yield ErrorState(message: 'Error deleting patient!');
@@ -78,8 +77,16 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         yield ErrorState(message: 'Error Adding Patient!');
       }
     } else if (event is EditPtientInfo) {
-      yield LoadingState();
-      //TODO
+      yield EditingPatientState();
+      try {
+        bool edited = await orderRepository.editPatientInfo(
+            orderId: event.orderId, index: event.index, patient: event.patient);
+        if (edited) {
+          yield EditedPatientState();
+        }
+      } catch (e) {
+        yield ErrorState(message: 'Error editing user');
+      }
     } else if (event is PlaceOrder) {
       yield PlacingOrder();
       try {

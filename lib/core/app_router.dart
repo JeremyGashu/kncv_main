@@ -6,9 +6,11 @@ import 'package:kncv_flutter/presentation/pages/intros/intro_page_three.dart';
 import 'package:kncv_flutter/presentation/pages/intros/intro_page_two.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
+import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
+import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_courier_selector.dart';
 
 class AppRouter {
   static Route? onGenerateRoute(RouteSettings settings) {
@@ -55,6 +57,19 @@ class AppRouter {
       case PatientInfoPage.patientInfoPageRouteName:
         return MaterialPageRoute(
             builder: (_) => PatientInfoPage(orderId: args));
+
+      case SelectorPage.selectorPageRouteName:
+        return MaterialPageRoute(
+            builder: (_) => Scaffold(body: SelectorPage()));
+
+      case EditPatientInfoPage.editPatientInfoRouteName:
+        return MaterialPageRoute(
+          builder: (_) => EditPatientInfoPage(
+            orderId: args['orderId'],
+            patient: args['patient'],
+            index: args['index'],
+          ),
+        );
     }
   }
 }

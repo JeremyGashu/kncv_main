@@ -1,14 +1,20 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
+import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
+import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_courier_selector.dart';
 
 import '../../../service_locator.dart';
 import 'widgets/item_cart.dart';
@@ -36,11 +42,15 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocConsumer<OrderBloc, OrderState>(
         bloc: orderBloc,
-        listener: (ctx, state) {
+        listener: (ctx, state) async {
           if (state is SentOrder) {
             // ScaffoldMessenger.of(context)
             //     .showSnackBar(SnackBar(content: Text('Created order!')));
             orderBloc.add(LoadOrders());
+            await Future.delayed(Duration(milliseconds: 500));
+            Navigator.pushNamed(
+                context, PatientInfoPage.patientInfoPageRouteName,
+                arguments: state.orderId);
           } else if (state is SendingOrder) {
             // ScaffoldMessenger.of(context)
             //     .showSnackBar(SnackBar(content: Text('Creating order...')));
@@ -138,7 +148,31 @@ class _HomePageState extends State<HomePage> {
                                             orderBloc.add(LoadOrders());
                                           }
                                         },
-                                        child: orderCard(state.orders[index]));
+                                        child: Dismissible(
+                                          background: Container(width: 20, height: 20,child: Center(child: CircularProgressIndicator())),
+                                            onDismissed: (_) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Order Deleted')));
+
+                                              orderBloc.add(LoadOrders());
+                                            },
+                                            confirmDismiss: (_) async {
+                                              OrderRepository r =
+                                                  sl<OrderRepository>();
+                                              var status = await r.deleteOrder(
+                                                  orderId: state
+                                                      .orders[index].orderId!);
+                                              return status['success'];
+                                            },
+                                            key: Key(
+                                                state.orders[index].orderId ??
+                                                    Random()
+                                                        .nextDouble()
+                                                        .toString()),
+                                            child: orderCard(
+                                                state.orders[index])));
                                   }),
                         )
                       : Container(),
@@ -148,8 +182,8 @@ class _HomePageState extends State<HomePage> {
                   Icons.add,
                   color: Colors.white,
                 ),
-                onPressed: () {
-                  showModalBottomSheet(
+                onPressed: () async {
+                  var create = await showModalBottomSheet(
                       backgroundColor: Colors.transparent,
                       isScrollControlled: true,
                       context: context,
@@ -186,263 +220,275 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(
                                 height: 30,
                               ),
-                              FutureBuilder(
-                                  future: sl<OrderRepository>()
-                                      .getCouriersWithSameZone(),
-                                  builder: (ctx,
-                                      AsyncSnapshot<List> couriersSnapShot) {
-                                    return FutureBuilder(
-                                        future: sl<OrderRepository>()
-                                            .getTestCentersWithSameZone(),
-                                        builder: (ctx,
-                                            AsyncSnapshot<List>
-                                                testCenterSnaphot) {
-                                          return couriersSnapShot.hasData &&
-                                                  testCenterSnaphot.hasData
-                                              ? Column(
-                                                  children: [
-                                                    Container(
-                                                        width: double.infinity,
-                                                        child: Text(
-                                                          'Nearby Couriers',
-                                                          textAlign:
-                                                              TextAlign.left,
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            color:
-                                                                kTextColorLight,
-                                                          ),
-                                                        )),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10,
-                                                              vertical: 5),
-                                                      width: double.infinity,
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.2),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(7),
-                                                      ),
-                                                      child:
-                                                          DropdownButtonHideUnderline(
-                                                        child: DropdownButton<
-                                                            dynamic>(
-                                                          items: couriersSnapShot
-                                                              .data!
-                                                              .map((e) =>
-                                                                  DropdownMenuItem(
-                                                                    child: Text(
-                                                                      '${e['name']}',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.black),
-                                                                    ),
-                                                                    value:
-                                                                        courierId,
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        courierId =
-                                                                            e['id'];
-                                                                        courierName =
-                                                                            e['name'];
-                                                                      });
-                                                                    },
-                                                                  ))
-                                                              .toList(),
-                                                          underline: null,
-                                                          focusColor:
-                                                              Colors.white,
-                                                          // value: '',
-                                                          //elevation: 5,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                          iconEnabledColor:
-                                                              Colors.black,
+                              // FutureBuilder(
+                              //     future: sl<OrderRepository>()
+                              //         .getCouriersWithSameZone(),
+                              //     builder: (ctx,
+                              //         AsyncSnapshot<List> couriersSnapShot) {
+                              //       return FutureBuilder(
+                              //           future: sl<OrderRepository>()
+                              //               .getTestCentersWithSameZone(),
+                              //           builder: (ctx,
+                              //               AsyncSnapshot<List>
+                              //                   testCenterSnaphot) {
+                              //             return couriersSnapShot.hasData &&
+                              //                     testCenterSnaphot.hasData
+                              //                 ? Column(
+                              //                     children: [
+                              //                       Container(
+                              //                           width: double.infinity,
+                              //                           child: Text(
+                              //                             'Nearby Couriers',
+                              //                             textAlign:
+                              //                                 TextAlign.left,
+                              //                             style: TextStyle(
+                              //                               fontSize: 16,
+                              //                               color:
+                              //                                   kTextColorLight,
+                              //                             ),
+                              //                           )),
+                              //                       SizedBox(
+                              //                         height: 10,
+                              //                       ),
+                              //                       Container(
+                              //                         padding:
+                              //                             EdgeInsets.symmetric(
+                              //                                 horizontal: 10,
+                              //                                 vertical: 5),
+                              //                         width: double.infinity,
+                              //                         decoration: BoxDecoration(
+                              //                           color: Colors.grey
+                              //                               .withOpacity(0.2),
+                              //                           borderRadius:
+                              //                               BorderRadius
+                              //                                   .circular(7),
+                              //                         ),
+                              //                         child:
+                              //                             DropdownButtonHideUnderline(
+                              //                           child: DropdownButton<
+                              //                               dynamic>(
+                              //                             items: couriersSnapShot
+                              //                                 .data!
+                              //                                 .map((e) =>
+                              //                                     DropdownMenuItem(
+                              //                                       child: Text(
+                              //                                         '${e['name']}',
+                              //                                         style: TextStyle(
+                              //                                             color:
+                              //                                                 Colors.black),
+                              //                                       ),
+                              //                                       value:
+                              //                                           courierId,
+                              //                                       onTap: () {
+                              //                                         setState(
+                              //                                             () {
+                              //                                           courierId =
+                              //                                               e['id'];
+                              //                                           courierName =
+                              //                                               e['name'];
+                              //                                         });
+                              //                                       },
+                              //                                     ))
+                              //                                 .toList(),
+                              //                             underline: null,
+                              //                             focusColor:
+                              //                                 Colors.white,
+                              //                             // value: '',
+                              //                             //elevation: 5,
+                              //                             style: TextStyle(
+                              //                                 color:
+                              //                                     Colors.white),
+                              //                             iconEnabledColor:
+                              //                                 Colors.black,
 
-                                                          hint: Text(
-                                                            "Please Select Nearby Courier",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                          ),
-                                                          onChanged: (val) {
-                                                            // setState(() {
-                                                            //   courierId = val['id'];
-                                                            // });
-                                                            print(val);
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 40,
-                                                    ),
-                                                    Container(
-                                                        width: double.infinity,
-                                                        child: Text(
-                                                          'Nearby Test Centers',
-                                                          textAlign:
-                                                              TextAlign.left,
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            color:
-                                                                kTextColorLight,
-                                                          ),
-                                                        )),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 10,
-                                                              vertical: 5),
-                                                      width: double.infinity,
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.grey
-                                                            .withOpacity(0.2),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(7),
-                                                      ),
-                                                      child:
-                                                          DropdownButtonHideUnderline(
-                                                        child: DropdownButton<
-                                                            dynamic>(
-                                                          items: testCenterSnaphot
-                                                              .data!
-                                                              .map((data) =>
-                                                                  DropdownMenuItem(
-                                                                    child: Text(
-                                                                      '${data['name']}',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.black),
-                                                                    ),
-                                                                    value:
-                                                                        testId,
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        testId =
-                                                                            data['id'];
-                                                                        testerName =
-                                                                            data['name'];
-                                                                      });
-                                                                    },
-                                                                  ))
-                                                              .toList(),
-                                                          underline: null,
-                                                          focusColor:
-                                                              Colors.white,
-                                                          // value: testId,
-                                                          //elevation: 5,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                          iconEnabledColor:
-                                                              Colors.black,
+                              //                             hint: Text(
+                              //                               "Please Select Nearby Courier",
+                              //                               style: TextStyle(
+                              //                                   color:
+                              //                                       Colors.grey,
+                              //                                   fontSize: 14,
+                              //                                   fontWeight:
+                              //                                       FontWeight
+                              //                                           .w500),
+                              //                             ),
+                              //                             onChanged: (val) {
+                              //                               // setState(() {
+                              //                               //   courierId = val['id'];
+                              //                               // });
+                              //                               print(val);
+                              //                             },
+                              //                           ),
+                              //                         ),
+                              //                       ),
+                              //                       SizedBox(
+                              //                         height: 40,
+                              //                       ),
+                              //                       Container(
+                              //                           width: double.infinity,
+                              //                           child: Text(
+                              //                             'Nearby Test Centers',
+                              //                             textAlign:
+                              //                                 TextAlign.left,
+                              //                             style: TextStyle(
+                              //                               fontSize: 16,
+                              //                               color:
+                              //                                   kTextColorLight,
+                              //                             ),
+                              //                           )),
+                              //                       SizedBox(
+                              //                         height: 10,
+                              //                       ),
+                              //                       Container(
+                              //                         padding:
+                              //                             EdgeInsets.symmetric(
+                              //                                 horizontal: 10,
+                              //                                 vertical: 5),
+                              //                         width: double.infinity,
+                              //                         decoration: BoxDecoration(
+                              //                           color: Colors.grey
+                              //                               .withOpacity(0.2),
+                              //                           borderRadius:
+                              //                               BorderRadius
+                              //                                   .circular(7),
+                              //                         ),
+                              //                         child:
+                              //                             DropdownButtonHideUnderline(
+                              //                           child: DropdownButton<
+                              //                               dynamic>(
+                              //                             items: testCenterSnaphot
+                              //                                 .data!
+                              //                                 .map((data) =>
+                              //                                     DropdownMenuItem(
+                              //                                       child: Text(
+                              //                                         '${data['name']}',
+                              //                                         style: TextStyle(
+                              //                                             color:
+                              //                                                 Colors.black),
+                              //                                       ),
+                              //                                       value:
+                              //                                           testId,
+                              //                                       onTap: () {
+                              //                                         setState(
+                              //                                             () {
+                              //                                           testId =
+                              //                                               data['id'];
+                              //                                           testerName =
+                              //                                               data['name'];
+                              //                                         });
+                              //                                       },
+                              //                                     ))
+                              //                                 .toList(),
+                              //                             underline: null,
+                              //                             focusColor:
+                              //                                 Colors.white,
+                              //                             // value: testId,
+                              //                             //elevation: 5,
+                              //                             style: TextStyle(
+                              //                                 color:
+                              //                                     Colors.white),
+                              //                             iconEnabledColor:
+                              //                                 Colors.black,
 
-                                                          hint: Text(
-                                                            "Please Select Nearby Test Center",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                          ),
-                                                          onChanged: (val) {
-                                                            // setState(() {
-                                                            //   testId = val['id'];
-                                                            // });
-                                                            print(val);
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    // SizedBox(
-                                                    //   height: 40,
-                                                    // ),
-                                                    SizedBox(
-                                                      height: 45,
-                                                    ),
-                                                    state is SendingOrder
-                                                        ? Center(
-                                                            child:
-                                                                CircularProgressIndicator(),
-                                                          )
-                                                        : InkWell(
-                                                            onTap: () {
-                                                              orderBloc.add(AddOrder(
-                                                                  courier_id:
-                                                                      courierId,
-                                                                  tester_id:
-                                                                      testId,
-                                                                  courier_name:
-                                                                      courierName,
-                                                                  tester_name:
-                                                                      testerName));
+                              //                             hint: Text(
+                              //                               "Please Select Nearby Test Center",
+                              //                               style: TextStyle(
+                              //                                   color:
+                              //                                       Colors.grey,
+                              //                                   fontSize: 14,
+                              //                                   fontWeight:
+                              //                                       FontWeight
+                              //                                           .w500),
+                              //                             ),
+                              //                             onChanged: (val) {
+                              //                               // setState(() {
+                              //                               //   testId = val['id'];
+                              //                               // });
+                              //                               print(val);
+                              //                             },
+                              //                           ),
+                              //                         ),
+                              //                       ),
+                              //                       // SizedBox(
+                              //                       //   height: 40,
+                              //                       // ),
+                              //                       SizedBox(
+                              //                         height: 45,
+                              //                       ),
+                              //                       state is SendingOrder
+                              //                           ? Center(
+                              //                               child:
+                              //                                   CircularProgressIndicator(),
+                              //                             )
+                              //                           : InkWell(
+                              //                               onTap: () {
+                              //                                 orderBloc.add(AddOrder(
+                              //                                     courier_id:
+                              //                                         courierId,
+                              //                                     tester_id:
+                              //                                         testId,
+                              //                                     courier_name:
+                              //                                         courierName,
+                              //                                     tester_name:
+                              //                                         testerName));
 
-                                                              Navigator.pop(
-                                                                  ctx);
-                                                            },
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        37),
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                color:
-                                                                    kColorsOrangeDark,
-                                                              ),
-                                                              height: 62,
-                                                              // margin: EdgeInsets.all(20),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  'Create Order',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          20,
-                                                                      color: Colors
-                                                                          .white),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                  ],
-                                                )
-                                              : Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                );
-                                        });
-                                  }),
+                              //                                 Navigator.pop(
+                              //                                     ctx);
+                              //                               },
+                              //                               borderRadius:
+                              //                                   BorderRadius
+                              //                                       .circular(
+                              //                                           37),
+                              //                               child: Container(
+                              //                                 decoration:
+                              //                                     BoxDecoration(
+                              //                                   borderRadius:
+                              //                                       BorderRadius
+                              //                                           .circular(
+                              //                                               10),
+                              //                                   color:
+                              //                                       kColorsOrangeDark,
+                              //                                 ),
+                              //                                 height: 62,
+                              //                                 // margin: EdgeInsets.all(20),
+                              //                                 child: Center(
+                              //                                   child: Text(
+                              //                                     'Create Order',
+                              //                                     style: TextStyle(
+                              //                                         fontWeight:
+                              //                                             FontWeight
+                              //                                                 .bold,
+                              //                                         fontSize:
+                              //                                             20,
+                              //                                         color: Colors
+                              //                                             .white),
+                              //                                   ),
+                              //                                 ),
+                              //                               ),
+                              //                             ),
+                              //                     ],
+                              //                   )
+                              //                 : Center(
+                              //                     child:
+                              //                         CircularProgressIndicator(),
+                              //                   );
+                              //           });
+                              //     }),
+                              SelectorPage(),
                             ],
                           ),
                         );
                       });
+                  if (create == true) {
+                    Tester? tester =
+                        BlocProvider.of<TesterCourierBloc>(context).tester;
+                    Courier? courier =
+                        BlocProvider.of<TesterCourierBloc>(context).courier;
+                    orderBloc.add(AddOrder(
+                        courier_id: courier!.id,
+                        tester_id: tester!.id,
+                        courier_name: courier.name,
+                        tester_name: tester.name));
+                  }
                 },
               ),
             ),

@@ -63,27 +63,26 @@ class Order {
 }
 
 class Patient {
-  Patient({
-    this.mr,
-    this.name,
-    this.sex,
-    this.age,
-    this.zone,
-    this.woreda,
-    this.phone,
-    this.tb,
-    this.childhood,
-    this.hiv,
-    this.pneumonia,
-    this.recurrentPneumonia,
-    this.malnutrition,
-    this.dm,
-    this.doctorInCharge,
-    this.anatomicLocation,
-    this.examPurpose,
-    this.specimens,
-    this.address
-  });
+  Patient(
+      {this.mr,
+      this.name,
+      this.sex,
+      this.age,
+      this.zone,
+      this.woreda,
+      this.phone,
+      this.tb,
+      this.childhood,
+      this.hiv,
+      this.pneumonia,
+      this.recurrentPneumonia,
+      this.malnutrition,
+      this.dm,
+      this.doctorInCharge,
+      this.anatomicLocation,
+      this.examPurpose,
+      this.specimens,
+      this.address});
 
   String? mr;
   String? name;
@@ -170,4 +169,40 @@ class Specimen {
         "type": type,
         "id": id,
       };
+}
+
+class TesterCourier {}
+
+class Courier extends TesterCourier {
+  final String name;
+  final String phone;
+  final String id;
+  Courier({required this.name, required this.id, required this.phone});
+
+  factory Courier.fromJson(Map<String, dynamic> json) =>
+      Courier(name: json['name'], phone: json['phone'], id: json['id']);
+
+  Map<String, dynamic> toJson() => {'name': name, 'phone': phone, 'id': id};
+
+  @override
+  String toString() {
+    return name;
+  }
+}
+
+class Tester extends TesterCourier {
+  final String name;
+  final String phone;
+  final String id;
+  Tester({required this.name, required this.id, required this.phone});
+
+  factory Tester.fromJson(Map<String, dynamic> json) =>
+      Tester(name: json['name'], phone: json['phone_number'], id: json['id']);
+
+  Map<String, dynamic> toJson() => {'name': name, 'phone_number': phone, 'id': id};
+
+  @override
+  String toString() {
+    return name;
+  }
 }

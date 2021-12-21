@@ -18,7 +18,7 @@ class OrderRepository {
         .toList();
   }
 
-  Future addOrder(
+  Future<String> addOrder(
       {required String courier_id,
       required String tester_id,
       required String courier_name,
@@ -42,7 +42,7 @@ class OrderRepository {
       'Nov',
       'Dec'
     ];
-    await ordersCollection.add({
+    var c = await ordersCollection.add({
       'courier_id': courier_id,
       'sender_id': sender_id,
       'tester_id': tester_id,
@@ -51,6 +51,7 @@ class OrderRepository {
       'tester_name': tester_name,
       'courier_name': courier_name,
     });
+    return c.id;
   }
 
   Future<List> getCouriersWithSameZone() async {
@@ -91,8 +92,37 @@ class OrderRepository {
   }
 
   Future<Order?> loadSingleOrder({required String orderId}) async {
-    var order = await database.collection('orders').doc(orderId).get();
+    var orderRef = await database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
     return Order.fromJson({...?order.data(), 'id': order.id});
+  }
+
+  Future<bool> editPatientInfo(
+      {required String orderId,
+      required Patient patient,
+      required int index}) async {
+    var orderRef = await database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists) {
+      List patientsList = order.data()?['patients'];
+      patientsList[index] = patient.toJson();
+      await orderRef.update({'patients': patientsList});
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> deletePatientInfo(
+      {required String orderId, required int index}) async {
+    var orderRef = await database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists) {
+      List patientsList = order.data()?['patients'];
+      patientsList.removeAt(index);
+      await orderRef.update({'patients': patientsList});
+      return true;
+    }
+    return false;
   }
 
   static Future getTestCenters() async {}
@@ -119,25 +149,6 @@ class OrderRepository {
     });
   }
 
-  Future deletePatient(
-      {required String orderId, required Patient patient}) async {
-    var orderRef = database.collection('orders').doc(orderId);
-    var order = await orderRef.get();
-
-    if (order.exists) {
-      if (order.data()!['status'] == 'Draft' ||
-          order.data()!['status'] == 'Waiting Confirmation') {
-        await orderRef.update({
-          "patients": FieldValue.arrayRemove([patient.toJson()]),
-        });
-        return {'success': true};
-      } else {
-        return {'success': false, 'message': 'Cant delete patient!!'};
-      }
-    }
-    return {'success': false, 'message': 'No data with the given ID!'};
-  }
-
   Future<Map<String, dynamic>?> getInstitutionDataFromUserId() async {
     String? currentUserId = auth.currentUser?.uid;
     var user = await database
@@ -161,12 +172,4 @@ class OrderRepository {
       return false;
     }
   }
-
-  Future editPatientInfo(
-      {required Order order,
-      required String patientId,
-      required Patient patient}) async {
-    //TODO edit existing patient information to order
-  }
-
 }

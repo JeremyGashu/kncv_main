@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:kncv_flutter/data/repositories/auth_repository.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
+import 'package:kncv_flutter/data/repositories/tester_courier_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -12,10 +14,13 @@ Future<void> serviceLocatorInit() async {
   /// Blocs
   sl.registerFactory(() => OrderBloc(sl()));
   sl.registerFactory(() => AuthBloc(sl()));
+  sl.registerFactory(() => TesterCourierBloc(sl()));
 
   /// Repositories
   sl.registerFactory<OrderRepository>(() => OrderRepository(sl(), sl()));
   sl.registerFactory<AuthRepository>(() => AuthRepository(sl()));
+  sl.registerFactory<TesterCourierRepository>(
+      () => TesterCourierRepository(sl(), sl()));
 
   /// FirebaseAuth instance
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;

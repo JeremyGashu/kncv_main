@@ -7,17 +7,25 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 
-class PatientInfoPage extends StatefulWidget {
+class EditPatientInfoPage extends StatefulWidget {
   final String orderId;
-  static const patientInfoPageRouteName = 'patient info page route name';
+  final Patient patient;
+  final int index;
 
-  const PatientInfoPage({Key? key, required this.orderId}) : super(key: key);
+  static const String editPatientInfoRouteName = 'edit patient info route name';
+
+  const EditPatientInfoPage(
+      {Key? key,
+      required this.orderId,
+      required this.patient,
+      required this.index})
+      : super(key: key);
 
   @override
-  State<PatientInfoPage> createState() => _PatientInfoPageState();
+  State<EditPatientInfoPage> createState() => _EditPatientInfoPageState();
 }
 
-class _PatientInfoPageState extends State<PatientInfoPage> {
+class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
   String? childhood;
   String? tb;
   String? pneumonia;
@@ -27,7 +35,9 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   String? anatomicLocation;
   String? sex;
   String? specimenType;
-  // String? childhood;
+
+  List<Specimen> specimens = [];
+
   final TextEditingController MRController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
@@ -41,7 +51,31 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
 
   final TextEditingController specimenIdController = TextEditingController();
 
-  List<Specimen> specimens = [];
+  @override
+  initState() {
+    childhood = widget.patient.childhood;
+    tb = widget.patient.tb;
+    pneumonia = widget.patient.pneumonia;
+    recurrentPneumonia = widget.patient.recurrentPneumonia;
+    dm = widget.patient.dm;
+    malnutrition = widget.patient.malnutrition;
+    anatomicLocation = widget.patient.anatomicLocation;
+    sex = widget.patient.sex;
+
+    MRController.text = widget.patient.mr ?? '';
+    nameController.text = widget.patient.name ?? '';
+    ageController.text = widget.patient.age ?? '';
+    zoneController.text = widget.patient.zone ?? '';
+    woredaController.text = widget.patient.woreda ?? '';
+    addressController.text = widget.patient.address ?? '';
+    phoneController.text = widget.patient.phone ?? '';
+    doctorInChargeController.text = widget.patient.doctorInCharge ?? '';
+    examPurposeController.text = widget.patient.examPurpose ?? '';
+
+    specimens = [...widget.patient.specimens!];
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,18 +86,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
         height: double.infinity,
         child:
             BlocConsumer<OrderBloc, OrderState>(listener: (ctx, state) async {
-          if (state is AddedPatient) {
+          if (state is EditedPatientState) {
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Added Patient!')));
+                .showSnackBar(SnackBar(content: Text('Edited Patient Data!')));
             await Future.delayed(Duration(seconds: 1));
             Navigator.pushNamedAndRemoveUntil(context,
                 OrderDetailPage.orderDetailPageRouteName, (route) => false,
                 arguments: widget.orderId);
-          }
-          if (state is ErrorState) {
+          } else if (state is ErrorState) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text('Errro Adding Patient!')));
-            await Future.delayed(Duration(seconds: 1));
           }
         }, builder: (context, state) {
           return SafeArea(
@@ -77,7 +109,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                     width: double.infinity,
                     padding: const EdgeInsets.only(top: 20),
                     child: Text(
-                      'Add Patient',
+                      'Edit Patient Info',
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
@@ -529,13 +561,13 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                   ),
 
                   SizedBox(
-                    height: 15,
+                    height: 10,
                   ),
 
                   Container(
                     // padding: EdgeInsets.all(10),
                     color: kPageBackground,
-                    child: state is AddingPatient
+                    child: state is EditingPatientState
                         ? Center(
                             child: CircularProgressIndicator(),
                           )
@@ -574,9 +606,10 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   mr: mr);
 
                               BlocProvider.of<OrderBloc>(context).add(
-                                  AddPatientToOrder(
+                                  EditPtientInfo(
                                       orderId: widget.orderId,
-                                      patient: patient));
+                                      patient: patient,
+                                      index: widget.index));
                             },
                             borderRadius: BorderRadius.circular(37),
                             child: Container(
@@ -588,7 +621,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                               // margin: EdgeInsets.all(20),
                               child: Center(
                                 child: Text(
-                                  'Add Patient',
+                                  'Edit Patient',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20,
@@ -665,59 +698,4 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
       ],
     );
   }
-}
-
-class KeyboardVisibilityBuilder extends StatefulWidget {
-  final Widget? child;
-  final Widget Function(
-    BuildContext context,
-    Widget? child,
-    bool isKeyboardVisible,
-  ) builder;
-
-  const KeyboardVisibilityBuilder({
-    Key? key,
-    this.child,
-    required this.builder,
-  }) : super(key: key);
-
-  @override
-  _KeyboardVisibilityBuilderState createState() =>
-      _KeyboardVisibilityBuilderState();
-}
-
-class _KeyboardVisibilityBuilderState extends State<KeyboardVisibilityBuilder>
-    with WidgetsBindingObserver {
-  var _isKeyboardVisible =
-      WidgetsBinding.instance!.window.viewInsets.bottom > 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance!.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeMetrics() {
-    final bottomInset = WidgetsBinding.instance!.window.viewInsets.bottom;
-    final newValue = bottomInset > 0.0;
-    if (newValue != _isKeyboardVisible) {
-      setState(() {
-        _isKeyboardVisible = newValue;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) => widget.builder(
-        context,
-        widget.child,
-        _isKeyboardVisible,
-      );
 }
