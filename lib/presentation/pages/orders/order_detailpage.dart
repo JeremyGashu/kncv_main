@@ -38,8 +38,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             await Future.delayed(Duration(seconds: 1));
             // ScaffoldMessenger.of(context)
             //     .showSnackBar(SnackBar(content: Text('Order Delted!')));
-            Navigator.pushNamedAndRemoveUntil(
-                context, HomePage.homePageRouteName, (route) => false);
+            Navigator.pushReplacementNamed(
+                context, HomePage.homePageRouteName);
           } else if (state is ErrorState) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));

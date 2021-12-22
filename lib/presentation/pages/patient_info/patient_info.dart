@@ -5,6 +5,7 @@ import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/pages/homepage/homepage.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 
 class PatientInfoPage extends StatefulWidget {
@@ -18,7 +19,7 @@ class PatientInfoPage extends StatefulWidget {
 }
 
 class _PatientInfoPageState extends State<PatientInfoPage> {
-  String? childhood;
+  String? childhood = 'Yes';
   String? tb;
   String? pneumonia;
   String? recurrentPneumonia;
@@ -56,8 +57,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text('Added Patient!')));
             await Future.delayed(Duration(seconds: 1));
-            Navigator.pushNamedAndRemoveUntil(context,
-                OrderDetailPage.orderDetailPageRouteName, (route) => false,
+            Navigator.pushReplacementNamed(
+                context, OrderDetailPage.orderDetailPageRouteName,
                 arguments: widget.orderId);
           }
           if (state is ErrorState) {
@@ -147,32 +148,32 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
 
                   _tobLabelBuilder('Observation'),
 
-                  _labelBuilder('Childhood'),
+                  // _labelBuilder('Childhood'),
 
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: childhood,
-                      hint: Text('Childhood'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          childhood = val;
-                        });
-                      },
-                    )),
-                  ),
+                  // Container(
+                  //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  //   width: double.infinity,
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.grey.withOpacity(0.2),
+                  //     borderRadius: BorderRadius.circular(7),
+                  //   ),
+                  //   child: DropdownButtonHideUnderline(
+                  //       child: DropdownButton<String>(
+                  //     value: childhood,
+                  //     hint: Text('Childhood'),
+                  //     items: <String>['Yes', 'No'].map((String value) {
+                  //       return DropdownMenuItem<String>(
+                  //         value: value,
+                  //         child: Text(value),
+                  //       );
+                  //     }).toList(),
+                  //     onChanged: (val) {
+                  //       setState(() {
+                  //         childhood = val;
+                  //       });
+                  //     },
+                  //   )),
+                  // ),
                   _labelBuilder('Pneumonia'),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
