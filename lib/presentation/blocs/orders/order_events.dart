@@ -99,7 +99,25 @@ class AddSpecimenToPatient extends OrderEvents {
       {required this.orderId, required this.patientId, required this.specimen});
 }
 
+class ApproveArrivalTester extends OrderEvents {
+  final String orderId;
+  final String? sputumCondition;
+  final String? stoolCondition;
+  final String? coldChainStatus;
+
+  ApproveArrivalTester(
+      {required this.orderId,
+      required this.stoolCondition,
+      required this.sputumCondition,
+      required this.coldChainStatus});
+}
+
 class LoadOrdersForCourier extends OrderEvents {
+  @override
+  List<Object> get props => [];
+}
+
+class LoadOrdersForTester extends OrderEvents {
   @override
   List<Object> get props => [];
 }

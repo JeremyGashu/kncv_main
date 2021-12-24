@@ -29,6 +29,10 @@ class ApprovingArrivalCourier extends OrderState {}
 
 class ApprovedArrivalCourier extends OrderState {}
 
+class ApprovingArrivalTester extends OrderState {}
+
+class ApprovedArrivalTester extends OrderState {}
+
 class DeletingPatient extends OrderState {}
 
 class LoadedOrdersForCourier extends OrderState {
@@ -40,6 +44,16 @@ class LoadedOrdersForCourier extends OrderState {
 }
 
 class LoadingOrderForCourier extends OrderState {}
+
+class LoadedOrdersForTester extends OrderState {
+  final List<Order> orders;
+
+  LoadedOrdersForTester({required this.orders});
+  @override
+  List<Object> get props => [orders];
+}
+
+class LoadingOrderForTester extends OrderState {}
 
 class DeletedPatient extends OrderState {}
 

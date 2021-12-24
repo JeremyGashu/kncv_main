@@ -54,6 +54,23 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       } catch (e) {
         yield ErrorState(message: 'Error Accepting Order. Please try Again!');
       }
+    } else if (event is ApproveArrivalTester) {
+      yield ApprovingArrivalTester();
+      try {
+        bool success = await orderRepository.approveArrivalTester(
+          orderId: event.orderId,
+          coldChainStatus: event.coldChainStatus,
+          sputumCondition: event.sputumCondition,
+          stoolCondition: event.stoolCondition,
+        );
+        if (success) {
+          yield ApprovedArrivalCourier();
+        } else {
+          ErrorState(message: 'Error Approving Arrival! Please try Again!');
+        }
+      } catch (e) {
+        yield ErrorState(message: 'Error Approving Arrival! Please try Again!');
+      }
     } else if (event is DeleteOrders) {
       yield DeletingOrder();
       try {
@@ -84,6 +101,14 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       try {
         List<Order> orders = await orderRepository.loadOrdersForCourier();
         yield LoadedOrdersForCourier(orders: orders);
+      } catch (e) {
+        yield ErrorState(message: 'Error Loading Orders!');
+      }
+    } else if (event is LoadOrdersForTester) {
+      yield LoadingOrderForTester();
+      try {
+        List<Order> orders = await orderRepository.loadOrdersForTestCenters();
+        yield LoadedOrdersForTester(orders: orders);
       } catch (e) {
         yield ErrorState(message: 'Error Loading Orders!');
       }

@@ -19,6 +19,10 @@ class OrderDetailCourier extends StatefulWidget {
 }
 
 class _OrderDetailCourierState extends State<OrderDetailCourier> {
+  String? inColdChain;
+  String? sputumCondition;
+  String? stoolCondition;
+
   TextEditingController _receiverController = TextEditingController();
   OrderBloc ordersBloc = sl<OrderBloc>();
   @override
@@ -40,6 +44,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
           } else if (state is AcceptedOrderCourier) {
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           } else if (state is ApprovedArrivalCourier) {
+            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+          } else if (state is ApprovedArrivalTester) {
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           }
         },
@@ -269,7 +275,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                               state.order.patients![index],
                                               widget.orderId,
                                               index,
-                                              true,
+                                              false,
                                             ),
                                           );
                                         })
@@ -392,7 +398,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       Container(
                                                         width: double.infinity,
                                                         child: Text(
-                                                          'Create An Order',
+                                                          'Confirm Arrival',
                                                           textAlign:
                                                               TextAlign.center,
                                                           style: TextStyle(
@@ -488,6 +494,89 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                 ),
                               )
                             : Container(),
+                        state.order.status == 'Arrived'
+                            ? Positioned(
+                                bottom: 0,
+                                left: 10,
+                                right: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  color: kPageBackground,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      var create = await showModalBottomSheet(
+                                          backgroundColor: Colors.transparent,
+                                          isScrollControlled: true,
+                                          context: context,
+                                          builder: (ctx) {
+                                            return ArrivalConfirmation(ctx);
+                                          });
+
+                                      if (create == true) {
+                                        ordersBloc.add(
+                                          ApproveArrivalTester(
+                                            orderId: state.order.orderId!,
+                                            sputumCondition: sputumCondition,
+                                            stoolCondition: stoolCondition,
+                                            coldChainStatus: inColdChain,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    borderRadius: BorderRadius.circular(37),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: kColorsOrangeDark,
+                                      ),
+                                      height: 62,
+                                      // margin: EdgeInsets.all(20),
+                                      child: Center(
+                                        child: Text(
+                                          'Confirm Arrival',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        state.order.status == 'Accepted'
+                            ? Positioned(
+                                bottom: 0,
+                                left: 10,
+                                right: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  color: kPageBackground,
+                                  child: InkWell(
+                                    onTap: () async {},
+                                    borderRadius: BorderRadius.circular(37),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: kColorsOrangeDark,
+                                      ),
+                                      height: 62,
+                                      // margin: EdgeInsets.all(20),
+                                      child: Center(
+                                        child: Text(
+                                          'Add Test Result',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
                       ],
                     )
                   : Center(
@@ -496,6 +585,195 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
             ),
           );
         });
+  }
+
+  Widget ArrivalConfirmation(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(
+            30,
+          ),
+          topRight: Radius.circular(
+            30,
+          ),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            child: Text(
+              'Confirm Arrival',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+
+          //cold chain status
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 20, bottom: 10),
+            child: Text(
+              'Cold Chain Status',
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: StatefulBuilder(builder: (context, ss) {
+              return DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                value: inColdChain,
+                hint: Text('Transported in cold Chain?'),
+                items: <String>['Yes', 'No'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    inColdChain = val;
+                  });
+
+                  ss(() {});
+                },
+              ));
+            }),
+          ),
+
+          //sputum cndition
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 20, bottom: 10),
+            child: Text(
+              'Sputum Condition',
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: StatefulBuilder(builder: (context, ss) {
+              return DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                value: sputumCondition,
+                hint: Text('Sputum Condition?'),
+                items: <String>['Yes', 'No'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    sputumCondition = val;
+                  });
+                  ss(() {});
+                },
+              ));
+            }),
+          ),
+
+          //sputum cndition
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 20, bottom: 10),
+            child: Text(
+              'Stool Condition',
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: StatefulBuilder(builder: (context, ss) {
+              return DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                value: stoolCondition,
+                hint: Text('Stool Condition?'),
+                items: <String>['Yes', 'No'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    stoolCondition = val;
+                  });
+                  ss(() {});
+                },
+              ));
+            }),
+          ),
+
+          SizedBox(
+            height: 20,
+          ),
+
+          GestureDetector(
+            onTap: () {
+              if (stoolCondition != null &&
+                  sputumCondition != null &&
+                  inColdChain != null) {
+                print(stoolCondition);
+                print(sputumCondition);
+                print(inColdChain);
+                // ordersBloc.add(event)
+                Navigator.pop(context, true);
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: kColorsOrangeDark,
+              ),
+              height: 62,
+              // margin: EdgeInsets.all(20),
+              child: Center(
+                child: Text(
+                  'Confirm',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          // SelectorPage(),
+        ],
+      ),
+    );
   }
 
   Widget _buildInputField(

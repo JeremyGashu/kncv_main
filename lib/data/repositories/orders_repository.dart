@@ -7,6 +7,9 @@ class OrderRepository {
   final FirebaseAuth auth;
 
   OrderRepository(this.database, this.auth);
+
+  //loading orders for senders
+  // @params{}
   Future<List<Order>> loadOrders() async {
     var ordersCollection = await database.collection('orders');
     String? currentUserId = auth.currentUser?.uid;
@@ -18,6 +21,8 @@ class OrderRepository {
         .toList();
   }
 
+  //loading orders for couriers
+  // @params{}
   Future<List<Order>> loadOrdersForCourier() async {
     var ordersCollection = await database.collection('orders');
     String? currentUserId = auth.currentUser?.uid;
@@ -30,6 +35,38 @@ class OrderRepository {
         .toList();
   }
 
+  //loading orders for test centers
+  // @params{}
+  Future<List<Order>> loadOrdersForTestCenters() async {
+    var ordersCollection = await database.collection('orders');
+    String? currentUserId = auth.currentUser?.uid;
+    Map<String, dynamic>? testCenter =
+        await getTestCenterByAdminUID(currentUserId ?? '');
+
+    var orders = await ordersCollection
+        .where('tester_id', isEqualTo: testCenter?['key'])
+        .where('status', whereIn: ['On Delivery', 'Arrived', 'Accepted']).get();
+    return orders.docs
+        .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
+        .toList();
+  }
+
+  //loading test center using the admin id
+  // @params{}
+  Future<Map<String, dynamic>?> getTestCenterByAdminUID(String id) async {
+    var usersData = await database
+        .collection('users')
+        .where('user_id', isEqualTo: id)
+        .get();
+    if (usersData.docs.length > 0) {
+      Map<String, dynamic> userData = usersData.docs[0].data()['test_center'];
+      print('test center => ${userData}');
+      return userData;
+    }
+  }
+
+  //adding orders for senders
+  // @params{courier_id, tester_id, courier_name and tester_name}
   Future<String> addOrder(
       {required String courier_id,
       required String tester_id,
@@ -74,6 +111,7 @@ class OrderRepository {
     return c.id;
   }
 
+  //loading couriers with the same zone as the sender
   Future<List> getCouriersWithSameZone() async {
     var usersCollection = await database.collection('users');
     String? currentUserId = auth.currentUser?.uid;
@@ -94,6 +132,7 @@ class OrderRepository {
     return [];
   }
 
+  //loading test centers with the same zone as the sender
   Future<List> getTestCentersWithSameZone() async {
     var usersCollection = await database.collection('users');
     String? currentUserId = auth.currentUser?.uid;
@@ -111,12 +150,16 @@ class OrderRepository {
     return [];
   }
 
+  //load order with id
+  //param {order_id : string}
   Future<Order?> loadSingleOrder({required String orderId}) async {
     var orderRef = await database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     return Order.fromJson({...?order.data(), 'id': order.id});
   }
 
+  //editing patient info
+  //params {order_id : string, patient : Patient and  index of the patient int}
   Future<bool> editPatientInfo(
       {required String orderId,
       required Patient patient,
@@ -208,7 +251,26 @@ class OrderRepository {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'On Delivery') {
-      await orderRef.update({'status': 'Arrived', 'receiver' : receiver});
+      await orderRef.update({'status': 'Arrived', 'receiver': receiver});
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> approveArrivalTester(
+      {required String orderId,
+      String? coldChainStatus,
+      String? sputumCondition,
+      String? stoolCondition}) async {
+    var orderRef = database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists && order.data()!['status'] == 'Arrived') {
+      await orderRef.update({
+        'status': 'Accepted',
+        'sputumCondition': sputumCondition,
+        'stoolCondition': stoolCondition,
+      });
       return true;
     } else {
       return false;
