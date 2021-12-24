@@ -21,7 +21,25 @@ class DeletingOrder extends OrderState {}
 
 class DeletedOrder extends OrderState {}
 
+class AcceptingOrderCourier extends OrderState {}
+
+class AcceptedOrderCourier extends OrderState {}
+
+class ApprovingArrivalCourier extends OrderState {}
+
+class ApprovedArrivalCourier extends OrderState {}
+
 class DeletingPatient extends OrderState {}
+
+class LoadedOrdersForCourier extends OrderState {
+  final List<Order> orders;
+
+  LoadedOrdersForCourier({required this.orders});
+  @override
+  List<Object> get props => [orders];
+}
+
+class LoadingOrderForCourier extends OrderState {}
 
 class DeletedPatient extends OrderState {}
 

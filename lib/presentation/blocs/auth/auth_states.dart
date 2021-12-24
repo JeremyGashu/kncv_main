@@ -15,8 +15,9 @@ class LoadingState extends AuthState {
 
 class AuthenticatedState extends AuthState {
   final User user;
+  final String type;
 
-  AuthenticatedState({required this.user});
+  AuthenticatedState({required this.user, required this.type});
   @override
   List<Object> get props => [user];
 }

@@ -29,6 +29,31 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       } catch (e) {
         yield ErrorState(message: 'Error sending order!');
       }
+    } else if (event is AcceptOrderCourier) {
+      yield AcceptingOrderCourier();
+      try {
+        bool success = await orderRepository.acceptOrder(event.orderId);
+        if (success) {
+          yield AcceptedOrderCourier();
+        } else {
+          ErrorState(message: 'Error Accepting Order! Please try Again!');
+        }
+      } catch (e) {
+        yield ErrorState(message: 'Error Accepting Order. Please try Again!');
+      }
+    } else if (event is ApproveArrivalCourier) {
+      yield ApprovingArrivalCourier();
+      try {
+        bool success =
+            await orderRepository.approveArrival(event.orderId, event.receiver);
+        if (success) {
+          yield ApprovedArrivalCourier();
+        } else {
+          ErrorState(message: 'Error Accepting Order! Please try Again!');
+        }
+      } catch (e) {
+        yield ErrorState(message: 'Error Accepting Order. Please try Again!');
+      }
     } else if (event is DeleteOrders) {
       yield DeletingOrder();
       try {
@@ -53,6 +78,14 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         }
       } catch (e) {
         yield ErrorState(message: 'Error deleting patient!');
+      }
+    } else if (event is LoadOrdersForCourier) {
+      yield LoadingOrderForCourier();
+      try {
+        List<Order> orders = await orderRepository.loadOrdersForCourier();
+        yield LoadedOrdersForCourier(orders: orders);
+      } catch (e) {
+        yield ErrorState(message: 'Error Loading Orders!');
       }
     } else if (event is LoadSingleOrder) {
       yield LoadingState();

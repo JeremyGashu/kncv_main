@@ -11,6 +11,7 @@ class Order {
       this.patients,
       this.status,
       this.tester_name,
+      this.sender_name,
       this.created_at,
       this.courier_name});
 
@@ -20,6 +21,7 @@ class Order {
   String? testCenterId;
   String? courier;
   String? testCenter;
+  String? sender_name;
   String? sender;
   String? timestamp;
   String? status;
@@ -35,6 +37,7 @@ class Order {
         testCenterId: json["test_center_id"],
         courier: json["courier"],
         testCenter: json["test_center"],
+        sender_name: json['sender_name'],
         sender: json["sender"],
         status: json['status'],
         tester_name: json['tester_name'],
@@ -52,6 +55,7 @@ class Order {
         "sender_id": senderId,
         "courier_id": courierId,
         "test_center_id": testCenterId,
+        'sender_name' : sender_name,
         "courier": courier,
         "test_center": testCenter,
         "sender": sender,

@@ -18,7 +18,7 @@ Future<void> serviceLocatorInit() async {
 
   /// Repositories
   sl.registerFactory<OrderRepository>(() => OrderRepository(sl(), sl()));
-  sl.registerFactory<AuthRepository>(() => AuthRepository(sl()));
+  sl.registerFactory<AuthRepository>(() => AuthRepository(sl(), sl()));
   sl.registerFactory<TesterCourierRepository>(
       () => TesterCourierRepository(sl(), sl()));
 

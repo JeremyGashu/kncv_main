@@ -4,7 +4,9 @@ import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_events.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_states.dart';
-import 'package:kncv_flutter/presentation/pages/homepage/homepage.dart';
+import 'package:kncv_flutter/presentation/pages/homepage/courier_homepage.dart';
+import 'package:kncv_flutter/presentation/pages/homepage/receiver_homepage.dart';
+import 'package:kncv_flutter/presentation/pages/homepage/sender_homepage.dart';
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 
 class LoginPage extends StatefulWidget {
@@ -128,8 +130,27 @@ class _LoginPageState extends State<LoginPage> {
                         BlocConsumer<AuthBloc, AuthState>(
                             listener: (context, state) {
                           if (state is AuthenticatedState) {
-                            Navigator.pushNamedAndRemoveUntil(context,
-                                HomePage.homePageRouteName, (route) => false);
+                            print('type => ${state.type}');
+                            if (state.type == 'COURIER_ADMIN') {
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  CourierHomePage.courierHomePageRouteName,
+                                  (route) => false);
+                            } else if (state.type == 'INSTITUTIONAL_ADMIN') {
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  SenderHomePage.senderHomePageRouteName,
+                                  (route) => false);
+                            } else if (state.type == 'TEST_CENTER_ADMIN') {
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  ReceiverHomePage.receiverHomepageRouteName,
+                                  (route) => false);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Invalid Credential!')));
+                            }
                           } else if (state is UnauthenticatedState ||
                               state is ErrorState) {
                             ScaffoldMessenger.of(context).showSnackBar(

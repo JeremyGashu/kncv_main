@@ -18,8 +18,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         User? user = await authRepository.loginUser(
             email: event.email, password: event.password);
+        String? type;
+        String? uid = user?.uid;
+        if (uid != null) {
+          var userData = await authRepository.database
+              .collection('users')
+              .where('user_id', isEqualTo: uid)
+              .get();
+          if (userData.docs.isNotEmpty) {
+            type = userData.docs[0].data()['type'];
+          }
+        }
         if (user != null) {
-          yield AuthenticatedState(user: user);
+          yield AuthenticatedState(user: user, type: type ?? '');
         } else {
           yield UnauthenticatedState();
         }
@@ -29,14 +40,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is CheckAuth) {
       yield LoadingState();
       try {
-        User? user = await authRepository.currentUser();
+        User? user = authRepository.auth.currentUser;
+        String? type;
+        String? uid = user?.uid;
+        
+        if (uid != null) {
+          var userData = await authRepository.database
+              .collection('users')
+              .where('user_id', isEqualTo: uid)
+              .get();
+              
+          if (userData.docs.isNotEmpty) {
+            type = userData.docs[0].data()['type'];
+          }
+        }
+
+        
 
         if (user != null) {
-          yield AuthenticatedState(user: user);
+          yield AuthenticatedState(user: user, type: type ?? '');
         } else {
           yield UnauthenticatedState();
         }
       } catch (e) {
+        print(e.toString());
         yield ErrorState(message: 'Incorrect username and password');
       }
     }

@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
-import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
-import 'package:kncv_flutter/presentation/pages/homepage/homepage.dart';
+import 'package:kncv_flutter/presentation/pages/homepage/sender_homepage.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 import 'package:kncv_flutter/service_locator.dart';
@@ -39,7 +38,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             // ScaffoldMessenger.of(context)
             //     .showSnackBar(SnackBar(content: Text('Order Delted!')));
             Navigator.pushReplacementNamed(
-                context, HomePage.homePageRouteName);
+                context, SenderHomePage.senderHomePageRouteName);
           } else if (state is ErrorState) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
@@ -151,47 +150,30 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                   physics: NeverScrollableScrollPhysics(),
                                   children: [
                                     //sender
-                                    FutureBuilder(
-                                        future: sl<OrderRepository>()
-                                            .getInstitutionDataFromUserId(),
-                                        builder: (context,
-                                            AsyncSnapshot<Map<String, dynamic>?>
-                                                snapshot) {
-                                          if (!snapshot.hasData) {
-                                            // return Center(
-                                            //     child:
-                                            //         CircularProgressIndicator());
-                                          }
-                                          if (snapshot.hasData &&
-                                              snapshot.data != null) {
-                                            return ListTile(
-                                              leading: CircleAvatar(
-                                                backgroundColor: Colors.blue,
-                                                radius: 18,
-                                                child: Text(
-                                                  'S',
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                  ),
-                                                ),
-                                              ),
-                                              title: Text(
-                                                '${snapshot.data?['institution']['name']}',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              trailing: Text(
-                                                'Sender',
-                                                style: TextStyle(
-                                                    color: kColorsOrangeLight,
-                                                    fontSize: 14),
-                                              ),
-                                            );
-                                          }
-                                          return Container();
-                                        }),
+                                    //courier
+                                    ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: Colors.blue,
+                                        radius: 18,
+                                        child: Text(
+                                          'S',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                      ),
+                                      title: Text(
+                                        '${state.order.sender_name}',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      trailing: Text(
+                                        'Sender',
+                                        style: TextStyle(
+                                            color: Colors.green, fontSize: 14),
+                                      ),
+                                    ),
 
                                     //courier
                                     ListTile(

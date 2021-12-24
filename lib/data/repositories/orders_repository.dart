@@ -18,6 +18,18 @@ class OrderRepository {
         .toList();
   }
 
+  Future<List<Order>> loadOrdersForCourier() async {
+    var ordersCollection = await database.collection('orders');
+    String? currentUserId = auth.currentUser?.uid;
+    var orders = await ordersCollection
+        .where('courier_id', isEqualTo: currentUserId)
+        .where('status',
+            whereIn: ['Waiting Confirmation', 'On Delivery', 'Arrived']).get();
+    return orders.docs
+        .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
+        .toList();
+  }
+
   Future<String> addOrder(
       {required String courier_id,
       required String tester_id,
@@ -42,9 +54,17 @@ class OrderRepository {
       'Nov',
       'Dec'
     ];
+    var usersCollection = database.collection('users');
+    String? sender_name;
+    var userData =
+        await usersCollection.where('user_id', isEqualTo: sender_id).get();
+    if (userData.docs.length > 0) {
+      sender_name = userData.docs[0].data()['name'];
+    }
     var c = await ordersCollection.add({
       'courier_id': courier_id,
       'sender_id': sender_id,
+      'sender_name': sender_name,
       'tester_id': tester_id,
       'status': 'Draft',
       'created_at': '$day ${months[month - 1]} $year',
@@ -167,6 +187,28 @@ class OrderRepository {
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Draft') {
       await orderRef.update({'status': 'Waiting Confirmation'});
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> acceptOrder(String orderId) async {
+    var orderRef = database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists && order.data()!['status'] == 'Waiting Confirmation') {
+      await orderRef.update({'status': 'On Delivery'});
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> approveArrival(String orderId, String receiver) async {
+    var orderRef = database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists && order.data()!['status'] == 'On Delivery') {
+      await orderRef.update({'status': 'Arrived', 'receiver' : receiver});
       return true;
     } else {
       return false;

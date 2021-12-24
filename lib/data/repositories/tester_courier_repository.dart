@@ -33,9 +33,9 @@ class TesterCourierRepository {
           .toList();
 
       data['couriers'] = couriersData.docs
-          .map((e) => Courier.fromJson({...e.data(), 'id': e.id}))
+          .map(
+              (e) => Courier.fromJson({...e.data(), 'id': e.data()['user_id']}))
           .toList();
-
     }
     return data;
   }

@@ -44,6 +44,23 @@ class DeleteOrders extends OrderEvents {
   List<Object> get props => [orderId];
 }
 
+class AcceptOrderCourier extends OrderEvents {
+  final String orderId;
+
+  AcceptOrderCourier(this.orderId);
+  @override
+  List<Object> get props => [orderId];
+}
+
+class ApproveArrivalCourier extends OrderEvents {
+  final String orderId;
+  final String receiver;
+
+  ApproveArrivalCourier(this.orderId, this.receiver);
+  @override
+  List<Object> get props => [orderId, receiver];
+}
+
 class PlaceOrder extends OrderEvents {
   final String orderId;
 
@@ -80,6 +97,11 @@ class AddSpecimenToPatient extends OrderEvents {
 
   AddSpecimenToPatient(
       {required this.orderId, required this.patientId, required this.specimen});
+}
+
+class LoadOrdersForCourier extends OrderEvents {
+  @override
+  List<Object> get props => [];
 }
 
 class DeletePatient extends OrderEvents {

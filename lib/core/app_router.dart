@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:kncv_flutter/presentation/pages/homepage/homepage.dart';
+import 'package:kncv_flutter/presentation/pages/homepage/courier_homepage.dart';
+import 'package:kncv_flutter/presentation/pages/homepage/receiver_homepage.dart';
+import 'package:kncv_flutter/presentation/pages/homepage/sender_homepage.dart';
 import 'package:kncv_flutter/presentation/pages/intros/intro_page_one.dart';
 import 'package:kncv_flutter/presentation/pages/intros/intro_page_three.dart';
 import 'package:kncv_flutter/presentation/pages/intros/intro_page_two.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
+import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_courier.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
@@ -45,8 +48,8 @@ class AppRouter {
       case ResetPasswordPage.resetPasswordPageName:
         return MaterialPageRoute(builder: (_) => ResetPasswordPage());
 
-      case HomePage.homePageRouteName:
-        return MaterialPageRoute(builder: (_) => HomePage());
+      case SenderHomePage.senderHomePageRouteName:
+        return MaterialPageRoute(builder: (_) => SenderHomePage());
       case OrderDetailPage.orderDetailPageRouteName:
         return MaterialPageRoute(
             builder: (_) => OrderDetailPage(
@@ -70,6 +73,16 @@ class AppRouter {
             index: args['index'],
           ),
         );
+
+      case CourierHomePage.courierHomePageRouteName:
+        return MaterialPageRoute(builder: (_) => CourierHomePage());
+      case ReceiverHomePage.receiverHomepageRouteName:
+        return MaterialPageRoute(builder: (_) => ReceiverHomePage());
+      case OrderDetailCourier.orderDetailCourierPageRouteName:
+        return MaterialPageRoute(
+            builder: (_) => OrderDetailCourier(
+                  orderId: args,
+                ));
     }
   }
 }
