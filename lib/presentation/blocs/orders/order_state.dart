@@ -61,6 +61,10 @@ class PlacingOrder extends OrderState {}
 
 class PlacedOrder extends OrderState {}
 
+class AddingTestResult extends OrderState {}
+
+class AddedTestResult extends OrderState {}
+
 class LoadingSingleOrder extends OrderState {}
 
 class LoadedSingleOrder extends OrderState {

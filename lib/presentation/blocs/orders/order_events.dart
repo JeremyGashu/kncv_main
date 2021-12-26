@@ -90,6 +90,16 @@ class EditPtientInfo extends OrderEvents {
   List<Object> get props => [index, patient, patient];
 }
 
+class AddTestResult extends OrderEvents {
+  final String orderId;
+  final Patient patient;
+  final int index;
+  AddTestResult(
+      {required this.index, required this.patient, required this.orderId});
+  @override
+  List<Object> get props => [index, patient, patient];
+}
+
 class AddSpecimenToPatient extends OrderEvents {
   final String orderId;
   final String patientId;

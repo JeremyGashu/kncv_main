@@ -126,7 +126,7 @@ class IntroPageOne extends StatelessWidget {
                             width: double.infinity,
                             margin: EdgeInsets.only(top: 30),
                             child: Text(
-                              'Sender',
+                              'Referring Health Facility',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,

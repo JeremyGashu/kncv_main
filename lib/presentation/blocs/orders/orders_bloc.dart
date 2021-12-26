@@ -145,6 +145,17 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       } catch (e) {
         yield ErrorState(message: 'Error editing user');
       }
+    } else if (event is AddTestResult) {
+      yield AddingTestResult();
+      try {
+        bool edited = await orderRepository.addTestResult(
+            orderId: event.orderId, index: event.index, patient: event.patient);
+        if (edited) {
+          yield AddedTestResult();
+        }
+      } catch (e) {
+        yield ErrorState(message: 'Error editing user');
+      }
     } else if (event is PlaceOrder) {
       yield PlacingOrder();
       try {

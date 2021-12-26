@@ -5,25 +5,25 @@ import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/pages/orders/result_page.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
-class OrderDetailCourier extends StatefulWidget {
+class OrderDetailTester extends StatefulWidget {
   final String orderId;
-  static const String orderDetailCourierPageRouteName =
-      'order detail courier page route name';
+  static const String orderDetailTesterPageRouteName =
+      'order detail tester page route name';
 
-  const OrderDetailCourier({Key? key, required this.orderId}) : super(key: key);
+  const OrderDetailTester({Key? key, required this.orderId}) : super(key: key);
 
   @override
-  State<OrderDetailCourier> createState() => _OrderDetailCourierState();
+  State<OrderDetailTester> createState() => _OrderDetailTesterState();
 }
 
-class _OrderDetailCourierState extends State<OrderDetailCourier> {
+class _OrderDetailTesterState extends State<OrderDetailTester> {
   String? inColdChain;
   String? sputumCondition;
   String? stoolCondition;
 
-  TextEditingController _receiverController = TextEditingController();
   OrderBloc ordersBloc = sl<OrderBloc>();
   @override
   void initState() {
@@ -36,6 +36,9 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
     return BlocConsumer<OrderBloc, OrderState>(
         bloc: ordersBloc,
         listener: (ctx, state) async {
+          if(state is LoadedSingleOrder) {
+            print(state.order.status);
+          } 
           if (state is ErrorState) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
@@ -195,79 +198,90 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                         itemBuilder: (ctx, index) {
                                           return GestureDetector(
                                             onTap: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (ctx) {
-                                                    return Container(
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      width: double.infinity,
-                                                      height: 300,
-                                                      child: Dialog(
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Container(
-                                                              // width: double
-                                                              //     .infinity,
-                                                              // height: 300,
-                                                              child: Wrap(
-                                                                children: state
-                                                                    .order
-                                                                    .patients![
-                                                                        index]
-                                                                    .specimens!
-                                                                    .map((e) =>
-                                                                        Container(
-                                                                          width:
-                                                                              120,
-                                                                          height:
-                                                                              80,
-                                                                          margin:
-                                                                              EdgeInsets.all(10),
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                Colors.grey.withOpacity(0.2),
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(15),
-                                                                          ),
-                                                                          padding: EdgeInsets.symmetric(
-                                                                              vertical: 20,
-                                                                              horizontal: 10),
-                                                                          child:
-                                                                              Column(
-                                                                            // crossAxisAlignment: CrossAxisAlignment.start,
-                                                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              Text(
-                                                                                e.id ?? '',
-                                                                                style: TextStyle(
-                                                                                  fontSize: 20,
-                                                                                ),
-                                                                              ),
-                                                                              Text(e.type ?? ''),
-                                                                            ],
-                                                                          ),
-                                                                        ))
-                                                                    .toList(),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                            TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      ctx);
-                                                                },
-                                                                child:
-                                                                    Text('OK')),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
+                                              // showDialog(
+                                              //     context: context,
+                                              //     builder: (ctx) {
+                                              //       return Container(
+                                              //         padding:
+                                              //             EdgeInsets.all(10),
+                                              //         width: double.infinity,
+                                              //         height: 300,
+                                              //         child: Dialog(
+                                              //           child: Column(
+                                              //             mainAxisSize:
+                                              //                 MainAxisSize.min,
+                                              //             children: [
+                                              //               Container(
+                                              //                 // width: double
+                                              //                 //     .infinity,
+                                              //                 // height: 300,
+                                              //                 child: Wrap(
+                                              //                   children: state
+                                              //                       .order
+                                              //                       .patients![
+                                              //                           index]
+                                              //                       .specimens!
+                                              //                       .map((e) =>
+                                              //                           Container(
+                                              //                             width:
+                                              //                                 120,
+                                              //                             height:
+                                              //                                 80,
+                                              //                             margin:
+                                              //                                 EdgeInsets.all(10),
+                                              //                             decoration:
+                                              //                                 BoxDecoration(
+                                              //                               color:
+                                              //                                   Colors.grey.withOpacity(0.2),
+                                              //                               borderRadius:
+                                              //                                   BorderRadius.circular(15),
+                                              //                             ),
+                                              //                             padding: EdgeInsets.symmetric(
+                                              //                                 vertical: 20,
+                                              //                                 horizontal: 10),
+                                              //                             child:
+                                              //                                 Column(
+                                              //                               // crossAxisAlignment: CrossAxisAlignment.start,
+                                              //                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              //                               children: [
+                                              //                                 Text(
+                                              //                                   e.id ?? '',
+                                              //                                   style: TextStyle(
+                                              //                                     fontSize: 20,
+                                              //                                   ),
+                                              //                                 ),
+                                              //                                 Text(e.type ?? ''),
+                                              //                               ],
+                                              //                             ),
+                                              //                           ))
+                                              //                       .toList(),
+                                              //                 ),
+                                              //               ),
+                                              //               SizedBox(
+                                              //                 height: 10,
+                                              //               ),
+                                              //               TextButton(
+                                              //                   onPressed: () {
+                                              //                     Navigator.pop(
+                                              //                         ctx);
+                                              //                   },
+                                              //                   child:
+                                              //                       Text('OK')),
+                                              //             ],
+                                              //           ),
+                                              //         ),
+                                              //       );
+                                              //     });
+
+                                              Navigator.pushNamed(
+                                                  context,
+                                                  AddTestResultPage
+                                                      .addTestResultPageRouteName,
+                                                  arguments: {
+                                                    'orderId': widget.orderId,
+                                                    'patient': state
+                                                        .order.patients![index],
+                                                    'index': index,
                                                   });
                                             },
                                             child: buildPatients(
@@ -286,215 +300,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                             ],
                           ),
                         ),
-                        state.order.status == 'Waiting Confirmation'
-                            ? Positioned(
-                                bottom: 0,
-                                left: 10,
-                                right: 10,
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  color: kPageBackground,
-                                  child: InkWell(
-                                    onTap: () async {
-                                      showDialog(
-                                          context: context,
-                                          builder: (ctx) {
-                                            return AlertDialog(
-                                              title: Text('Accept Order?'),
-                                              content: Text(
-                                                  'Are you sure you want to accept this order?'),
-                                              actions: [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(ctx);
-                                                      ordersBloc.add(
-                                                          AcceptOrderCourier(
-                                                              state.order
-                                                                  .orderId!));
-                                                    },
-                                                    child: Text('Yes')),
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(ctx);
-                                                    },
-                                                    child: Text('Cancel'))
-                                              ],
-                                            );
-                                          });
-                                    },
-                                    borderRadius: BorderRadius.circular(37),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: kColorsOrangeDark,
-                                      ),
-                                      height: 62,
-                                      // margin: EdgeInsets.all(20),
-                                      child: Center(
-                                        child: Text(
-                                          'Accept Order',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                        state.order.status == 'On Delivery'
-                            ? Positioned(
-                                bottom: 0,
-                                left: 10,
-                                right: 10,
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  color: kPageBackground,
-                                  child: InkWell(
-                                    onTap: () async {
-                                      bool confirm = await showModalBottomSheet(
-                                          backgroundColor: Colors.transparent,
-                                          isScrollControlled: true,
-                                          context: context,
-                                          builder: (ctx) {
-                                            return StatefulBuilder(
-                                                builder: (ctx, ss) {
-                                              return SingleChildScrollView(
-                                                child: Container(
-                                                  padding: EdgeInsets.only(
-                                                    bottom:
-                                                        MediaQuery.of(context)
-                                                                .viewInsets
-                                                                .bottom +
-                                                            20,
-                                                    top: 30,
-                                                    left: 20,
-                                                    right: 20,
-                                                  ),
-                                                  // padding: EdgeInsets.only(
-
-                                                  //     bottom: 20),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft: Radius.circular(
-                                                        30,
-                                                      ),
-                                                      topRight: Radius.circular(
-                                                        30,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                        width: double.infinity,
-                                                        child: Text(
-                                                          'Confirm Arrival',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                            fontSize: 32,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 30,
-                                                      ),
-                                                      _buildInputField(
-                                                          label: 'Receiver',
-                                                          hint:
-                                                              'Enter Receiver',
-                                                          controller:
-                                                              _receiverController),
-                                                      SizedBox(
-                                                        height: 30,
-                                                      ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          print(
-                                                              _receiverController
-                                                                  .value.text);
-
-                                                          if (_receiverController
-                                                                  .value.text !=
-                                                              '') {
-                                                            Navigator.pop(
-                                                                ctx, true);
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            color:
-                                                                kColorsOrangeDark,
-                                                          ),
-                                                          height: 62,
-                                                          // margin: EdgeInsets.all(20),
-                                                          child: Center(
-                                                            child: Text(
-                                                              'Confirm',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 20,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            });
-                                          });
-
-                                      if (confirm == true) {
-                                        ordersBloc.add(ApproveArrivalCourier(
-                                            state.order.orderId!,
-                                            _receiverController.value.text));
-                                      }
-                                    },
-                                    borderRadius: BorderRadius.circular(37),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: kColorsOrangeDark,
-                                      ),
-                                      height: 62,
-                                      // margin: EdgeInsets.all(20),
-                                      child: Center(
-                                        child: Text(
-                                          'Approve Arrival',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                        // state.order.status == 'Arrived'
+                        // state.order.status == 'Waiting Confirmation'
                         //     ? Positioned(
                         //         bottom: 0,
                         //         left: 10,
@@ -504,23 +310,180 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                         //           color: kPageBackground,
                         //           child: InkWell(
                         //             onTap: () async {
-                        //               var create = await showModalBottomSheet(
+                        //               showDialog(
+                        //                   context: context,
+                        //                   builder: (ctx) {
+                        //                     return AlertDialog(
+                        //                       title: Text('Accept Order?'),
+                        //                       content: Text(
+                        //                           'Are you sure you want to accept this order?'),
+                        //                       actions: [
+                        //                         TextButton(
+                        //                             onPressed: () {
+                        //                               Navigator.pop(ctx);
+                        //                               ordersBloc.add(
+                        //                                   AcceptOrderCourier(
+                        //                                       state.order
+                        //                                           .orderId!));
+                        //                             },
+                        //                             child: Text('Yes')),
+                        //                         TextButton(
+                        //                             onPressed: () {
+                        //                               Navigator.pop(ctx);
+                        //                             },
+                        //                             child: Text('Cancel'))
+                        //                       ],
+                        //                     );
+                        //                   });
+                        //             },
+                        //             borderRadius: BorderRadius.circular(37),
+                        //             child: Container(
+                        //               decoration: BoxDecoration(
+                        //                 borderRadius: BorderRadius.circular(10),
+                        //                 color: kColorsOrangeDark,
+                        //               ),
+                        //               height: 62,
+                        //               // margin: EdgeInsets.all(20),
+                        //               child: Center(
+                        //                 child: Text(
+                        //                   'Accept Order',
+                        //                   style: TextStyle(
+                        //                       fontWeight: FontWeight.bold,
+                        //                       fontSize: 20,
+                        //                       color: Colors.white),
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       )
+                        //     : Container(),
+                        // state.order.status == 'On Delivery'
+                        //     ? Positioned(
+                        //         bottom: 0,
+                        //         left: 10,
+                        //         right: 10,
+                        //         child: Container(
+                        //           padding: EdgeInsets.all(10),
+                        //           color: kPageBackground,
+                        //           child: InkWell(
+                        //             onTap: () async {
+                        //               bool confirm = await showModalBottomSheet(
                         //                   backgroundColor: Colors.transparent,
                         //                   isScrollControlled: true,
                         //                   context: context,
                         //                   builder: (ctx) {
-                        //                     return ArrivalConfirmation(ctx);
+                        //                     return StatefulBuilder(
+                        //                         builder: (ctx, ss) {
+                        //                       return SingleChildScrollView(
+                        //                         child: Container(
+                        //                           padding: EdgeInsets.only(
+                        //                             bottom:
+                        //                                 MediaQuery.of(context)
+                        //                                         .viewInsets
+                        //                                         .bottom +
+                        //                                     20,
+                        //                             top: 30,
+                        //                             left: 20,
+                        //                             right: 20,
+                        //                           ),
+                        //                           // padding: EdgeInsets.only(
+
+                        //                           //     bottom: 20),
+                        //                           decoration: BoxDecoration(
+                        //                             color: Colors.white,
+                        //                             borderRadius:
+                        //                                 BorderRadius.only(
+                        //                               topLeft: Radius.circular(
+                        //                                 30,
+                        //                               ),
+                        //                               topRight: Radius.circular(
+                        //                                 30,
+                        //                               ),
+                        //                             ),
+                        //                           ),
+                        //                           child: Column(
+                        //                             mainAxisSize:
+                        //                                 MainAxisSize.min,
+                        //                             crossAxisAlignment:
+                        //                                 CrossAxisAlignment
+                        //                                     .start,
+                        //                             children: [
+                        //                               Container(
+                        //                                 width: double.infinity,
+                        //                                 child: Text(
+                        //                                   'Confirm Arrival',
+                        //                                   textAlign:
+                        //                                       TextAlign.center,
+                        //                                   style: TextStyle(
+                        //                                     fontSize: 32,
+                        //                                     fontWeight:
+                        //                                         FontWeight.bold,
+                        //                                   ),
+                        //                                 ),
+                        //                               ),
+                        //                               SizedBox(
+                        //                                 height: 30,
+                        //                               ),
+                        //                               _buildInputField(
+                        //                                   label: 'Receiver',
+                        //                                   hint:
+                        //                                       'Enter Receiver',
+                        //                                   controller:
+                        //                                       _receiverController),
+                        //                               SizedBox(
+                        //                                 height: 30,
+                        //                               ),
+                        //                               GestureDetector(
+                        //                                 onTap: () {
+                        //                                   print(
+                        //                                       _receiverController
+                        //                                           .value.text);
+
+                        //                                   if (_receiverController
+                        //                                           .value.text !=
+                        //                                       '') {
+                        //                                     Navigator.pop(
+                        //                                         ctx, true);
+                        //                                   }
+                        //                                 },
+                        //                                 child: Container(
+                        //                                   decoration:
+                        //                                       BoxDecoration(
+                        //                                     borderRadius:
+                        //                                         BorderRadius
+                        //                                             .circular(
+                        //                                                 10),
+                        //                                     color:
+                        //                                         kColorsOrangeDark,
+                        //                                   ),
+                        //                                   height: 62,
+                        //                                   // margin: EdgeInsets.all(20),
+                        //                                   child: Center(
+                        //                                     child: Text(
+                        //                                       'Confirm',
+                        //                                       style: TextStyle(
+                        //                                           fontWeight:
+                        //                                               FontWeight
+                        //                                                   .bold,
+                        //                                           fontSize: 20,
+                        //                                           color: Colors
+                        //                                               .white),
+                        //                                     ),
+                        //                                   ),
+                        //                                 ),
+                        //                               ),
+                        //                             ],
+                        //                           ),
+                        //                         ),
+                        //                       );
+                        //                     });
                         //                   });
 
-                        //               if (create == true) {
-                        //                 ordersBloc.add(
-                        //                   ApproveArrivalTester(
-                        //                     orderId: state.order.orderId!,
-                        //                     sputumCondition: sputumCondition,
-                        //                     stoolCondition: stoolCondition,
-                        //                     coldChainStatus: inColdChain,
-                        //                   ),
-                        //                 );
+                        //               if (confirm == true) {
+                        //                 ordersBloc.add(ApproveArrivalCourier(
+                        //                     state.order.orderId!,
+                        //                     _receiverController.value.text));
                         //               }
                         //             },
                         //             borderRadius: BorderRadius.circular(37),
@@ -533,7 +496,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                         //               // margin: EdgeInsets.all(20),
                         //               child: Center(
                         //                 child: Text(
-                        //                   'Confirm Arrival',
+                        //                   'Approve Arrival',
                         //                   style: TextStyle(
                         //                       fontWeight: FontWeight.bold,
                         //                       fontSize: 20,
@@ -545,6 +508,57 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                         //         ),
                         //       )
                         //     : Container(),
+                        state.order.status == 'Arrived'
+                            ? Positioned(
+                                bottom: 0,
+                                left: 10,
+                                right: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  color: kPageBackground,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      var create = await showModalBottomSheet(
+                                          backgroundColor: Colors.transparent,
+                                          isScrollControlled: true,
+                                          context: context,
+                                          builder: (ctx) {
+                                            return ArrivalConfirmation(ctx);
+                                          });
+
+                                      if (create == true) {
+                                        ordersBloc.add(
+                                          ApproveArrivalTester(
+                                            orderId: state.order.orderId!,
+                                            sputumCondition: sputumCondition,
+                                            stoolCondition: stoolCondition,
+                                            coldChainStatus: inColdChain,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    borderRadius: BorderRadius.circular(37),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: kColorsOrangeDark,
+                                      ),
+                                      height: 62,
+                                      // margin: EdgeInsets.all(20),
+                                      child: Center(
+                                        child: Text(
+                                          'Confirm Arrival',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
                         // state.order.status == 'Accepted'
                         //     ? Positioned(
                         //         bottom: 0,
@@ -773,41 +787,6 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
           // SelectorPage(),
         ],
       ),
-    );
-  }
-
-  Widget _buildInputField(
-      {required String label,
-      required String hint,
-      required TextEditingController controller}) {
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.only(top: 20),
-          child: Text(
-            label,
-            textAlign: TextAlign.left,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 10),
-          padding: EdgeInsets.only(left: 10, right: 10, bottom: 4, top: 4),
-          decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: TextField(
-            controller: controller,
-            style: TextStyle(color: Colors.black),
-            decoration: InputDecoration(
-                hintText: hint,
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(left: 10, top: 2, bottom: 3)),
-          ),
-        ),
-      ],
     );
   }
 

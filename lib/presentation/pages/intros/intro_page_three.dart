@@ -126,7 +126,7 @@ class InstroPageThree extends StatelessWidget {
                             width: double.infinity,
                             margin: EdgeInsets.only(top: 30),
                             child: Text(
-                              'Receiver',
+                              'Testing Health Facility',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,

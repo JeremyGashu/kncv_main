@@ -5,7 +5,6 @@ import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
-import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 
 class PatientInfoPage extends StatefulWidget {
   final String orderId;
@@ -56,9 +55,10 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text('Added Patient!')));
             await Future.delayed(Duration(seconds: 1));
-            Navigator.pushReplacementNamed(
-                context, OrderDetailPage.orderDetailPageRouteName,
-                arguments: widget.orderId);
+            Navigator.pop(
+              context,
+              true,
+            );
           }
           if (state is ErrorState) {
             ScaffoldMessenger.of(context)
@@ -352,129 +352,141 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                           context: context,
                           builder: (ctx) {
                             return StatefulBuilder(builder: (ctx, ss) {
-                              return Container(
-                                padding: EdgeInsets.only(
-                                    top: 30, left: 20, right: 20, bottom: 20),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(
-                                      30,
-                                    ),
-                                    topRight: Radius.circular(
-                                      30,
+                              return SingleChildScrollView(
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                    top: 30,
+                                    left: 20,
+                                    right: 20,
+                                    bottom:
+                                        MediaQuery.of(ctx).viewInsets.bottom +
+                                            20,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(
+                                        30,
+                                      ),
+                                      topRight: Radius.circular(
+                                        30,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: double.infinity,
-                                      child: Text(
-                                        'Create Specimen',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.bold,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        child: Text(
+                                          'Create Specimen',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    _buildInputField(
-                                        label: 'Specimen ID',
-                                        hint: "Please enter specimen ID",
-                                        controller: specimenIdController),
-                                    _labelBuilder('Specimen Type'),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(7),
+                                      SizedBox(
+                                        height: 30,
                                       ),
-                                      child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
-                                        value: specimenType,
-                                        hint: Text('Specimen Type'),
-                                        items: <String>[
-                                          'Stool',
-                                          'Sputum',
-                                          'Urine'
-                                        ].map((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                        onChanged: (val) {
-                                          ss(() => 1 == 1);
+                                      _buildInputField(
+                                          label: 'Specimen ID',
+                                          hint: "Please enter specimen ID",
+                                          controller: specimenIdController),
+                                      _labelBuilder('Specimen Type'),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 5),
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(7),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<String>(
+                                          value: specimenType,
+                                          hint: Text('Specimen Type'),
+                                          items: <String>[
+                                            'Stool',
+                                            'Sputum',
+                                            'Urine'
+                                          ].map((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          onChanged: (val) {
+                                            ss(() => 1 == 1);
 
-                                          setState(() {
-                                            specimenType = val;
-                                          });
-                                        },
-                                      )),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          print(specimenType);
-                                          print(
-                                              specimenIdController.value.text);
-                                          if (specimenIdController.value.text ==
-                                                  '' ||
-                                              specimenType == null) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                                    content: Text(
-                                                        'Please enter complete information')));
+                                            setState(() {
+                                              specimenType = val;
+                                            });
+                                          },
+                                        )),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      GestureDetector(
+                                          onTap: () {
+                                            print(specimenType);
+                                            print(specimenIdController
+                                                .value.text);
+                                            if (specimenIdController
+                                                        .value.text ==
+                                                    '' ||
+                                                specimenType == null) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Please enter complete information')));
+                                              Navigator.pop(context);
+                                              return;
+                                            }
+
+                                            Specimen specimen = Specimen(
+                                                id: specimenIdController
+                                                    .value.text,
+                                                type: specimenType);
+                                            setState(() {
+                                              specimens = [
+                                                ...specimens,
+                                                specimen
+                                              ];
+                                            });
+                                            print(specimens.length);
+                                            // ScaffoldMessenger.of(context)
+                                            //     .showSnackBar(SnackBar(
+                                            //         content: Text(
+                                            //             'Added Specimen')));
                                             Navigator.pop(context);
                                             return;
-                                          }
-
-                                          Specimen specimen = Specimen(
-                                              id: specimenIdController
-                                                  .value.text,
-                                              type: specimenType);
-                                          setState(() {
-                                            specimens = [
-                                              ...specimens,
-                                              specimen
-                                            ];
-                                          });
-                                          print(specimens.length);
-                                          // ScaffoldMessenger.of(context)
-                                          //     .showSnackBar(SnackBar(
-                                          //         content: Text(
-                                          //             'Added Specimen')));
-                                          Navigator.pop(context);
-                                          return;
-                                        },
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: kColorsOrangeDark,
-                                            ),
-                                            height: 62,
-                                            // margin: EdgeInsets.all(20),
-                                            child: Center(
-                                              child: Text(
-                                                'Add Specimen',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
-                                                    color: Colors.white),
+                                          },
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: kColorsOrangeDark,
                                               ),
-                                            ))),
-                                  ],
+                                              height: 62,
+                                              // margin: EdgeInsets.all(20),
+                                              child: Center(
+                                                child: Text(
+                                                  'Add Specimen',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20,
+                                                      color: Colors.white),
+                                                ),
+                                              ))),
+                                    ],
+                                  ),
                                 ),
                               );
                             });

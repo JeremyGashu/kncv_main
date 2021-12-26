@@ -55,7 +55,7 @@ class Order {
         "sender_id": senderId,
         "courier_id": courierId,
         "test_center_id": testCenterId,
-        'sender_name' : sender_name,
+        'sender_name': sender_name,
         "courier": courier,
         "test_center": testCenter,
         "sender": sender,
@@ -86,6 +86,9 @@ class Patient {
       this.anatomicLocation,
       this.examPurpose,
       this.specimens,
+      this.testResult,
+      this.status,
+      this.resultAvaiable = false,
       this.address});
 
   String? mr;
@@ -102,10 +105,13 @@ class Patient {
   String? pneumonia;
   String? recurrentPneumonia;
   String? malnutrition;
+  String? status = 'Draft';
   String? dm;
   String? doctorInCharge;
   String? anatomicLocation;
   String? examPurpose;
+  bool resultAvaiable;
+  TestResult? testResult;
   List<Specimen>? specimens;
 
   factory Patient.fromJson(Map<String, dynamic> json) => Patient(
@@ -117,9 +123,13 @@ class Patient {
         woreda: json["woreda"],
         phone: json["phone"],
         tb: json["TB"],
+        status: json['status'],
         childhood: json["childhood"],
+        resultAvaiable: json['result_available'] ?? false,
         hiv: json["HIV"],
         pneumonia: json["pneumonia"],
+        testResult:
+            json['result'] != null ? TestResult.fromJson(json['result']) : null,
         recurrentPneumonia: json["recurrent_pneumonia"],
         malnutrition: json["malnutrition"],
         dm: json["DM"],
@@ -139,6 +149,7 @@ class Patient {
         "woreda": woreda,
         "phone": phone,
         "TB": tb,
+        'status': status,
         "childhood": childhood,
         "HIV": hiv,
         "pneumonia": pneumonia,
@@ -146,6 +157,8 @@ class Patient {
         "recurrent_pneumonia": recurrentPneumonia,
         "malnutrition": malnutrition,
         "DM": dm,
+        'result': testResult?.toJson(),
+        'result_available': resultAvaiable,
         "doctor_in_charge": doctorInCharge,
         "anatomic_location": anatomicLocation,
         "exam_purpose": examPurpose,
@@ -203,10 +216,53 @@ class Tester extends TesterCourier {
   factory Tester.fromJson(Map<String, dynamic> json) =>
       Tester(name: json['name'], phone: json['phone_number'], id: json['id']);
 
-  Map<String, dynamic> toJson() => {'name': name, 'phone_number': phone, 'id': id};
+  Map<String, dynamic> toJson() =>
+      {'name': name, 'phone_number': phone, 'id': id};
 
   @override
   String toString() {
     return name;
   }
+}
+
+//Test Rrsult
+
+// To parse this JSON data, do
+//
+//     final testResult = testResultFromJson(jsonString);
+
+class TestResult {
+  TestResult({
+    this.resultDate,
+    this.resultTime,
+    this.labRegistratinNumber,
+    this.mtbResult,
+    this.quantity,
+    this.resultRr,
+  });
+
+  String? resultDate;
+  String? resultTime;
+  String? labRegistratinNumber;
+  String? mtbResult;
+  String? quantity;
+  String? resultRr;
+
+  factory TestResult.fromJson(Map<String, dynamic> json) => TestResult(
+        resultDate: json["result_date"],
+        resultTime: json["result_time"],
+        labRegistratinNumber: json["lab_registratin_number"],
+        mtbResult: json["mtb_result"],
+        quantity: json["quantity"],
+        resultRr: json["result_rr"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "result_date": resultDate,
+        "result_time": resultTime,
+        "lab_registratin_number": labRegistratinNumber,
+        "mtb_result": mtbResult,
+        "quantity": quantity,
+        "result_rr": resultRr,
+      };
 }

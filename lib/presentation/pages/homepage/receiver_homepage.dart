@@ -7,7 +7,7 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/widgets/item_cart.dart';
-import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_courier.dart';
+import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_tester.dart';
 import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
 
 import '../../../service_locator.dart';
@@ -93,8 +93,8 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                               '${state.orders[index].orderId}');
                                           var load = await Navigator.pushNamed(
                                               context,
-                                              OrderDetailCourier
-                                                  .orderDetailCourierPageRouteName,
+                                              OrderDetailTester
+                                                  .orderDetailTesterPageRouteName,
                                               arguments:
                                                   state.orders[index].orderId);
                                           if (load == true) {

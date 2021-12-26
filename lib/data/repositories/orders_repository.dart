@@ -175,6 +175,23 @@ class OrderRepository {
     return false;
   }
 
+  //editing patient info
+  //params {order_id : string, patient : Patient and  index of the patient int}
+  Future<bool> addTestResult(
+      {required String orderId,
+      required Patient patient,
+      required int index}) async {
+    var orderRef = await database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists) {
+      List patientsList = order.data()?['patients'];
+      patientsList[index] = patient.toJson();
+      await orderRef.update({'patients': patientsList});
+      return true;
+    }
+    return false;
+  }
+
   Future<bool> deletePatientInfo(
       {required String orderId, required int index}) async {
     var orderRef = await database.collection('orders').doc(orderId);

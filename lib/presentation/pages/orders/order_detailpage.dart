@@ -93,38 +93,49 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 actions: [
                   state is DeletingOrder
                       ? Container()
-                      : IconButton(
-                          icon: Icon(
-                            Icons.delete_outline,
-                            color: Colors.black,
-                          ),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (ctx) {
-                                  return AlertDialog(
-                                    title: Text('Delete Order'),
-                                    content: Text(
-                                        'Are you sure you want to delete this order?'),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            ordersBloc.add(DeleteOrders(
-                                                orderId: widget.orderId));
-                                            Navigator.pop(ctx);
-                                          },
-                                          child: Text('Yes')),
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(ctx);
-                                          },
-                                          child: Text('No')),
-                                    ],
-                                  );
-                                });
-                            // AlertDialog(),
-                          },
-                        ),
+                      : state is LoadedSingleOrder
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.delete_outline,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                if (state.order.status !=
+                                        'Waiting Confirmation' ||
+                                    state.order.status != 'Draft') {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'Cant delete this order! It is already accepted!')));
+                                  return;
+                                }
+                                showDialog(
+                                    context: context,
+                                    builder: (ctx) {
+                                      return AlertDialog(
+                                        title: Text('Delete Order'),
+                                        content: Text(
+                                            'Are you sure you want to delete this order?'),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                ordersBloc.add(DeleteOrders(
+                                                    orderId: widget.orderId));
+                                                Navigator.pop(ctx);
+                                              },
+                                              child: Text('Yes')),
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(ctx);
+                                              },
+                                              child: Text('No')),
+                                        ],
+                                      );
+                                    });
+                                // AlertDialog(),
+                              },
+                            )
+                          : Container(),
                   // IconButton(
                   //   icon: Icon(
                   //     Icons.edit_outlined,
@@ -243,29 +254,31 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                     )),
                               ),
 
-                              SliverToBoxAdapter(
-                                  child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  FloatingActionButton(
-                                      tooltip: 'Add Patient',
-                                      backgroundColor: kColorsOrangeLight,
-                                      elevation: 0,
-                                      onPressed: () async {
-                                        var added = await Navigator.pushNamed(
-                                            context,
-                                            PatientInfoPage
-                                                .patientInfoPageRouteName,
-                                            arguments: widget.orderId);
-                                        if (added == true) {
-                                          ordersBloc.add(LoadSingleOrder(
-                                              orderId: widget.orderId));
-                                        }
-                                      },
-                                      child:
-                                          Icon(Icons.app_registration_rounded)),
-                                ],
-                              )),
+                              state.order.status == 'Draft'
+                                  ? SliverToBoxAdapter(
+                                      child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        FloatingActionButton(
+                                            tooltip: 'Add Patient',
+                                            backgroundColor: kColorsOrangeLight,
+                                            elevation: 0,
+                                            onPressed: () async {
+                                              var added = await Navigator.pushNamed(
+                                                  context,
+                                                  PatientInfoPage
+                                                      .patientInfoPageRouteName,
+                                                  arguments: widget.orderId);
+                                              if (added == true) {
+                                                ordersBloc.add(LoadSingleOrder(
+                                                    orderId: widget.orderId));
+                                              }
+                                            },
+                                            child: Icon(Icons
+                                                .app_registration_rounded)),
+                                      ],
+                                    ))
+                                  : SliverToBoxAdapter(),
 
                               SliverToBoxAdapter(
                                 child: state.order.patients!.length > 0
@@ -283,11 +296,31 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         physics: NeverScrollableScrollPhysics(),
                                         itemCount: state.order.patients!.length,
                                         itemBuilder: (ctx, index) {
-                                          return buildPatients(
-                                            context,
-                                            state.order.patients![index],
-                                            widget.orderId,
-                                            index,
+                                          return GestureDetector(
+                                            onTap: () {
+                                              if (state.order.patients![index]
+                                                  .resultAvaiable) {
+                                                Navigator.pushNamed(
+                                                    context,
+                                                    EditPatientInfoPage
+                                                        .editPatientInfoRouteName,
+                                                    arguments: {
+                                                      'patient': state.order
+                                                          .patients![index],
+                                                      'orderId': widget.orderId,
+                                                      'index': index
+                                                    });
+                                              }
+                                            },
+                                            child: buildPatients(
+                                              context,
+                                              state.order.patients![index],
+                                              widget.orderId,
+                                              index,
+                                              deletable: state.order.status ==
+                                                      'Waiting Confirmation' ||
+                                                  state.order.status == 'Draft',
+                                            ),
                                           );
                                         })
                                     : Center(
@@ -351,7 +384,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   }
 
   Container buildPatients(
-      BuildContext context, Patient patient, String orderId, int index) {
+      BuildContext context, Patient patient, String orderId, int index,
+      {bool deletable = true}) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -400,7 +434,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                     color: Colors.green,
                   ),
                   child: Text(
-                    'Draft',
+                    patient.status ?? 'Draft',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
@@ -425,9 +459,18 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 children: [
                   GestureDetector(
                     onTap: () {
+                      if (!deletable) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content:
+                                Text('The patient info is already sent!')));
+                        return;
+                      }
+
                       showDialog(
                           context: context,
                           builder: (context) {
+                            //check status
+
                             return AlertDialog(
                               title: Text('Delete Patient?'),
                               content: Text('Delete patient ${patient.name}'),
@@ -475,6 +518,13 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       print(index);
                       print(patient);
                       print(orderId);
+                      // if (!deletable) {
+                      //             ScaffoldMessenger.of(context).showSnackBar(
+                      //                 SnackBar(
+                      //                     content: Text(
+                      //                         'Cant edit this order! It is already accepted!')));
+                      //                         return;
+                      //           }
                       Navigator.pushNamed(
                           context, EditPatientInfoPage.editPatientInfoRouteName,
                           arguments: {
