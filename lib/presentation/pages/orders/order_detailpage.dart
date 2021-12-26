@@ -10,6 +10,8 @@ import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.d
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
+import '../notificatins.dart';
+
 class OrderDetailPage extends StatefulWidget {
   final String orderId;
   static const String orderDetailPageRouteName = 'order detail page route name';
@@ -56,6 +58,13 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             //     .showSnackBar(SnackBar(content: Text('Order Placed!')));
             ordersBloc.add(LoadOrders());
             Navigator.pop(context, true);
+
+            addNotification(
+              orderId: widget.orderId,
+              content: 'New order placed!',
+              tester: false,
+
+            );
           }
         },
         builder: (ctx, state) {
@@ -231,7 +240,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                       trailing: Text(
                                         'Test Center',
                                         style: TextStyle(
-                                            color: kColorsOrangeLight,
+                                            color: Colors.green,
                                             fontSize: 14),
                                       ),
                                     ),

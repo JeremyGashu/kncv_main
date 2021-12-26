@@ -9,6 +9,8 @@ import 'package:kncv_flutter/presentation/pages/orders/result_page.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
+import '../notificatins.dart';
+
 class OrderDetailTester extends StatefulWidget {
   final String orderId;
   static const String orderDetailTesterPageRouteName =
@@ -49,6 +51,10 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           } else if (state is ApprovedArrivalCourier) {
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+            addNotification(
+              orderId: widget.orderId,
+              content: 'Tester approved arrival of order!',
+            );
           } else if (state is ApprovedArrivalTester) {
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           }
@@ -167,8 +173,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                       trailing: Text(
                                         'Test Center',
                                         style: TextStyle(
-                                            color: kColorsOrangeLight,
-                                            fontSize: 14),
+                                            color: Colors.green, fontSize: 14),
                                       ),
                                     ),
                                   ],
@@ -298,6 +303,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                       'index': index,
                                                     });
                                               }
+                                              // print(state.order.patients![index].toJson());
                                             },
                                             child: buildPatients(
                                               context,

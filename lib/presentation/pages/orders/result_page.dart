@@ -6,18 +6,23 @@ import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/pages/patient_info/report.dart';
 import 'package:kncv_flutter/service_locator.dart';
+
+import '../notificatins.dart';
 
 class AddTestResultPage extends StatefulWidget {
   final String orderId;
   final Patient patient;
   final int index;
+  final bool accepted;
   static const String addTestResultPageRouteName = 'add test result page';
 
   const AddTestResultPage(
       {Key? key,
       required this.orderId,
       required this.index,
+      this.accepted = false,
       required this.patient})
       : super(key: key);
 
@@ -60,7 +65,9 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
               title: Text('Result'),
               actions: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, ReportPage.reportPage, arguments: widget.patient);
+                  },
                   icon: Icon(
                     Icons.save,
                   ),
@@ -78,6 +85,12 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text('Added Result!')));
                 await Future.delayed(Duration(seconds: 1));
+
+                addNotification(
+                  orderId: widget.orderId,
+                  content: 'Added Test Result!',
+                  courier: false,
+                );
                 Navigator.pop(context);
               }
               if (state is ErrorState) {

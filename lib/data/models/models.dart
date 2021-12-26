@@ -267,30 +267,34 @@ class TestResult {
       };
 }
 
-class Notification {
-  Notification({
-    this.users = const [],
+class NotificationModel {
+  NotificationModel({
+    this.userId,
+    this.id,
     this.timestamp,
     this.content,
-    this.seen,
+    this.seen = false,
   });
 
-  List<String> users;
+  String? userId;
   String? timestamp;
   String? content;
-  bool? seen;
+  String? id;
+  bool seen;
 
-  factory Notification.fromJson(Map<String, dynamic> json) => Notification(
-        users: List<String>.from(json["users"].map((x) => x)),
-        timestamp: json["timestamp"],
-        content: json["content"],
-        seen: json["seen"],
-      );
+  factory NotificationModel.fromJson(Map<String, dynamic> json) =>
+      NotificationModel(
+          userId: json["user_id"],
+          timestamp: json["timestamp"],
+          content: json["content"],
+          seen: json["seen"],
+          id: json['id']);
 
   Map<String, dynamic> toJson() => {
-        "users": List<dynamic>.from(users.map((x) => x)),
+        "user_id": userId,
         "timestamp": timestamp,
         "content": content,
         "seen": seen,
+        'id': id,
       };
 }

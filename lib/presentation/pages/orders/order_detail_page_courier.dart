@@ -5,6 +5,7 @@ import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
 class OrderDetailCourier extends StatefulWidget {
@@ -41,9 +42,17 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                 .showSnackBar(SnackBar(content: Text(state.message)));
             await Future.delayed(Duration(seconds: 1));
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          } else if (state is AcceptedOrderCourier) {
+          } else if (state is AcceptedOrderCourier) { 
+            addNotification(
+              orderId: widget.orderId,
+              content: 'One order got accepted by courier!',
+            );
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           } else if (state is ApprovedArrivalCourier) {
+            addNotification(
+              orderId: widget.orderId,
+              content: 'Courier reached at destination to pick order!',
+            );
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           } else if (state is ApprovedArrivalTester) {
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
@@ -163,8 +172,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                       trailing: Text(
                                         'Test Center',
                                         style: TextStyle(
-                                            color: kColorsOrangeLight,
-                                            fontSize: 14),
+                                            color: Colors.green, fontSize: 14),
                                       ),
                                     ),
                                   ],

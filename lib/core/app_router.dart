@@ -7,12 +7,14 @@ import 'package:kncv_flutter/presentation/pages/intros/intro_page_one.dart';
 import 'package:kncv_flutter/presentation/pages/intros/intro_page_three.dart';
 import 'package:kncv_flutter/presentation/pages/intros/intro_page_two.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
+import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_courier.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_tester.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 import 'package:kncv_flutter/presentation/pages/orders/result_page.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
+import 'package:kncv_flutter/presentation/pages/patient_info/report.dart';
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
 import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_courier_selector.dart';
@@ -99,6 +101,12 @@ class AppRouter {
             index: args['index'],
           ),
         );
+
+      case NotificationsPage.notificationsRouteName:
+        return MaterialPageRoute(builder: (_) => NotificationsPage());
+
+      case ReportPage.reportPage:
+        return MaterialPageRoute(builder: (_) => ReportPage(patient: args,));
     }
   }
 }

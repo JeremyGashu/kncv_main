@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/data/models/models.dart';
-import 'package:kncv_flutter/data/repositories/tester_courier_repository.dart';
+import 'package:kncv_flutter/data/repositories/tester_courier_receiver_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_event.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_state.dart';
 
