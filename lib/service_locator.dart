@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:kncv_flutter/data/repositories/auth_repository.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
@@ -25,7 +26,16 @@ Future<void> serviceLocatorInit() async {
   /// FirebaseAuth instance
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  await messaging.setForegroundNotificationPresentationOptions(
+    alert: true, // Required to display a heads up notification
+    badge: true,
+    sound: true,
+  );
+
   sl.registerLazySingleton<FirebaseAuth>(() => firebaseAuth);
   sl.registerLazySingleton<FirebaseFirestore>(() => firebaseFirestore);
+  sl.registerLazySingleton<FirebaseMessaging>(() => messaging);
+
   print('Initialized all elements');
 }

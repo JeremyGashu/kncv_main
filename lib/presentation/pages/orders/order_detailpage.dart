@@ -462,7 +462,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       if (!deletable) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content:
-                                Text('The patient info is already sent!')));
+                                Text('Cannot delete this order anymore!')));
                         return;
                       }
 

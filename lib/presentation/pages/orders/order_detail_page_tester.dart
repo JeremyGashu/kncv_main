@@ -6,6 +6,7 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/pages/orders/result_page.dart';
+import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
 class OrderDetailTester extends StatefulWidget {
@@ -36,9 +37,9 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
     return BlocConsumer<OrderBloc, OrderState>(
         bloc: ordersBloc,
         listener: (ctx, state) async {
-          if(state is LoadedSingleOrder) {
+          if (state is LoadedSingleOrder) {
             print(state.order.status);
-          } 
+          }
           if (state is ErrorState) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
@@ -273,16 +274,30 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                               //       );
                                               //     });
 
-                                              Navigator.pushNamed(
-                                                  context,
-                                                  AddTestResultPage
-                                                      .addTestResultPageRouteName,
-                                                  arguments: {
-                                                    'orderId': widget.orderId,
-                                                    'patient': state
-                                                        .order.patients![index],
-                                                    'index': index,
-                                                  });
+                                              if (state.order.patients![index]
+                                                  .resultAvaiable) {
+                                                Navigator.pushNamed(
+                                                    context,
+                                                    EditPatientInfoPage
+                                                        .editPatientInfoRouteName,
+                                                    arguments: {
+                                                      'patient': state.order
+                                                          .patients![index],
+                                                      'orderId': widget.orderId,
+                                                      'index': index
+                                                    });
+                                              } else {
+                                                Navigator.pushNamed(
+                                                    context,
+                                                    AddTestResultPage
+                                                        .addTestResultPageRouteName,
+                                                    arguments: {
+                                                      'orderId': widget.orderId,
+                                                      'patient': state.order
+                                                          .patients![index],
+                                                      'index': index,
+                                                    });
+                                              }
                                             },
                                             child: buildPatients(
                                               context,

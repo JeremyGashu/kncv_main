@@ -266,3 +266,31 @@ class TestResult {
         "result_rr": resultRr,
       };
 }
+
+class Notification {
+  Notification({
+    this.users = const [],
+    this.timestamp,
+    this.content,
+    this.seen,
+  });
+
+  List<String> users;
+  String? timestamp;
+  String? content;
+  bool? seen;
+
+  factory Notification.fromJson(Map<String, dynamic> json) => Notification(
+        users: List<String>.from(json["users"].map((x) => x)),
+        timestamp: json["timestamp"],
+        content: json["content"],
+        seen: json["seen"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "users": List<dynamic>.from(users.map((x) => x)),
+        "timestamp": timestamp,
+        "content": content,
+        "seen": seen,
+      };
+}

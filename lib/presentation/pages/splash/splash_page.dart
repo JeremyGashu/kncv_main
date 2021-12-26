@@ -1,5 +1,7 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_states.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/courier_homepage.dart';
@@ -16,8 +18,19 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   @override
   void initState() {
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
+    initMessaging();
     super.initState();
   }
 
@@ -72,5 +85,61 @@ class _SplashPageState extends State<SplashPage> {
         return Container();
       }),
     );
+  }
+
+  void onSelectNotification(String? payload) async {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return new AlertDialog(
+          title: Text("PayLoad"),
+          content: Text("Payload : $payload"),
+        );
+      },
+    );
+  }
+
+  void showNotification(String? title, String? body) async {
+    await _demoNotification(title ?? '', body ?? '');
+  }
+
+  Future<void> _demoNotification(String title, String body) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'FLUTTER_STREAMING_APP', 'STREAMING_APP',
+        importance: Importance.max,
+        playSound: true,
+        showProgress: true,
+        priority: Priority.high,
+        ticker: 'test ticker');
+
+    var iOSChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
+    await flutterLocalNotificationsPlugin
+        .show(0, title, body, platformChannelSpecifics, payload: 'test');
+  }
+
+  initMessaging() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    String? token = await messaging.getToken();
+    print("USER TOKEN:" + token!);
+
+    FirebaseMessaging.onMessage.listen((message) {
+      //todo => use flutter local notification to show notification in the background
+      print('NOTIFICATION RECEIVED');
+      showNotification(message.notification?.title, message.notification?.body);
+      print('TITLE => ${message.notification?.title}');
+      print('TITLE => ${message.notification?.body}');
+    });
   }
 }
