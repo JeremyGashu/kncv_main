@@ -94,7 +94,7 @@ class ReportPage extends StatelessWidget {
                       pw.SizedBox(
                         height: 10,
                       ),
-                      pw.Text('Specimen Info',
+                      pw.Text('Patient History',
                           style: pw.TextStyle(
                               fontSize: 20, fontWeight: pw.FontWeight.bold)),
                       pw.SizedBox(height: 10),
@@ -187,7 +187,7 @@ class ReportPage extends StatelessWidget {
                         height: 10,
                       ),
                       pw.Text(
-                        'Result RR : ${patient.testResult?.resultRr ?? ''}',
+                        'Time : ${patient.testResult?.resultTime ?? ''}',
                         style: pw.TextStyle(
                           // color: Colors.black87,
                           fontSize: 13,
@@ -197,12 +197,13 @@ class ReportPage extends StatelessWidget {
                         height: 10,
                       ),
                       pw.Text(
-                        'Time : ${patient.testResult?.resultTime ?? ''}',
+                        'Result RR : ${patient.testResult?.resultRr ?? ''}',
                         style: pw.TextStyle(
                           // color: Colors.black87,
                           fontSize: 13,
                         ),
                       ),
+                      
                       pw.SizedBox(
                         height: 10,
                       ),
@@ -294,7 +295,7 @@ class ReportPage extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    Text('Specimen Info',
+                    Text('Patient History',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold)),
                     SizedBox(height: 10),

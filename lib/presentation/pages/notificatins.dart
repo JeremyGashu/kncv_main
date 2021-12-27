@@ -162,6 +162,7 @@ Future<List<String?>> getTestCenterAdminsFromTestCenterId(String? id) async {
   var testCenters = await FirebaseFirestore.instance
       .collection('users')
       .where('test_center_id', isEqualTo: id)
+      .where('type', isEqualTo: 'TEST_CENTER_ADMIN')
       .get();
   testCenterAdmins =
       testCenters.docs.map((e) => e.data()['user_id'] as String).toList();
