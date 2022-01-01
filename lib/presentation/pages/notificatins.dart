@@ -51,6 +51,7 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getNotificationSnapshot() {
       .collection('notifications')
       .where('user_id', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .orderBy('seen')
+      .orderBy('date',descending: true)
       .snapshots();
 }
 
@@ -116,6 +117,9 @@ Widget notificationCard(NotificationModel notificationModel) {
 addNotification(
     {required String orderId,
     required String content,
+    String? courierContent,
+    String? senderContent,
+    String? testerContent,
     bool courier = true,
     bool sender = true,
     bool tester = true}) async {
@@ -123,11 +127,38 @@ addNotification(
   var ordersCollection = await database.collection('orders').doc(orderId).get();
   Order order = Order.fromJson(ordersCollection.data() as Map<String, dynamic>);
   List<String?> sendList = [];
+  var dateTime = DateTime.now();
+  int month = dateTime.month;
+  int day = dateTime.day;
+  int year = dateTime.year;
+
+  int hour = dateTime.hour;
+  int minutes = dateTime.minute;
   if (sender) {
-    sendList.add(order.senderId);
+    NotificationModel newNotification = NotificationModel(
+      content: senderContent ?? content,
+      seen: false,
+      userId: order.senderId,
+      timestamp: '$day-$month-$year at $hour:$minutes',
+      date: Timestamp.now(),
+    );
+
+    FirebaseFirestore.instance
+        .collection('notifications')
+        .add(newNotification.toJson());
   }
   if (courier) {
-    sendList.add(order.courierId);
+    NotificationModel newNotification = NotificationModel(
+      content: courierContent ?? content,
+      seen: false,
+      userId: order.courierId,
+      timestamp: '$day-$month-$year at $hour:$minutes',
+      date: Timestamp.now(),
+    );
+
+    FirebaseFirestore.instance
+        .collection('notifications')
+        .add(newNotification.toJson());
   }
   if (tester) {
     var testers = await getTestCenterAdminsFromTestCenterId(order.testCenterId);
@@ -137,21 +168,15 @@ addNotification(
   }
 
   sendList.forEach((element) async {
-    var dateTime = DateTime.now();
-    int month = dateTime.month;
-    int day = dateTime.day;
-    int year = dateTime.year;
-
-    int hour = dateTime.hour;
-    int minutes = dateTime.minute;
     NotificationModel newNotification = NotificationModel(
-      content: content,
+      content: testerContent ?? content,
       seen: false,
       userId: element,
       timestamp: '$day-$month-$year at $hour:$minutes',
+      date: Timestamp.now(),
     );
 
-    await FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection('notifications')
         .add(newNotification.toJson());
   });

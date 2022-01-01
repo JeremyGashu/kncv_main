@@ -42,16 +42,28 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                 .showSnackBar(SnackBar(content: Text(state.message)));
             await Future.delayed(Duration(seconds: 1));
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          } else if (state is AcceptedOrderCourier) { 
+          } else if (state is AcceptedOrderCourier) {
             addNotification(
               orderId: widget.orderId,
+              courierContent:
+                  'You have accepted order from ${state.order.sender_name} to ${state.order.tester_name}.',
+              senderContent:
+                  'Courier coming to fetch order to ${state.order.tester_name}.',
+              testerContent:
+                  'Courier going to fetch order from ${state.order.sender_name}.',
               content: 'One order got accepted by courier!',
             );
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          } else if (state is ApprovedArrivalCourier) {
+          } else if (state is CourierApprovedArrivalTester) {
             addNotification(
               orderId: widget.orderId,
               content: 'Courier reached at destination to pick order!',
+              courierContent:
+                  'You have confirmed arrival to ${state.order.tester_name} from ${state.order.sender_name}.',
+              senderContent:
+                  'Your specimen has arrived to ${state.order.tester_name}.',
+              testerContent:
+                  'Courier ${state.order.courier_name} has jus arrived from ${state.order.sender_name}.',
             );
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           } else if (state is ApprovedArrivalTester) {
@@ -317,8 +329,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       Navigator.pop(ctx);
                                                       ordersBloc.add(
                                                           AcceptOrderCourier(
-                                                              state.order
-                                                                  .orderId!));
+                                                              state.order));
                                                     },
                                                     child: Text('Yes')),
                                                 TextButton(
@@ -475,9 +486,11 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                           });
 
                                       if (confirm == true) {
-                                        ordersBloc.add(ApproveArrivalCourier(
-                                            state.order.orderId!,
-                                            _receiverController.value.text));
+                                        ordersBloc.add(
+                                            CourierApproveArrivalToTestCenter(
+                                                state.order,
+                                                _receiverController
+                                                    .value.text));
                                       }
                                     },
                                     borderRadius: BorderRadius.circular(37),
@@ -593,195 +606,6 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
             ),
           );
         });
-  }
-
-  Widget ArrivalConfirmation(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(
-            30,
-          ),
-          topRight: Radius.circular(
-            30,
-          ),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: double.infinity,
-            child: Text(
-              'Confirm Arrival',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-
-          //cold chain status
-
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 20, bottom: 10),
-            child: Text(
-              'Cold Chain Status',
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(7),
-            ),
-            child: StatefulBuilder(builder: (context, ss) {
-              return DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                value: inColdChain,
-                hint: Text('Transported in cold Chain?'),
-                items: <String>['Yes', 'No'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (val) {
-                  setState(() {
-                    inColdChain = val;
-                  });
-
-                  ss(() {});
-                },
-              ));
-            }),
-          ),
-
-          //sputum cndition
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 20, bottom: 10),
-            child: Text(
-              'Sputum Condition',
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(7),
-            ),
-            child: StatefulBuilder(builder: (context, ss) {
-              return DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                value: sputumCondition,
-                hint: Text('Sputum Condition?'),
-                items: <String>['Yes', 'No'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (val) {
-                  setState(() {
-                    sputumCondition = val;
-                  });
-                  ss(() {});
-                },
-              ));
-            }),
-          ),
-
-          //sputum cndition
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 20, bottom: 10),
-            child: Text(
-              'Stool Condition',
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(7),
-            ),
-            child: StatefulBuilder(builder: (context, ss) {
-              return DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                value: stoolCondition,
-                hint: Text('Stool Condition?'),
-                items: <String>['Yes', 'No'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (val) {
-                  setState(() {
-                    stoolCondition = val;
-                  });
-                  ss(() {});
-                },
-              ));
-            }),
-          ),
-
-          SizedBox(
-            height: 20,
-          ),
-
-          GestureDetector(
-            onTap: () {
-              if (stoolCondition != null &&
-                  sputumCondition != null &&
-                  inColdChain != null) {
-                print(stoolCondition);
-                print(sputumCondition);
-                print(inColdChain);
-                // ordersBloc.add(event)
-                Navigator.pop(context, true);
-              }
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: kColorsOrangeDark,
-              ),
-              height: 62,
-              // margin: EdgeInsets.all(20),
-              child: Center(
-                child: Text(
-                  'Confirm',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white),
-                ),
-              ),
-            ),
-          ),
-          // SelectorPage(),
-        ],
-      ),
-    );
   }
 
   Widget _buildInputField(

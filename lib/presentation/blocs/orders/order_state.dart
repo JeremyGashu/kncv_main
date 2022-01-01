@@ -23,15 +23,43 @@ class DeletedOrder extends OrderState {}
 
 class AcceptingOrderCourier extends OrderState {}
 
-class AcceptedOrderCourier extends OrderState {}
+class AcceptedOrderCourier extends OrderState {
+  final Order order;
+
+  AcceptedOrderCourier(this.order);
+  @override
+  List<Object> get props => [order];
+}
 
 class ApprovingArrivalCourier extends OrderState {}
 
-class ApprovedArrivalCourier extends OrderState {}
+class ApprovedArrivalCourier extends OrderState {
+  final Order order;
+
+  ApprovedArrivalCourier(this.order);
+  @override
+  List<Object> get props => [order];
+}
 
 class ApprovingArrivalTester extends OrderState {}
 
-class ApprovedArrivalTester extends OrderState {}
+class ApprovedArrivalTester extends OrderState {
+  final Order order;
+
+  ApprovedArrivalTester(this.order);
+  @override
+  List<Object> get props => [order];
+}
+
+class CourierApprovingArrivalTester extends OrderState {}
+
+class CourierApprovedArrivalTester extends OrderState {
+  final Order order;
+
+  CourierApprovedArrivalTester(this.order);
+  @override
+  List<Object> get props => [order];
+}
 
 class DeletingPatient extends OrderState {}
 
@@ -59,11 +87,23 @@ class DeletedPatient extends OrderState {}
 
 class PlacingOrder extends OrderState {}
 
-class PlacedOrder extends OrderState {}
+class PlacedOrder extends OrderState {
+  final Order order;
+
+  PlacedOrder(this.order);
+  @override
+  List<Object> get props => [order];
+}
 
 class AddingTestResult extends OrderState {}
 
-class AddedTestResult extends OrderState {}
+class AddedTestResult extends OrderState {
+  final Patient patient;
+
+  AddedTestResult(this.patient);
+  @override
+  List<Object> get props => [patient];
+}
 
 class LoadingSingleOrder extends OrderState {}
 

@@ -66,7 +66,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, ReportPage.reportPage, arguments: widget.patient);
+                    Navigator.pushNamed(context, ReportPage.reportPage,
+                        arguments: widget.patient);
                   },
                   icon: Icon(
                     Icons.save,
@@ -89,6 +90,10 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                 addNotification(
                   orderId: widget.orderId,
                   content: 'Added Test Result!',
+                  senderContent:
+                      'Patient result has been added to patient ${state.patient.name}',
+                  testerContent:
+                      'You have added test result to patient ${state.patient.name}.',
                   courier: false,
                 );
                 Navigator.pop(context);

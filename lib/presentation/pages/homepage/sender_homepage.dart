@@ -14,9 +14,9 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
+import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
-import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
 import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_courier_selector.dart';
 
 import '../../../service_locator.dart';
@@ -121,7 +121,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                     ),
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(context,
-                          SplashPage.splashPageRouteName, (route) => false);
+                          LoginPage.loginPageRouteName, (route) => false);
                       BlocProvider.of<AuthBloc>(context).add(LogOutUser());
                     },
                   ),

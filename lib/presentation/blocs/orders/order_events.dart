@@ -45,29 +45,38 @@ class DeleteOrders extends OrderEvents {
 }
 
 class AcceptOrderCourier extends OrderEvents {
-  final String orderId;
+  final Order order;
 
-  AcceptOrderCourier(this.orderId);
+  AcceptOrderCourier(this.order);
   @override
-  List<Object> get props => [orderId];
+  List<Object> get props => [order];
 }
 
 class ApproveArrivalCourier extends OrderEvents {
-  final String orderId;
+  final Order order;
   final String receiver;
 
-  ApproveArrivalCourier(this.orderId, this.receiver);
+  ApproveArrivalCourier(this.order, this.receiver);
   @override
-  List<Object> get props => [orderId, receiver];
+  List<Object> get props => [order, receiver];
+}
+
+class CourierApproveArrivalToTestCenter extends OrderEvents {
+  final Order order;
+  final String receiver;
+
+  CourierApproveArrivalToTestCenter(this.order, this.receiver);
+  @override
+  List<Object> get props => [order, receiver];
 }
 
 class PlaceOrder extends OrderEvents {
-  final String orderId;
+  final Order order;
 
-  PlaceOrder({required this.orderId});
+  PlaceOrder({required this.order});
 
   @override
-  List<Object> get props => [orderId];
+  List<Object> get props => [order];
 }
 
 class AddPatientToOrder extends OrderEvents {
@@ -110,13 +119,13 @@ class AddSpecimenToPatient extends OrderEvents {
 }
 
 class ApproveArrivalTester extends OrderEvents {
-  final String orderId;
+  final Order order;
   final String? sputumCondition;
   final String? stoolCondition;
   final String? coldChainStatus;
 
   ApproveArrivalTester(
-      {required this.orderId,
+      {required this.order,
       required this.stoolCondition,
       required this.sputumCondition,
       required this.coldChainStatus});

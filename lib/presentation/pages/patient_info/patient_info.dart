@@ -26,7 +26,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   String? anatomicLocation;
   String? sex;
   String? specimenType;
-  // String? childhood;
+  String? hivStatus;
   final TextEditingController MRController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
@@ -236,6 +236,33 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                       value: recurrentPneumonia,
                       hint: Text('Recurrent Pneuomonia'),
                       items: <String>['Yes', 'No'].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          recurrentPneumonia = val;
+                        });
+                      },
+                    )),
+                  ),
+
+                  _labelBuilder('HIV Status'),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                      value: recurrentPneumonia,
+                      hint: Text('HIV'),
+                      items: <String>['Positive', 'Negative', 'Unknown']
+                          .map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -579,6 +606,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   address: address,
                                   name: name,
                                   sex: sex,
+                                  hiv: hivStatus,
                                   specimens: specimens,
                                   pneumonia: pneumonia,
                                   tb: tb,

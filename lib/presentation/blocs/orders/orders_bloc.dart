@@ -32,9 +32,9 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is AcceptOrderCourier) {
       yield AcceptingOrderCourier();
       try {
-        bool success = await orderRepository.acceptOrder(event.orderId);
+        bool success = await orderRepository.acceptOrder(event.order.orderId);
         if (success) {
-          yield AcceptedOrderCourier();
+          yield AcceptedOrderCourier(event.order);
         } else {
           ErrorState(message: 'Error Accepting Order! Please try Again!');
         }
@@ -44,10 +44,10 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is ApproveArrivalCourier) {
       yield ApprovingArrivalCourier();
       try {
-        bool success =
-            await orderRepository.approveArrival(event.orderId, event.receiver);
+        bool success = await orderRepository.approveArrival(
+            event.order.orderId, event.receiver);
         if (success) {
-          yield ApprovedArrivalCourier();
+          yield ApprovedArrivalCourier(event.order);
         } else {
           ErrorState(message: 'Error Accepting Order! Please try Again!');
         }
@@ -58,13 +58,28 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       yield ApprovingArrivalTester();
       try {
         bool success = await orderRepository.approveArrivalTester(
-          orderId: event.orderId,
+          orderId: event.order.orderId,
           coldChainStatus: event.coldChainStatus,
           sputumCondition: event.sputumCondition,
           stoolCondition: event.stoolCondition,
         );
         if (success) {
-          yield ApprovedArrivalCourier();
+          yield ApprovedArrivalTester(event.order);
+        } else {
+          ErrorState(message: 'Error Approving Arrival! Please try Again!');
+        }
+      } catch (e) {
+        yield ErrorState(message: 'Error Approving Arrival! Please try Again!');
+      }
+    } else if (event is CourierApproveArrivalToTestCenter) {
+      yield CourierApprovingArrivalTester();
+      try {
+        bool success = await orderRepository.courierApproveArrivalTester(
+          event.order.orderId,
+          event.receiver,
+        );
+        if (success) {
+          yield CourierApprovedArrivalTester(event.order);
         } else {
           ErrorState(message: 'Error Approving Arrival! Please try Again!');
         }
@@ -151,7 +166,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         bool edited = await orderRepository.addTestResult(
             orderId: event.orderId, index: event.index, patient: event.patient);
         if (edited) {
-          yield AddedTestResult();
+          yield AddedTestResult(event.patient);
         }
       } catch (e) {
         yield ErrorState(message: 'Error editing user');
@@ -159,9 +174,10 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is PlaceOrder) {
       yield PlacingOrder();
       try {
-        bool success = await orderRepository.placeOrder(orderId: event.orderId);
+        bool success =
+            await orderRepository.placeOrder(orderId: event.order.orderId);
         if (success) {
-          yield PlacedOrder();
+          yield PlacedOrder(event.order);
         } else {
           yield ErrorState(message: 'Error placing order...');
         }

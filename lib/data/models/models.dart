@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Order {
   Order(
       {this.orderId,
@@ -225,12 +227,6 @@ class Tester extends TesterCourier {
   }
 }
 
-//Test Rrsult
-
-// To parse this JSON data, do
-//
-//     final testResult = testResultFromJson(jsonString);
-
 class TestResult {
   TestResult({
     this.resultDate,
@@ -274,6 +270,7 @@ class NotificationModel {
     this.timestamp,
     this.content,
     this.seen = false,
+    this.date,
   });
 
   String? userId;
@@ -281,14 +278,17 @@ class NotificationModel {
   String? content;
   String? id;
   bool seen;
+  Timestamp? date;
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) =>
       NotificationModel(
-          userId: json["user_id"],
-          timestamp: json["timestamp"],
-          content: json["content"],
-          seen: json["seen"],
-          id: json['id']);
+        userId: json["user_id"],
+        timestamp: json["timestamp"],
+        content: json["content"],
+        seen: json["seen"],
+        id: json['id'],
+        // date: json['date'],
+      );
 
   Map<String, dynamic> toJson() => {
         "user_id": userId,
@@ -296,5 +296,6 @@ class NotificationModel {
         "content": content,
         "seen": seen,
         'id': id,
+        'date': date
       };
 }

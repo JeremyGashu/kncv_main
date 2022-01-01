@@ -50,13 +50,18 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
           } else if (state is AcceptedOrderCourier) {
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           } else if (state is ApprovedArrivalCourier) {
+          } else if (state is ApprovedArrivalTester) {
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             addNotification(
               orderId: widget.orderId,
               content: 'Tester approved arrival of order!',
+              courierContent:
+                  'Tester center ${state.order.tester_name} accepted the order from ${state.order.sender_name}',
+              senderContent:
+                  'Speciment sent to ${state.order.tester_name} via courier ${state.order.courier_name} has been deliverd successfully!',
+              testerContent:
+                  'You have accepted order sent from ${state.order.sender_name} transported by ${state.order.courier_name}.',
             );
-          } else if (state is ApprovedArrivalTester) {
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           }
         },
         builder: (ctx, state) {
@@ -529,7 +534,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                         //         ),
                         //       )
                         //     : Container(),
-                        state.order.status == 'Arrived'
+                        state.order.status == 'Courier At Test Center'
                             ? Positioned(
                                 bottom: 0,
                                 left: 10,
@@ -550,7 +555,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                       if (create == true) {
                                         ordersBloc.add(
                                           ApproveArrivalTester(
-                                            orderId: state.order.orderId!,
+                                            order: state.order,
                                             sputumCondition: sputumCondition,
                                             stoolCondition: stoolCondition,
                                             coldChainStatus: inColdChain,
@@ -678,7 +683,11 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                   child: DropdownButton<String>(
                 value: inColdChain,
                 hint: Text('Transported in cold Chain?'),
-                items: <String>['Yes', 'No'].map((String value) {
+                items: <String>[
+                  'Yes, end to end',
+                  'Yes, partly',
+                  'No, not at all'
+                ].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -717,7 +726,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                   child: DropdownButton<String>(
                 value: sputumCondition,
                 hint: Text('Sputum Condition?'),
-                items: <String>['Yes', 'No'].map((String value) {
+                items: <String>['Mucoid Murulent', 'Bloodstreak', 'Saliva']
+                    .map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -755,7 +765,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                   child: DropdownButton<String>(
                 value: stoolCondition,
                 hint: Text('Stool Condition?'),
-                items: <String>['Yes', 'No'].map((String value) {
+                items: <String>['Formed', 'Unformed', 'Liquid']
+                    .map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),

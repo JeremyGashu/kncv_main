@@ -28,8 +28,13 @@ class OrderRepository {
     String? currentUserId = auth.currentUser?.uid;
     var orders = await ordersCollection
         .where('courier_id', isEqualTo: currentUserId)
-        .where('status',
-            whereIn: ['Waiting Confirmation', 'On Delivery', 'Arrived']).get();
+        .where('status', whereIn: [
+      'Waiting Confirmation',
+      'On Delivery',
+      'Arrived',
+      'Courier Accepted',
+      'Courier At Test Center',
+    ]).get();
     return orders.docs
         .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
         .toList();
@@ -45,7 +50,13 @@ class OrderRepository {
 
     var orders = await ordersCollection
         .where('tester_id', isEqualTo: testCenter?['key'])
-        .where('status', whereIn: ['On Delivery', 'Arrived', 'Accepted']).get();
+        .where('status', whereIn: [
+      'On Delivery',
+      'Arrived',
+      'Accepted',
+      'Courier Accepted',
+      'Courier At Test Center'
+    ]).get();
     return orders.docs
         .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
         .toList();
@@ -96,7 +107,7 @@ class OrderRepository {
     var userData =
         await usersCollection.where('user_id', isEqualTo: sender_id).get();
     if (userData.docs.length > 0) {
-      sender_name = userData.docs[0].data()['name'];
+      sender_name = userData.docs[0].data()['institution']['name'];
     }
     var c = await ordersCollection.add({
       'courier_id': courier_id,
@@ -178,7 +189,7 @@ class OrderRepository {
   //editing patient info
   //params {order_id : string, patient : Patient and  index of the patient int}
   Future<bool> addTestResult(
-      {required String orderId,
+      {required String? orderId,
       required Patient patient,
       required int index}) async {
     var orderRef = await database.collection('orders').doc(orderId);
@@ -242,7 +253,7 @@ class OrderRepository {
     return null;
   }
 
-  Future placeOrder({required String orderId}) async {
+  Future placeOrder({required String? orderId}) async {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Draft') {
@@ -253,22 +264,34 @@ class OrderRepository {
     }
   }
 
-  Future<bool> acceptOrder(String orderId) async {
+  Future<bool> acceptOrder(String? orderId) async {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Waiting Confirmation') {
-      await orderRef.update({'status': 'On Delivery'});
+      await orderRef.update({'status': 'Courier Accepted'});
       return true;
     } else {
       return false;
     }
   }
 
-  Future<bool> approveArrival(String orderId, String receiver) async {
+  Future<bool> approveArrival(String? orderId, String receiver) async {
+    var orderRef = database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists && order.data()!['status'] == 'Courier Accepted') {
+      await orderRef.update({'status': 'On Delivery', 'receiver': receiver});
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> courierApproveArrivalTester(
+      String? orderId, String receiver) async {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'On Delivery') {
-      await orderRef.update({'status': 'Arrived', 'receiver': receiver});
+      await orderRef.update({'status': 'Courier At Test Center', 'receiver': receiver});
       return true;
     } else {
       return false;
@@ -276,13 +299,13 @@ class OrderRepository {
   }
 
   Future<bool> approveArrivalTester(
-      {required String orderId,
+      {required String? orderId,
       String? coldChainStatus,
       String? sputumCondition,
       String? stoolCondition}) async {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
-    if (order.exists && order.data()!['status'] == 'Arrived') {
+    if (order.exists && order.data()!['status'] == 'Courier At Test Center') {
       await orderRef.update({
         'status': 'Accepted',
         'sputumCondition': sputumCondition,
