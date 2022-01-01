@@ -130,7 +130,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                               ),
                               onPressed: () {
                                 if (state.order.status !=
-                                        'Waiting Confirmation' &&
+                                        'Waiting for Confirmation' &&
                                     state.order.status != 'Draft') {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
@@ -346,7 +346,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                               widget.orderId,
                                               index,
                                               deletable: state.order.status ==
-                                                      'Waiting Confirmation' ||
+                                                      'Waiting for Confirmation' ||
                                                   state.order.status == 'Draft',
                                             ),
                                           );
@@ -401,7 +401,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                 ),
                               )
                             : Container(),
-                        state.order.status == 'Courier Accepted'
+                        state.order.status == 'Confirmed'
                             ? Positioned(
                                 bottom: 0,
                                 left: 10,

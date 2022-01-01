@@ -259,7 +259,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                     ),
                     child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                      value: recurrentPneumonia,
+                      value: hivStatus,
                       hint: Text('HIV'),
                       items: <String>['Positive', 'Negative', 'Unknown']
                           .map((String value) {
@@ -270,7 +270,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                       }).toList(),
                       onChanged: (val) {
                         setState(() {
-                          recurrentPneumonia = val;
+                          hivStatus = val;
                         });
                       },
                     )),

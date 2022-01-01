@@ -38,6 +38,10 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
   final TextEditingController quantityController = TextEditingController();
   OrderBloc orderBloc = sl<OrderBloc>();
 
+  String? resultRR;
+  String? mtbResult;
+  String? quantity;
+
   String? time;
   String? date;
 
@@ -100,7 +104,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
               }
               if (state is ErrorState) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Errro Adding Patient!')));
+                    SnackBar(content: Text(state.message)));
                 await Future.delayed(Duration(seconds: 1));
               }
             },
@@ -215,36 +219,140 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                         controller: resitrationNumberController,
                         disabled: widget.patient.resultAvaiable,
                       ),
-                      _buildInputField(
-                        label: 'MTB Result',
-                        hint: 'MTB Result',
-                        controller: mtbResultController,
-                        disabled: widget.patient.resultAvaiable,
-                      ),
-                      _buildInputField(
-                        label: 'Quantity',
-                        hint: 'Quantity',
-                        controller: quantityController,
-                        disabled: widget.patient.resultAvaiable,
+
+                      _labelBuilder('MTB Result'),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: mtbResult,
+                          hint: Text('MTB Result'),
+                          items: <String>['MTB Not Detected', 'MTB Detected']
+                              .map((String value) {
+                            return DropdownMenuItem<String>(
+                              enabled: !widget.patient.resultAvaiable,
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              if (val == 'MTB Not Detected ') {
+                                resultRR = null;
+                                quantity = null;
+                              }
+                              print(val == 'MTB Not Detected');
+                              mtbResult = val;
+                            });
+                          },
+                        )),
                       ),
 
-                      _buildInputField(
-                        label: 'Result RR',
-                        hint: 'Result RR',
-                        controller: resultRRController,
-                        disabled: widget.patient.resultAvaiable,
-                      ),
+                      mtbResult == 'MTB Detected'
+                          ? _labelBuilder('Quantity')
+                          : SizedBox(),
+                      mtbResult == 'MTB Detected'
+                          ? Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                value: quantity,
+                                hint: Text('Quantity'),
+                                items: <String>[
+                                  'High',
+                                  'Medium',
+                                  'Low',
+                                  'Very Low',
+                                  'Trace'
+                                ].map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    enabled: !widget.patient.resultAvaiable,
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (val) {
+                                  setState(() {
+                                    quantity = val;
+                                  });
+                                },
+                              )),
+                            )
+                          : SizedBox(),
+
+                      mtbResult == 'MTB Detected'
+                          ? _labelBuilder('Result RR')
+                          : SizedBox(),
+                      mtbResult == 'MTB Detected'
+                          ? Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    
+                                value: resultRR,
+                                hint: Text('Result RR'),
+                                items: <String>[
+                                  'Rif Res Detected',
+                                  'Rif Res Not Detected',
+                                  'Rif Res Indeterminate',
+                                ].map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    enabled: !widget.patient.resultAvaiable,
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (val) {
+                                  setState(() {
+                                    resultRR = val;
+                                  });
+                                },
+                              )),
+                            )
+                          : SizedBox(),
+
+                      // _buildInputField(
+                      //   label: 'MTB Result',
+                      //   hint: 'MTB Result',
+                      //   controller: mtbResultController,
+                      //   disabled: widget.patient.resultAvaiable,
+                      // ),
+                      // _buildInputField(
+                      //   label: 'Quantity',
+                      //   hint: 'Quantity',
+                      //   controller: quantityController,
+                      //   disabled: widget.patient.resultAvaiable,
+                      // ),
+
+                      // _buildInputField(
+                      //   label: 'Result RR',
+                      //   hint: 'Result RR',
+                      //   controller: resultRRController,
+                      //   disabled: widget.patient.resultAvaiable,
+                      // ),
+
+                    
 
                       SizedBox(
-                        height: 15,
-                      ),
-
-                      SizedBox(
-                        height: 15,
-                      ),
-
-                      SizedBox(
-                        height: 15,
+                        height: 35,
                       ),
 
                       !widget.patient.resultAvaiable
@@ -257,12 +365,12 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                     )
                                   : InkWell(
                                       onTap: () {
-                                        String resultRR =
-                                            resultRRController.value.text;
-                                        String mtbResult =
-                                            mtbResultController.value.text;
-                                        String quantity =
-                                            quantityController.value.text;
+                                        // String resultRR =
+                                        //     resultRRController.value.text;
+                                        // String mtbResult =
+                                        //     mtbResultController.value.text;
+                                        // String quantity =
+                                        //     quantityController.value.text;
                                         String registrationNumber =
                                             resitrationNumberController
                                                 .value.text;

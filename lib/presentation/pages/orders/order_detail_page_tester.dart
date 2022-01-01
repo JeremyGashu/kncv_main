@@ -326,7 +326,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                             ],
                           ),
                         ),
-                        // state.order.status == 'Waiting Confirmation'
+                        // state.order.status == 'Waiting for Confirmation'
                         //     ? Positioned(
                         //         bottom: 0,
                         //         left: 10,
@@ -384,7 +384,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                         //         ),
                         //       )
                         //     : Container(),
-                        // state.order.status == 'On Delivery'
+                        // state.order.status == 'Picked Up'
                         //     ? Positioned(
                         //         bottom: 0,
                         //         left: 10,
@@ -534,7 +534,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                         //         ),
                         //       )
                         //     : Container(),
-                        state.order.status == 'Courier At Test Center'
+                        state.order.status == 'Received'
                             ? Positioned(
                                 bottom: 0,
                                 left: 10,

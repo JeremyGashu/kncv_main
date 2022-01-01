@@ -90,9 +90,9 @@ Color getColorFromStatus(String status) {
   switch (status) {
     case 'Draft':
       return Colors.orange;
-    case 'Waiting Confirmation':
+    case 'Waiting for Confirmation':
       return Colors.yellow[800]!;
-    case 'On Delivery':
+    case 'Picked Up':
       return Colors.blue;
     case 'Rejected':
       return Colors.red;

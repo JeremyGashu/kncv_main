@@ -306,7 +306,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                             ],
                           ),
                         ),
-                        state.order.status == 'Waiting Confirmation'
+                        state.order.status == 'Waiting for Confirmation'
                             ? Positioned(
                                 bottom: 0,
                                 left: 10,
@@ -363,7 +363,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                 ),
                               )
                             : Container(),
-                        state.order.status == 'On Delivery'
+                        state.order.status == 'Picked Up'
                             ? Positioned(
                                 bottom: 0,
                                 left: 10,
