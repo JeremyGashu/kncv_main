@@ -140,7 +140,7 @@ addNotification(
       seen: false,
       userId: order.senderId,
       timestamp: '$day-$month-$year at $hour:$minutes',
-      date: Timestamp.now(),
+      date: DateTime.now(),
     );
 
     FirebaseFirestore.instance
@@ -153,7 +153,7 @@ addNotification(
       seen: false,
       userId: order.courierId,
       timestamp: '$day-$month-$year at $hour:$minutes',
-      date: Timestamp.now(),
+      date: DateTime.now(),
     );
 
     FirebaseFirestore.instance
@@ -173,7 +173,7 @@ addNotification(
       seen: false,
       userId: element,
       timestamp: '$day-$month-$year at $hour:$minutes',
-      date: Timestamp.now(),
+      date: DateTime.now(),
     );
 
     FirebaseFirestore.instance

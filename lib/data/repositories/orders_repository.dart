@@ -118,7 +118,7 @@ class OrderRepository {
       'created_at': '$day ${months[month - 1]} $year',
       'tester_name': tester_name,
       'courier_name': courier_name,
-      'order_created' : Timestamp.now()
+      'order_created' : DateTime.now()
     });
     return c.id;
   }
@@ -198,7 +198,7 @@ class OrderRepository {
     if (order.exists) {
       List patientsList = order.data()?['patients'];
       patientsList[index] = patient.toJson();
-      await orderRef.update({'patients': patientsList, 'test_result_added' : Timestamp.now()});
+      await orderRef.update({'patients': patientsList, 'test_result_added' : DateTime.now()});
       return true;
     }
     return false;
@@ -258,7 +258,7 @@ class OrderRepository {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Draft') {
-      await orderRef.update({'status': 'Waiting for Confirmation', 'order_placed' : Timestamp.now()});
+      await orderRef.update({'status': 'Waiting for Confirmation', 'order_placed' : DateTime.now()});
       return true;
     } else {
       return false;
@@ -269,7 +269,7 @@ class OrderRepository {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Waiting for Confirmation') {
-      await orderRef.update({'status': 'Confirmed', 'order_confirmed' : Timestamp.now()});
+      await orderRef.update({'status': 'Confirmed', 'order_confirmed' : DateTime.now()});
       return true;
     } else {
       return false;
@@ -280,7 +280,7 @@ class OrderRepository {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Confirmed') {
-      await orderRef.update({'status': 'Picked Up', 'receiver': receiver, 'order_pickedup' : Timestamp.now()});
+      await orderRef.update({'status': 'Picked Up', 'receiver': receiver, 'order_pickedup' : DateTime.now()});
       return true;
     } else {
       return false;
@@ -292,7 +292,7 @@ class OrderRepository {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Picked Up') {
-      await orderRef.update({'status': 'Received', 'receiver': receiver, 'order_received' : Timestamp.now()});
+      await orderRef.update({'status': 'Received', 'receiver': receiver, 'order_received' : DateTime.now()});
       return true;
     } else {
       return false;
@@ -311,7 +311,7 @@ class OrderRepository {
         'status': 'Accepted',
         'sputumCondition': sputumCondition,
         'stoolCondition': stoolCondition,
-        'order_accepted' : Timestamp.now()
+        'order_accepted' : DateTime.now()
       });
       return true;
     } else {

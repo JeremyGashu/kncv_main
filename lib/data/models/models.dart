@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Order {
   Order(
@@ -278,7 +277,7 @@ class NotificationModel {
   String? content;
   String? id;
   bool seen;
-  Timestamp? date;
+  DateTime? date;
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) =>
       NotificationModel(
