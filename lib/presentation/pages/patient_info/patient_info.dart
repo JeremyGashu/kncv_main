@@ -23,8 +23,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   String? recurrentPneumonia;
   String? dm;
   String? malnutrition;
-  String? anatomicLocation;
-  String? sex;
+  String? anatomicLocation = 'Pulmonary';
+  String? sex = 'Male';
   String? specimenType;
   String? hivStatus;
   final TextEditingController MRController = TextEditingController();
@@ -41,6 +41,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   final TextEditingController specimenIdController = TextEditingController();
 
   List<Specimen> specimens = [];
+
+  GlobalKey<FormState> _form = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -70,575 +72,610 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
             child: Container(
               padding:
                   EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
-              child: ListView(
-                children: [
-                  //controller, hint, label,
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Text(
-                      'Add Patient',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  _tobLabelBuilder('Basic Info'),
-                  _buildInputField(
-                      label: 'MR',
-                      hint: 'Enter Your MR',
-                      controller: MRController),
-                  _buildInputField(
-                      label: 'Name',
-                      hint: 'Enter Your Name',
-                      controller: nameController),
-                  _labelBuilder('Sex'),
-                  GestureDetector(
-                    onTap: () {
-                      // FocusScope.of(context).requestFocus(new FocusNode());
-                    },
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(7),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _form,
+                  child: Column(
+                    children: [
+                      //controller, hint, label,
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text(
+                          'Add Patient',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 32, fontWeight: FontWeight.w500),
+                        ),
                       ),
-                      child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                        value: sex,
-                        hint: Text('Sex'),
-                        items: <String>['Male', 'Female'].map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            sex = val;
-                          });
+                      _tobLabelBuilder('Basic Info'),
+                      _buildInputField(
+                        label: 'MR',
+                        hint: 'Enter Your MR',
+                        controller: MRController,
+                        required: true,
+                      ),
+                      _buildInputField(
+                          label: 'Name',
+                          hint: 'Enter Your Name',
+                          controller: nameController,
+                          required: true),
+                      _labelBuilder('Sex'),
+                      GestureDetector(
+                        onTap: () {
+                          // FocusScope.of(context).requestFocus(new FocusNode());
                         },
-                      )),
-                    ),
-                  ),
-                  _buildInputField(
-                      label: 'Age',
-                      hint: 'Enter Your Age',
-                      controller: ageController),
-                  _tobLabelBuilder('Address'),
-                  _buildInputField(
-                      label: 'Zone',
-                      hint: 'Enter Your Zone',
-                      controller: zoneController),
-                  _buildInputField(
-                      label: 'Woreda',
-                      hint: 'Enter Your Woreda',
-                      controller: woredaController),
-                  _buildInputField(
-                      label: 'Address',
-                      hint: 'Enter Your Address',
-                      controller: addressController),
-                  _buildInputField(
-                      label: 'Phone',
-                      hint: 'Enter Your Phone',
-                      controller: phoneController),
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                            value: sex,
+                            hint: Text('Sex'),
+                            items:
+                                <String>['Male', 'Female'].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (val) {
+                              setState(() {
+                                sex = val;
+                              });
+                            },
+                          )),
+                        ),
+                      ),
+                      //TODO select date  of birth and convert it to age
+                      _buildInputField(
+                          label: 'Age',
+                          hint: 'Enter Your Age',
+                          controller: ageController,
+                          required: true),
+                      _tobLabelBuilder('Address'),
+                      _buildInputField(
+                        label: 'Zone',
+                        hint: 'Enter Your Zone',
+                        controller: zoneController,
+                        required: true,
+                      ),
+                      _buildInputField(
+                        label: 'Woreda',
+                        hint: 'Enter Your Woreda',
+                        controller: woredaController,
+                        required: true,
+                      ),
+                      _buildInputField(
+                        label: 'Address',
+                        hint: 'Enter Your Address',
+                        controller: addressController,
+                        required: true,
+                      ),
+                      _buildInputField(
+                        label: 'Phone',
+                        hint: 'Enter Your Phone',
+                        controller: phoneController,
+                      ),
 
-                  _tobLabelBuilder('Observation'),
+                      _tobLabelBuilder('Observation'),
 
-                  // _labelBuilder('Childhood'),
+                      // _labelBuilder('Childhood'),
 
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  //   width: double.infinity,
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.grey.withOpacity(0.2),
-                  //     borderRadius: BorderRadius.circular(7),
-                  //   ),
-                  //   child: DropdownButtonHideUnderline(
-                  //       child: DropdownButton<String>(
-                  //     value: childhood,
-                  //     hint: Text('Childhood'),
-                  //     items: <String>['Yes', 'No'].map((String value) {
-                  //       return DropdownMenuItem<String>(
-                  //         value: value,
-                  //         child: Text(value),
-                  //       );
-                  //     }).toList(),
-                  //     onChanged: (val) {
-                  //       setState(() {
-                  //         childhood = val;
-                  //       });
-                  //     },
-                  //   )),
-                  // ),
-                  _labelBuilder('Pneumonia'),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: pneumonia,
-                      hint: Text('Pneumonia'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          pneumonia = val;
-                        });
-                      },
-                    )),
-                  ),
-                  _labelBuilder('TB'),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: tb,
-                      hint: Text('TB'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          tb = val;
-                        });
-                      },
-                    )),
-                  ),
-                  _labelBuilder('Recurrent Pneumonia'),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: recurrentPneumonia,
-                      hint: Text('Recurrent Pneuomonia'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          recurrentPneumonia = val;
-                        });
-                      },
-                    )),
-                  ),
+                      // Container(
+                      //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      //   width: double.infinity,
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.grey.withOpacity(0.2),
+                      //     borderRadius: BorderRadius.circular(7),
+                      //   ),
+                      //   child: DropdownButtonHideUnderline(
+                      //       child: DropdownButton<String>(
+                      //     value: childhood,
+                      //     hint: Text('Childhood'),
+                      //     items: <String>['Yes', 'No'].map((String value) {
+                      //       return DropdownMenuItem<String>(
+                      //         value: value,
+                      //         child: Text(value),
+                      //       );
+                      //     }).toList(),
+                      //     onChanged: (val) {
+                      //       setState(() {
+                      //         childhood = val;
+                      //       });
+                      //     },
+                      //   )),
+                      // ),
+                      _labelBuilder('Pneumonia'),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: pneumonia,
+                          hint: Text('Pneumonia'),
+                          items: <String>['Yes', 'No'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              pneumonia = val;
+                            });
+                          },
+                        )),
+                      ),
+                      _labelBuilder('TB'),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: tb,
+                          hint: Text('TB'),
+                          items: <String>['Yes', 'No'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              tb = val;
+                            });
+                          },
+                        )),
+                      ),
+                      _labelBuilder('Recurrent Pneumonia'),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: recurrentPneumonia,
+                          hint: Text('Recurrent Pneuomonia'),
+                          items: <String>['Yes', 'No'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              recurrentPneumonia = val;
+                            });
+                          },
+                        )),
+                      ),
 
-                  _labelBuilder('HIV Status'),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: hivStatus,
-                      hint: Text('HIV'),
-                      items: <String>['Positive', 'Negative', 'Unknown']
-                          .map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          hivStatus = val;
-                        });
-                      },
-                    )),
-                  ),
+                      _labelBuilder('HIV Status'),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: hivStatus,
+                          hint: Text('HIV'),
+                          items: <String>['Positive', 'Negative', 'Unknown']
+                              .map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              hivStatus = val;
+                            });
+                          },
+                        )),
+                      ),
 
-                  _labelBuilder('Malnutrition'),
+                      _labelBuilder('Malnutrition'),
 
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: malnutrition,
-                      hint: Text('Malnutrition'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          malnutrition = val;
-                        });
-                      },
-                    )),
-                  ),
-                  _labelBuilder('DM'),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: malnutrition,
+                          hint: Text('Malnutrition'),
+                          items: <String>['Yes', 'No'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              malnutrition = val;
+                            });
+                          },
+                        )),
+                      ),
+                      _labelBuilder('DM'),
 
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: dm,
-                      hint: Text('DM'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          dm = val;
-                        });
-                      },
-                    )),
-                  ),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: dm,
+                          hint: Text('DM'),
+                          items: <String>['Yes', 'No'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              dm = val;
+                            });
+                          },
+                        )),
+                      ),
 
-                  _tobLabelBuilder('Specimen Purpose'),
-                  _labelBuilder('Anatomic Location'),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: anatomicLocation,
-                      hint: Text('Anatomic Location'),
-                      items: <String>['Pulmonary', 'Extra-pulmonary']
-                          .map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          anatomicLocation = val;
-                        });
-                      },
-                    )),
-                  ),
+                      _tobLabelBuilder('Specimen Purpose'),
+                      _labelBuilder('Anatomic Location'),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: anatomicLocation,
+                          hint: Text('Anatomic Location'),
+                          items: <String>['Pulmonary', 'Extra-pulmonary']
+                              .map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              anatomicLocation = val;
+                            });
+                          },
+                        )),
+                      ),
 
-                  _buildInputField(
-                      label: 'Doctor in charge',
-                      hint: 'Doctor in charge',
-                      controller: doctorInChargeController),
+                      _buildInputField(
+                          label: 'Doctor in charge',
+                          hint: 'Doctor in charge',
+                          controller: doctorInChargeController),
 
-                  _buildInputField(
-                      label: 'Exam Purpose',
-                      hint: 'Please enter exam pupose',
-                      controller: examPurposeController),
+                      _buildInputField(
+                        label: 'Exam Purpose',
+                        hint: 'Please enter exam pupose',
+                        controller: examPurposeController,
+                        required: true,
+                      ),
 
-                  SizedBox(
-                    height: 15,
-                  ),
+                      SizedBox(
+                        height: 15,
+                      ),
 
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (ctx) {
-                            return StatefulBuilder(builder: (ctx, ss) {
-                              return SingleChildScrollView(
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                    top: 30,
-                                    left: 20,
-                                    right: 20,
-                                    bottom:
-                                        MediaQuery.of(ctx).viewInsets.bottom +
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (ctx) {
+                                return StatefulBuilder(builder: (ctx, ss) {
+                                  return SingleChildScrollView(
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                        top: 30,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: MediaQuery.of(ctx)
+                                                .viewInsets
+                                                .bottom +
                                             20,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(
-                                        30,
                                       ),
-                                      topRight: Radius.circular(
-                                        30,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: double.infinity,
-                                        child: Text(
-                                          'Create Specimen',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 32,
-                                            fontWeight: FontWeight.bold,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(
+                                            30,
+                                          ),
+                                          topRight: Radius.circular(
+                                            30,
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: 30,
-                                      ),
-                                      _buildInputField(
-                                          label: 'Specimen ID',
-                                          hint: "Please enter specimen ID",
-                                          controller: specimenIdController),
-                                      _labelBuilder('Specimen Type'),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 5),
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey.withOpacity(0.2),
-                                          borderRadius:
-                                              BorderRadius.circular(7),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<String>(
-                                          value: specimenType,
-                                          hint: Text('Specimen Type'),
-                                          items: <String>[
-                                            'Stool',
-                                            'Sputum',
-                                            'Urine'
-                                          ].map((String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          }).toList(),
-                                          onChanged: (val) {
-                                            ss(() => 1 == 1);
-
-                                            setState(() {
-                                              specimenType = val;
-                                            });
-                                          },
-                                        )),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      GestureDetector(
-                                          onTap: () {
-                                            print(specimenType);
-                                            print(specimenIdController
-                                                .value.text);
-                                            if (specimenIdController
-                                                        .value.text ==
-                                                    '' ||
-                                                specimenType == null) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                      content: Text(
-                                                          'Please enter complete information')));
-                                              Navigator.pop(context);
-                                              return;
-                                            }
-
-                                            Specimen specimen = Specimen(
-                                                id: specimenIdController
-                                                    .value.text,
-                                                type: specimenType);
-                                            setState(() {
-                                              specimens = [
-                                                ...specimens,
-                                                specimen
-                                              ];
-                                            });
-                                            print(specimens.length);
-                                            // ScaffoldMessenger.of(context)
-                                            //     .showSnackBar(SnackBar(
-                                            //         content: Text(
-                                            //             'Added Specimen')));
-                                            Navigator.pop(context);
-                                            return;
-                                          },
-                                          child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                color: kColorsOrangeDark,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            width: double.infinity,
+                                            child: Text(
+                                              'Create Specimen',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 32,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                              height: 62,
-                                              // margin: EdgeInsets.all(20),
-                                              child: Center(
-                                                child: Text(
-                                                  'Add Specimen',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
-                                              ))),
-                                    ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 30,
+                                          ),
+                                          _buildInputField(
+                                              label: 'Specimen ID',
+                                              hint: "Please enter specimen ID",
+                                              controller: specimenIdController),
+                                          _labelBuilder('Specimen Type'),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 5),
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  Colors.grey.withOpacity(0.2),
+                                              borderRadius:
+                                                  BorderRadius.circular(7),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                                child: DropdownButton<String>(
+                                              value: specimenType,
+                                              hint: Text('Specimen Type'),
+                                              items: <String>[
+                                                'Stool',
+                                                'Sputum',
+                                                'Urine'
+                                              ].map((String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(value),
+                                                );
+                                              }).toList(),
+                                              onChanged: (val) {
+                                                ss(() => 1 == 1);
+
+                                                setState(() {
+                                                  specimenType = val;
+                                                });
+                                              },
+                                            )),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          GestureDetector(
+                                              onTap: () {
+                                                print(specimenType);
+                                                print(specimenIdController
+                                                    .value.text);
+                                                if (specimenIdController
+                                                            .value.text ==
+                                                        '' ||
+                                                    specimenType == null) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please enter complete information')));
+                                                  Navigator.pop(context);
+                                                  return;
+                                                }
+
+                                                Specimen specimen = Specimen(
+                                                    id: specimenIdController
+                                                        .value.text,
+                                                    type: specimenType);
+                                                setState(() {
+                                                  specimens = [
+                                                    ...specimens,
+                                                    specimen
+                                                  ];
+                                                });
+                                                print(specimens.length);
+                                                // ScaffoldMessenger.of(context)
+                                                //     .showSnackBar(SnackBar(
+                                                //         content: Text(
+                                                //             'Added Specimen')));
+                                                Navigator.pop(context);
+                                                return;
+                                              },
+                                              child: Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: kColorsOrangeDark,
+                                                  ),
+                                                  height: 62,
+                                                  // margin: EdgeInsets.all(20),
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Add Specimen',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 20,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ))),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                });
+                              });
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 110,
+                          color: Colors.grey.withOpacity(0.3),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add,
+                                color: kColorsOrangeLight,
+                                size: 30,
+                              ),
+                              Text('Add Specimen'),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: 15,
+                      ),
+
+                      Container(
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          direction: Axis.horizontal,
+                          children: specimens
+                              .map((e) => Container(
+                                    padding: EdgeInsets.all(20),
+                                    margin: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Type : ${e.type}'),
+                                        Text('ID : ${e.id}'),
+                                      ],
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: 15,
+                      ),
+
+                      Container(
+                        // padding: EdgeInsets.all(10),
+                        color: kPageBackground,
+                        child: state is AddingPatient
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : InkWell(
+                                onTap: () {
+                                  if (_form.currentState!.validate()) {
+                                    String mr = MRController.value.text;
+                                    String name = nameController.value.text;
+                                    //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
+                                    String age = ageController.value.text;
+                                    String zone = zoneController.value.text;
+                                    String woreda = woredaController.value.text;
+                                    String address =
+                                        addressController.value.text;
+                                    String phone = phoneController.value.text;
+                                    String doctorInCharge =
+                                        doctorInChargeController.value.text;
+                                    String examinatinPurpose =
+                                        examPurposeController.value.text;
+                                    Patient patient = Patient(
+                                        age: age,
+                                        anatomicLocation: anatomicLocation,
+                                        childhood: childhood,
+                                        dm: dm,
+                                        doctorInCharge: doctorInCharge,
+                                        examPurpose: examinatinPurpose,
+                                        malnutrition: malnutrition,
+                                        phone: phone,
+                                        zone: zone,
+                                        woreda: woreda,
+                                        address: address,
+                                        name: name,
+                                        sex: sex,
+                                        hiv: hivStatus,
+                                        specimens: specimens,
+                                        pneumonia: pneumonia,
+                                        tb: tb,
+                                        recurrentPneumonia: recurrentPneumonia,
+                                        mr: mr);
+
+                                    BlocProvider.of<OrderBloc>(context).add(
+                                        AddPatientToOrder(
+                                            orderId: widget.orderId,
+                                            patient: patient));
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(37),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: kColorsOrangeDark,
+                                  ),
+                                  height: 62,
+                                  // margin: EdgeInsets.all(20),
+                                  child: Center(
+                                    child: Text(
+                                      'Add Patient',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                          color: Colors.white),
+                                    ),
                                   ),
                                 ),
-                              );
-                            });
-                          });
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 110,
-                      color: Colors.grey.withOpacity(0.3),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add,
-                            color: kColorsOrangeLight,
-                            size: 30,
-                          ),
-                          Text('Add Specimen'),
-                        ],
+                              ),
                       ),
-                    ),
+                    ],
                   ),
-
-                  SizedBox(
-                    height: 15,
-                  ),
-
-                  Container(
-                    child: Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.start,
-                      direction: Axis.horizontal,
-                      children: specimens
-                          .map((e) => Container(
-                                padding: EdgeInsets.all(20),
-                                margin: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Type : ${e.type}'),
-                                    Text('ID : ${e.id}'),
-                                  ],
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                  ),
-
-                  SizedBox(
-                    height: 15,
-                  ),
-
-                  Container(
-                    // padding: EdgeInsets.all(10),
-                    color: kPageBackground,
-                    child: state is AddingPatient
-                        ? Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : InkWell(
-                            onTap: () {
-                              String mr = MRController.value.text;
-                              String name = nameController.value.text;
-                              //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
-                              String age = ageController.value.text;
-                              String zone = zoneController.value.text;
-                              String woreda = woredaController.value.text;
-                              String address = addressController.value.text;
-                              String phone = phoneController.value.text;
-                              String doctorInCharge =
-                                  doctorInChargeController.value.text;
-                              String examinatinPurpose =
-                                  examPurposeController.value.text;
-                              Patient patient = Patient(
-                                  age: age,
-                                  anatomicLocation: anatomicLocation,
-                                  childhood: childhood,
-                                  dm: dm,
-                                  doctorInCharge: doctorInCharge,
-                                  examPurpose: examinatinPurpose,
-                                  malnutrition: malnutrition,
-                                  phone: phone,
-                                  zone: zone,
-                                  woreda: woreda,
-                                  address: address,
-                                  name: name,
-                                  sex: sex,
-                                  hiv: hivStatus,
-                                  specimens: specimens,
-                                  pneumonia: pneumonia,
-                                  tb: tb,
-                                  recurrentPneumonia: recurrentPneumonia,
-                                  mr: mr);
-
-                              BlocProvider.of<OrderBloc>(context).add(
-                                  AddPatientToOrder(
-                                      orderId: widget.orderId,
-                                      patient: patient));
-                            },
-                            borderRadius: BorderRadius.circular(37),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: kColorsOrangeDark,
-                              ),
-                              height: 62,
-                              // margin: EdgeInsets.all(20),
-                              child: Center(
-                                child: Text(
-                                  'Add Patient',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ),
-                  ),
-                ],
+                ),
               ),
             ),
           );
@@ -671,17 +708,19 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
     );
   }
 
-  Widget _buildInputField(
-      {required String label,
-      required String hint,
-      required TextEditingController controller}) {
+  Widget _buildInputField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    bool required = false,
+  }) {
     return Column(
       children: [
         Container(
           width: double.infinity,
           padding: const EdgeInsets.only(top: 20),
           child: Text(
-            label,
+            '$label ${required ? '*' : ''}', 
             textAlign: TextAlign.left,
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
           ),
@@ -693,7 +732,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
             color: Colors.grey.withOpacity(0.3),
             borderRadius: BorderRadius.circular(5),
           ),
-          child: TextField(
+          child: TextFormField(
+            validator: (value) {
+              if (!required) {
+                return null;
+              }
+              if (value == null || value.isEmpty) {
+                return 'Value cannot be empty!';
+              }
+              return null;
+            },
             controller: controller,
             style: TextStyle(color: Colors.black),
             decoration: InputDecoration(

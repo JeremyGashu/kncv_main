@@ -264,11 +264,17 @@ class _SenderHomePageState extends State<SenderHomePage> {
                         BlocProvider.of<TesterCourierBloc>(context).tester;
                     Courier? courier =
                         BlocProvider.of<TesterCourierBloc>(context).courier;
-                    orderBloc.add(AddOrder(
+                    String? date =
+                        BlocProvider.of<TesterCourierBloc>(context).date;
+                    orderBloc.add(
+                      AddOrder(
                         courier_id: courier!.id,
                         tester_id: tester!.id,
                         courier_name: courier.name,
-                        tester_name: tester.name));
+                        tester_name: tester.name,
+                        date: date!,
+                      ),
+                    );
                   }
                 },
               ),

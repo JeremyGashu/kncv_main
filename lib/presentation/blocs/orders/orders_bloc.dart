@@ -24,7 +24,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             courier_id: event.courier_id,
             tester_id: event.tester_id,
             courier_name: event.courier_name,
-            tester_name: event.tester_name);
+            tester_name: event.tester_name, date : event.date);
         yield SentOrder(orderId: newOrderId);
       } catch (e) {
         yield ErrorState(message: 'Error sending order!');
@@ -32,9 +32,9 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is AcceptOrderCourier) {
       yield AcceptingOrderCourier();
       try {
-        bool success = await orderRepository.acceptOrder(event.order.orderId);
+        bool success = await orderRepository.acceptOrder(event.order.orderId, event.time,);
         if (success) {
-          yield AcceptedOrderCourier(event.order);
+          yield AcceptedOrderCourier(event.order, event.time);
         } else {
           ErrorState(message: 'Error Accepting Order! Please try Again!');
         }
@@ -77,6 +77,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         bool success = await orderRepository.courierApproveArrivalTester(
           event.order.orderId,
           event.receiver,
+          event.phone,
         );
         if (success) {
           yield CourierApprovedArrivalTester(event.order);

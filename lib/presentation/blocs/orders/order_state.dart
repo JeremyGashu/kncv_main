@@ -25,8 +25,9 @@ class AcceptingOrderCourier extends OrderState {}
 
 class AcceptedOrderCourier extends OrderState {
   final Order order;
+  final String? time;
 
-  AcceptedOrderCourier(this.order);
+  AcceptedOrderCourier(this.order, this.time);
   @override
   List<Object> get props => [order];
 }

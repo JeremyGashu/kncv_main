@@ -114,7 +114,7 @@ Widget notificationCard(NotificationModel notificationModel) {
   );
 }
 
-addNotification(
+Future<bool >addNotification(
     {required String orderId,
     required String content,
     String? courierContent,
@@ -123,7 +123,8 @@ addNotification(
     bool courier = true,
     bool sender = true,
     bool tester = true}) async {
-  var database = FirebaseFirestore.instance;
+  try {
+    var database = FirebaseFirestore.instance;
   var ordersCollection = await database.collection('orders').doc(orderId).get();
   Order order = Order.fromJson(ordersCollection.data() as Map<String, dynamic>);
   List<String?> sendList = [];
@@ -143,7 +144,7 @@ addNotification(
       date: DateTime.now(),
     );
 
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('notifications')
         .add(newNotification.toJson());
   }
@@ -156,7 +157,7 @@ addNotification(
       date: DateTime.now(),
     );
 
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('notifications')
         .add(newNotification.toJson());
   }
@@ -176,10 +177,15 @@ addNotification(
       date: DateTime.now(),
     );
 
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('notifications')
         .add(newNotification.toJson());
   });
+
+  return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 Future<List<String?>> getTestCenterAdminsFromTestCenterId(String? id) async {

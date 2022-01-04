@@ -78,11 +78,13 @@ class OrderRepository {
 
   //adding orders for senders
   // @params{courier_id, tester_id, courier_name and tester_name}
-  Future<String> addOrder(
-      {required String courier_id,
-      required String tester_id,
-      required String courier_name,
-      required String tester_name}) async {
+  Future<String> addOrder({
+    required String courier_id,
+    required String tester_id,
+    required String courier_name,
+    required String tester_name,
+    required String date,
+  }) async {
     String sender_id = auth.currentUser!.uid;
     var ordersCollection = await database.collection('orders');
     int month = DateTime.now().month;
@@ -116,9 +118,10 @@ class OrderRepository {
       'tester_id': tester_id,
       'status': 'Draft',
       'created_at': '$day ${months[month - 1]} $year',
+      'ordered_for': date,
       'tester_name': tester_name,
       'courier_name': courier_name,
-      'order_created' : DateTime.now()
+      'order_created': DateTime.now()
     });
     return c.id;
   }
@@ -198,7 +201,8 @@ class OrderRepository {
     if (order.exists) {
       List patientsList = order.data()?['patients'];
       patientsList[index] = patient.toJson();
-      await orderRef.update({'patients': patientsList, 'test_result_added' : DateTime.now()});
+      await orderRef.update(
+          {'patients': patientsList, 'test_result_added': DateTime.now()});
       return true;
     }
     return false;
@@ -258,18 +262,25 @@ class OrderRepository {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Draft') {
-      await orderRef.update({'status': 'Waiting for Confirmation', 'order_placed' : DateTime.now()});
+      await orderRef.update({
+        'status': 'Waiting for Confirmation',
+        'order_placed': DateTime.now()
+      });
       return true;
     } else {
       return false;
     }
   }
 
-  Future<bool> acceptOrder(String? orderId) async {
+  Future<bool> acceptOrder(String? orderId, String? time) async {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Waiting for Confirmation') {
-      await orderRef.update({'status': 'Confirmed', 'order_confirmed' : DateTime.now()});
+      await orderRef.update({
+        'status': 'Confirmed',
+        'will_reach_at': time,
+        'order_confirmed': DateTime.now()
+      });
       return true;
     } else {
       return false;
@@ -280,7 +291,11 @@ class OrderRepository {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Confirmed') {
-      await orderRef.update({'status': 'Picked Up', 'receiver': receiver, 'order_pickedup' : DateTime.now()});
+      await orderRef.update({
+        'status': 'Picked Up',
+        'receiver_courier': receiver,
+        'order_pickedup': DateTime.now(),
+      });
       return true;
     } else {
       return false;
@@ -288,11 +303,16 @@ class OrderRepository {
   }
 
   Future<bool> courierApproveArrivalTester(
-      String? orderId, String receiver) async {
+      String? orderId, String receiver, String phone) async {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Picked Up') {
-      await orderRef.update({'status': 'Received', 'receiver': receiver, 'order_received' : DateTime.now()});
+      await orderRef.update({
+        'status': 'Received',
+        'receiver_tester': receiver,
+        'receiver_phone_number': phone,
+        'order_received': DateTime.now(),
+      });
       return true;
     } else {
       return false;
@@ -311,7 +331,7 @@ class OrderRepository {
         'status': 'Accepted',
         'sputumCondition': sputumCondition,
         'stoolCondition': stoolCondition,
-        'order_accepted' : DateTime.now()
+        'order_accepted': DateTime.now()
       });
       return true;
     } else {

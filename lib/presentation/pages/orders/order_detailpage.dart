@@ -292,6 +292,20 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                             backgroundColor: kColorsOrangeLight,
                                             elevation: 0,
                                             onPressed: () async {
+                                              if (state
+                                                      .order.patients!.length >=
+                                                  4) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Maximum sample quantity is reached!',
+                                                    ),
+                                                  ),
+                                                );
+
+                                                return;
+                                              }
                                               var added = await Navigator.pushNamed(
                                                   context,
                                                   PatientInfoPage

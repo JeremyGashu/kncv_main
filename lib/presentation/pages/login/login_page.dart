@@ -169,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                                         _passwordController.value.text;
                                     BlocProvider.of<AuthBloc>(context).add(
                                         LoginUser(
-                                            email: email, password: password));
+                                            email: '$email@kncv.com', password: password));
                                   },
                                   borderRadius: BorderRadius.circular(37),
                                   child: Container(

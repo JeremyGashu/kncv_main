@@ -16,14 +16,18 @@ class AddOrder extends OrderEvents {
   final String courier_id;
   final String courier_name;
   final String tester_name;
+  final String date;
 
-  AddOrder(
-      {required this.courier_id,
-      required this.tester_id,
-      required this.courier_name,
-      required this.tester_name});
+  AddOrder({
+    required this.courier_id,
+    required this.tester_id,
+    required this.courier_name,
+    required this.tester_name,
+    required this.date,
+  });
   @override
-  List<Object> get props => [tester_id, courier_id];
+  List<Object> get props =>
+      [tester_id, courier_id, date, courier_name, tester_name];
 }
 
 class LoadSingleOrder extends OrderEvents {
@@ -46,10 +50,11 @@ class DeleteOrders extends OrderEvents {
 
 class AcceptOrderCourier extends OrderEvents {
   final Order order;
+  final String time;
 
-  AcceptOrderCourier(this.order);
+  AcceptOrderCourier(this.order, this.time);
   @override
-  List<Object> get props => [order];
+  List<Object> get props => [order, time];
 }
 
 class ApproveArrivalCourier extends OrderEvents {
@@ -64,10 +69,11 @@ class ApproveArrivalCourier extends OrderEvents {
 class CourierApproveArrivalToTestCenter extends OrderEvents {
   final Order order;
   final String receiver;
+  final String phone;
 
-  CourierApproveArrivalToTestCenter(this.order, this.receiver);
+  CourierApproveArrivalToTestCenter(this.order, this.receiver, this.phone);
   @override
-  List<Object> get props => [order, receiver];
+  List<Object> get props => [order, receiver, phone];
 }
 
 class PlaceOrder extends OrderEvents {

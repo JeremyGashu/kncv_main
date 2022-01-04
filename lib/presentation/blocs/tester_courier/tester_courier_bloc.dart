@@ -8,6 +8,7 @@ class TesterCourierBloc extends Bloc<TesterCourierEvent, TesterCourierStates> {
   final TesterCourierRepository testerCourierRepository;
   Tester? tester;
   Courier? courier;
+  String? date;
 
   TesterCourierBloc(this.testerCourierRepository) : super(InitialState());
 
