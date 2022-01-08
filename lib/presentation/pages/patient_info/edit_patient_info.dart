@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -7,6 +8,7 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 import 'package:kncv_flutter/presentation/pages/orders/result_page.dart';
+import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 
 class EditPatientInfoPage extends StatefulWidget {
   final String orderId;
@@ -36,6 +38,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
   String? anatomicLocation;
   String? sex;
   String? specimenType;
+  String? dateOfBirth;
+  String? hivStatus;
 
   List<Specimen> specimens = [];
 
@@ -48,6 +52,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController doctorInChargeController =
       TextEditingController();
+  final TextEditingController patientRemarkController = TextEditingController();
   final TextEditingController examPurposeController = TextEditingController();
 
   final TextEditingController specimenIdController = TextEditingController();
@@ -62,6 +67,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
     malnutrition = widget.patient.malnutrition;
     anatomicLocation = widget.patient.anatomicLocation;
     sex = widget.patient.sex;
+    dateOfBirth = widget.patient.dateOfBirth;
+    hivStatus = widget.patient.hiv;
 
     MRController.text = widget.patient.mr ?? '';
     nameController.text = widget.patient.name ?? '';
@@ -72,6 +79,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
     phoneController.text = widget.patient.phone ?? '';
     doctorInChargeController.text = widget.patient.doctorInCharge ?? '';
     examPurposeController.text = widget.patient.examPurpose ?? '';
+    patientRemarkController.text = widget.patient.remark ?? '';
 
     specimens = [...widget.patient.specimens!];
 
@@ -161,6 +169,57 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                         },
                       )),
                     ),
+                  ),
+
+                  _labelBuilder('Date Of Birth'),
+
+                  GestureDetector(
+                      onTap: () {
+                        DatePicker.showDatePicker(
+                          context,
+                          showTitleActions: true,
+                          maxTime: DateTime.now(),
+                          minTime: DateTime.now()
+                              .subtract(Duration(days: (365 * 200))),
+                          onConfirm: (d) {
+                            int month = d.month;
+                            int year = d.year;
+                            int day = d.day;
+                            setState(() {
+                              dateOfBirth = '$day-$month-$year';
+                              ageController.text = calculateAge(d).toString();
+                            });
+                          },
+                          currentTime: DateTime.now(),
+                          locale: LocaleType.en,
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 54,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.only(left: 20),
+                            child: Text(
+                              dateOfBirth ?? 'Please Select Date',
+                              style: TextStyle(
+                                  color: Colors.black87.withOpacity(0.5),
+                                  fontSize: 15),
+                            ),
+                          ),
+                        ),
+                      )),
+
+                  _buildInputField(
+                    editable: false,
+                    label: 'Age',
+                    hint: 'Please enter Date of Birth',
+                    controller: ageController,
                   ),
                   _buildInputField(
                       label: 'Age',
@@ -349,6 +408,41 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                         });
                       },
                     )),
+                  ),
+
+                  _labelBuilder('HIV'),
+
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                      value: hivStatus,
+                      hint: Text('HIV'),
+                      items: <String>['Negative', 'Positive', 'Unknown']
+                          .map((String value) {
+                        return DropdownMenuItem<String>(
+                          enabled: !widget.patient.resultAvaiable,
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          hivStatus = val;
+                        });
+                      },
+                    )),
+                  ),
+
+                  buildRemarkField(
+                    label: 'Remark',
+                    hint: 'Pateint Remark',
+                    controller: patientRemarkController,
                   ),
 
                   _tobLabelBuilder('Specimen Purpose'),
@@ -594,6 +688,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                   children: [
                                     Text('Type : ${e.type}'),
                                     Text('ID : ${e.id}'),
+                                    Text(
+                                        'Examination Type : ${e.examinationType}'),
                                   ],
                                 ),
                               ))
@@ -628,25 +724,31 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         doctorInChargeController.value.text;
                                     String examinatinPurpose =
                                         examPurposeController.value.text;
+                                    String patientRemark =
+                                        patientRemarkController.value.text;
                                     Patient patient = Patient(
-                                        age: age,
-                                        anatomicLocation: anatomicLocation,
-                                        childhood: childhood,
-                                        dm: dm,
-                                        doctorInCharge: doctorInCharge,
-                                        examPurpose: examinatinPurpose,
-                                        malnutrition: malnutrition,
-                                        phone: phone,
-                                        zone: zone,
-                                        woreda: woreda,
-                                        address: address,
-                                        name: name,
-                                        sex: sex,
-                                        specimens: specimens,
-                                        pneumonia: pneumonia,
-                                        tb: tb,
-                                        recurrentPneumonia: recurrentPneumonia,
-                                        mr: mr);
+                                      age: age,
+                                      anatomicLocation: anatomicLocation,
+                                      childhood: childhood,
+                                      dm: dm,
+                                      doctorInCharge: doctorInCharge,
+                                      examPurpose: examinatinPurpose,
+                                      malnutrition: malnutrition,
+                                      phone: phone,
+                                      zone: zone,
+                                      woreda: woreda,
+                                      address: address,
+                                      name: name,
+                                      sex: sex,
+                                      specimens: specimens,
+                                      pneumonia: pneumonia,
+                                      tb: tb,
+                                      hiv: hivStatus,
+                                      remark: patientRemark,
+                                      recurrentPneumonia: recurrentPneumonia,
+                                      mr: mr,
+                                      dateOfBirth: dateOfBirth,
+                                    );
 
                                     BlocProvider.of<OrderBloc>(context).add(
                                         EditPtientInfo(

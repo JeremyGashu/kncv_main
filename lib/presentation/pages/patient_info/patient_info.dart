@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -26,7 +27,9 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   String? anatomicLocation = 'Pulmonary';
   String? sex = 'Male';
   String? specimenType;
+  String? examinationType;
   String? hivStatus;
+  String? dateOfBirth;
   final TextEditingController MRController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
@@ -34,6 +37,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   final TextEditingController woredaController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final TextEditingController patientRemarkController = TextEditingController();
   final TextEditingController doctorInChargeController =
       TextEditingController();
   final TextEditingController examPurposeController = TextEditingController();
@@ -132,10 +136,56 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                           )),
                         ),
                       ),
-                      //TODO select date  of birth and convert it to age
+
+                      _labelBuilder('Date Of Birth'),
+
+                      GestureDetector(
+                          onTap: () {
+                            DatePicker.showDatePicker(
+                              context,
+                              showTitleActions: true,
+                              maxTime: DateTime.now(),
+                              minTime: DateTime.now()
+                                  .subtract(Duration(days: (365 * 200))),
+                              onConfirm: (d) {
+                                int month = d.month;
+                                int year = d.year;
+                                int day = d.day;
+                                setState(() {
+                                  dateOfBirth = '$day-$month-$year';
+                                  ageController.text =
+                                      calculateAge(d).toString();
+                                });
+                              },
+                              currentTime: DateTime.now(),
+                              locale: LocaleType.en,
+                            );
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            height: 54,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Center(
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.only(left: 20),
+                                child: Text(
+                                  dateOfBirth ?? 'Please Select Date',
+                                  style: TextStyle(
+                                      color: Colors.black87.withOpacity(0.5),
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ),
+                          )),
+
                       _buildInputField(
+                          editable: false,
                           label: 'Age',
-                          hint: 'Enter Your Age',
+                          hint: 'Please enter Date of Birth',
                           controller: ageController,
                           required: true),
                       _tobLabelBuilder('Address'),
@@ -270,34 +320,6 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                         )),
                       ),
 
-                      _labelBuilder('HIV Status'),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                          value: hivStatus,
-                          hint: Text('HIV'),
-                          items: <String>['Positive', 'Negative', 'Unknown']
-                              .map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            setState(() {
-                              hivStatus = val;
-                            });
-                          },
-                        )),
-                      ),
-
                       _labelBuilder('Malnutrition'),
 
                       Container(
@@ -351,6 +373,40 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                             });
                           },
                         )),
+                      ),
+
+                      _labelBuilder('HIV Status'),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: hivStatus,
+                          hint: Text('HIV'),
+                          items: <String>['Positive', 'Negative', 'Unknown']
+                              .map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              hivStatus = val;
+                            });
+                          },
+                        )),
+                      ),
+
+                      buildRemarkField(
+                        label: 'Remark',
+                        hint: 'Pateint Remark',
+                        controller: patientRemarkController,
                       ),
 
                       _tobLabelBuilder('Specimen Purpose'),
@@ -485,6 +541,40 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                               },
                                             )),
                                           ),
+                                          _labelBuilder('Examination Type'),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 5),
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  Colors.grey.withOpacity(0.2),
+                                              borderRadius:
+                                                  BorderRadius.circular(7),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                                child: DropdownButton<String>(
+                                              value: examinationType,
+                                              hint: Text('Examination Type'),
+                                              items: <String>[
+                                                'GeneXpert',
+                                                'AFB Microscopy',
+                                                'Other',
+                                              ].map((String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(value),
+                                                );
+                                              }).toList(),
+                                              onChanged: (val) {
+                                                ss(() => 1 == 1);
+
+                                                setState(() {
+                                                  examinationType = val;
+                                                });
+                                              },
+                                            )),
+                                          ),
                                           SizedBox(
                                             height: 10,
                                           ),
@@ -506,9 +596,12 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                 }
 
                                                 Specimen specimen = Specimen(
-                                                    id: specimenIdController
-                                                        .value.text,
-                                                    type: specimenType);
+                                                  id: specimenIdController
+                                                      .value.text,
+                                                  type: specimenType,
+                                                  examinationType:
+                                                      examinationType,
+                                                );
                                                 setState(() {
                                                   specimens = [
                                                     ...specimens,
@@ -592,6 +685,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                       children: [
                                         Text('Type : ${e.type}'),
                                         Text('ID : ${e.id}'),
+                                        Text(
+                                            'Examination Type : ${e.examinationType}'),
                                       ],
                                     ),
                                   ))
@@ -626,26 +721,31 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                         doctorInChargeController.value.text;
                                     String examinatinPurpose =
                                         examPurposeController.value.text;
+                                    String patientRemark =
+                                        patientRemarkController.value.text;
                                     Patient patient = Patient(
-                                        age: age,
-                                        anatomicLocation: anatomicLocation,
-                                        childhood: childhood,
-                                        dm: dm,
-                                        doctorInCharge: doctorInCharge,
-                                        examPurpose: examinatinPurpose,
-                                        malnutrition: malnutrition,
-                                        phone: phone,
-                                        zone: zone,
-                                        woreda: woreda,
-                                        address: address,
-                                        name: name,
-                                        sex: sex,
-                                        hiv: hivStatus,
-                                        specimens: specimens,
-                                        pneumonia: pneumonia,
-                                        tb: tb,
-                                        recurrentPneumonia: recurrentPneumonia,
-                                        mr: mr);
+                                      age: age,
+                                      anatomicLocation: anatomicLocation,
+                                      childhood: childhood,
+                                      dm: dm,
+                                      doctorInCharge: doctorInCharge,
+                                      examPurpose: examinatinPurpose,
+                                      malnutrition: malnutrition,
+                                      phone: phone,
+                                      zone: zone,
+                                      woreda: woreda,
+                                      address: address,
+                                      name: name,
+                                      sex: sex,
+                                      hiv: hivStatus,
+                                      specimens: specimens,
+                                      pneumonia: pneumonia,
+                                      tb: tb,
+                                      recurrentPneumonia: recurrentPneumonia,
+                                      mr: mr,
+                                      dateOfBirth: dateOfBirth,
+                                      remark: patientRemark,
+                                    );
 
                                     BlocProvider.of<OrderBloc>(context).add(
                                         AddPatientToOrder(
@@ -713,6 +813,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
     required String hint,
     required TextEditingController controller,
     bool required = false,
+    bool editable = true,
   }) {
     return Column(
       children: [
@@ -720,7 +821,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
           width: double.infinity,
           padding: const EdgeInsets.only(top: 20),
           child: Text(
-            '$label ${required ? '*' : ''}', 
+            '$label ${required ? '*' : ''}',
             textAlign: TextAlign.left,
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
           ),
@@ -733,6 +834,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
             borderRadius: BorderRadius.circular(5),
           ),
           child: TextFormField(
+            enabled: editable,
             validator: (value) {
               if (!required) {
                 return null;
@@ -755,57 +857,69 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   }
 }
 
-class KeyboardVisibilityBuilder extends StatefulWidget {
-  final Widget? child;
-  final Widget Function(
-    BuildContext context,
-    Widget? child,
-    bool isKeyboardVisible,
-  ) builder;
-
-  const KeyboardVisibilityBuilder({
-    Key? key,
-    this.child,
-    required this.builder,
-  }) : super(key: key);
-
-  @override
-  _KeyboardVisibilityBuilderState createState() =>
-      _KeyboardVisibilityBuilderState();
+Widget buildRemarkField({
+  required String label,
+  required String hint,
+  required TextEditingController controller,
+  bool required = false,
+  bool editable = true,
+}) {
+  return Column(
+    children: [
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.only(top: 20),
+        child: Text(
+          '$label ${required ? '*' : ''}',
+          textAlign: TextAlign.left,
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+        ),
+      ),
+      Container(
+        margin: EdgeInsets.only(top: 10),
+        padding: EdgeInsets.only(left: 10, right: 10, bottom: 4, top: 4),
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: TextFormField(
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          enabled: editable,
+          validator: (value) {
+            if (!required) {
+              return null;
+            }
+            if (value == null || value.isEmpty) {
+              return 'Value cannot be empty!';
+            }
+            return null;
+          },
+          controller: controller,
+          style: TextStyle(color: Colors.black),
+          decoration: InputDecoration(
+              hintText: hint,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(left: 10, top: 2, bottom: 3)),
+        ),
+      ),
+    ],
+  );
 }
 
-class _KeyboardVisibilityBuilderState extends State<KeyboardVisibilityBuilder>
-    with WidgetsBindingObserver {
-  var _isKeyboardVisible =
-      WidgetsBinding.instance!.window.viewInsets.bottom > 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance!.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeMetrics() {
-    final bottomInset = WidgetsBinding.instance!.window.viewInsets.bottom;
-    final newValue = bottomInset > 0.0;
-    if (newValue != _isKeyboardVisible) {
-      setState(() {
-        _isKeyboardVisible = newValue;
-      });
+int calculateAge(DateTime birthDate) {
+  DateTime currentDate = DateTime.now();
+  int age = currentDate.year - birthDate.year;
+  int month1 = currentDate.month;
+  int month2 = birthDate.month;
+  if (month2 > month1) {
+    age--;
+  } else if (month1 == month2) {
+    int day1 = currentDate.day;
+    int day2 = birthDate.day;
+    if (day2 > day1) {
+      age--;
     }
   }
-
-  @override
-  Widget build(BuildContext context) => widget.builder(
-        context,
-        widget.child,
-        _isKeyboardVisible,
-      );
+  return age;
 }

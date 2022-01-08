@@ -1,4 +1,3 @@
-
 class Order {
   Order(
       {this.orderId,
@@ -89,11 +88,14 @@ class Patient {
       this.specimens,
       this.testResult,
       this.status,
+      this.dateOfBirth,
+      this.remark,
       this.resultAvaiable = false,
       this.address});
 
   String? mr;
   String? name;
+  String? remark;
   String? sex;
   String? age;
   String? zone;
@@ -114,6 +116,7 @@ class Patient {
   bool resultAvaiable;
   TestResult? testResult;
   List<Specimen>? specimens;
+  String? dateOfBirth;
 
   factory Patient.fromJson(Map<String, dynamic> json) => Patient(
         mr: json["MR"],
@@ -123,8 +126,11 @@ class Patient {
         zone: json["zone"],
         woreda: json["woreda"],
         phone: json["phone"],
+        address: json['address'],
+        dateOfBirth: json['date_of_birth'],
         tb: json["TB"],
         status: json['status'],
+        remark: json['remark'],
         childhood: json["childhood"],
         resultAvaiable: json['result_available'] ?? false,
         hiv: json["HIV"],
@@ -154,10 +160,12 @@ class Patient {
         "childhood": childhood,
         "HIV": hiv,
         "pneumonia": pneumonia,
+        'remark': remark,
         "address": address,
         "recurrent_pneumonia": recurrentPneumonia,
         "malnutrition": malnutrition,
         "DM": dm,
+        'date_of_birth': dateOfBirth,
         'result': testResult?.toJson(),
         'result_available': resultAvaiable,
         "doctor_in_charge": doctorInCharge,
@@ -173,19 +181,23 @@ class Specimen {
   Specimen({
     this.type,
     this.id,
+    this.examinationType,
   });
 
   String? type;
   String? id;
+  String? examinationType;
 
   factory Specimen.fromJson(Map<String, dynamic> json) => Specimen(
         type: json["type"],
         id: json["id"],
+        examinationType: json['examination_type'],
       );
 
   Map<String, dynamic> toJson() => {
         "type": type,
         "id": id,
+        'examination_type': examinationType,
       };
 }
 
