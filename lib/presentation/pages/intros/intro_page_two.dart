@@ -122,7 +122,7 @@ class InstroPageTwo extends StatelessWidget {
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 32,
+                                fontSize: 25,
                               ),
                             )),
                       ),

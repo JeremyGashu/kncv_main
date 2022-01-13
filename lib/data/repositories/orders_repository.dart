@@ -55,7 +55,8 @@ class OrderRepository {
       'Arrived',
       'Accepted',
       'Confirmed',
-      'Received'
+      'Received',
+      'Being Assessed By Tester'
     ]).get();
     return orders.docs
         .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
@@ -126,6 +127,26 @@ class OrderRepository {
     return c.id;
   }
 
+  Future<bool> editCourierInfo(
+      {required String courier_id,
+      required String tester_id,
+      required String courier_name,
+      required String tester_name,
+      required String orderId}) async {
+    var orderRef = await database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists) {
+      await orderRef.update({
+        'courier_id': courier_id,
+        'courier_name': courier_name,
+        'tester_id': tester_id,
+        'tester_name': tester_name,
+      });
+      return true;
+    }
+    return false;
+  }
+
   //loading couriers with the same zone as the sender
   Future<List> getCouriersWithSameZone() async {
     var usersCollection = await database.collection('users');
@@ -188,6 +209,39 @@ class OrderRepository {
       return true;
     }
     return false;
+  }
+
+  static Future<bool> editSpecimenFeedback(
+      {required Order order,
+      required Patient patient,
+      required int index}) async {
+    var orderRef = await FirebaseFirestore.instance
+        .collection('orders')
+        .doc(order.orderId);
+    var or = await orderRef.get();
+    if (or.exists) {
+      List patientsList = or.data()?['patients'];
+      patientsList[index] = patient.toJson();
+      bool assessed = allSpecimensAssessed(order);
+      await orderRef.update({
+        'patients': patientsList,
+        'status': assessed ? 'Received' : 'Being Assessed By Tester',
+      });
+
+      return true;
+    }
+    return false;
+  }
+
+  static bool allSpecimensAssessed(Order order) {
+    List<Specimen> specimens = [];
+    order.patients?.forEach((e) => specimens = [...specimens, ...?e.specimens]);
+    for (int i = 0; i < specimens.length; i++) {
+      if (!specimens[i].assessed) {
+        return false;
+      }
+    }
+    return true;
   }
 
   //editing patient info
@@ -308,7 +362,7 @@ class OrderRepository {
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Picked Up') {
       await orderRef.update({
-        'status': 'Received',
+        'status': 'Being Assessed By Tester',
         'receiver_tester': receiver,
         'receiver_phone_number': phone,
         'order_received': DateTime.now(),

@@ -184,6 +184,7 @@ Future<bool >addNotification(
 
   return true;
   } catch (e) {
+    // throw Exception(e);
     return false;
   }
 }

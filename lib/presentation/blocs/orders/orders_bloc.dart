@@ -3,11 +3,24 @@ import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
+import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 
 class OrderBloc extends Bloc<OrderEvents, OrderState> {
   final OrderRepository orderRepository;
 
   OrderBloc(this.orderRepository) : super(InitialState());
+
+  static Future<bool> approveArrivalFromCourier(Order order) async {
+    return await addNotification(
+      orderId: order.orderId!,
+      courierContent:
+          'You notified the order arrival to ${order.tester_name} from ${order.sender_name}.',
+      testerContent:
+          'Courier arrived from ${order.sender_name} at your test center to deliver specimens.',
+      content: 'One order got accepted by courier!',
+      sender: false,
+    );
+  }
 
   @override
   Stream<OrderState> mapEventToState(
@@ -24,7 +37,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             courier_id: event.courier_id,
             tester_id: event.tester_id,
             courier_name: event.courier_name,
-            tester_name: event.tester_name, date : event.date);
+            tester_name: event.tester_name,
+            date: event.date);
         yield SentOrder(orderId: newOrderId);
       } catch (e) {
         yield ErrorState(message: 'Error sending order!');
@@ -32,7 +46,10 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is AcceptOrderCourier) {
       yield AcceptingOrderCourier();
       try {
-        bool success = await orderRepository.acceptOrder(event.order.orderId, event.time,);
+        bool success = await orderRepository.acceptOrder(
+          event.order.orderId,
+          event.time,
+        );
         if (success) {
           yield AcceptedOrderCourier(event.order, event.time);
         } else {
@@ -90,9 +107,10 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is DeleteOrders) {
       yield DeletingOrder();
       try {
-        var status = await orderRepository.deleteOrder(orderId: event.orderId);
+        var status = await orderRepository.deleteOrder(
+            orderId: event.order.orderId ?? 'null');
         if (status['success']) {
-          yield DeletedOrder();
+          yield DeletedOrder(event.order);
         } else {
           yield ErrorState(message: status['message']);
         }
@@ -149,6 +167,20 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         yield AddedPatient();
       } catch (e) {
         yield ErrorState(message: 'Error Adding Patient!');
+      }
+    } else if (event is EditOrder) {
+      yield EditingOrder();
+      try {
+        await orderRepository.editCourierInfo(
+          orderId: event.orderId,
+          courier_name: event.courier_name,
+          courier_id: event.courier_id,
+          tester_id: event.tester_id,
+          tester_name: event.tester_name,
+        );
+        yield EditedOrder();
+      } catch (e) {
+        yield ErrorState(message: 'Error Editing Patient!');
       }
     } else if (event is EditPtientInfo) {
       yield EditingPatientState();

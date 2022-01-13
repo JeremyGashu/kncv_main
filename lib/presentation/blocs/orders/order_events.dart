@@ -30,6 +30,24 @@ class AddOrder extends OrderEvents {
       [tester_id, courier_id, date, courier_name, tester_name];
 }
 
+class EditOrder extends OrderEvents {
+  final String tester_id;
+  final String courier_id;
+  final String courier_name;
+  final String tester_name;
+  final String orderId;
+
+  EditOrder(
+      {required this.courier_id,
+      required this.tester_id,
+      required this.courier_name,
+      required this.tester_name,
+      required this.orderId});
+  @override
+  List<Object> get props =>
+      [tester_id, courier_id, courier_name, tester_name, this.orderId];
+}
+
 class LoadSingleOrder extends OrderEvents {
   final String orderId;
 
@@ -40,12 +58,12 @@ class LoadSingleOrder extends OrderEvents {
 }
 
 class DeleteOrders extends OrderEvents {
-  final String orderId;
+  final Order order;
 
-  DeleteOrders({required this.orderId});
+  DeleteOrders({required this.order});
 
   @override
-  List<Object> get props => [orderId];
+  List<Object> get props => [order];
 }
 
 class AcceptOrderCourier extends OrderEvents {

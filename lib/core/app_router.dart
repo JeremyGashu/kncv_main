@@ -76,6 +76,8 @@ class AppRouter {
             orderId: args['orderId'],
             patient: args['patient'],
             index: args['index'],
+            canEdit: args['canEdit'] ?? true,
+            canAddResult: args['canAddResult'] ?? false,
           ),
         );
 

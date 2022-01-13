@@ -21,6 +21,7 @@ class OrderDetailCourier extends StatefulWidget {
 }
 
 class _OrderDetailCourierState extends State<OrderDetailCourier> {
+  bool notifiyingArrival = false;
   String? inColdChain;
   String? sputumCondition;
   String? stoolCondition;
@@ -29,6 +30,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
   TextEditingController _receiverController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
   OrderBloc ordersBloc = sl<OrderBloc>();
+  bool notifyingArrival = false;
   @override
   void initState() {
     ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
@@ -531,156 +533,231 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                 bottom: 0,
                                 left: 10,
                                 right: 10,
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  color: kPageBackground,
-                                  child: InkWell(
-                                    onTap: () async {
-                                      bool confirm = await showModalBottomSheet(
-                                          backgroundColor: Colors.transparent,
-                                          isScrollControlled: true,
-                                          context: context,
-                                          builder: (ctx) {
-                                            return StatefulBuilder(
-                                                builder: (ctx, ss) {
-                                              return SingleChildScrollView(
-                                                child: Container(
-                                                  padding: EdgeInsets.only(
-                                                    bottom:
-                                                        MediaQuery.of(context)
-                                                                .viewInsets
-                                                                .bottom +
-                                                            20,
-                                                    top: 30,
-                                                    left: 20,
-                                                    right: 20,
-                                                  ),
-                                                  // padding: EdgeInsets.only(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(10),
+                                      color: kPageBackground,
+                                      child: InkWell(
+                                        onTap: () async {
+                                          print('Notifying Arrival');
+                                          setState(() {
+                                            notifiyingArrival = true;
+                                          });
+                                          bool success = await OrderBloc
+                                              .approveArrivalFromCourier(
+                                                  state.order);
+                                          if (success) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        'Notified Arrivel to Test Center!')));
 
-                                                  //     bottom: 20),
-                                                  decoration: BoxDecoration(
+                                            setState(() {
+                                              notifiyingArrival = false;
+                                            });
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        'Error Notifiying Test Center!')));
+
+                                            setState(() {
+                                              notifiyingArrival = false;
+                                            });
+                                          }
+                                        },
+                                        borderRadius: BorderRadius.circular(37),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: kColorsOrangeDark,
+                                          ),
+                                          height: 62,
+                                          // margin: EdgeInsets.all(20),
+                                          child: Center(
+                                            child: notifiyingArrival
+                                                ? CircularProgressIndicator(
                                                     color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft: Radius.circular(
-                                                        30,
-                                                      ),
-                                                      topRight: Radius.circular(
-                                                        30,
-                                                      ),
+                                                  )
+                                                : Text(
+                                                    'Notifiy Arrival',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 20,
+                                                      color: Colors.white,
                                                     ),
                                                   ),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                        width: double.infinity,
-                                                        child: Text(
-                                                          'Confirm Arrival',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                            fontSize: 32,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 30,
-                                                      ),
-                                                      _buildInputField(
-                                                          label: 'Receiver',
-                                                          hint:
-                                                              'Enter Receiver',
-                                                          controller:
-                                                              _receiverController),
-                                                      _buildInputField(
-                                                          label: 'Phone',
-                                                          hint:
-                                                              'Enter Receiver\'s Phone',
-                                                          controller:
-                                                              _phoneController),
-                                                      SizedBox(
-                                                        height: 30,
-                                                      ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          print(
-                                                              _receiverController
-                                                                  .value.text);
-
-                                                          if (_receiverController
-                                                                  .value.text !=
-                                                              '') {
-                                                            Navigator.pop(
-                                                                ctx, true);
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            color:
-                                                                kColorsOrangeDark,
-                                                          ),
-                                                          height: 62,
-                                                          // margin: EdgeInsets.all(20),
-                                                          child: Center(
-                                                            child: Text(
-                                                              'Confirm',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 20,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            });
-                                          });
-
-                                      if (confirm == true) {
-                                        ordersBloc.add(
-                                            CourierApproveArrivalToTestCenter(
-                                                state.order,
-                                                _receiverController.value.text,
-                                                _phoneController.value.text));
-                                      }
-                                    },
-                                    borderRadius: BorderRadius.circular(37),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: kColorsOrangeDark,
-                                      ),
-                                      height: 62,
-                                      // margin: EdgeInsets.all(20),
-                                      child: Center(
-                                        child: Text(
-                                          'Approve Arrival',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Colors.white),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                    Container(
+                                      padding: EdgeInsets.all(10),
+                                      color: kPageBackground,
+                                      child: InkWell(
+                                        onTap: () async {
+                                          bool confirm =
+                                              await showModalBottomSheet(
+                                            backgroundColor: Colors.transparent,
+                                            isScrollControlled: true,
+                                            context: context,
+                                            builder: (ctx) {
+                                              return StatefulBuilder(
+                                                  builder: (ctx, ss) {
+                                                return SingleChildScrollView(
+                                                  child: Container(
+                                                    padding: EdgeInsets.only(
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                                  .viewInsets
+                                                                  .bottom +
+                                                              20,
+                                                      top: 30,
+                                                      left: 20,
+                                                      right: 20,
+                                                    ),
+                                                    // padding: EdgeInsets.only(
+
+                                                    //     bottom: 20),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(
+                                                          30,
+                                                        ),
+                                                        topRight:
+                                                            Radius.circular(
+                                                          30,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                          child: Text(
+                                                            'Confirm Arrival',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                              fontSize: 32,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 30,
+                                                        ),
+                                                        _buildInputField(
+                                                            label: 'Receiver',
+                                                            hint:
+                                                                'Enter Receiver',
+                                                            controller:
+                                                                _receiverController),
+                                                        _buildInputField(
+                                                            label: 'Phone',
+                                                            hint:
+                                                                'Enter Receiver\'s Phone',
+                                                            controller:
+                                                                _phoneController),
+                                                        SizedBox(
+                                                          height: 30,
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            print(
+                                                                _receiverController
+                                                                    .value
+                                                                    .text);
+
+                                                            if (_receiverController
+                                                                    .value
+                                                                    .text !=
+                                                                '') {
+                                                              Navigator.pop(
+                                                                  ctx, true);
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              color:
+                                                                  kColorsOrangeDark,
+                                                            ),
+                                                            height: 62,
+                                                            // margin: EdgeInsets.all(20),
+                                                            child: Center(
+                                                              child: Text(
+                                                                'Confirm',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        20,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              });
+                                            },
+                                          );
+
+                                          if (confirm == true) {
+                                            ordersBloc.add(
+                                                CourierApproveArrivalToTestCenter(
+                                                    state.order,
+                                                    _receiverController
+                                                        .value.text,
+                                                    _phoneController
+                                                        .value.text));
+                                          }
+                                        },
+                                        borderRadius: BorderRadius.circular(37),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: kColorsOrangeDark,
+                                          ),
+                                          height: 62,
+                                          // margin: EdgeInsets.all(20),
+                                          child: Center(
+                                            child: Text(
+                                              'Approve Arrival',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               )
                             : Container(),
@@ -695,6 +772,9 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                   color: kPageBackground,
                                   child: InkWell(
                                     onTap: () async {
+                                      setState(() {
+                                        notifyingArrival = true;
+                                      });
                                       bool success = await addNotification(
                                         orderId: widget.orderId,
                                         courierContent:
@@ -713,6 +793,9 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                 content: Text(
                                                     'Sent notification to health facility!')));
                                       }
+                                      setState(() {
+                                        notifyingArrival = false;
+                                      });
                                     },
                                     borderRadius: BorderRadius.circular(37),
                                     child: Container(
@@ -723,13 +806,17 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                       height: 62,
                                       // margin: EdgeInsets.all(20),
                                       child: Center(
-                                        child: Text(
-                                          'Notify Arrival At Health Facility',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Colors.white),
-                                        ),
+                                        child: notifyingArrival
+                                            ? CircularProgressIndicator(
+                                                color: Colors.white,
+                                              )
+                                            : Text(
+                                                'Notify Arrival At Health Facility',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                    color: Colors.white),
+                                              ),
                                       ),
                                     ),
                                   ),

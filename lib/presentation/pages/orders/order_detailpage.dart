@@ -5,9 +5,11 @@ import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/sender_homepage.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
+import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_courier_selector.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
 import '../notificatins.dart';
@@ -38,9 +40,21 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         bloc: ordersBloc,
         listener: (ctx, state) async {
           if (state is DeletedOrder) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Order deleted!')));
             await Future.delayed(Duration(seconds: 1));
             // ScaffoldMessenger.of(context)
             //     .showSnackBar(SnackBar(content: Text('Order Delted!')));
+
+            // bool a = await addNotification(
+            //   orderId: widget.orderId,
+            //   courierContent:
+            //       'Sender ${state.order.sender_name} have deleted order!',
+            //   senderContent: 'You have deleted one order!',
+            //   testerContent:
+            //       'Sender ${state.order.sender_name} have deleted order!',
+            //   content: 'Sender deleted an order!',
+            // );
             Navigator.pushReplacementNamed(
                 context, SenderHomePage.senderHomePageRouteName);
           } else if (state is ErrorState) {
@@ -72,18 +86,22 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             );
           } else if (state is ApprovedArrivalCourier) {
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Courier Fethed Order!')));
+                .showSnackBar(SnackBar(content: Text('Courier collected Order!')));
             addNotification(
               orderId: widget.orderId,
               courierContent:
-                  'Order fethed from ${state.order.sender_name} to be transported to ${state.order.tester_name}.',
+                  'Order collected from ${state.order.sender_name} to be transported to ${state.order.tester_name}.',
               senderContent:
                   'You have approved departure of specimen from you to ${state.order.tester_name}.',
               testerContent:
-                  'Specimen fetched from ${state.order.sender_name} by courier ${state.order.courier_name}.',
+                  'Specimen collected from ${state.order.sender_name} by courier ${state.order.courier_name}.',
               content: 'New order from ${state.order.sender} is ready.!',
             );
             await Future.delayed(Duration(seconds: 1));
+            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+          } else if (state is EditedOrder) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Changed order info!')));
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           }
         },
@@ -149,7 +167,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                           TextButton(
                                               onPressed: () {
                                                 ordersBloc.add(DeleteOrders(
-                                                    orderId: widget.orderId));
+                                                  order: state.order,
+                                                ));
                                                 Navigator.pop(ctx);
                                               },
                                               child: Text('Yes')),
@@ -182,6 +201,120 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                               bottom: 100, left: 10, top: 10, right: 10),
                           child: CustomScrollView(
                             slivers: [
+                              state.order.status == 'Draft'
+                                  ? SliverToBoxAdapter(
+                                      child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                            tooltip: 'Edit',
+                                            // backgroundColor: kColorsOrangeLight,
+                                            // elevation: 0,
+                                            onPressed: () async {
+                                              print('here');
+                                              var create =
+                                                  await showModalBottomSheet(
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      isScrollControlled: true,
+                                                      context: context,
+                                                      builder: (ctx) {
+                                                        return Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 30,
+                                                                  left: 20,
+                                                                  right: 20,
+                                                                  bottom: 20),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(
+                                                                30,
+                                                              ),
+                                                              topRight: Radius
+                                                                  .circular(
+                                                                30,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Container(
+                                                                width: double
+                                                                    .infinity,
+                                                                child: Text(
+                                                                  'Create An Order',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        32,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 30,
+                                                              ),
+                                                              SelectorPage(
+                                                                buttonText:
+                                                                    'Eedit Order',
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      });
+
+                                              print('create');
+                                              if (create == true) {
+                                                Tester? tester = BlocProvider
+                                                        .of<TesterCourierBloc>(
+                                                            context)
+                                                    .tester;
+                                                Courier? courier = BlocProvider
+                                                        .of<TesterCourierBloc>(
+                                                            context)
+                                                    .courier;
+                                                String? date = BlocProvider.of<
+                                                            TesterCourierBloc>(
+                                                        context)
+                                                    .date;
+                                                print(tester?.name);
+                                                print(courier?.name);
+                                                print(date);
+                                                ordersBloc.add(
+                                                  EditOrder(
+                                                    courier_id: courier!.id,
+                                                    tester_id: tester!.id,
+                                                    courier_name: courier.name,
+                                                    tester_name: tester.name,
+                                                    orderId: widget.orderId,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            icon: Icon(
+                                              Icons.edit,
+                                              color: Colors.red,
+                                            )),
+                                      ],
+                                    ))
+                                  : SliverToBoxAdapter(),
                               SliverToBoxAdapter(
                                 child: ListView(
                                   primary: false,
@@ -316,8 +449,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                     orderId: widget.orderId));
                                               }
                                             },
-                                            child: Icon(Icons
-                                                .app_registration_rounded)),
+                                            child: Icon(Icons.add)),
                                       ],
                                     ))
                                   : SliverToBoxAdapter(),
@@ -340,19 +472,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         itemBuilder: (ctx, index) {
                                           return GestureDetector(
                                             onTap: () {
-                                              if (state.order.patients![index]
-                                                  .resultAvaiable) {
-                                                Navigator.pushNamed(
-                                                    context,
-                                                    EditPatientInfoPage
-                                                        .editPatientInfoRouteName,
-                                                    arguments: {
-                                                      'patient': state.order
-                                                          .patients![index],
-                                                      'orderId': widget.orderId,
-                                                      'index': index
-                                                    });
-                                              }
+                                              Navigator.pushNamed(
+                                                  context,
+                                                  EditPatientInfoPage
+                                                      .editPatientInfoRouteName,
+                                                  arguments: {
+                                                    'patient': state
+                                                        .order.patients![index],
+                                                    'orderId': widget.orderId,
+                                                    'index': index,
+                                                    'canEdit': ['Draft']
+                                                        .contains(
+                                                            state.order.status),
+                                                  });
                                             },
                                             child: buildPatients(
                                               context,

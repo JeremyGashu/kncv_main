@@ -10,19 +10,25 @@ import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 import 'package:kncv_flutter/presentation/pages/orders/result_page.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 
+import '../../../service_locator.dart';
+
 class EditPatientInfoPage extends StatefulWidget {
   final String orderId;
   final Patient patient;
   final int index;
+  final bool canEdit;
+  final bool canAddResult;
 
   static const String editPatientInfoRouteName = 'edit patient info route name';
 
-  const EditPatientInfoPage(
-      {Key? key,
-      required this.orderId,
-      required this.patient,
-      required this.index})
-      : super(key: key);
+  const EditPatientInfoPage({
+    Key? key,
+    required this.orderId,
+    required this.patient,
+    required this.index,
+    this.canEdit = true,
+    this.canAddResult = false,
+  }) : super(key: key);
 
   @override
   State<EditPatientInfoPage> createState() => _EditPatientInfoPageState();
@@ -39,9 +45,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
   String? sex;
   String? specimenType;
   String? dateOfBirth;
+  String? examinationType;
+
   String? hivStatus;
 
   List<Specimen> specimens = [];
+
+  OrderBloc orderBloc = sl<OrderBloc>();
 
   final TextEditingController MRController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
@@ -83,6 +93,10 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
     specimens = [...widget.patient.specimens!];
 
+    orderBloc.add(LoadSingleOrder(
+      orderId: widget.orderId,
+    ));
+
     super.initState();
   }
 
@@ -93,668 +107,867 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        child:
-            BlocConsumer<OrderBloc, OrderState>(listener: (ctx, state) async {
-          if (state is EditedPatientState) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Edited Patient Data!')));
-            await Future.delayed(Duration(seconds: 1));
-            Navigator.pushReplacementNamed(
-                context, OrderDetailPage.orderDetailPageRouteName,
-                arguments: widget.orderId);
-          } else if (state is ErrorState) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Errro Adding Patient!')));
-          }
-        }, builder: (context, state) {
-          return SafeArea(
-            child: Container(
-              padding:
-                  EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
-              child: ListView(
-                children: [
-                  //controller, hint, label,
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Text(
-                      widget.patient.resultAvaiable
-                          ? 'Patient Info'
-                          : 'Edit Patient Info',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  _tobLabelBuilder('Basic Info'),
-                  _buildInputField(
-                    label: 'MR',
-                    hint: 'Enter Your MR',
-                    controller: MRController,
-                    editable: !(widget.patient.status == 'Tested'),
-                  ),
-                  _buildInputField(
-                      label: 'Name',
-                      editable: !(widget.patient.status == 'Tested'),
-                      hint: 'Enter Your Name',
-                      controller: nameController),
-                  _labelBuilder('Sex'),
-                  GestureDetector(
-                    onTap: () {
-                      // FocusScope.of(context).requestFocus(new FocusNode());
-                    },
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(7),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                        value: sex,
-                        hint: Text('Sex'),
-                        items: <String>['Male', 'Female'].map((String value) {
-                          return DropdownMenuItem<String>(
-                            enabled: !widget.patient.resultAvaiable,
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            sex = val;
-                          });
-                        },
-                      )),
-                    ),
-                  ),
-
-                  _labelBuilder('Date Of Birth'),
-
-                  GestureDetector(
-                      onTap: () {
-                        DatePicker.showDatePicker(
-                          context,
-                          showTitleActions: true,
-                          maxTime: DateTime.now(),
-                          minTime: DateTime.now()
-                              .subtract(Duration(days: (365 * 200))),
-                          onConfirm: (d) {
-                            int month = d.month;
-                            int year = d.year;
-                            int day = d.day;
-                            setState(() {
-                              dateOfBirth = '$day-$month-$year';
-                              ageController.text = calculateAge(d).toString();
-                            });
-                          },
-                          currentTime: DateTime.now(),
-                          locale: LocaleType.en,
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 54,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Center(
-                          child: Container(
+        child: BlocConsumer<OrderBloc, OrderState>(
+            bloc: orderBloc,
+            listener: (ctx, state) async {
+              if (state is EditedPatientState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Edited Patient Data!')));
+                await Future.delayed(Duration(seconds: 1));
+                Navigator.pushReplacementNamed(
+                    context, OrderDetailPage.orderDetailPageRouteName,
+                    arguments: widget.orderId);
+              } else if (state is ErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Errro Adding Patient!')));
+              }
+            },
+            builder: (context, state) {
+              return SafeArea(
+                child: Container(
+                  padding:
+                      EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
+                  child: SingleChildScrollView(
+                    child: Form(
+                      child: Column(
+                        children: [
+                          //controller, hint, label,
+                          Container(
                             width: double.infinity,
-                            padding: EdgeInsets.only(left: 20),
+                            padding: const EdgeInsets.only(top: 20),
                             child: Text(
-                              dateOfBirth ?? 'Please Select Date',
+                              widget.patient.resultAvaiable || !widget.canEdit
+                                  ? 'Patient Info'
+                                  : 'Edit Patient Info',
+                              textAlign: TextAlign.center,
                               style: TextStyle(
-                                  color: Colors.black87.withOpacity(0.5),
-                                  fontSize: 15),
+                                  fontSize: 32, fontWeight: FontWeight.w500),
                             ),
                           ),
-                        ),
-                      )),
+                          _tobLabelBuilder('Basic Info'),
+                          _buildInputField(
+                            label: 'MRN',
+                            hint: 'Enter Your MR',
+                            controller: MRController,
+                            editable: !(widget.patient.status == 'Tested') &&
+                                widget.canEdit,
+                          ),
+                          _buildInputField(
+                              label: 'Name',
+                              editable: !(widget.patient.status == 'Tested') &&
+                                  widget.canEdit,
+                              hint: 'Enter Your Name',
+                              controller: nameController),
+                          _labelBuilder('Sex'),
+                          GestureDetector(
+                            onTap: () {
+                              // FocusScope.of(context).requestFocus(new FocusNode());
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                value: sex,
+                                hint: Text('Sex'),
+                                items: <String>['Male', 'Female']
+                                    .map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    enabled: !widget.patient.resultAvaiable &&
+                                        widget.canEdit,
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (val) {
+                                  setState(() {
+                                    sex = val;
+                                  });
+                                },
+                              )),
+                            ),
+                          ),
 
-                  _buildInputField(
-                    editable: false,
-                    label: 'Age',
-                    hint: 'Please enter Date of Birth',
-                    controller: ageController,
-                  ),
-                  _buildInputField(
-                      label: 'Age',
-                      editable: !(widget.patient.status == 'Tested'),
-                      hint: 'Enter Your Age',
-                      controller: ageController),
-                  _tobLabelBuilder('Address'),
-                  _buildInputField(
-                      label: 'Zone',
-                      editable: !(widget.patient.status == 'Tested'),
-                      hint: 'Enter Your Zone',
-                      controller: zoneController),
-                  _buildInputField(
-                      label: 'Woreda',
-                      editable: !(widget.patient.status == 'Tested'),
-                      hint: 'Enter Your Woreda',
-                      controller: woredaController),
-                  _buildInputField(
-                      label: 'Address',
-                      editable: !(widget.patient.status == 'Tested'),
-                      hint: 'Enter Your Address',
-                      controller: addressController),
-                  _buildInputField(
-                      label: 'Phone',
-                      editable: !(widget.patient.status == 'Tested'),
-                      hint: 'Enter Your Phone',
-                      controller: phoneController),
+                          _labelBuilder('Date Of Birth'),
 
-                  _tobLabelBuilder('Observation'),
+                          GestureDetector(
+                              onTap: (widget.patient.resultAvaiable ||
+                                      !widget.canEdit)
+                                  ? () {}
+                                  : () {
+                                      DatePicker.showDatePicker(
+                                        context,
+                                        showTitleActions: true,
+                                        maxTime: DateTime.now(),
+                                        minTime: DateTime.now().subtract(
+                                            Duration(days: (365 * 200))),
+                                        onConfirm: (d) {
+                                          int month = d.month;
+                                          int year = d.year;
+                                          int day = d.day;
+                                          setState(() {
+                                            dateOfBirth = '$day-$month-$year';
+                                            ageController.text =
+                                                calculateAge(d).toString();
+                                          });
+                                        },
+                                        currentTime: DateTime.now(),
+                                        locale: LocaleType.en,
+                                      );
+                                    },
+                              child: Container(
+                                width: double.infinity,
+                                height: 54,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.only(left: 20),
+                                    child: Text(
+                                      dateOfBirth ?? 'Please Select Date',
+                                      style: TextStyle(
+                                          color:
+                                              Colors.black87.withOpacity(0.5),
+                                          fontSize: 15),
+                                    ),
+                                  ),
+                                ),
+                              )),
 
-                  // _labelBuilder('Childhood'),
+                          _buildInputField(
+                            editable: false,
+                            label: 'Age',
+                            hint: 'Please enter Date of Birth',
+                            controller: ageController,
+                          ),
 
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  //   width: double.infinity,
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.grey.withOpacity(0.2),
-                  //     borderRadius: BorderRadius.circular(7),
-                  //   ),
-                  //   child: DropdownButtonHideUnderline(
-                  //       child: DropdownButton<String>(
-                  //     value: childhood,
-                  //     hint: Text('Childhood'),
-                  //     items: <String>['Yes', 'No'].map((String value) {
-                  //       return DropdownMenuItem<String>(
-                  //         value: value,
-                  //         child: Text(value),
-                  //       );
-                  //     }).toList(),
-                  //     onChanged: (val) {
-                  //       setState(() {
-                  //         childhood = val;
-                  //       });
-                  //     },
-                  //   )),
-                  // ),
-                  _labelBuilder('Pneumonia'),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: pneumonia,
-                      hint: Text('Pneumonia'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          enabled: !widget.patient.resultAvaiable,
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          pneumonia = val;
-                        });
-                      },
-                    )),
-                  ),
-                  _labelBuilder('TB'),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: tb,
-                      hint: Text('TB'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          enabled: !widget.patient.resultAvaiable,
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          tb = val;
-                        });
-                      },
-                    )),
-                  ),
-                  _labelBuilder('Recurrent Pneumonia'),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: recurrentPneumonia,
-                      hint: Text('Recurrent Pneuomonia'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          enabled: !widget.patient.resultAvaiable,
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          recurrentPneumonia = val;
-                        });
-                      },
-                    )),
-                  ),
+                          _tobLabelBuilder('Address'),
+                          _buildInputField(
+                              label: 'Zone',
+                              editable: !(widget.patient.status == 'Tested') &&
+                                  widget.canEdit,
+                              hint: 'Enter Your Zone',
+                              controller: zoneController),
+                          _buildInputField(
+                              label: 'Woreda',
+                              editable: !(widget.patient.status == 'Tested') &&
+                                  widget.canEdit,
+                              hint: 'Enter Your Woreda',
+                              controller: woredaController),
+                          _buildInputField(
+                              label: 'Address',
+                              editable: !(widget.patient.status == 'Tested') &&
+                                  widget.canEdit,
+                              hint: 'Enter Your Address',
+                              controller: addressController),
+                          _buildInputField(
+                              label: 'Phone',
+                              editable: !(widget.patient.status == 'Tested') &&
+                                  widget.canEdit,
+                              hint: 'Enter Your Phone',
+                              controller: phoneController),
 
-                  _labelBuilder('Malnutrition'),
+                          _tobLabelBuilder('Observation'),
 
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: malnutrition,
-                      hint: Text('Malnutrition'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          enabled: !widget.patient.resultAvaiable,
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          malnutrition = val;
-                        });
-                      },
-                    )),
-                  ),
-                  _labelBuilder('DM'),
+                          // _labelBuilder('Childhood'),
 
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: dm,
-                      hint: Text('DM'),
-                      items: <String>['Yes', 'No'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          enabled: !widget.patient.resultAvaiable,
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          dm = val;
-                        });
-                      },
-                    )),
-                  ),
+                          // Container(
+                          //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          //   width: double.infinity,
+                          //   decoration: BoxDecoration(
+                          //     color: Colors.grey.withOpacity(0.2),
+                          //     borderRadius: BorderRadius.circular(7),
+                          //   ),
+                          //   child: DropdownButtonHideUnderline(
+                          //       child: DropdownButton<String>(
+                          //     value: childhood,
+                          //     hint: Text('Childhood'),
+                          //     items: <String>['Yes', 'No'].map((String value) {
+                          //       return DropdownMenuItem<String>(
+                          //         value: value,
+                          //         child: Text(value),
+                          //       );
+                          //     }).toList(),
+                          //     onChanged: (val) {
+                          //       setState(() {
+                          //         childhood = val;
+                          //       });
+                          //     },
+                          //   )),
+                          // ),
+                          _labelBuilder('Pneumonia'),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                              value: pneumonia,
+                              hint: Text('Pneumonia'),
+                              items: <String>['Yes', 'No'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  enabled: !widget.patient.resultAvaiable &&
+                                      widget.canEdit,
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  pneumonia = val;
+                                });
+                              },
+                            )),
+                          ),
+                          _labelBuilder('TB'),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                              value: tb,
+                              hint: Text('TB'),
+                              items: <String>['Yes', 'No'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  enabled: !widget.patient.resultAvaiable &&
+                                      widget.canEdit,
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  tb = val;
+                                });
+                              },
+                            )),
+                          ),
+                          _labelBuilder('Recurrent Pneumonia'),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                              value: recurrentPneumonia,
+                              hint: Text('Recurrent Pneuomonia'),
+                              items: <String>['Yes', 'No'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  enabled: !widget.patient.resultAvaiable &&
+                                      widget.canEdit,
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  recurrentPneumonia = val;
+                                });
+                              },
+                            )),
+                          ),
 
-                  _labelBuilder('HIV'),
+                          _labelBuilder('Malnutrition'),
 
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: hivStatus,
-                      hint: Text('HIV'),
-                      items: <String>['Negative', 'Positive', 'Unknown']
-                          .map((String value) {
-                        return DropdownMenuItem<String>(
-                          enabled: !widget.patient.resultAvaiable,
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          hivStatus = val;
-                        });
-                      },
-                    )),
-                  ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                              value: malnutrition,
+                              hint: Text('Malnutrition'),
+                              items: <String>['Yes', 'No'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  enabled: !widget.patient.resultAvaiable &&
+                                      widget.canEdit,
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  malnutrition = val;
+                                });
+                              },
+                            )),
+                          ),
+                          _labelBuilder('DM'),
 
-                  buildRemarkField(
-                    label: 'Remark',
-                    hint: 'Pateint Remark',
-                    controller: patientRemarkController,
-                  ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                              value: dm,
+                              hint: Text('DM'),
+                              items: <String>['Yes', 'No'].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  enabled: !widget.patient.resultAvaiable &&
+                                      widget.canEdit,
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  dm = val;
+                                });
+                              },
+                            )),
+                          ),
 
-                  _tobLabelBuilder('Specimen Purpose'),
-                  _labelBuilder('Anatomic Location'),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                      value: anatomicLocation,
-                      hint: Text('Anatomic Location'),
-                      items: <String>['Pulmonary', 'Extra-pulmonary']
-                          .map((String value) {
-                        return DropdownMenuItem<String>(
-                          enabled: !widget.patient.resultAvaiable,
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          anatomicLocation = val;
-                        });
-                      },
-                    )),
-                  ),
+                          _labelBuilder('HIV'),
 
-                  _buildInputField(
-                      label: 'Doctor in charge',
-                      hint: 'Doctor in charge',
-                      editable: !(widget.patient.status == 'Tested'),
-                      controller: doctorInChargeController),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                              value: hivStatus,
+                              hint: Text('HIV'),
+                              items: <String>['Negative', 'Positive', 'Unknown']
+                                  .map((String value) {
+                                return DropdownMenuItem<String>(
+                                  enabled: !widget.patient.resultAvaiable &&
+                                      widget.canEdit,
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  hivStatus = val;
+                                });
+                              },
+                            )),
+                          ),
 
-                  _buildInputField(
-                      label: 'Exam Purpose',
-                      hint: 'Please enter exam pupose',
-                      editable: !(widget.patient.status == 'Tested'),
-                      controller: examPurposeController),
+                          buildRemarkField(
+                            label: 'Remark',
+                            hint: 'Pateint Remark',
+                            controller: patientRemarkController,
+                            editable: !widget.patient.resultAvaiable &&
+                                widget.canEdit,
+                          ),
 
-                  SizedBox(
-                    height: 15,
-                  ),
+                          _tobLabelBuilder('Specimen Purpose'),
+                          _labelBuilder('Anatomic Location'),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                              value: anatomicLocation,
+                              hint: Text('Anatomic Location'),
+                              items: <String>['Pulmonary', 'Extra-pulmonary']
+                                  .map((String value) {
+                                return DropdownMenuItem<String>(
+                                  enabled: !widget.patient.resultAvaiable &&
+                                      widget.canEdit,
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  anatomicLocation = val;
+                                });
+                              },
+                            )),
+                          ),
 
-                  !widget.patient.resultAvaiable
-                      ? GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                                backgroundColor: Colors.transparent,
-                                isScrollControlled: true,
-                                context: context,
-                                builder: (ctx) {
-                                  return StatefulBuilder(builder: (ctx, ss) {
-                                    return Container(
-                                      padding: EdgeInsets.only(
-                                          top: 30,
-                                          left: 20,
-                                          right: 20,
-                                          bottom: 20),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(
-                                            30,
-                                          ),
-                                          topRight: Radius.circular(
-                                            30,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: double.infinity,
-                                            child: Text(
-                                              'Create Specimen',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: 32,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                          _buildInputField(
-                                              label: 'Specimen ID',
-                                              hint: "Please enter specimen ID",
-                                              controller: specimenIdController),
-                                          _labelBuilder('Specimen Type'),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            width: double.infinity,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  Colors.grey.withOpacity(0.2),
-                                              borderRadius:
-                                                  BorderRadius.circular(7),
-                                            ),
-                                            child: DropdownButtonHideUnderline(
-                                                child: DropdownButton<String>(
-                                              value: specimenType,
-                                              hint: Text('Specimen Type'),
-                                              items: <String>[
-                                                'Stool',
-                                                'Sputum',
-                                                'Urine'
-                                              ].map((String value) {
-                                                return DropdownMenuItem<String>(
-                                                  enabled: !widget
-                                                      .patient.resultAvaiable,
-                                                  value: value,
-                                                  child: Text(value),
-                                                );
-                                              }).toList(),
-                                              onChanged: (val) {
-                                                ss(() => 1 == 1);
+                          _buildInputField(
+                              label: 'Doctor in charge',
+                              hint: 'Doctor in charge',
+                              editable: !(widget.patient.status == 'Tested') &&
+                                  widget.canEdit,
+                              controller: doctorInChargeController),
 
-                                                setState(() {
-                                                  specimenType = val;
-                                                });
-                                              },
-                                            )),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          !widget.patient.resultAvaiable
-                                              ? GestureDetector(
-                                                  onTap: () {
-                                                    print(specimenType);
-                                                    print(specimenIdController
-                                                        .value.text);
-                                                    if (specimenIdController
-                                                                .value.text ==
-                                                            '' ||
-                                                        specimenType == null) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(SnackBar(
-                                                              content: Text(
-                                                                  'Please enter complete information')));
-                                                      Navigator.pop(context);
-                                                      return;
-                                                    }
+                          _buildInputField(
+                              label: 'Exam Purpose',
+                              hint: 'Please enter exam pupose',
+                              editable: !(widget.patient.status == 'Tested') &&
+                                  widget.canEdit,
+                              controller: examPurposeController),
 
-                                                    Specimen specimen = Specimen(
-                                                        id: specimenIdController
-                                                            .value.text,
-                                                        type: specimenType);
-                                                    setState(() {
-                                                      specimens = [
-                                                        ...specimens,
-                                                        specimen
-                                                      ];
-                                                    });
-                                                    print(specimens.length);
-                                                    // ScaffoldMessenger.of(context)
-                                                    //     .showSnackBar(SnackBar(
-                                                    //         content: Text(
-                                                    //             'Added Specimen')));
-                                                    Navigator.pop(context);
-                                                    return;
-                                                  },
-                                                  child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        color:
-                                                            kColorsOrangeDark,
+                          SizedBox(
+                            height: 15,
+                          ),
+
+                          !widget.patient.resultAvaiable
+                              ? widget.canEdit
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        if (widget.canEdit) {
+                                          showModalBottomSheet(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              isScrollControlled: true,
+                                              context: context,
+                                              builder: (ctx) {
+                                                return StatefulBuilder(
+                                                    builder: (ctx, ss) {
+                                                  return Container(
+                                                    padding: EdgeInsets.only(
+                                                        top: 30,
+                                                        left: 20,
+                                                        right: 20,
+                                                        bottom: 20),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(
+                                                          30,
+                                                        ),
+                                                        topRight:
+                                                            Radius.circular(
+                                                          30,
+                                                        ),
                                                       ),
-                                                      height: 62,
-                                                      // margin: EdgeInsets.all(20),
-                                                      child: Center(
-                                                        child: Text(
-                                                          'Add Specimen',
-                                                          style: TextStyle(
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          width:
+                                                              double.infinity,
+                                                          child: Text(
+                                                            'Create Specimen',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                              fontSize: 32,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              fontSize: 20,
-                                                              color:
-                                                                  Colors.white),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      )))
-                                              : Container(),
-                                        ],
+                                                        SizedBox(
+                                                          height: 30,
+                                                        ),
+                                                        _buildInputField(
+                                                            label:
+                                                                'Specimen ID',
+                                                            hint:
+                                                                "Please enter specimen ID",
+                                                            controller:
+                                                                specimenIdController),
+                                                        _labelBuilder(
+                                                            'Specimen Type'),
+                                                        Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 5),
+                                                          width:
+                                                              double.infinity,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        7),
+                                                          ),
+                                                          child:
+                                                              DropdownButtonHideUnderline(
+                                                                  child:
+                                                                      DropdownButton<
+                                                                          String>(
+                                                            value: specimenType,
+                                                            hint: Text(
+                                                                'Specimen Type'),
+                                                            items: <String>[
+                                                              'Stool',
+                                                              'Sputum',
+                                                              'Urine'
+                                                            ].map(
+                                                                (String value) {
+                                                              return DropdownMenuItem<
+                                                                  String>(
+                                                                enabled: !widget
+                                                                        .patient
+                                                                        .resultAvaiable &&
+                                                                    widget
+                                                                        .canEdit,
+                                                                value: value,
+                                                                child:
+                                                                    Text(value),
+                                                              );
+                                                            }).toList(),
+                                                            onChanged: (val) {
+                                                              ss(() => 1 == 1);
+
+                                                              setState(() {
+                                                                specimenType =
+                                                                    val;
+                                                              });
+                                                            },
+                                                          )),
+                                                        ),
+                                                        _labelBuilder(
+                                                            'Examination Type'),
+                                                        Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 5),
+                                                          width:
+                                                              double.infinity,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        7),
+                                                          ),
+                                                          child:
+                                                              DropdownButtonHideUnderline(
+                                                                  child:
+                                                                      DropdownButton<
+                                                                          String>(
+                                                            value:
+                                                                examinationType,
+                                                            hint: Text(
+                                                                'Examination Type'),
+                                                            items: <String>[
+                                                              'GeneXpert',
+                                                              'AFB Microscopy',
+                                                              'Other',
+                                                            ].map(
+                                                                (String value) {
+                                                              return DropdownMenuItem<
+                                                                  String>(
+                                                                value: value,
+                                                                child:
+                                                                    Text(value),
+                                                              );
+                                                            }).toList(),
+                                                            onChanged: (val) {
+                                                              ss(() => 1 == 1);
+
+                                                              setState(() {
+                                                                examinationType =
+                                                                    val;
+                                                              });
+                                                            },
+                                                          )),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        !widget.patient
+                                                                .resultAvaiable
+                                                            ? GestureDetector(
+                                                                onTap: () {
+                                                                  print(
+                                                                      specimenType);
+                                                                  print(
+                                                                      specimenIdController
+                                                                          .value
+                                                                          .text);
+                                                                  if (specimenIdController
+                                                                              .value
+                                                                              .text ==
+                                                                          '' ||
+                                                                      specimenType ==
+                                                                          null) {
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(SnackBar(
+                                                                            content:
+                                                                                Text('Please enter complete information')));
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    return;
+                                                                  }
+
+                                                                  if (specimenExists(
+                                                                      specimens,
+                                                                      specimenIdController
+                                                                          .value
+                                                                          .text,
+                                                                      specimenType!)) {
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(SnackBar(
+                                                                            content:
+                                                                                Text('This specimen is already added please try editing fields.')));
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    return;
+                                                                  }
+
+                                                                  Specimen specimen = Specimen(
+                                                                      id: specimenIdController
+                                                                          .value
+                                                                          .text,
+                                                                      type:
+                                                                          specimenType,
+                                                                      examinationType:
+                                                                          examinationType);
+                                                                  setState(() {
+                                                                    specimens =
+                                                                        [
+                                                                      ...specimens,
+                                                                      specimen
+                                                                    ];
+                                                                  });
+                                                                  print(specimens
+                                                                      .length);
+                                                                  specimenIdController
+                                                                      .text = '';
+                                                                  specimenType =
+                                                                      null;
+                                                                  // ScaffoldMessenger.of(context)
+                                                                  //     .showSnackBar(SnackBar(
+                                                                  //         content: Text(
+                                                                  //             'Added Specimen')));
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  return;
+                                                                },
+                                                                child: Container(
+                                                                    decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10),
+                                                                      color:
+                                                                          kColorsOrangeDark,
+                                                                    ),
+                                                                    height: 62,
+                                                                    // margin: EdgeInsets.all(20),
+                                                                    child: Center(
+                                                                      child:
+                                                                          Text(
+                                                                        'Add Specimen',
+                                                                        style: TextStyle(
+                                                                            fontWeight: FontWeight
+                                                                                .bold,
+                                                                            fontSize:
+                                                                                20,
+                                                                            color:
+                                                                                Colors.white),
+                                                                      ),
+                                                                    )))
+                                                            : Container(),
+                                                      ],
+                                                    ),
+                                                  );
+                                                });
+                                              });
+                                        }
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 110,
+                                        color: Colors.grey.withOpacity(0.3),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.add,
+                                              color: kColorsOrangeLight,
+                                              size: 30,
+                                            ),
+                                            Text('Add Specimen'),
+                                          ],
+                                        ),
                                       ),
-                                    );
-                                  });
-                                });
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            height: 110,
-                            color: Colors.grey.withOpacity(0.3),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                  color: kColorsOrangeLight,
-                                  size: 30,
-                                ),
-                                Text('Add Specimen'),
-                              ],
-                            ),
+                                    )
+                                  : Container()
+                              : Container(),
+
+                          SizedBox(
+                            height: 15,
                           ),
-                        )
-                      : Container(),
 
-                  SizedBox(
-                    height: 15,
-                  ),
+                          _labelBuilder('Specimens'),
 
-                  _labelBuilder('Specimens'),
+                          getSpecimensFromState(state),
 
-                  Container(
-                    child: Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.start,
-                      direction: Axis.horizontal,
-                      children: specimens
-                          .map((e) => Container(
-                                padding: EdgeInsets.all(20),
-                                margin: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Type : ${e.type}'),
-                                    Text('ID : ${e.id}'),
-                                    Text(
-                                        'Examination Type : ${e.examinationType}'),
-                                  ],
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                  ),
+                          SizedBox(
+                            height: 10,
+                          ),
 
-                  SizedBox(
-                    height: 10,
-                  ),
+                          !widget.patient.resultAvaiable && widget.canAddResult
+                              ? Container(
+                                  // padding: EdgeInsets.all(10),
+                                  color: kPageBackground,
+                                  child: state is EditingPatientState
+                                      ? Center(
+                                          child: CircularProgressIndicator(),
+                                        )
+                                      : InkWell(
+                                          onTap: () {
+                                            if (!widget.canEdit) {
+                                              Navigator.pushNamed(
+                                                  context,
+                                                  AddTestResultPage
+                                                      .addTestResultPageRouteName,
+                                                  arguments: {
+                                                    'orderId': widget.orderId,
+                                                    'patient': widget.patient,
+                                                    'index': widget.index,
+                                                  });
+                                            } else {
+                                              String mr =
+                                                  MRController.value.text;
+                                              String name =
+                                                  nameController.value.text;
+                                              //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
+                                              String age =
+                                                  ageController.value.text;
+                                              String zone =
+                                                  zoneController.value.text;
+                                              String woreda =
+                                                  woredaController.value.text;
+                                              String address =
+                                                  addressController.value.text;
+                                              String phone =
+                                                  phoneController.value.text;
+                                              String doctorInCharge =
+                                                  doctorInChargeController
+                                                      .value.text;
+                                              String examinatinPurpose =
+                                                  examPurposeController
+                                                      .value.text;
+                                              String patientRemark =
+                                                  patientRemarkController
+                                                      .value.text;
+                                              Patient patient = Patient(
+                                                age: age,
+                                                anatomicLocation:
+                                                    anatomicLocation,
+                                                childhood: childhood,
+                                                dm: dm,
+                                                doctorInCharge: doctorInCharge,
+                                                examPurpose: examinatinPurpose,
+                                                malnutrition: malnutrition,
+                                                phone: phone,
+                                                zone: zone,
+                                                woreda: woreda,
+                                                address: address,
+                                                name: name,
+                                                sex: sex,
+                                                specimens: specimens,
+                                                pneumonia: pneumonia,
+                                                tb: tb,
+                                                hiv: hivStatus,
+                                                remark: patientRemark,
+                                                recurrentPneumonia:
+                                                    recurrentPneumonia,
+                                                mr: mr,
+                                                dateOfBirth: dateOfBirth,
+                                              );
 
-                  !widget.patient.resultAvaiable
-                      ? Container(
-                          // padding: EdgeInsets.all(10),
-                          color: kPageBackground,
-                          child: state is EditingPatientState
-                              ? Center(
-                                  child: CircularProgressIndicator(),
+                                              orderBloc.add(EditPtientInfo(
+                                                  orderId: widget.orderId,
+                                                  patient: patient,
+                                                  index: widget.index));
+                                            }
+                                          },
+                                          borderRadius:
+                                              BorderRadius.circular(37),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: kColorsOrangeDark,
+                                            ),
+                                            height: 62,
+                                            // margin: EdgeInsets.all(20),
+                                            child: Center(
+                                              child: Text(
+                                                widget.canEdit
+                                                    ? 'Edit Patient'
+                                                    : widget.patient
+                                                            .resultAvaiable
+                                                        ? 'View Result'
+                                                        : 'Add Result',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                 )
-                              : InkWell(
-                                  onTap: () {
-                                    String mr = MRController.value.text;
-                                    String name = nameController.value.text;
-                                    //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
-                                    String age = ageController.value.text;
-                                    String zone = zoneController.value.text;
-                                    String woreda = woredaController.value.text;
-                                    String address =
-                                        addressController.value.text;
-                                    String phone = phoneController.value.text;
-                                    String doctorInCharge =
-                                        doctorInChargeController.value.text;
-                                    String examinatinPurpose =
-                                        examPurposeController.value.text;
-                                    String patientRemark =
-                                        patientRemarkController.value.text;
-                                    Patient patient = Patient(
-                                      age: age,
-                                      anatomicLocation: anatomicLocation,
-                                      childhood: childhood,
-                                      dm: dm,
-                                      doctorInCharge: doctorInCharge,
-                                      examPurpose: examinatinPurpose,
-                                      malnutrition: malnutrition,
-                                      phone: phone,
-                                      zone: zone,
-                                      woreda: woreda,
-                                      address: address,
-                                      name: name,
-                                      sex: sex,
-                                      specimens: specimens,
-                                      pneumonia: pneumonia,
-                                      tb: tb,
-                                      hiv: hivStatus,
-                                      remark: patientRemark,
-                                      recurrentPneumonia: recurrentPneumonia,
-                                      mr: mr,
-                                      dateOfBirth: dateOfBirth,
-                                    );
+                              : Container(),
 
-                                    BlocProvider.of<OrderBloc>(context).add(
-                                        EditPtientInfo(
-                                            orderId: widget.orderId,
-                                            patient: patient,
-                                            index: widget.index));
+                          widget.patient.resultAvaiable
+                              ? InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      AddTestResultPage
+                                          .addTestResultPageRouteName,
+                                      arguments: {
+                                        'orderId': widget.orderId,
+                                        'patient': widget.patient,
+                                        'index': widget.index,
+                                      },
+                                    );
                                   },
                                   borderRadius: BorderRadius.circular(37),
                                   child: Container(
@@ -766,7 +979,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                     // margin: EdgeInsets.all(20),
                                     child: Center(
                                       child: Text(
-                                        'Edit Patient',
+                                        'View Result',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20,
@@ -774,48 +987,101 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       ),
                                     ),
                                   ),
-                                ),
-                        )
-                      : Container(),
+                                )
+                              : Container(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+      ),
+    );
+  }
 
-                  widget.patient.resultAvaiable
-                      ? InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              AddTestResultPage.addTestResultPageRouteName,
-                              arguments: {
-                                'orderId': widget.orderId,
-                                'patient': widget.patient,
-                                'index': widget.index,
-                              },
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(37),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: kColorsOrangeDark,
-                            ),
-                            height: 62,
-                            // margin: EdgeInsets.all(20),
-                            child: Center(
-                              child: Text(
-                                'View Result',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(),
+  Widget getSpecimensFromState(
+    OrderState state,
+  ) {
+    if (state is LoadedSingleOrder && state.order.status == 'Draft') {
+      return Container(
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.start,
+          direction: Axis.horizontal,
+          children: specimens
+              .map(
+                (e) => Stack(
+                  alignment: AlignmentDirectional.topEnd,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(20),
+                      margin: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Type : ${e.type}'),
+                          Text('ID : ${e.id}'),
+                          Text('Examination Type : ${e.examinationType}'),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          specimens.remove(e);
+                        });
+                      },
+                      icon: Icon(
+                        Icons.close,
+                      ),
+                    )
+                  ],
+                ),
+              )
+              .toList(),
+        ),
+      );
+    }
+    return Container(
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.start,
+        direction: Axis.horizontal,
+        children: specimens
+            .map(
+              (e) => Stack(
+                alignment: AlignmentDirectional.topEnd,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(20),
+                    margin: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Type : ${e.type}'),
+                        Text('ID : ${e.id}'),
+                        Text('Examination Type : ${e.examinationType}'),
+                        // Text('Assessed : ${e.assessed}'),
+                        !e.rejected ? Text('Accepted : ${!e.rejected}') : Container(),
+                        e.rejected ? Text('Rejected : ${e.rejected}') : Container(),
+                        e.rejected ? Text('Reason : ${e.reason}') : Container(),
+                      
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
-          );
-        }),
+            )
+            .toList(),
       ),
     );
   }

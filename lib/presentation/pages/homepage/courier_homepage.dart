@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/data/repositories/auth_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -72,14 +73,15 @@ class _CourierHomePageState extends State<CourierHomePage> {
                           padding: EdgeInsets.only(top: 10, right: 10),
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, NotificationsPage.notificationsRouteName);
+                              Navigator.pushNamed(context,
+                                  NotificationsPage.notificationsRouteName);
                             },
                             child: Badge(
                               badgeContent: Text('${counter}'),
-                          
+
                               badgeColor: Colors.white,
                               // padding: EdgeInsets.only(top: 10),
-                          
+
                               child: Icon(
                                 Icons.notifications_outlined,
                                 color: Colors.black,
@@ -88,6 +90,22 @@ class _CourierHomePageState extends State<CourierHomePage> {
                           ),
                         );
                       }),
+                  Center(
+                    child: FutureBuilder(
+                        future: AuthRepository.currentUser(),
+                        builder: (context,
+                            AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              'Logged in  as: ${snapshot.data?['name'] ?? ''}',
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            );
+                          }
+                          return Container();
+                        }),
+                  ),
                   IconButton(
                     icon: Icon(
                       Icons.logout,

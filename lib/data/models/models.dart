@@ -182,22 +182,34 @@ class Specimen {
     this.type,
     this.id,
     this.examinationType,
+    this.assessed = false,
+    this.rejected = false,
+    this.reason,
   });
 
   String? type;
   String? id;
   String? examinationType;
+  bool assessed;
+  bool rejected;
+  String? reason;
 
   factory Specimen.fromJson(Map<String, dynamic> json) => Specimen(
         type: json["type"],
         id: json["id"],
         examinationType: json['examination_type'],
+        reason: json['reason'],
+        assessed: json['assessed'] ?? false,
+        rejected: json['rejected'] ?? false,
       );
 
   Map<String, dynamic> toJson() => {
         "type": type,
         "id": id,
         'examination_type': examinationType,
+        'assessed': assessed,
+        'rejected': rejected,
+        'reason': reason,
       };
 }
 

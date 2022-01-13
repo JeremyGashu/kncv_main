@@ -31,11 +31,8 @@ class AddTestResultPage extends StatefulWidget {
 }
 
 class _AddTestResultPageState extends State<AddTestResultPage> {
-  final TextEditingController resultRRController = TextEditingController();
   final TextEditingController resitrationNumberController =
       TextEditingController();
-  final TextEditingController mtbResultController = TextEditingController();
-  final TextEditingController quantityController = TextEditingController();
   OrderBloc orderBloc = sl<OrderBloc>();
 
   String? resultRR;
@@ -48,13 +45,16 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
   @override
   void initState() {
     if (widget.patient.resultAvaiable) {
-      resultRRController.text = widget.patient.testResult?.resultRr ?? '';
       resitrationNumberController.text =
           widget.patient.testResult?.labRegistratinNumber ?? '';
-      mtbResultController.text = widget.patient.testResult?.mtbResult ?? '';
-      quantityController.text = widget.patient.testResult?.quantity ?? '';
+
       time = widget.patient.testResult?.resultTime ?? '';
       date = widget.patient.testResult?.resultDate ?? '';
+
+      
+      mtbResult = widget.patient.testResult?.mtbResult;
+      quantity = widget.patient.testResult?.quantity;
+      resultRR = widget.patient.testResult?.resultRr;
     }
     super.initState();
   }

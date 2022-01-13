@@ -19,7 +19,17 @@ class AddedPatient extends OrderState {}
 
 class DeletingOrder extends OrderState {}
 
-class DeletedOrder extends OrderState {}
+class DeletedOrder extends OrderState {
+  final Order order;
+
+  DeletedOrder(this.order);
+  @override
+  List<Object> get props => [order];
+}
+
+class EditingOrder extends OrderState {}
+
+class EditedOrder extends OrderState {}
 
 class AcceptingOrderCourier extends OrderState {}
 

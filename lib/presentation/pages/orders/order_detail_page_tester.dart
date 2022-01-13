@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
+import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
-import 'package:kncv_flutter/presentation/pages/orders/result_page.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
@@ -26,6 +26,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
   String? inColdChain;
   String? sputumCondition;
   String? stoolCondition;
+
+  bool sendingFeedback = false;
 
   OrderBloc ordersBloc = sl<OrderBloc>();
   @override
@@ -200,423 +202,54 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                     )),
                               ),
 
+                              //change the way to be
                               SliverToBoxAdapter(
-                                child: state.order.patients!.length > 0
-                                    ? ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: state.order.patients!.length,
-                                        itemBuilder: (ctx, index) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              // showDialog(
-                                              //     context: context,
-                                              //     builder: (ctx) {
-                                              //       return Container(
-                                              //         padding:
-                                              //             EdgeInsets.all(10),
-                                              //         width: double.infinity,
-                                              //         height: 300,
-                                              //         child: Dialog(
-                                              //           child: Column(
-                                              //             mainAxisSize:
-                                              //                 MainAxisSize.min,
-                                              //             children: [
-                                              //               Container(
-                                              //                 // width: double
-                                              //                 //     .infinity,
-                                              //                 // height: 300,
-                                              //                 child: Wrap(
-                                              //                   children: state
-                                              //                       .order
-                                              //                       .patients![
-                                              //                           index]
-                                              //                       .specimens!
-                                              //                       .map((e) =>
-                                              //                           Container(
-                                              //                             width:
-                                              //                                 120,
-                                              //                             height:
-                                              //                                 80,
-                                              //                             margin:
-                                              //                                 EdgeInsets.all(10),
-                                              //                             decoration:
-                                              //                                 BoxDecoration(
-                                              //                               color:
-                                              //                                   Colors.grey.withOpacity(0.2),
-                                              //                               borderRadius:
-                                              //                                   BorderRadius.circular(15),
-                                              //                             ),
-                                              //                             padding: EdgeInsets.symmetric(
-                                              //                                 vertical: 20,
-                                              //                                 horizontal: 10),
-                                              //                             child:
-                                              //                                 Column(
-                                              //                               // crossAxisAlignment: CrossAxisAlignment.start,
-                                              //                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              //                               children: [
-                                              //                                 Text(
-                                              //                                   e.id ?? '',
-                                              //                                   style: TextStyle(
-                                              //                                     fontSize: 20,
-                                              //                                   ),
-                                              //                                 ),
-                                              //                                 Text(e.type ?? ''),
-                                              //                               ],
-                                              //                             ),
-                                              //                           ))
-                                              //                       .toList(),
-                                              //                 ),
-                                              //               ),
-                                              //               SizedBox(
-                                              //                 height: 10,
-                                              //               ),
-                                              //               TextButton(
-                                              //                   onPressed: () {
-                                              //                     Navigator.pop(
-                                              //                         ctx);
-                                              //                   },
-                                              //                   child:
-                                              //                       Text('OK')),
-                                              //             ],
-                                              //           ),
-                                              //         ),
-                                              //       );
-                                              //     });
-
-                                              if (state.order.patients![index]
-                                                  .resultAvaiable) {
-                                                Navigator.pushNamed(
-                                                    context,
-                                                    EditPatientInfoPage
-                                                        .editPatientInfoRouteName,
-                                                    arguments: {
-                                                      'patient': state.order
-                                                          .patients![index],
-                                                      'orderId': widget.orderId,
-                                                      'index': index
-                                                    });
-                                              } else {
-                                                Navigator.pushNamed(
-                                                    context,
-                                                    AddTestResultPage
-                                                        .addTestResultPageRouteName,
-                                                    arguments: {
-                                                      'orderId': widget.orderId,
-                                                      'patient': state.order
-                                                          .patients![index],
-                                                      'index': index,
-                                                    });
-                                              }
-                                              // print(state.order.patients![index].toJson());
-                                            },
-                                            child: buildPatients(
-                                              context,
-                                              state.order.patients![index],
-                                              widget.orderId,
-                                              index,
-                                              false,
-                                            ),
-                                          );
-                                        })
-                                    : Center(
-                                        child: Text('No patient added!'),
-                                      ),
+                                child: state.order.status ==
+                                        'Being Assessed By Tester'
+                                    ? sendingFeedback
+                                        ? Center(
+                                            child: CircularProgressIndicator())
+                                        : buildSpecimensList(state.order)
+                                    : state.order.patients!.length > 0
+                                        ? ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemCount:
+                                                state.order.patients!.length,
+                                            itemBuilder: (ctx, index) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  Navigator.pushNamed(
+                                                      context,
+                                                      EditPatientInfoPage
+                                                          .editPatientInfoRouteName,
+                                                      arguments: {
+                                                        'patient': state.order
+                                                            .patients![index],
+                                                        'orderId':
+                                                            widget.orderId,
+                                                        'index': index,
+                                                        'canEdit': false,
+                                                        'canAddResult': true,
+                                                      });
+                                                },
+                                                child: buildPatients(
+                                                  context,
+                                                  state.order.patients![index],
+                                                  widget.orderId,
+                                                  index,
+                                                  false,
+                                                ),
+                                              );
+                                            })
+                                        : Center(
+                                            child: Text('No patient added!'),
+                                          ),
                               ),
                             ],
                           ),
                         ),
-                        // state.order.status == 'Waiting for Confirmation'
-                        //     ? Positioned(
-                        //         bottom: 0,
-                        //         left: 10,
-                        //         right: 10,
-                        //         child: Container(
-                        //           padding: EdgeInsets.all(10),
-                        //           color: kPageBackground,
-                        //           child: InkWell(
-                        //             onTap: () async {
-                        //               showDialog(
-                        //                   context: context,
-                        //                   builder: (ctx) {
-                        //                     return AlertDialog(
-                        //                       title: Text('Accept Order?'),
-                        //                       content: Text(
-                        //                           'Are you sure you want to accept this order?'),
-                        //                       actions: [
-                        //                         TextButton(
-                        //                             onPressed: () {
-                        //                               Navigator.pop(ctx);
-                        //                               ordersBloc.add(
-                        //                                   AcceptOrderCourier(
-                        //                                       state.order
-                        //                                           .orderId!));
-                        //                             },
-                        //                             child: Text('Yes')),
-                        //                         TextButton(
-                        //                             onPressed: () {
-                        //                               Navigator.pop(ctx);
-                        //                             },
-                        //                             child: Text('Cancel'))
-                        //                       ],
-                        //                     );
-                        //                   });
-                        //             },
-                        //             borderRadius: BorderRadius.circular(37),
-                        //             child: Container(
-                        //               decoration: BoxDecoration(
-                        //                 borderRadius: BorderRadius.circular(10),
-                        //                 color: kColorsOrangeDark,
-                        //               ),
-                        //               height: 62,
-                        //               // margin: EdgeInsets.all(20),
-                        //               child: Center(
-                        //                 child: Text(
-                        //                   'Accept Order',
-                        //                   style: TextStyle(
-                        //                       fontWeight: FontWeight.bold,
-                        //                       fontSize: 20,
-                        //                       color: Colors.white),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       )
-                        //     : Container(),
-                        // state.order.status == 'Picked Up'
-                        //     ? Positioned(
-                        //         bottom: 0,
-                        //         left: 10,
-                        //         right: 10,
-                        //         child: Container(
-                        //           padding: EdgeInsets.all(10),
-                        //           color: kPageBackground,
-                        //           child: InkWell(
-                        //             onTap: () async {
-                        //               bool confirm = await showModalBottomSheet(
-                        //                   backgroundColor: Colors.transparent,
-                        //                   isScrollControlled: true,
-                        //                   context: context,
-                        //                   builder: (ctx) {
-                        //                     return StatefulBuilder(
-                        //                         builder: (ctx, ss) {
-                        //                       return SingleChildScrollView(
-                        //                         child: Container(
-                        //                           padding: EdgeInsets.only(
-                        //                             bottom:
-                        //                                 MediaQuery.of(context)
-                        //                                         .viewInsets
-                        //                                         .bottom +
-                        //                                     20,
-                        //                             top: 30,
-                        //                             left: 20,
-                        //                             right: 20,
-                        //                           ),
-                        //                           // padding: EdgeInsets.only(
-
-                        //                           //     bottom: 20),
-                        //                           decoration: BoxDecoration(
-                        //                             color: Colors.white,
-                        //                             borderRadius:
-                        //                                 BorderRadius.only(
-                        //                               topLeft: Radius.circular(
-                        //                                 30,
-                        //                               ),
-                        //                               topRight: Radius.circular(
-                        //                                 30,
-                        //                               ),
-                        //                             ),
-                        //                           ),
-                        //                           child: Column(
-                        //                             mainAxisSize:
-                        //                                 MainAxisSize.min,
-                        //                             crossAxisAlignment:
-                        //                                 CrossAxisAlignment
-                        //                                     .start,
-                        //                             children: [
-                        //                               Container(
-                        //                                 width: double.infinity,
-                        //                                 child: Text(
-                        //                                   'Confirm Arrival',
-                        //                                   textAlign:
-                        //                                       TextAlign.center,
-                        //                                   style: TextStyle(
-                        //                                     fontSize: 32,
-                        //                                     fontWeight:
-                        //                                         FontWeight.bold,
-                        //                                   ),
-                        //                                 ),
-                        //                               ),
-                        //                               SizedBox(
-                        //                                 height: 30,
-                        //                               ),
-                        //                               _buildInputField(
-                        //                                   label: 'Receiver',
-                        //                                   hint:
-                        //                                       'Enter Receiver',
-                        //                                   controller:
-                        //                                       _receiverController),
-                        //                               SizedBox(
-                        //                                 height: 30,
-                        //                               ),
-                        //                               GestureDetector(
-                        //                                 onTap: () {
-                        //                                   print(
-                        //                                       _receiverController
-                        //                                           .value.text);
-
-                        //                                   if (_receiverController
-                        //                                           .value.text !=
-                        //                                       '') {
-                        //                                     Navigator.pop(
-                        //                                         ctx, true);
-                        //                                   }
-                        //                                 },
-                        //                                 child: Container(
-                        //                                   decoration:
-                        //                                       BoxDecoration(
-                        //                                     borderRadius:
-                        //                                         BorderRadius
-                        //                                             .circular(
-                        //                                                 10),
-                        //                                     color:
-                        //                                         kColorsOrangeDark,
-                        //                                   ),
-                        //                                   height: 62,
-                        //                                   // margin: EdgeInsets.all(20),
-                        //                                   child: Center(
-                        //                                     child: Text(
-                        //                                       'Confirm',
-                        //                                       style: TextStyle(
-                        //                                           fontWeight:
-                        //                                               FontWeight
-                        //                                                   .bold,
-                        //                                           fontSize: 20,
-                        //                                           color: Colors
-                        //                                               .white),
-                        //                                     ),
-                        //                                   ),
-                        //                                 ),
-                        //                               ),
-                        //                             ],
-                        //                           ),
-                        //                         ),
-                        //                       );
-                        //                     });
-                        //                   });
-
-                        //               if (confirm == true) {
-                        //                 ordersBloc.add(ApproveArrivalCourier(
-                        //                     state.order.orderId!,
-                        //                     _receiverController.value.text));
-                        //               }
-                        //             },
-                        //             borderRadius: BorderRadius.circular(37),
-                        //             child: Container(
-                        //               decoration: BoxDecoration(
-                        //                 borderRadius: BorderRadius.circular(10),
-                        //                 color: kColorsOrangeDark,
-                        //               ),
-                        //               height: 62,
-                        //               // margin: EdgeInsets.all(20),
-                        //               child: Center(
-                        //                 child: Text(
-                        //                   'Approve Arrival',
-                        //                   style: TextStyle(
-                        //                       fontWeight: FontWeight.bold,
-                        //                       fontSize: 20,
-                        //                       color: Colors.white),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       )
-                        //     : Container(),
-                        state.order.status == 'Received'
-                            ? Positioned(
-                                bottom: 0,
-                                left: 10,
-                                right: 10,
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  color: kPageBackground,
-                                  child: InkWell(
-                                    onTap: () async {
-                                      var create = await showModalBottomSheet(
-                                          backgroundColor: Colors.transparent,
-                                          isScrollControlled: true,
-                                          context: context,
-                                          builder: (ctx) {
-                                            return ArrivalConfirmation(ctx);
-                                          });
-
-                                      if (create == true) {
-                                        ordersBloc.add(
-                                          ApproveArrivalTester(
-                                            order: state.order,
-                                            sputumCondition: sputumCondition,
-                                            stoolCondition: stoolCondition,
-                                            coldChainStatus: inColdChain,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    borderRadius: BorderRadius.circular(37),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: kColorsOrangeDark,
-                                      ),
-                                      height: 62,
-                                      // margin: EdgeInsets.all(20),
-                                      child: Center(
-                                        child: Text(
-                                          'Confirm Arrival',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                        // state.order.status == 'Accepted'
-                        //     ? Positioned(
-                        //         bottom: 0,
-                        //         left: 10,
-                        //         right: 10,
-                        //         child: Container(
-                        //           padding: EdgeInsets.all(10),
-                        //           color: kPageBackground,
-                        //           child: InkWell(
-                        //             onTap: () async {},
-                        //             borderRadius: BorderRadius.circular(37),
-                        //             child: Container(
-                        //               decoration: BoxDecoration(
-                        //                 borderRadius: BorderRadius.circular(10),
-                        //                 color: kColorsOrangeDark,
-                        //               ),
-                        //               height: 62,
-                        //               // margin: EdgeInsets.all(20),
-                        //               child: Center(
-                        //                 child: Text(
-                        //                   'Add Test Result',
-                        //                   style: TextStyle(
-                        //                       fontWeight: FontWeight.bold,
-                        //                       fontSize: 20,
-                        //                       color: Colors.white),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       )
-                        //     : Container(),
                       ],
                     )
                   : Center(
@@ -625,6 +258,435 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
             ),
           );
         });
+  }
+
+  Widget buildSpecimensList(Order order) {
+    return ListView.builder(
+      shrinkWrap: true,
+      primary: false,
+      itemCount: order.patients?.length ?? 0,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            Container(
+              width: double.infinity,
+              child: Text(
+                '${order.patients?[index].name ?? ''}\'s Specimens',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              primary: false,
+              itemCount: order.patients![index].specimens?.length ?? 0,
+              itemBuilder: (ctx, i) {
+                return Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: order.patients![index].specimens![i].assessed
+                        ? Colors.green.withOpacity(0.2)
+                        : Colors.yellow.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListTile(
+                    title: Text(
+                      order.patients![index].specimens![i].type ?? '',
+                    ),
+                    subtitle: Text(
+                        'ID : ${order.patients![index].specimens![i].id ?? ''}'),
+                    trailing: !order.patients![index].specimens![i].assessed
+                        ? TextButton(
+                            onPressed: () async {
+                              bool create = await showModalBottomSheet(
+                                  backgroundColor: Colors.transparent,
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (ctx) {
+                                    return AssessSpecimen(ctx,
+                                        order.patients![index].specimens![i]);
+                                  });
+
+                              if (create == true &&
+                                  order.patients![index].specimens![i].type ==
+                                      'Sputum') {
+                                order.patients![index].specimens![i].assessed =
+                                    true;
+                                order.patients![index].specimens![i].rejected =
+                                    'Mucoid Purulent' != sputumCondition;
+                                order.patients![index].specimens![i].reason =
+                                    'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
+
+                                setState(() {
+                                  sendingFeedback = true;
+                                });
+
+                                bool success =
+                                    await OrderRepository.editSpecimenFeedback(
+                                        index: index,
+                                        order: order,
+                                        patient: order.patients![index]);
+
+                                if (success) {
+                                  addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Accepted Sputum specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Sputum Specimen have accepted by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got accepted by courier!',
+                                      courier: false);
+                                  ordersBloc.add(
+                                      LoadSingleOrder(orderId: widget.orderId));
+                                }
+
+                                if ('Mucoid Purulent' != sputumCondition) {
+                                  addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Rejected Sputum specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Sputum Specimen have been rejected by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got rejected by tester!',
+                                      courier: false);
+                                }
+
+                                setState(() {
+                                  inColdChain = null;
+                                  stoolCondition = null;
+                                  sputumCondition = null;
+                                  sendingFeedback = false;
+                                });
+                              } else if (create == true &&
+                                  order.patients![index].specimens![i].type ==
+                                      'Stool') {
+                                order.patients![index].specimens![i].assessed =
+                                    true;
+                                order.patients![index].specimens![i].rejected =
+                                    'Formed' != stoolCondition;
+                                order.patients![index].specimens![i].reason =
+                                    'Stool Specimen is in $stoolCondition type. Not in Formed State!';
+
+                                setState(() {
+                                  sendingFeedback = true;
+                                });
+
+                                bool success =
+                                    await OrderRepository.editSpecimenFeedback(
+                                        index: index,
+                                        order: order,
+                                        patient: order.patients![index]);
+
+                                if (success) {
+                                  addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Accepted Stool specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Stool Specimen is accepted by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got accepted by tester!',
+                                      courier: false);
+                                  setState(() {
+                                    sendingFeedback = false;
+                                  });
+                                  ordersBloc.add(
+                                      LoadSingleOrder(orderId: widget.orderId));
+                                }
+                                if ('Formed' != stoolCondition) {
+                                  addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Rejected Stool specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Stool Specimen have been rejected by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got rejected by tester!',
+                                      courier: false);
+
+                                  ordersBloc.add(
+                                      LoadSingleOrder(orderId: widget.orderId));
+                                }
+
+                                setState(() {
+                                  inColdChain = null;
+                                  stoolCondition = null;
+                                  sendingFeedback = false;
+                                  sputumCondition = null;
+                                });
+                              } else if (create == true &&
+                                  order.patients![index].specimens![i].type ==
+                                      'Urine') {
+                                order.patients![index].specimens![i].assessed =
+                                    true;
+
+                                order.patients![index].specimens![i].rejected =
+                                    false;
+                                order.patients![index].specimens![i].reason =
+                                    '';
+
+                                setState(() {
+                                  sendingFeedback = true;
+                                });
+
+                                bool success =
+                                    await OrderRepository.editSpecimenFeedback(
+                                        index: index,
+                                        order: order,
+                                        patient: order.patients![index]);
+
+                                if (success) {
+                                  addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Accepted Urine specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Urine Specimen is accepted by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got accepted by courier!',
+                                      courier: false);
+                                  setState(() {
+                                    sendingFeedback = false;
+                                  });
+                                  ordersBloc.add(
+                                      LoadSingleOrder(orderId: widget.orderId));
+                                }
+
+                                setState(() {
+                                  inColdChain = null;
+                                  stoolCondition = null;
+                                  sendingFeedback = false;
+                                  sputumCondition = null;
+                                });
+                              }
+                            },
+                            child: Text(
+                              'Assess',
+                              style: TextStyle(
+                                color: kColorsOrangeLight,
+                              ),
+                            ),
+                          )
+                        : Icon(
+                            order.patients![index].specimens![i].rejected
+                                ? Icons.close
+                                : Icons.check,
+                          ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget AssessSpecimen(BuildContext context, Specimen specimen) {
+    return Container(
+      padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(
+            30,
+          ),
+          topRight: Radius.circular(
+            30,
+          ),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            child: Text(
+              'Assess Specimen',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+
+          //cold chain status
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 20, bottom: 10),
+            child: Text(
+              'Cold Chain Status',
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: StatefulBuilder(builder: (context, ss) {
+              return DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                value: inColdChain,
+                hint: Text('Transported in cold Chain?'),
+                items: <String>[
+                  'Yes, end to end',
+                  'Yes, partly',
+                  'No, not at all'
+                ].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    inColdChain = val;
+                  });
+
+                  ss(() {});
+                },
+              ));
+            }),
+          ),
+
+          //sputum cndition
+          specimen.type == 'Sputum'
+              ? Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(top: 20, bottom: 10),
+                  child: Text(
+                    'Sputum Condition',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                  ),
+                )
+              : specimen.type == 'Stool'
+                  ? Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.only(top: 20, bottom: 10),
+                      child: Text(
+                        'Stool Condition',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w500),
+                      ),
+                    )
+                  : Container(),
+          specimen.type == 'Sputum'
+              ? Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: StatefulBuilder(builder: (context, ss) {
+                    return DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                      value: sputumCondition,
+                      hint: Text('Sputum Condition?'),
+                      items: <String>[
+                        'Mucoid Purulent',
+                        'Bloodstreak',
+                        'Saliva'
+                      ].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          sputumCondition = val;
+                        });
+                        ss(() {});
+                      },
+                    ));
+                  }),
+                )
+              : specimen.type == 'Stool'
+                  ? Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: StatefulBuilder(builder: (context, ss) {
+                        return DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: stoolCondition,
+                          hint: Text('Stool Condition?'),
+                          items: <String>['Formed', 'Unformed', 'Liquid']
+                              .map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              stoolCondition = val;
+                            });
+                            ss(() {});
+                          },
+                        ));
+                      }),
+                    )
+                  : Container(),
+
+          SizedBox(
+            height: 20,
+          ),
+
+          GestureDetector(
+            onTap: () {
+              if (inColdChain != null) {
+                // ordersBloc.add(event)
+                Navigator.pop(context, true);
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: kColorsOrangeDark,
+              ),
+              height: 62,
+              // margin: EdgeInsets.all(20),
+              child: Center(
+                child: Text(
+                  'Assess',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          // SelectorPage(),
+        ],
+      ),
+    );
   }
 
   Widget ArrivalConfirmation(BuildContext context) {
@@ -726,7 +788,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                   child: DropdownButton<String>(
                 value: sputumCondition,
                 hint: Text('Sputum Condition?'),
-                items: <String>['Mucoid Murulent', 'Bloodstreak', 'Saliva']
+                items: <String>['Mucoid Purulent', 'Bloodstreak', 'Saliva']
                     .map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

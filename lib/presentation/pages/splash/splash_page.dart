@@ -37,19 +37,25 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
+      body: BlocConsumer<AuthBloc, AuthState>(listener: (context, state) async {
         if (state is UnauthenticatedState || state is InitialState) {
           Navigator.pushNamedAndRemoveUntil(
               context, IntroPageOne.introPageOneRouteName, (route) => false);
         } else if (state is AuthenticatedState) {
           print('type => ${state.type}');
           if (state.type == 'COURIER_ADMIN') {
+            await Future.delayed(Duration(seconds: 2));
+
             Navigator.pushNamedAndRemoveUntil(context,
                 CourierHomePage.courierHomePageRouteName, (route) => false);
           } else if (state.type == 'INSTITUTIONAL_ADMIN') {
+            await Future.delayed(Duration(seconds: 2));
+
             Navigator.pushNamedAndRemoveUntil(context,
                 SenderHomePage.senderHomePageRouteName, (route) => false);
           } else if (state.type == 'TEST_CENTER_ADMIN') {
+            await Future.delayed(Duration(seconds: 2));
+
             Navigator.pushNamedAndRemoveUntil(context,
                 ReceiverHomePage.receiverHomepageRouteName, (route) => false);
           } else {
@@ -58,31 +64,28 @@ class _SplashPageState extends State<SplashPage> {
           }
         }
       }, builder: (context, state) {
-        if (state is LoadingState) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(child: Image.asset('assets/images/hand.png')),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Container(child: Image.asset('assets/images/KNCV.png')),
-                  ],
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Container(child: Image.asset('assets/images/TBtext.png')),
-              ],
-            ),
-          );
-        }
-        return Container();
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(child: Image.asset('assets/images/hand.png')),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Container(child: Image.asset('assets/images/KNCV.png')),
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Container(child: Image.asset('assets/images/TBtext.png')),
+            ],
+          ),
+        );
       }),
     );
   }

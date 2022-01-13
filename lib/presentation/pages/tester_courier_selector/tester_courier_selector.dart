@@ -7,7 +7,13 @@ import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bl
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_state.dart';
 
 class SelectorPage extends StatefulWidget {
+  final String? buttonText;
   static const String selectorPageRouteName = 'selector page route name';
+
+  const SelectorPage({
+    Key? key,
+    this.buttonText = 'Create Order',
+  }) : super(key: key);
   @override
   _SelectorPageState createState() => _SelectorPageState();
 }
@@ -19,6 +25,9 @@ class _SelectorPageState extends State<SelectorPage> {
 
   @override
   void initState() {
+    BlocProvider.of<TesterCourierBloc>(context).courier = null;
+    BlocProvider.of<TesterCourierBloc>(context).tester = null;
+    BlocProvider.of<TesterCourierBloc>(context).date = null;
     super.initState();
   }
 
@@ -42,13 +51,12 @@ class _SelectorPageState extends State<SelectorPage> {
                       int month = t.month;
                       int day = t.day;
                       int year = t.year;
-                      
+
                       String d = '$day-$month-$year';
                       print(d);
                       setState(() {
                         date = d;
-                        BlocProvider.of<TesterCourierBloc>(context).date =
-                              date;
+                        BlocProvider.of<TesterCourierBloc>(context).date = date;
                       });
 
                       // setState(() {
@@ -172,6 +180,7 @@ class _SelectorPageState extends State<SelectorPage> {
             ),
             InkWell(
               onTap: () {
+                print('Popping');
                 if (BlocProvider.of<TesterCourierBloc>(context).tester !=
                         null &&
                     BlocProvider.of<TesterCourierBloc>(context).courier !=
@@ -189,7 +198,7 @@ class _SelectorPageState extends State<SelectorPage> {
                 // margin: EdgeInsets.all(20),
                 child: Center(
                   child: Text(
-                    'Create Order',
+                    widget.buttonText ?? 'Create Order',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,

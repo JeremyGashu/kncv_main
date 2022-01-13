@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: MediaQuery.of(context).size.height * 0.4,
                   child: Center(
                       child: Text(
-                    'e-Specimen e-Referral System Ethiopia',
+                    'Begize',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 46,

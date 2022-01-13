@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/data/repositories/auth_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -89,6 +90,22 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                           ),
                         );
                       }),
+                      Center(
+                    child: FutureBuilder(
+                        future: AuthRepository.currentUser(),
+                        builder: (context,
+                            AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              'Logged in  as: ${snapshot.data?['name'] ?? ''}',
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            );
+                          }
+                          return Container();
+                        }),
+                  ),
                   IconButton(
                     icon: Icon(
                       Icons.logout,

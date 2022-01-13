@@ -45,7 +45,7 @@ class ReportPage extends StatelessWidget {
                       ),
                       pw.SizedBox(height: 10),
                       pw.Text(
-                        'Age : ${patient.age ?? ''}',
+                        'Date of Birth : ${patient.dateOfBirth ?? ''}',
                         style: pw.TextStyle(
                           // color: Colors.black87,
                           fontSize: 13,
@@ -132,6 +132,15 @@ class ReportPage extends StatelessWidget {
                       pw.SizedBox(height: 10),
                       pw.Text(
                         'Pneumonia : ${patient.recurrentPneumonia ?? ''}',
+                        style: pw.TextStyle(
+                          // color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+
+                      pw.SizedBox(height: 10),
+                      pw.Text(
+                        'Remaark : ${patient.remark ?? ''}',
                         style: pw.TextStyle(
                           // color: Colors.black87,
                           fontSize: 13,

@@ -15,21 +15,27 @@ class AuthRepository {
     return null;
   }
 
-  Future<Map<String, dynamic>> currentUser() async {
-    User? user = auth.currentUser;
+  static Future<Map<String, dynamic>> currentUser() async {
+    User? user = FirebaseAuth.instance.currentUser;
     String? uid = user?.uid;
     String? type;
+    String? name;
     print('uid => $uid');
     if (uid != null) {
-      var userData = await database
+      var userData = await FirebaseFirestore.instance
           .collection('users')
           .where('user_id', isEqualTo: uid)
           .get();
       if (userData.docs.isNotEmpty) {
         type = userData.docs[0].data()['type'];
+        name = userData.docs[0].data()['name'];
       }
     }
-    return {'user': user, 'type': type};
+    return {
+      'user': user,
+      'type': type,
+      'name': name,
+    };
   }
 
   Future<bool?> logoutUser() async {
