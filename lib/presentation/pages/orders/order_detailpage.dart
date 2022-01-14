@@ -85,8 +85,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               content: 'New order from ${state.order.sender} is ready.!',
             );
           } else if (state is ApprovedArrivalCourier) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Courier collected Order!')));
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Courier collected Order!')));
             addNotification(
               orderId: widget.orderId,
               courierContent:
@@ -481,9 +481,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                         .order.patients![index],
                                                     'orderId': widget.orderId,
                                                     'index': index,
-                                                    'canEdit': ['Draft']
-                                                        .contains(
-                                                            state.order.status),
+                                                    'canEdit':
+                                                        state.order.status ==
+                                                            'Draft',
                                                   });
                                             },
                                             child: buildPatients(
@@ -494,6 +494,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                               deletable: state.order.status ==
                                                       'Waiting for Confirmation' ||
                                                   state.order.status == 'Draft',
+                                                  order: state.order,
                                             ),
                                           );
                                         })
@@ -709,7 +710,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   Container buildPatients(
       BuildContext context, Patient patient, String orderId, int index,
-      {bool deletable = true}) {
+      {bool deletable = true, required Order order}) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -849,12 +850,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       //                         'Cant edit this order! It is already accepted!')));
                       //                         return;
                       //           }
+
                       Navigator.pushNamed(
                           context, EditPatientInfoPage.editPatientInfoRouteName,
                           arguments: {
-                            'patient': patient,
-                            'orderId': orderId,
-                            'index': index
+                            'patient': order.patients![index],
+                            'orderId': widget.orderId,
+                            'index': index,
+                            'canEdit': order.status == 'Draft',
                           });
                     },
                     child: Container(

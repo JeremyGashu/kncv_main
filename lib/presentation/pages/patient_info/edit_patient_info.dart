@@ -26,7 +26,7 @@ class EditPatientInfoPage extends StatefulWidget {
     required this.orderId,
     required this.patient,
     required this.index,
-    this.canEdit = true,
+    this.canEdit = false,
     this.canAddResult = false,
   }) : super(key: key);
 
@@ -849,7 +849,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             height: 10,
                           ),
 
-                          !widget.patient.resultAvaiable && widget.canAddResult
+                          !widget.patient.resultAvaiable
                               ? Container(
                                   // padding: EdgeInsets.all(10),
                                   color: kPageBackground,

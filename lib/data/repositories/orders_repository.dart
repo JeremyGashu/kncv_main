@@ -51,7 +51,6 @@ class OrderRepository {
     var orders = await ordersCollection
         .where('tester_id', isEqualTo: testCenter?['key'])
         .where('status', whereIn: [
-      'Picked Up',
       'Arrived',
       'Accepted',
       'Confirmed',
