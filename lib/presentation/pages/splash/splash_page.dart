@@ -39,6 +39,7 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(listener: (context, state) async {
         if (state is UnauthenticatedState || state is InitialState) {
+          await Future.delayed(Duration(seconds: 2));
           Navigator.pushNamedAndRemoveUntil(
               context, IntroPageOne.introPageOneRouteName, (route) => false);
         } else if (state is AuthenticatedState) {
@@ -59,6 +60,7 @@ class _SplashPageState extends State<SplashPage> {
             Navigator.pushNamedAndRemoveUntil(context,
                 ReceiverHomePage.receiverHomepageRouteName, (route) => false);
           } else {
+            await Future.delayed(Duration(seconds: 2));
             Navigator.pushNamedAndRemoveUntil(
                 context, LoginPage.loginPageRouteName, (route) => false);
           }

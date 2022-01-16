@@ -107,7 +107,7 @@ class ReportPage extends StatelessWidget {
                       ),
                       pw.SizedBox(height: 10),
                       pw.Text(
-                        'Anatomic Location : ${patient.anatomicLocation ?? ''}',
+                        'Anatomic Location : ${patient.siteOfTB ?? ''}',
                         style: pw.TextStyle(
                           // color: Colors.black87,
                           fontSize: 13,
@@ -317,7 +317,7 @@ class ReportPage extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Anatomic Location : ${patient.anatomicLocation ?? ''}',
+                      'Anatomic Location : ${patient.siteOfTB ?? ''}',
                       style: TextStyle(
                         color: Colors.black87,
                         fontSize: 13,

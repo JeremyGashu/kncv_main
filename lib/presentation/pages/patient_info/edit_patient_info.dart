@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -35,6 +34,27 @@ class EditPatientInfoPage extends StatefulWidget {
 }
 
 class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
+  var siteOfTbChoices = [
+    'Pulmonary',
+    'Extra-pulmonary',
+    'Other',
+  ];
+  var registrationGroupChoices = [
+    'New',
+    'Relapse',
+    'After Default',
+    'After failure of 1st treatment',
+    'After failure of re treatment',
+    'Other'
+  ];
+  var reasonForTestChoices = [
+    'Diagnostic',
+    'Presumptive',
+    'Presumptive RR-TB',
+    'Presumptive MDR-TB',
+    'At X months during treatment',
+    'At X months after treatment'
+  ];
   String? childhood = 'Yes';
   String? tb;
   String? pneumonia;
@@ -47,6 +67,19 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
   String? dateOfBirth;
   String? examinationType;
 
+  //new
+  String? siteOfTB;
+  String? registrationGroup;
+  String? requestedTests;
+  final TextEditingController registrationGroupController =
+      TextEditingController();
+  final TextEditingController siteOfTBController = TextEditingController();
+  final TextEditingController xMonthsDuringController = TextEditingController();
+  final TextEditingController xMonthsAfterController = TextEditingController();
+
+  String? previousTBDrugUse;
+  String? reasonForTest;
+
   String? hivStatus;
 
   List<Specimen> specimens = [];
@@ -55,13 +88,15 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
   final TextEditingController MRController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
+  final TextEditingController ageYearsController = TextEditingController();
   final TextEditingController zoneController = TextEditingController();
   final TextEditingController woredaController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController doctorInChargeController =
       TextEditingController();
+  final TextEditingController ageMonthsController = TextEditingController();
+
   final TextEditingController patientRemarkController = TextEditingController();
   final TextEditingController examPurposeController = TextEditingController();
 
@@ -75,14 +110,14 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
     recurrentPneumonia = widget.patient.recurrentPneumonia;
     dm = widget.patient.dm;
     malnutrition = widget.patient.malnutrition;
-    anatomicLocation = widget.patient.anatomicLocation;
+    anatomicLocation = widget.patient.siteOfTB;
     sex = widget.patient.sex;
     dateOfBirth = widget.patient.dateOfBirth;
     hivStatus = widget.patient.hiv;
 
     MRController.text = widget.patient.mr ?? '';
     nameController.text = widget.patient.name ?? '';
-    ageController.text = widget.patient.age ?? '';
+    ageYearsController.text = widget.patient.age ?? '';
     zoneController.text = widget.patient.zone ?? '';
     woredaController.text = widget.patient.woreda ?? '';
     addressController.text = widget.patient.address ?? '';
@@ -92,6 +127,32 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
     patientRemarkController.text = widget.patient.remark ?? '';
 
     specimens = [...widget.patient.specimens!];
+    if (siteOfTbChoices.contains(widget.patient.siteOfTB)) {
+      siteOfTB = widget.patient.siteOfTB;
+    } else {
+      siteOfTB = 'Other';
+      siteOfTBController.text = widget.patient.siteOfTB ?? '';
+    }
+
+    if (registrationGroupChoices.contains(widget.patient.registrationGroup)) {
+      registrationGroup = widget.patient.registrationGroup;
+    } else {
+      registrationGroup = 'Other';
+      registrationGroupController.text = widget.patient.registrationGroup ?? '';
+    }
+
+    if (reasonForTestChoices.contains(widget.patient.reasonForTest)) {
+      reasonForTest = widget.patient.reasonForTest;
+    } else {
+      // reasonForTest = 'Other';
+      if (widget.patient.reasonForTest!.contains('after')) {
+        reasonForTest = 'At X months after treatment';
+        xMonthsAfterController.text = widget.patient.reasonForTest ?? '';
+      } else {
+        reasonForTest = 'At X months during treatment';
+        xMonthsDuringController.text = widget.patient.reasonForTest ?? '';
+      }
+    }
 
     orderBloc.add(LoadSingleOrder(
       orderId: widget.orderId,
@@ -158,6 +219,17 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                   widget.canEdit,
                               hint: 'Enter Your Name',
                               controller: nameController),
+                          _buildInputField(
+                              label: 'Age',
+                              inputType: TextInputType.numberWithOptions(
+                                  signed: false, decimal: false),
+                              maxCharacters: 2,
+                              editable: !(widget.patient.status == 'Tested') &&
+                                  widget.canEdit,
+                              maxValue: 12,
+                              hint: 'Age (Months)...',
+                              controller: ageMonthsController,
+                              required: true),
                           _labelBuilder('Sex'),
                           GestureDetector(
                             onTap: () {
@@ -193,60 +265,10 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             ),
                           ),
 
-                          _labelBuilder('Date Of Birth'),
-
-                          GestureDetector(
-                              onTap: (widget.patient.resultAvaiable ||
-                                      !widget.canEdit)
-                                  ? () {}
-                                  : () {
-                                      DatePicker.showDatePicker(
-                                        context,
-                                        showTitleActions: true,
-                                        maxTime: DateTime.now(),
-                                        minTime: DateTime.now().subtract(
-                                            Duration(days: (365 * 200))),
-                                        onConfirm: (d) {
-                                          int month = d.month;
-                                          int year = d.year;
-                                          int day = d.day;
-                                          setState(() {
-                                            dateOfBirth = '$day-$month-$year';
-                                            ageController.text =
-                                                calculateAge(d).toString();
-                                          });
-                                        },
-                                        currentTime: DateTime.now(),
-                                        locale: LocaleType.en,
-                                      );
-                                    },
-                              child: Container(
-                                width: double.infinity,
-                                height: 54,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Center(
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.only(left: 20),
-                                    child: Text(
-                                      dateOfBirth ?? 'Please Select Date',
-                                      style: TextStyle(
-                                          color:
-                                              Colors.black87.withOpacity(0.5),
-                                          fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                              )),
-
                           _buildInputField(
-                            editable: false,
                             label: 'Age',
                             hint: 'Please enter Date of Birth',
-                            controller: ageController,
+                            controller: ageYearsController,
                           ),
 
                           _tobLabelBuilder('Address'),
@@ -303,92 +325,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                           //     },
                           //   )),
                           // ),
-                          _labelBuilder('Pneumonia'),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                              value: pneumonia,
-                              hint: Text('Pneumonia'),
-                              items: <String>['Yes', 'No'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  enabled: !widget.patient.resultAvaiable &&
-                                      widget.canEdit,
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                setState(() {
-                                  pneumonia = val;
-                                });
-                              },
-                            )),
-                          ),
-                          _labelBuilder('TB'),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                              value: tb,
-                              hint: Text('TB'),
-                              items: <String>['Yes', 'No'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  enabled: !widget.patient.resultAvaiable &&
-                                      widget.canEdit,
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                setState(() {
-                                  tb = val;
-                                });
-                              },
-                            )),
-                          ),
-                          _labelBuilder('Recurrent Pneumonia'),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                              value: recurrentPneumonia,
-                              hint: Text('Recurrent Pneuomonia'),
-                              items: <String>['Yes', 'No'].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  enabled: !widget.patient.resultAvaiable &&
-                                      widget.canEdit,
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                setState(() {
-                                  recurrentPneumonia = val;
-                                });
-                              },
-                            )),
-                          ),
 
-                          _labelBuilder('Malnutrition'),
+                          _labelBuilder('Site of TB'),
 
                           Container(
                             padding: EdgeInsets.symmetric(
@@ -400,9 +338,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             ),
                             child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
-                              value: malnutrition,
-                              hint: Text('Malnutrition'),
-                              items: <String>['Yes', 'No'].map((String value) {
+                              value: siteOfTB,
+                              hint: Text('Site of TB'),
+                              items: <String>[
+                                'Pulmonary',
+                                'Extra-pulmonary',
+                                'Other'
+                              ].map((String value) {
                                 return DropdownMenuItem<String>(
                                   enabled: !widget.patient.resultAvaiable &&
                                       widget.canEdit,
@@ -412,13 +354,23 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               }).toList(),
                               onChanged: (val) {
                                 setState(() {
-                                  malnutrition = val;
+                                  siteOfTB = val;
                                 });
                               },
                             )),
                           ),
-                          _labelBuilder('DM'),
 
+                          !widget.patient.resultAvaiable &&
+                                  widget.canEdit &&
+                                  siteOfTB == 'Other'
+                              ? TextField(
+                                  controller: siteOfTBController,
+                                  decoration: InputDecoration(
+                                      hintText: 'Enter site of TB...'),
+                                )
+                              : SizedBox(),
+
+                          _labelBuilder('Registration Group'),
                           Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
@@ -429,9 +381,16 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             ),
                             child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
-                              value: dm,
-                              hint: Text('DM'),
-                              items: <String>['Yes', 'No'].map((String value) {
+                              value: registrationGroup,
+                              hint: Text('Registration Group'),
+                              items: <String>[
+                                'New',
+                                'Relapse',
+                                'After Default',
+                                'After failure of 1st treatment',
+                                'After failure of re treatment',
+                                'Other'
+                              ].map((String value) {
                                 return DropdownMenuItem<String>(
                                   enabled: !widget.patient.resultAvaiable &&
                                       widget.canEdit,
@@ -441,14 +400,23 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               }).toList(),
                               onChanged: (val) {
                                 setState(() {
-                                  dm = val;
+                                  registrationGroup = val;
                                 });
                               },
                             )),
                           ),
 
-                          _labelBuilder('HIV'),
+                          !widget.patient.resultAvaiable &&
+                                  widget.canEdit &&
+                                  registrationGroup == 'Other'
+                              ? TextField(
+                                  controller: registrationGroupController,
+                                  decoration: InputDecoration(
+                                      hintText: 'Enter registration group...'),
+                                )
+                              : SizedBox(),
 
+                          _labelBuilder('Previous TB Drug use'),
                           Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
@@ -459,10 +427,14 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             ),
                             child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
-                              value: hivStatus,
-                              hint: Text('HIV'),
-                              items: <String>['Negative', 'Positive', 'Unknown']
-                                  .map((String value) {
+                              value: previousTBDrugUse,
+                              hint: Text('Previous TB Drug use'),
+                              items: <String>[
+                                'New',
+                                'First Line',
+                                'Second Line',
+                                'MDR TB Contact'
+                              ].map((String value) {
                                 return DropdownMenuItem<String>(
                                   enabled: !widget.patient.resultAvaiable &&
                                       widget.canEdit,
@@ -472,7 +444,101 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               }).toList(),
                               onChanged: (val) {
                                 setState(() {
-                                  hivStatus = val;
+                                  previousTBDrugUse = val;
+                                });
+                              },
+                            )),
+                          ),
+
+                          _labelBuilder('Reason for Test'),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                              value: reasonForTest,
+                              hint: Text('Reason for Test'),
+                              items: <String>[
+                                'Diagnostic',
+                                'Presumptive',
+                                'Presumptive RR-TB',
+                                'Presumptive MDR-TB',
+                                'At X months during treatment',
+                                'At X months after treatment'
+                              ].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  enabled: !widget.patient.resultAvaiable &&
+                                      widget.canEdit,
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  reasonForTest = val;
+                                });
+                              },
+                            )),
+                          ),
+
+                          !widget.patient.resultAvaiable &&
+                                  widget.canEdit &&
+                                  reasonForTest ==
+                                      'At X months during treatment'
+                              ? TextField(
+                                  controller: xMonthsDuringController,
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: false, signed: false),
+                                  decoration: InputDecoration(
+                                      hintText: 'X Months during treatment...'),
+                                )
+                              : SizedBox(),
+
+                          !widget.patient.resultAvaiable &&
+                                  widget.canEdit &&
+                                  reasonForTest == 'At X months after treatment'
+                              ? TextField(
+                                  controller: xMonthsAfterController,
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: false, signed: false),
+                                  decoration: InputDecoration(
+                                      hintText: 'X Months after treatment...'),
+                                )
+                              : SizedBox(),
+
+                          _labelBuilder('Requested Tests'),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                              value: requestedTests,
+                              hint: Text('Requested Tests'),
+                              items: <String>[
+                                'Microscopy',
+                                'Xpert MTB/RIF test',
+                                'Culture',
+                                'Drug Susceptibility Testing (DST)',
+                                'Line probe assay'
+                              ].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  requestedTests = val;
                                 });
                               },
                             )),
@@ -487,35 +553,6 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                           ),
 
                           _tobLabelBuilder('Specimen Purpose'),
-                          _labelBuilder('Anatomic Location'),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                              value: anatomicLocation,
-                              hint: Text('Anatomic Location'),
-                              items: <String>['Pulmonary', 'Extra-pulmonary']
-                                  .map((String value) {
-                                return DropdownMenuItem<String>(
-                                  enabled: !widget.patient.resultAvaiable &&
-                                      widget.canEdit,
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                setState(() {
-                                  anatomicLocation = val;
-                                });
-                              },
-                            )),
-                          ),
 
                           _buildInputField(
                               label: 'Doctor in charge',
@@ -523,13 +560,6 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               editable: !(widget.patient.status == 'Tested') &&
                                   widget.canEdit,
                               controller: doctorInChargeController),
-
-                          _buildInputField(
-                              label: 'Exam Purpose',
-                              hint: 'Please enter exam pupose',
-                              editable: !(widget.patient.status == 'Tested') &&
-                                  widget.canEdit,
-                              controller: examPurposeController),
 
                           SizedBox(
                             height: 15,
@@ -876,7 +906,11 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                   nameController.value.text;
                                               //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
                                               String age =
-                                                  ageController.value.text;
+                                                  ageYearsController.value.text;
+                                              String ageMonths =
+                                                  ageMonthsController
+                                                      .value.text;
+
                                               String zone =
                                                   zoneController.value.text;
                                               String woreda =
@@ -888,21 +922,58 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                               String doctorInCharge =
                                                   doctorInChargeController
                                                       .value.text;
-                                              String examinatinPurpose =
-                                                  examPurposeController
-                                                      .value.text;
                                               String patientRemark =
                                                   patientRemarkController
                                                       .value.text;
+
+                                              String? regGroup =
+                                                  registrationGroup == 'Other'
+                                                      ? registrationGroupController
+                                                          .value.text
+                                                      : registrationGroup;
+                                              regGroup = regGroup ?? 'Other';
+
+                                              String? reason = reasonForTest ==
+                                                      'At X months during treatment'
+                                                  ? 'At ${xMonthsDuringController.value.text} months during treatment'
+                                                  : reasonForTest ==
+                                                          'At X months after treatment'
+                                                      ? 'At ${xMonthsAfterController.value.text} month after treatment'
+                                                      : reasonForTest;
+                                              String? site = siteOfTB == 'Other'
+                                                  ? siteOfTBController
+                                                      .value.text
+                                                  : siteOfTB;
+                                              // Patient patient = Patient(
+                                              //   age: age,
+                                              //   siteOfTB: anatomicLocation,
+                                              //   childhood: childhood,
+                                              //   dm: dm,
+                                              //   doctorInCharge: doctorInCharge,
+                                              //   examPurpose: examinatinPurpose,
+                                              //   malnutrition: malnutrition,
+                                              //   phone: phone,
+                                              //   zone: zone,
+                                              //   woreda: woreda,
+                                              //   address: address,
+                                              //   name: name,
+                                              //   sex: sex,
+                                              //   specimens: specimens,
+                                              //   pneumonia: pneumonia,
+                                              //   tb: tb,
+                                              //   hiv: hivStatus,
+                                              //   remark: patientRemark,
+                                              //   recurrentPneumonia:
+                                              //       recurrentPneumonia,
+                                              //   mr: mr,
+                                              //   dateOfBirth: dateOfBirth,
+                                              // );
+
                                               Patient patient = Patient(
                                                 age: age,
-                                                anatomicLocation:
-                                                    anatomicLocation,
-                                                childhood: childhood,
-                                                dm: dm,
+                                                ageMonths: ageMonths,
+                                                siteOfTB: siteOfTB,
                                                 doctorInCharge: doctorInCharge,
-                                                examPurpose: examinatinPurpose,
-                                                malnutrition: malnutrition,
                                                 phone: phone,
                                                 zone: zone,
                                                 woreda: woreda,
@@ -910,14 +981,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                 name: name,
                                                 sex: sex,
                                                 specimens: specimens,
-                                                pneumonia: pneumonia,
-                                                tb: tb,
-                                                hiv: hivStatus,
-                                                remark: patientRemark,
-                                                recurrentPneumonia:
-                                                    recurrentPneumonia,
                                                 mr: mr,
-                                                dateOfBirth: dateOfBirth,
+                                                remark: patientRemark,
+                                                registrationGroup: regGroup,
+                                                reasonForTest: reason,
+                                                requestedTest: requestedTests,
+                                                previousDrugUse:
+                                                    previousTBDrugUse,
                                               );
 
                                               orderBloc.add(EditPtientInfo(
@@ -1071,10 +1141,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                         Text('ID : ${e.id}'),
                         Text('Examination Type : ${e.examinationType}'),
                         // Text('Assessed : ${e.assessed}'),
-                        !e.rejected ? Text('Accepted : ${!e.rejected}') : Container(),
-                        e.rejected ? Text('Rejected : ${e.rejected}') : Container(),
+                        !e.rejected
+                            ? Text('Accepted : ${!e.rejected}')
+                            : Container(),
+                        e.rejected
+                            ? Text('Rejected : ${e.rejected}')
+                            : Container(),
                         e.rejected ? Text('Reason : ${e.reason}') : Container(),
-                      
                       ],
                     ),
                   ),
@@ -1110,18 +1183,23 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
     );
   }
 
-  Widget _buildInputField(
-      {required String label,
-      required String hint,
-      required TextEditingController controller,
-      bool editable = true}) {
+  Widget _buildInputField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    int? maxCharacters,
+    TextInputType inputType = TextInputType.text,
+    int? maxValue,
+    bool required = false,
+    bool editable = true,
+  }) {
     return Column(
       children: [
         Container(
           width: double.infinity,
           padding: const EdgeInsets.only(top: 20),
           child: Text(
-            label,
+            '$label ${required ? '*' : ''}',
             textAlign: TextAlign.left,
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
           ),
@@ -1133,10 +1211,21 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
             color: Colors.grey.withOpacity(0.3),
             borderRadius: BorderRadius.circular(5),
           ),
-          child: TextField(
+          child: TextFormField(
+            enabled: editable,
+            validator: (value) {
+              if (!required) {
+                return null;
+              }
+              if (value == null || value.isEmpty) {
+                return 'Value cannot be empty!';
+              }
+              return null;
+            },
             controller: controller,
-            readOnly: !editable,
             style: TextStyle(color: Colors.black),
+            keyboardType: inputType,
+            maxLength: maxCharacters,
             decoration: InputDecoration(
                 hintText: hint,
                 border: InputBorder.none,

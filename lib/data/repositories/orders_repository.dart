@@ -111,7 +111,13 @@ class OrderRepository {
     if (userData.docs.length > 0) {
       sender_name = userData.docs[0].data()['institution']['name'];
     }
-    var c = await ordersCollection.add({
+    var orders =
+        await ordersCollection.where('sender_id', isEqualTo: sender_id).get();
+    int length = orders.docs.length;
+
+    String id =
+        '${sender_name}_${DateTime.now().toIso8601String()}_${length + 1}';
+    await ordersCollection.doc(id).set({
       'courier_id': courier_id,
       'sender_id': sender_id,
       'sender_name': sender_name,
@@ -123,7 +129,19 @@ class OrderRepository {
       'courier_name': courier_name,
       'order_created': DateTime.now()
     });
-    return c.id;
+    // var c = await ordersCollection.add({
+    //   'courier_id': courier_id,
+    //   'sender_id': sender_id,
+    //   'sender_name': sender_name,
+    //   'tester_id': tester_id,
+    //   'status': 'Draft',
+    //   'created_at': '$day ${months[month - 1]} $year',
+    //   'ordered_for': date,
+    //   'tester_name': tester_name,
+    //   'courier_name': courier_name,
+    //   'order_created': DateTime.now()
+    // });
+    return id;
   }
 
   Future<bool> editCourierInfo(

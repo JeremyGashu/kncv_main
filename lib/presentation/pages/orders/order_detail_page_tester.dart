@@ -85,7 +85,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                   },
                 ),
                 title: Text(
-                  '${widget.orderId.substring(0, 5)}',
+                  '${widget.orderId}',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

@@ -35,14 +35,31 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height * 0.4,
                   child: Center(
-                      child: Text(
-                    'Begize',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 46,
-                      fontWeight: FontWeight.w500,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Begize',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 46,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'E-Specimen referral system Ethiopia',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                  )),
+                  ),
                 ),
                 Container(
                     height: MediaQuery.of(context).size.height * 0.4,
@@ -169,7 +186,8 @@ class _LoginPageState extends State<LoginPage> {
                                         _passwordController.value.text;
                                     BlocProvider.of<AuthBloc>(context).add(
                                         LoginUser(
-                                            email: '$email@kncv.com', password: password));
+                                            email: '$email@kncv.com',
+                                            password: password));
                                   },
                                   borderRadius: BorderRadius.circular(37),
                                   child: Container(

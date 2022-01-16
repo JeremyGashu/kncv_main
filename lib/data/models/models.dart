@@ -77,29 +77,43 @@ class Patient {
       this.phone,
       this.tb,
       this.childhood,
+      this.ageMonths,
       this.hiv,
       this.pneumonia,
       this.recurrentPneumonia,
       this.malnutrition,
       this.dm,
       this.doctorInCharge,
-      this.anatomicLocation,
+      this.siteOfTB,
       this.examPurpose,
       this.specimens,
       this.testResult,
       this.status,
       this.dateOfBirth,
+      this.registrationGroup,
+      this.reasonForTest,
+      this.previousDrugUse,
+      this.requestedTest,
       this.remark,
       this.resultAvaiable = false,
       this.address});
+
+  // regitrationGroup: regGroup,
+  //                                     reasonForTest: reason,
+  //                                     requestedTest: requestedTests,
 
   String? mr;
   String? name;
   String? remark;
   String? sex;
   String? age;
+  String? ageMonths;
   String? zone;
   String? woreda;
+  String? previousDrugUse;
+  String? registrationGroup;
+  String? reasonForTest;
+  String? requestedTest;
   String? phone;
   String? tb;
   String? childhood;
@@ -111,7 +125,7 @@ class Patient {
   String? status = 'Draft';
   String? dm;
   String? doctorInCharge;
-  String? anatomicLocation;
+  String? siteOfTB;
   String? examPurpose;
   bool resultAvaiable;
   TestResult? testResult;
@@ -123,12 +137,17 @@ class Patient {
         name: json["name"],
         sex: json["sex"],
         age: json["age"],
+        registrationGroup: json['registration_group'],
         zone: json["zone"],
+        ageMonths: json['age_months'],
         woreda: json["woreda"],
         phone: json["phone"],
+        reasonForTest: json['reason_for_test'],
         address: json['address'],
         dateOfBirth: json['date_of_birth'],
+        previousDrugUse: json['previous_drug_use'],
         tb: json["TB"],
+        requestedTest: json['requested_test'],
         status: json['status'],
         remark: json['remark'],
         childhood: json["childhood"],
@@ -141,7 +160,7 @@ class Patient {
         malnutrition: json["malnutrition"],
         dm: json["DM"],
         doctorInCharge: json["doctor_in_charge"],
-        anatomicLocation: json["anatomic_location"],
+        siteOfTB: json["anatomic_location"],
         examPurpose: json["exam_purpose"],
         specimens: List<Specimen>.from(
             json["specimens"].map((x) => Specimen.fromJson(x))),
@@ -152,14 +171,19 @@ class Patient {
         "name": name,
         "sex": sex,
         "age": age,
+        'reason_for_test': reasonForTest,
         "zone": zone,
         "woreda": woreda,
         "phone": phone,
         "TB": tb,
+        'requested_test': requestedTest,
+        'registration_group': registrationGroup,
+        'age_months': ageMonths,
         'status': status,
         "childhood": childhood,
         "HIV": hiv,
         "pneumonia": pneumonia,
+        'previous_drug_use': previousDrugUse,
         'remark': remark,
         "address": address,
         "recurrent_pneumonia": recurrentPneumonia,
@@ -169,7 +193,7 @@ class Patient {
         'result': testResult?.toJson(),
         'result_available': resultAvaiable,
         "doctor_in_charge": doctorInCharge,
-        "anatomic_location": anatomicLocation,
+        "anatomic_location": siteOfTB,
         "exam_purpose": examPurpose,
         "specimens": specimens != null
             ? List<dynamic>.from(specimens!.map((x) => x.toJson()))
@@ -320,5 +344,99 @@ class NotificationModel {
         "seen": seen,
         'id': id,
         'date': date
+      };
+}
+
+class Region {
+  Region({
+    required this.code,
+    required this.name,
+    required this.zones,
+  });
+
+  String code;
+  String name;
+  List<Zone> zones;
+
+  factory Region.fromJson(Map<String, dynamic> json) => Region(
+        code: json["code"],
+        name: json["name"],
+        zones: List<Zone>.from(json["zones"].map((x) => Zone.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "code": code,
+        "name": name,
+        "zones": List<dynamic>.from(zones.map((x) => x.toJson())),
+      };
+}
+
+class Zone {
+  Zone({
+    required this.code,
+    required this.name,
+    required this.woredas,
+  });
+
+  String code;
+  String name;
+  List<Woreda> woredas;
+
+  factory Zone.fromJson(Map<String, dynamic> json) => Zone(
+        code: json["code"],
+        name: json["name"],
+        woredas:
+            List<Woreda>.from(json["woredas"].map((x) => Woreda.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "code": code,
+        "name": name,
+        "woredas": List<dynamic>.from(woredas.map((x) => x.toJson())),
+      };
+}
+
+class Woreda {
+  Woreda({
+    required this.code,
+    required this.name,
+    required this.kebeles,
+  });
+
+  String code;
+  String name;
+  List<Kebele> kebeles;
+
+  factory Woreda.fromJson(Map<String, dynamic> json) => Woreda(
+        code: json["code"],
+        name: json["name"],
+        kebeles:
+            List<Kebele>.from(json["kebeles"].map((x) => Kebele.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "code": code,
+        "name": name,
+        "kebeles": List<dynamic>.from(kebeles.map((x) => x.toJson())),
+      };
+}
+
+class Kebele {
+  Kebele({
+    required this.name,
+    required this.code,
+  });
+
+  String name;
+  String code;
+
+  factory Kebele.fromJson(Map<String, dynamic> json) => Kebele(
+        name: json["name"],
+        code: json["code"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "code": code,
       };
 }
