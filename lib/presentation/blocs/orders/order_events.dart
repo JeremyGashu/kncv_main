@@ -69,10 +69,11 @@ class DeleteOrders extends OrderEvents {
 class AcceptOrderCourier extends OrderEvents {
   final Order order;
   final String time;
+  final String date;
 
-  AcceptOrderCourier(this.order, this.time);
+  AcceptOrderCourier(this.order, this.time, this.date);
   @override
-  List<Object> get props => [order, time];
+  List<Object> get props => [order, time, date];
 }
 
 class ApproveArrivalCourier extends OrderEvents {

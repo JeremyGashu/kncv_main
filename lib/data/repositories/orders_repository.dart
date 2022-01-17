@@ -33,7 +33,7 @@ class OrderRepository {
       'Picked Up',
       'Arrived',
       'Confirmed',
-      'Received',
+      // 'Received',
     ]).get();
     return orders.docs
         .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
@@ -55,6 +55,7 @@ class OrderRepository {
       'Accepted',
       'Confirmed',
       'Received',
+      'Picked Up',
       'Being Assessed By Tester'
     ]).get();
     return orders.docs
@@ -343,13 +344,13 @@ class OrderRepository {
     }
   }
 
-  Future<bool> acceptOrder(String? orderId, String? time) async {
+  Future<bool> acceptOrder(String? orderId, String? time, String? date) async {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Waiting for Confirmation') {
       await orderRef.update({
         'status': 'Confirmed',
-        'will_reach_at': time,
+        'will_reach_at': '$date-$time',
         'order_confirmed': DateTime.now()
       });
       return true;

@@ -26,9 +26,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
   String? sputumCondition;
   String? stoolCondition;
   String? time;
+  String? date;
 
-  TextEditingController _receiverController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
   OrderBloc ordersBloc = sl<OrderBloc>();
   bool notifyingArrival = false;
   @override
@@ -53,25 +52,27 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
               courierContent:
                   'You have accepted order from ${state.order.sender_name} to ${state.order.tester_name}.',
               senderContent:
-                  'Courier coming to fetch order to ${state.order.tester_name}. Will reach at your place at ${state.time}.',
+                  'Courier coming to fetch order to ${state.order.tester_name}. Will reach at your place on ${state.date} at ${state.time}.',
               testerContent:
                   'Courier going to fetch order from ${state.order.sender_name}.',
               content: 'One order got accepted by courier!',
             );
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          } else if (state is CourierApprovedArrivalTester) {
-            addNotification(
-              orderId: widget.orderId,
-              content: 'Courier reached at destination to pick order!',
-              courierContent:
-                  'You have confirmed arrival to ${state.order.tester_name} from ${state.order.sender_name}.',
-              senderContent:
-                  'Your specimen has arrived to ${state.order.tester_name}.',
-              testerContent:
-                  'Courier ${state.order.courier_name} has just arrived from ${state.order.sender_name}.',
-            );
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          } else if (state is ApprovedArrivalTester) {
+          }
+          //  else if (state is CourierApprovedArrivalTester) {
+          //   addNotification(
+          //     orderId: widget.orderId,
+          //     content: 'Courier reached at destination to pick order!',
+          //     courierContent:
+          //         'You have confirmed arrival to ${state.order.tester_name} from ${state.order.sender_name}.',
+          //     senderContent:
+          //         'Your specimen has arrived to ${state.order.tester_name}.',
+          //     testerContent:
+          //         'Courier ${state.order.courier_name} has just arrived from ${state.order.sender_name}.',
+          //   );
+          //   ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+          // }
+          else if (state is ApprovedArrivalTester) {
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
           }
         },
@@ -321,31 +322,6 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                   color: kPageBackground,
                                   child: InkWell(
                                     onTap: () async {
-                                      // showDialog(
-                                      //     context: context,
-                                      //     builder: (ctx) {
-                                      //       return AlertDialog(
-                                      //         title: Text('Accept Order?'),
-                                      //         content: Text(
-                                      //             'Are you sure you want to accept this order?'),
-                                      //         actions: [
-                                      //           TextButton(
-                                      //               onPressed: () {
-                                      //                 Navigator.pop(ctx);
-                                      //                 ordersBloc.add(
-                                      //                     AcceptOrderCourier(
-                                      //                         state.order));
-                                      //               },
-                                      //               child: Text('Yes')),
-                                      //           TextButton(
-                                      //               onPressed: () {
-                                      //                 Navigator.pop(ctx);
-                                      //               },
-                                      //               child: Text('Cancel'))
-                                      //         ],
-                                      //       );
-                                      //     });
-
                                       bool success = await showModalBottomSheet(
                                           backgroundColor: Colors.transparent,
                                           isScrollControlled: true,
@@ -402,6 +378,66 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       ),
                                                       SizedBox(
                                                         height: 30,
+                                                      ),
+                                                      GestureDetector(
+                                                          onTap: () {
+                                                            DatePicker
+                                                                .showDatePicker(
+                                                              context,
+                                                              minTime: DateTime
+                                                                  .now(),
+                                                              onConfirm: (t) {
+                                                                int day = t.day;
+                                                                int month =
+                                                                    t.month;
+                                                                int year =
+                                                                    t.year;
+                                                                ss(() {});
+                                                                setState(() {
+                                                                  date =
+                                                                      '$day-$month-$year';
+                                                                });
+                                                              },
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            width:
+                                                                double.infinity,
+                                                            height: 54,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors.grey
+                                                                  .withOpacity(
+                                                                      0.3),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                            ),
+                                                            child: Center(
+                                                              child: Container(
+                                                                width: double
+                                                                    .infinity,
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20),
+                                                                child: Text(
+                                                                  date ??
+                                                                      'Please Select Date',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black87
+                                                                          .withOpacity(
+                                                                              0.8),
+                                                                      fontSize:
+                                                                          15),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          )),
+                                                      SizedBox(
+                                                        height: 10,
                                                       ),
                                                       GestureDetector(
                                                           onTap: () {
@@ -465,8 +501,11 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       ),
                                                       GestureDetector(
                                                         onTap: () {
-                                                          Navigator.pop(
-                                                              ctx, true);
+                                                          if (date != null &&
+                                                              time != null) {
+                                                            Navigator.pop(
+                                                                ctx, true);
+                                                          }
                                                         },
                                                         child: Container(
                                                           decoration:
@@ -503,7 +542,9 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
 
                                       if (success == true) {
                                         ordersBloc.add(AcceptOrderCourier(
-                                            state.order, time ?? ''));
+                                            state.order,
+                                            time ?? '',
+                                            date ?? ''));
                                       }
                                     },
                                     borderRadius: BorderRadius.circular(37),
@@ -594,174 +635,10 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                         ),
                                       ),
                                     ),
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      color: kPageBackground,
-                                      child: InkWell(
-                                        onTap: () async {
-                                          bool confirm =
-                                              await showModalBottomSheet(
-                                            backgroundColor: Colors.transparent,
-                                            isScrollControlled: true,
-                                            context: context,
-                                            builder: (ctx) {
-                                              return StatefulBuilder(
-                                                  builder: (ctx, ss) {
-                                                return SingleChildScrollView(
-                                                  child: Container(
-                                                    padding: EdgeInsets.only(
-                                                      bottom:
-                                                          MediaQuery.of(context)
-                                                                  .viewInsets
-                                                                  .bottom +
-                                                              20,
-                                                      top: 30,
-                                                      left: 20,
-                                                      right: 20,
-                                                    ),
-                                                    // padding: EdgeInsets.only(
-
-                                                    //     bottom: 20),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(
-                                                          30,
-                                                        ),
-                                                        topRight:
-                                                            Radius.circular(
-                                                          30,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          width:
-                                                              double.infinity,
-                                                          child: Text(
-                                                            'Confirm Arrival',
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style: TextStyle(
-                                                              fontSize: 32,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 30,
-                                                        ),
-                                                        _buildInputField(
-                                                            label: 'Receiver',
-                                                            hint:
-                                                                'Enter Receiver',
-                                                            controller:
-                                                                _receiverController),
-                                                        _buildInputField(
-                                                            label: 'Phone',
-                                                            hint:
-                                                                'Enter Receiver\'s Phone',
-                                                            controller:
-                                                                _phoneController),
-                                                        SizedBox(
-                                                          height: 30,
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            print(
-                                                                _receiverController
-                                                                    .value
-                                                                    .text);
-
-                                                            if (_receiverController
-                                                                    .value
-                                                                    .text !=
-                                                                '') {
-                                                              Navigator.pop(
-                                                                  ctx, true);
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              color:
-                                                                  kColorsOrangeDark,
-                                                            ),
-                                                            height: 62,
-                                                            // margin: EdgeInsets.all(20),
-                                                            child: Center(
-                                                              child: Text(
-                                                                'Confirm',
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        20,
-                                                                    color: Colors
-                                                                        .white),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              });
-                                            },
-                                          );
-
-                                          if (confirm == true) {
-                                            ordersBloc.add(
-                                                CourierApproveArrivalToTestCenter(
-                                                    state.order,
-                                                    _receiverController
-                                                        .value.text,
-                                                    _phoneController
-                                                        .value.text));
-                                          }
-                                        },
-                                        borderRadius: BorderRadius.circular(37),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: kColorsOrangeDark,
-                                          ),
-                                          height: 62,
-                                          // margin: EdgeInsets.all(20),
-                                          child: Center(
-                                            child: Text(
-                                              'Approve Arrival',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
                                   ],
                                 ),
                               )
                             : Container(),
-
                         state.order.status == 'Confirmed'
                             ? Positioned(
                                 bottom: 0,
@@ -823,89 +700,6 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                 ),
                               )
                             : Container(),
-                        // state.order.status == 'Arrived'
-                        //     ? Positioned(
-                        //         bottom: 0,
-                        //         left: 10,
-                        //         right: 10,
-                        //         child: Container(
-                        //           padding: EdgeInsets.all(10),
-                        //           color: kPageBackground,
-                        //           child: InkWell(
-                        //             onTap: () async {
-                        //               var create = await showModalBottomSheet(
-                        //                   backgroundColor: Colors.transparent,
-                        //                   isScrollControlled: true,
-                        //                   context: context,
-                        //                   builder: (ctx) {
-                        //                     return ArrivalConfirmation(ctx);
-                        //                   });
-
-                        //               if (create == true) {
-                        //                 ordersBloc.add(
-                        //                   ApproveArrivalTester(
-                        //                     orderId: state.order.orderId!,
-                        //                     sputumCondition: sputumCondition,
-                        //                     stoolCondition: stoolCondition,
-                        //                     coldChainStatus: inColdChain,
-                        //                   ),
-                        //                 );
-                        //               }
-                        //             },
-                        //             borderRadius: BorderRadius.circular(37),
-                        //             child: Container(
-                        //               decoration: BoxDecoration(
-                        //                 borderRadius: BorderRadius.circular(10),
-                        //                 color: kColorsOrangeDark,
-                        //               ),
-                        //               height: 62,
-                        //               // margin: EdgeInsets.all(20),
-                        //               child: Center(
-                        //                 child: Text(
-                        //                   'Confirm Arrival',
-                        //                   style: TextStyle(
-                        //                       fontWeight: FontWeight.bold,
-                        //                       fontSize: 20,
-                        //                       color: Colors.white),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       )
-                        //     : Container(),
-                        // state.order.status == 'Accepted'
-                        //     ? Positioned(
-                        //         bottom: 0,
-                        //         left: 10,
-                        //         right: 10,
-                        //         child: Container(
-                        //           padding: EdgeInsets.all(10),
-                        //           color: kPageBackground,
-                        //           child: InkWell(
-                        //             onTap: () async {},
-                        //             borderRadius: BorderRadius.circular(37),
-                        //             child: Container(
-                        //               decoration: BoxDecoration(
-                        //                 borderRadius: BorderRadius.circular(10),
-                        //                 color: kColorsOrangeDark,
-                        //               ),
-                        //               height: 62,
-                        //               // margin: EdgeInsets.all(20),
-                        //               child: Center(
-                        //                 child: Text(
-                        //                   'Add Test Result',
-                        //                   style: TextStyle(
-                        //                       fontWeight: FontWeight.bold,
-                        //                       fontSize: 20,
-                        //                       color: Colors.white),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       )
-                        //     : Container(),
                       ],
                     )
                   : Center(
@@ -914,41 +708,6 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
             ),
           );
         });
-  }
-
-  Widget _buildInputField(
-      {required String label,
-      required String hint,
-      required TextEditingController controller}) {
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.only(top: 20),
-          child: Text(
-            label,
-            textAlign: TextAlign.left,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 10),
-          padding: EdgeInsets.only(left: 10, right: 10, bottom: 4, top: 4),
-          decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: TextField(
-            controller: controller,
-            style: TextStyle(color: Colors.black),
-            decoration: InputDecoration(
-                hintText: hint,
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(left: 10, top: 2, bottom: 3)),
-          ),
-        ),
-      ],
-    );
   }
 
   Container buildPatients(

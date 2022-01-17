@@ -25,201 +25,203 @@ class ReportPage extends StatelessWidget {
           build: (pw.Context context) {
             return pw.Padding(
               padding: const pw.EdgeInsets.only(top: 50, left: 20, right: 20),
-              child: pw.Row(
-                mainAxisSize: pw.MainAxisSize.max,
-                mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                children: [
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text('Patient Info',
+              child: pw.Column(children: [
+                pw.Container(
+                  // width: double.infinity,
+                  child: pw.Text('Test Result for ${patient.name}',
+                      textAlign: pw.TextAlign.center,
+                      style: pw.TextStyle(fontSize: 25)),
+                ),
+                pw.SizedBox(height: 10),
+                pw.Row(
+                  mainAxisSize: pw.MainAxisSize.max,
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text('Patient Info',
+                            style: pw.TextStyle(
+                                fontSize: 20, fontWeight: pw.FontWeight.bold)),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Name : ${patient.name ?? ''}',
                           style: pw.TextStyle(
-                              fontSize: 20, fontWeight: pw.FontWeight.bold)),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Name : ${patient.name ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Date of Birth : ${patient.dateOfBirth ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Sex : ${patient.sex ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Address : ${patient.address ?? ''}',
-                        style: pw.TextStyle(
-                          // color: pw.Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Phone : ${patient.phone ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Zone : ${patient.zone ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Woreda : ${patient.woreda ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      pw.SizedBox(
-                        height: 10,
-                      ),
-                      pw.Text('Patient History',
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Date of Birth : ${patient.dateOfBirth ?? ''}',
                           style: pw.TextStyle(
-                              fontSize: 20, fontWeight: pw.FontWeight.bold)),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'MR : ${patient.mr ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Anatomic Location : ${patient.siteOfTB ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'DM : ${patient.dm ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Malnutrition : ${patient.malnutrition ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Pneumonia : ${patient.recurrentPneumonia ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Remaark : ${patient.remark ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text('Patient Test Result',
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Sex : ${patient.sex ?? ''}',
                           style: pw.TextStyle(
-                              fontSize: 20, fontWeight: pw.FontWeight.bold)),
-                      pw.SizedBox(height: 10),
-                      pw.Text(
-                        'Lab Reg No : ${patient.testResult?.labRegistratinNumber ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                      pw.SizedBox(
-                        height: 10,
-                      ),
-                      pw.Text(
-                        'MTB Result : ${patient.testResult?.mtbResult ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Address : ${patient.address ?? ''}',
+                          style: pw.TextStyle(
+                            // color: pw.Colors.black87,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                      pw.SizedBox(
-                        height: 10,
-                      ),
-                      pw.Text(
-                        'Quantity: ${patient.testResult?.quantity ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Phone : ${patient.phone ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                      pw.SizedBox(
-                        height: 10,
-                      ),
-                      pw.Text(
-                        'Result Date : ${patient.testResult?.resultDate ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Zone : ${patient.zone ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                      pw.SizedBox(
-                        height: 10,
-                      ),
-                      pw.Text(
-                        'Time : ${patient.testResult?.resultTime ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Woreda : ${patient.woreda ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                      pw.SizedBox(
-                        height: 10,
-                      ),
-                      pw.Text(
-                        'Result RR : ${patient.testResult?.resultRr ?? ''}',
-                        style: pw.TextStyle(
-                          // color: Colors.black87,
-                          fontSize: 13,
+                        pw.SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      
-                      pw.SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                        pw.Text('Patient History',
+                            style: pw.TextStyle(
+                                fontSize: 20, fontWeight: pw.FontWeight.bold)),
+                        pw.Text(
+                          'Reason For Test : ${patient.reasonForTest ?? ''}',
+                          style: pw.TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Site Of TB : ${patient.siteOfTB ?? ''}',
+                          style: pw.TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Registered Group : ${patient.registrationGroup ?? ''}',
+                          style: pw.TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Requested Tests : ${patient.requestedTest ?? ''}',
+                          style: pw.TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Previous TB Drug Use : ${patient.previousDrugUse ?? ''}',
+                          style: pw.TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Remark : ${patient.remark ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text('Patient Test Result',
+                            style: pw.TextStyle(
+                                fontSize: 20, fontWeight: pw.FontWeight.bold)),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Lab Reg No : ${patient.testResult?.labRegistratinNumber ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(
+                          height: 10,
+                        ),
+                        pw.Text(
+                          'MTB Result : ${patient.testResult?.mtbResult ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(
+                          height: 10,
+                        ),
+                        pw.Text(
+                          'Quantity: ${patient.testResult?.quantity ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(
+                          height: 10,
+                        ),
+                        pw.Text(
+                          'Result Date : ${patient.testResult?.resultDate ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(
+                          height: 10,
+                        ),
+                        pw.Text(
+                          'Time : ${patient.testResult?.resultTime ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(
+                          height: 10,
+                        ),
+                        pw.Text(
+                          'Result RR : ${patient.testResult?.resultRr ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ]),
             );
           }));
 
@@ -236,187 +238,210 @@ class ReportPage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisSize: MainAxisSize.max,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Patient Info',
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Patient Info',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 10),
+                      Text(
+                        'Name : ${patient.name ?? ''}',
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 10),
-                    Text(
-                      'Name : ${patient.name ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Age : ${patient.age ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Sex : ${patient.sex ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Address : ${patient.address ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Phone : ${patient.phone ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Zone : ${patient.zone ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Woreda : ${patient.woreda ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text('Patient History',
+                      SizedBox(height: 10),
+                      Text(
+                        'Age In Years: ${patient.age ?? ''}',
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 10),
-                    Text(
-                      'MR : ${patient.mr ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Anatomic Location : ${patient.siteOfTB ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                      SizedBox(height: 10),
+                      Text(
+                        'Age In Months: ${patient.ageMonths ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'DM : ${patient.dm ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Malnutrition : ${patient.malnutrition ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                      // SizedBox(height: 10),
+                      Text(
+                        'Sex : ${patient.sex ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Pneumonia : ${patient.recurrentPneumonia ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                      SizedBox(height: 10),
+                      Text(
+                        'Address : ${patient.address ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 10),
+                      Text(
+                        'Phone : ${patient.phone ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Zone : ${patient.zone ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Woreda : ${patient.woreda ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text('Patient History',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 10),
+                      Text(
+                        'Reason For Test : ${patient.reasonForTest ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Site Of TB : ${patient.siteOfTB ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Registered Group : ${patient.registrationGroup ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Requested Tests : ${patient.requestedTest ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Previous TB Drug Use : ${patient.previousDrugUse ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+
+                      Text(
+                        'Remark : ${patient.remark ?? ''}',
+                        style: TextStyle(
+                          // color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Patient Test Result',
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Patient Test Result',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 10),
+                      Text(
+                        'Lab Reg No : ${patient.testResult?.labRegistratinNumber ?? ''}',
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 10),
-                    Text(
-                      'Lab Reg No : ${patient.testResult?.labRegistratinNumber ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'MTB Result : ${patient.testResult?.mtbResult ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Quantity: ${patient.testResult?.quantity ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                      Text(
+                        'MTB Result : ${patient.testResult?.mtbResult ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Result Date : ${patient.testResult?.resultDate ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Result RR : ${patient.testResult?.resultRr ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                      Text(
+                        'Quantity: ${patient.testResult?.quantity ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Time : ${patient.testResult?.resultTime ?? ''}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13,
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
+                      Text(
+                        'Result Date : ${patient.testResult?.resultDate ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Result RR : ${patient.testResult?.resultRr ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Time : ${patient.testResult?.resultTime ?? ''}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

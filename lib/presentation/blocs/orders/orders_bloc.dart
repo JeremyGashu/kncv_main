@@ -49,9 +49,10 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         bool success = await orderRepository.acceptOrder(
           event.order.orderId,
           event.time,
+          event.date,
         );
         if (success) {
-          yield AcceptedOrderCourier(event.order, event.time);
+          yield AcceptedOrderCourier(event.order, event.time, event.date);
         } else {
           ErrorState(message: 'Error Accepting Order! Please try Again!');
         }

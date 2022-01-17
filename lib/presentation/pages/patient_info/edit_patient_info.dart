@@ -104,6 +104,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
   @override
   initState() {
+    print('ptient => ${widget.patient.siteOfTB}');
     childhood = widget.patient.childhood;
     tb = widget.patient.tb;
     pneumonia = widget.patient.pneumonia;
@@ -114,10 +115,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
     sex = widget.patient.sex;
     dateOfBirth = widget.patient.dateOfBirth;
     hivStatus = widget.patient.hiv;
+    previousTBDrugUse = widget.patient.previousDrugUse;
+    requestedTests = widget.patient.requestedTest;
 
     MRController.text = widget.patient.mr ?? '';
     nameController.text = widget.patient.name ?? '';
     ageYearsController.text = widget.patient.age ?? '';
+    ageMonthsController.text = widget.patient.ageMonths ?? '';
     zoneController.text = widget.patient.zone ?? '';
     woredaController.text = widget.patient.woreda ?? '';
     addressController.text = widget.patient.address ?? '';
@@ -220,7 +224,18 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               hint: 'Enter Your Name',
                               controller: nameController),
                           _buildInputField(
-                              label: 'Age',
+                            label: 'Age In Years',
+                            hint: 'Please enter Date of Birth',
+                            controller: ageYearsController,
+                            inputType: TextInputType.numberWithOptions(
+                                signed: false, decimal: false),
+                            maxCharacters: 2,
+                            editable: !(widget.patient.status == 'Tested') &&
+                                widget.canEdit,
+                          ),
+
+                          _buildInputField(
+                              label: 'Age In Months',
                               inputType: TextInputType.numberWithOptions(
                                   signed: false, decimal: false),
                               maxCharacters: 2,
@@ -265,12 +280,6 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             ),
                           ),
 
-                          _buildInputField(
-                            label: 'Age',
-                            hint: 'Please enter Date of Birth',
-                            controller: ageYearsController,
-                          ),
-
                           _tobLabelBuilder('Address'),
                           _buildInputField(
                               label: 'Zone',
@@ -298,33 +307,6 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               controller: phoneController),
 
                           _tobLabelBuilder('Observation'),
-
-                          // _labelBuilder('Childhood'),
-
-                          // Container(
-                          //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          //   width: double.infinity,
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.grey.withOpacity(0.2),
-                          //     borderRadius: BorderRadius.circular(7),
-                          //   ),
-                          //   child: DropdownButtonHideUnderline(
-                          //       child: DropdownButton<String>(
-                          //     value: childhood,
-                          //     hint: Text('Childhood'),
-                          //     items: <String>['Yes', 'No'].map((String value) {
-                          //       return DropdownMenuItem<String>(
-                          //         value: value,
-                          //         child: Text(value),
-                          //       );
-                          //     }).toList(),
-                          //     onChanged: (val) {
-                          //       setState(() {
-                          //         childhood = val;
-                          //       });
-                          //     },
-                          //   )),
-                          // ),
 
                           _labelBuilder('Site of TB'),
 
@@ -887,140 +869,228 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       ? Center(
                                           child: CircularProgressIndicator(),
                                         )
-                                      : InkWell(
-                                          onTap: () {
-                                            if (!widget.canEdit) {
-                                              Navigator.pushNamed(
-                                                  context,
-                                                  AddTestResultPage
-                                                      .addTestResultPageRouteName,
-                                                  arguments: {
-                                                    'orderId': widget.orderId,
-                                                    'patient': widget.patient,
-                                                    'index': widget.index,
-                                                  });
-                                            } else {
-                                              String mr =
-                                                  MRController.value.text;
-                                              String name =
-                                                  nameController.value.text;
-                                              //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
-                                              String age =
-                                                  ageYearsController.value.text;
-                                              String ageMonths =
-                                                  ageMonthsController
-                                                      .value.text;
+                                      : Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            widget.canEdit
+                                                ? InkWell(
+                                                    onTap: () {
+                                                      if (!widget.canEdit) {
+                                                      } else {
+                                                        String mr = MRController
+                                                            .value.text;
+                                                        String name =
+                                                            nameController
+                                                                .value.text;
+                                                        //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
+                                                        String age =
+                                                            ageYearsController
+                                                                .value.text;
+                                                        String ageMonths =
+                                                            ageMonthsController
+                                                                .value.text;
 
-                                              String zone =
-                                                  zoneController.value.text;
-                                              String woreda =
-                                                  woredaController.value.text;
-                                              String address =
-                                                  addressController.value.text;
-                                              String phone =
-                                                  phoneController.value.text;
-                                              String doctorInCharge =
-                                                  doctorInChargeController
-                                                      .value.text;
-                                              String patientRemark =
-                                                  patientRemarkController
-                                                      .value.text;
+                                                        String zone =
+                                                            zoneController
+                                                                .value.text;
+                                                        String woreda =
+                                                            woredaController
+                                                                .value.text;
+                                                        String address =
+                                                            addressController
+                                                                .value.text;
+                                                        String phone =
+                                                            phoneController
+                                                                .value.text;
+                                                        String doctorInCharge =
+                                                            doctorInChargeController
+                                                                .value.text;
+                                                        String patientRemark =
+                                                            patientRemarkController
+                                                                .value.text;
 
-                                              String? regGroup =
-                                                  registrationGroup == 'Other'
-                                                      ? registrationGroupController
-                                                          .value.text
-                                                      : registrationGroup;
-                                              regGroup = regGroup ?? 'Other';
+                                                        String? regGroup =
+                                                            registrationGroup ==
+                                                                    'Other'
+                                                                ? registrationGroupController
+                                                                    .value.text
+                                                                : registrationGroup;
+                                                        regGroup =
+                                                            regGroup ?? 'Other';
 
-                                              String? reason = reasonForTest ==
-                                                      'At X months during treatment'
-                                                  ? 'At ${xMonthsDuringController.value.text} months during treatment'
-                                                  : reasonForTest ==
-                                                          'At X months after treatment'
-                                                      ? 'At ${xMonthsAfterController.value.text} month after treatment'
-                                                      : reasonForTest;
-                                              String? site = siteOfTB == 'Other'
-                                                  ? siteOfTBController
-                                                      .value.text
-                                                  : siteOfTB;
-                                              // Patient patient = Patient(
-                                              //   age: age,
-                                              //   siteOfTB: anatomicLocation,
-                                              //   childhood: childhood,
-                                              //   dm: dm,
-                                              //   doctorInCharge: doctorInCharge,
-                                              //   examPurpose: examinatinPurpose,
-                                              //   malnutrition: malnutrition,
-                                              //   phone: phone,
-                                              //   zone: zone,
-                                              //   woreda: woreda,
-                                              //   address: address,
-                                              //   name: name,
-                                              //   sex: sex,
-                                              //   specimens: specimens,
-                                              //   pneumonia: pneumonia,
-                                              //   tb: tb,
-                                              //   hiv: hivStatus,
-                                              //   remark: patientRemark,
-                                              //   recurrentPneumonia:
-                                              //       recurrentPneumonia,
-                                              //   mr: mr,
-                                              //   dateOfBirth: dateOfBirth,
-                                              // );
+                                                        String? reason = reasonForTest ==
+                                                                'At X months during treatment'
+                                                            ? 'At ${xMonthsDuringController.value.text} months during treatment'
+                                                            : reasonForTest ==
+                                                                    'At X months after treatment'
+                                                                ? 'At ${xMonthsAfterController.value.text} month after treatment'
+                                                                : reasonForTest;
+                                                        String? site = siteOfTB ==
+                                                                'Other'
+                                                            ? siteOfTBController
+                                                                .value.text
+                                                            : siteOfTB;
 
-                                              Patient patient = Patient(
-                                                age: age,
-                                                ageMonths: ageMonths,
-                                                siteOfTB: siteOfTB,
-                                                doctorInCharge: doctorInCharge,
-                                                phone: phone,
-                                                zone: zone,
-                                                woreda: woreda,
-                                                address: address,
-                                                name: name,
-                                                sex: sex,
-                                                specimens: specimens,
-                                                mr: mr,
-                                                remark: patientRemark,
-                                                registrationGroup: regGroup,
-                                                reasonForTest: reason,
-                                                requestedTest: requestedTests,
-                                                previousDrugUse:
-                                                    previousTBDrugUse,
-                                              );
+                                                        Patient patient =
+                                                            Patient(
+                                                          age: age,
+                                                          ageMonths: ageMonths,
+                                                          siteOfTB: site,
+                                                          doctorInCharge:
+                                                              doctorInCharge,
+                                                          phone: phone,
+                                                          zone: zone,
+                                                          woreda: woreda,
+                                                          address: address,
+                                                          name: name,
+                                                          sex: sex,
+                                                          specimens: specimens,
+                                                          mr: mr,
+                                                          remark: patientRemark,
+                                                          registrationGroup:
+                                                              regGroup,
+                                                          reasonForTest: reason,
+                                                          requestedTest:
+                                                              requestedTests,
+                                                          previousDrugUse:
+                                                              previousTBDrugUse,
+                                                        );
 
-                                              orderBloc.add(EditPtientInfo(
-                                                  orderId: widget.orderId,
-                                                  patient: patient,
-                                                  index: widget.index));
-                                            }
-                                          },
-                                          borderRadius:
-                                              BorderRadius.circular(37),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: kColorsOrangeDark,
-                                            ),
-                                            height: 62,
-                                            // margin: EdgeInsets.all(20),
-                                            child: Center(
-                                              child: Text(
-                                                widget.canEdit
-                                                    ? 'Edit Patient'
-                                                    : widget.patient
-                                                            .resultAvaiable
-                                                        ? 'View Result'
-                                                        : 'Add Result',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
+                                                        orderBloc.add(
+                                                            EditPtientInfo(
+                                                                orderId: widget
+                                                                    .orderId,
+                                                                patient:
+                                                                    patient,
+                                                                index: widget
+                                                                    .index));
+                                                      }
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            37),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        color:
+                                                            kColorsOrangeDark,
+                                                      ),
+                                                      height: 62,
+                                                      // margin: EdgeInsets.all(20),
+                                                      child: Center(
+                                                        child: Text(
+                                                          widget.canEdit
+                                                              ? 'Edit Patient'
+                                                              : widget.patient
+                                                                      .resultAvaiable
+                                                                  ? 'View Result'
+                                                                  : 'Add Result',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+
+                                            //view result
+                                            widget.patient.resultAvaiable
+                                                ? InkWell(
+                                                    onTap: () {
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          AddTestResultPage
+                                                              .addTestResultPageRouteName,
+                                                          arguments: {
+                                                            'orderId':
+                                                                widget.orderId,
+                                                            'patient':
+                                                                widget.patient,
+                                                            'index':
+                                                                widget.index,
+                                                          });
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            37),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        color:
+                                                            kColorsOrangeDark,
+                                                      ),
+                                                      height: 62,
+                                                      // margin: EdgeInsets.all(20),
+                                                      child: Center(
+                                                        child: Text(
+                                                          'View Result',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+
+                                            // widget.canAddResult
+                                            //     ? InkWell(
+                                            //         onTap: () {
+                                            //           Navigator.pushNamed(
+                                            //               context,
+                                            //               AddTestResultPage
+                                            //                   .addTestResultPageRouteName,
+                                            //               arguments: {
+                                            //                 'orderId':
+                                            //                     widget.orderId,
+                                            //                 'patient':
+                                            //                     widget.patient,
+                                            //                 'index':
+                                            //                     widget.index,
+                                            //               });
+                                            //         },
+                                            //         borderRadius:
+                                            //             BorderRadius.circular(
+                                            //                 37),
+                                            //         child: Container(
+                                            //           decoration: BoxDecoration(
+                                            //             borderRadius:
+                                            //                 BorderRadius
+                                            //                     .circular(10),
+                                            //             color:
+                                            //                 kColorsOrangeDark,
+                                            //           ),
+                                            //           height: 62,
+                                            //           // margin: EdgeInsets.all(20),
+                                            //           child: Center(
+                                            //             child: Text(
+                                            //               'Add Result',
+                                            //               style: TextStyle(
+                                            //                   fontWeight:
+                                            //                       FontWeight
+                                            //                           .bold,
+                                            //                   fontSize: 20,
+                                            //                   color:
+                                            //                       Colors.white),
+                                            //             ),
+                                            //           ),
+                                            //         ),
+                                            //       )
+                                            //     : Container(),
+                                          ],
                                         ),
                                 )
                               : Container(),
@@ -1142,12 +1212,38 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                         Text('Examination Type : ${e.examinationType}'),
                         // Text('Assessed : ${e.assessed}'),
                         !e.rejected
-                            ? Text('Accepted : ${!e.rejected}')
+                            ? Text('Accepted : ${e.assessed}')
                             : Container(),
                         e.rejected
                             ? Text('Rejected : ${e.rejected}')
                             : Container(),
                         e.rejected ? Text('Reason : ${e.reason}') : Container(),
+                        widget.canAddResult &&
+                                (state is LoadedSingleOrder &&
+                                    state.order.status == 'Received') &&
+                                (!e.rejected) &&
+                                !widget.patient.resultAvaiable
+                            ? Align(
+                                alignment: AlignmentDirectional.centerEnd,
+                                child: IconButton(
+                                  color: Colors.green,
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context,
+                                        AddTestResultPage
+                                            .addTestResultPageRouteName,
+                                        arguments: {
+                                          'orderId': widget.orderId,
+                                          'patient': widget.patient,
+                                          'index': widget.index,
+                                        });
+                                  },
+                                  icon: Icon(
+                                    Icons.edit,
+                                  ),
+                                ),
+                              )
+                            : SizedBox(),
                       ],
                     ),
                   ),
