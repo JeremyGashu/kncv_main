@@ -16,6 +16,8 @@ class AddOrder extends OrderEvents {
   final String courier_id;
   final String courier_name;
   final String tester_name;
+  final String courier_phone;
+  final String tester_phone;
   final String date;
 
   AddOrder({
@@ -24,6 +26,8 @@ class AddOrder extends OrderEvents {
     required this.courier_name,
     required this.tester_name,
     required this.date,
+    required this.courier_phone,
+    required this.tester_phone,
   });
   @override
   List<Object> get props =>

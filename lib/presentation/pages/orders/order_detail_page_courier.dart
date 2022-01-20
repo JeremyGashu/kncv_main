@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/core/hear_beat.dart';
+import 'package:kncv_flutter/core/message_codes.dart';
+import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
@@ -52,9 +55,9 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
               courierContent:
                   'You have accepted order from ${state.order.sender_name} to ${state.order.tester_name}.',
               senderContent:
-                  'Courier coming to fetch order to ${state.order.tester_name}. Will reach at your place on ${state.date} at ${state.time}.',
+                  'Courier coming to collect order to ${state.order.tester_name}. Will reach at your place on ${state.date} at ${state.time}.',
               testerContent:
-                  'Courier going to fetch order from ${state.order.sender_name}.',
+                  'Courier going to collect order from ${state.order.sender_name}.',
               content: 'One order got accepted by courier!',
             );
             ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
@@ -91,7 +94,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                     color: Colors.black,
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   },
                 ),
                 title: Text(
@@ -139,7 +142,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       trailing: Text(
-                                        'Sender',
+                                        'Referring Health Facilty',
                                         style: TextStyle(
                                             color: Colors.green, fontSize: 14),
                                       ),
@@ -188,7 +191,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       trailing: Text(
-                                        'Test Center',
+                                        'Testing Health Center',
                                         style: TextStyle(
                                             color: Colors.green, fontSize: 14),
                                       ),
@@ -203,12 +206,23 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
 
                               SliverToBoxAdapter(
                                 child: Container(
-                                    margin: EdgeInsets.symmetric(vertical: 20),
+                                    margin: EdgeInsets.symmetric(vertical: 5),
+                                    width: double.infinity,
+                                    child: Text(
+                                      'Order ID = ${state.order.orderId}',
+                                      style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.left,
+                                    )),
+                              ),
+
+                              SliverToBoxAdapter(
+                                child: Container(
+                                    margin: EdgeInsets.symmetric(vertical: 5),
                                     width: double.infinity,
                                     child: Text(
                                       'Current Status = ${state.order.status}',
                                       style: TextStyle(color: Colors.grey),
-                                      textAlign: TextAlign.center,
+                                      textAlign: TextAlign.left,
                                     )),
                               ),
 
@@ -541,6 +555,17 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                           });
 
                                       if (success == true) {
+                                        if (!(await isConnectedToTheInternet())) {
+                                          await sendSMS(context,
+                                              to: '0931057901',
+                                              payload: {
+                                                'oid': state.order.orderId,
+                                                'date': date ?? '',
+                                                'time': time ?? '',
+                                              },
+                                              action: COURIER_ACCEPT_ORDER);
+                                          return;
+                                        }
                                         ordersBloc.add(AcceptOrderCourier(
                                             state.order,
                                             time ?? '',
@@ -585,6 +610,21 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                           setState(() {
                                             notifiyingArrival = true;
                                           });
+                                          if (!(await isConnectedToTheInternet())) {
+                                            await sendSMS(
+                                              context,
+                                              to: '0931057901',
+                                              payload: {
+                                                'oid': state.order.orderId,
+                                              },
+                                              action:
+                                                  COURIER_NOTIFY_ARRIVAL_TESTER,
+                                            );
+                                            setState(() {
+                                              notifiyingArrival = true;
+                                            });
+                                            return;
+                                          }
                                           bool success = await OrderBloc
                                               .approveArrivalFromCourier(
                                                   state.order);
@@ -652,6 +692,20 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                       setState(() {
                                         notifyingArrival = true;
                                       });
+                                      if (!(await isConnectedToTheInternet())) {
+                                        await sendSMS(
+                                          context,
+                                          to: '0931057901',
+                                          payload: {
+                                            'oid': state.order.orderId,
+                                          },
+                                          action: COURIER_NOTIFY_ARRIVAL_SENDER,
+                                        );
+                                        setState(() {
+                                          notifiyingArrival = true;
+                                        });
+                                        return;
+                                      }
                                       bool success = await addNotification(
                                         orderId: widget.orderId,
                                         courierContent:
@@ -661,7 +715,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                         testerContent:
                                             'Courier is at ${state.order.sender_name} to bring specimen to you.',
                                         content:
-                                            'Courier Reached at health facility to fetch order!',
+                                            'Courier Reached at health facility to collect order!',
                                       );
 
                                       if (success) {

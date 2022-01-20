@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 class Order {
   Order(
       {this.orderId,
@@ -12,6 +14,9 @@ class Order {
       this.status,
       this.tester_name,
       this.sender_name,
+      this.sender_phone,
+      this.courier_phone,
+      this.tester_phone,
       this.created_at,
       this.courier_name});
 
@@ -29,6 +34,9 @@ class Order {
   String? tester_name;
   String? courier_name;
   String? created_at;
+  String? sender_phone;
+  String? tester_phone;
+  String? courier_phone;
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         orderId: json["id"],
@@ -40,6 +48,9 @@ class Order {
         sender_name: json['sender_name'],
         sender: json["sender"],
         status: json['status'],
+        sender_phone: json['sender_phone'],
+        tester_phone: json['tester_phone'],
+        courier_phone: json['courier_phone'],
         tester_name: json['tester_name'],
         courier_name: json['courier_name'],
         created_at: json['created_at'],
@@ -58,6 +69,9 @@ class Order {
         'sender_name': sender_name,
         "courier": courier,
         "test_center": testCenter,
+        'sender_phone': sender_phone,
+        'tester_phone': tester_phone,
+        'courier_phone': courier_phone,
         "sender": sender,
         "timestamp": timestamp,
         "patients": patients != null
@@ -94,13 +108,10 @@ class Patient {
       this.reasonForTest,
       this.previousDrugUse,
       this.requestedTest,
+      this.region,
       this.remark,
       this.resultAvaiable = false,
       this.address});
-
-  // regitrationGroup: regGroup,
-  //                                     reasonForTest: reason,
-  //                                     requestedTest: requestedTests,
 
   String? mr;
   String? name;
@@ -124,6 +135,7 @@ class Patient {
   String? malnutrition;
   String? status = 'Draft';
   String? dm;
+  Region? region;
   String? doctorInCharge;
   String? siteOfTB;
   String? examPurpose;
@@ -142,6 +154,7 @@ class Patient {
         ageMonths: json['age_months'],
         woreda: json["woreda"],
         phone: json["phone"],
+        region: json['region'] != null ? Region.fromJson(json['region']) : null,
         reasonForTest: json['reason_for_test'],
         address: json['address'],
         dateOfBirth: json['date_of_birth'],
@@ -175,6 +188,7 @@ class Patient {
         "zone": zone,
         "woreda": woreda,
         "phone": phone,
+        'region': region?.toJson(),
         // "TB": tb,
         'requested_test': requestedTest,
         'registration_group': registrationGroup,
@@ -347,21 +361,23 @@ class NotificationModel {
       };
 }
 
-class Region {
+class Region extends Equatable {
   Region({
     required this.code,
     required this.name,
     required this.zones,
   });
 
-  String code;
-  String name;
-  List<Zone> zones;
+  final String code;
+  final String name;
+  final List<Zone> zones;
 
   factory Region.fromJson(Map<String, dynamic> json) => Region(
         code: json["code"],
         name: json["name"],
-        zones: List<Zone>.from(json["zones"].map((x) => Zone.fromJson(x))),
+        zones: json["zones"] != null
+            ? List<Zone>.from(json["zones"].map((x) => Zone.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -369,24 +385,33 @@ class Region {
         "name": name,
         "zones": List<dynamic>.from(zones.map((x) => x.toJson())),
       };
+
+  @override
+  String toString() {
+    return this.name;
+  }
+
+  @override
+  List<Object?> get props => [code, name, zones];
 }
 
-class Zone {
+class Zone extends Equatable {
   Zone({
     required this.code,
     required this.name,
     required this.woredas,
   });
 
-  String code;
-  String name;
-  List<Woreda> woredas;
+  final String code;
+  final String name;
+  final List<Woreda> woredas;
 
   factory Zone.fromJson(Map<String, dynamic> json) => Zone(
         code: json["code"],
         name: json["name"],
-        woredas:
-            List<Woreda>.from(json["woredas"].map((x) => Woreda.fromJson(x))),
+        woredas: json["woredas"] != null
+            ? List<Woreda>.from(json["woredas"].map((x) => Woreda.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -394,49 +419,40 @@ class Zone {
         "name": name,
         "woredas": List<dynamic>.from(woredas.map((x) => x.toJson())),
       };
+
+  @override
+  String toString() {
+    return this.name;
+  }
+
+  @override
+  List<Object?> get props => [code, name, woredas];
 }
 
-class Woreda {
+class Woreda extends Equatable {
   Woreda({
     required this.code,
     required this.name,
-    required this.kebeles,
   });
 
-  String code;
-  String name;
-  List<Kebele> kebeles;
+  final String code;
+  final String name;
 
   factory Woreda.fromJson(Map<String, dynamic> json) => Woreda(
         code: json["code"],
         name: json["name"],
-        kebeles:
-            List<Kebele>.from(json["kebeles"].map((x) => Kebele.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "code": code,
         "name": name,
-        "kebeles": List<dynamic>.from(kebeles.map((x) => x.toJson())),
       };
-}
 
-class Kebele {
-  Kebele({
-    required this.name,
-    required this.code,
-  });
+  @override
+  String toString() {
+    return this.name;
+  }
 
-  String name;
-  String code;
-
-  factory Kebele.fromJson(Map<String, dynamic> json) => Kebele(
-        name: json["name"],
-        code: json["code"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "name": name,
-        "code": code,
-      };
+  @override
+  List<Object?> get props => [code, name];
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/core/hear_beat.dart';
+import 'package:kncv_flutter/core/message_codes.dart';
+import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -97,7 +100,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                     color: Colors.black,
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   },
                 ),
                 title: Text(
@@ -145,7 +148,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       trailing: Text(
-                                        'Sender',
+                                        'Referring Health Facilty',
                                         style: TextStyle(
                                             color: Colors.green, fontSize: 14),
                                       ),
@@ -194,7 +197,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       trailing: Text(
-                                        'Test Center',
+                                        'Testing Health Facility',
                                         style: TextStyle(
                                             color: Colors.green, fontSize: 14),
                                       ),
@@ -209,19 +212,29 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
 
                               SliverToBoxAdapter(
                                 child: Container(
-                                    margin: EdgeInsets.symmetric(vertical: 20),
+                                    margin: EdgeInsets.symmetric(vertical: 5),
+                                    width: double.infinity,
+                                    child: Text(
+                                      'Order ID = ${state.order.orderId}',
+                                      style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.left,
+                                    )),
+                              ),
+
+                              SliverToBoxAdapter(
+                                child: Container(
+                                    margin: EdgeInsets.symmetric(vertical: 5),
                                     width: double.infinity,
                                     child: Text(
                                       'Current Status = ${state.order.status}',
                                       style: TextStyle(color: Colors.grey),
-                                      textAlign: TextAlign.center,
+                                      textAlign: TextAlign.left,
                                     )),
                               ),
 
                               //change the way to be
                               SliverToBoxAdapter(
-                                child: state.order.status ==
-                                        'Being Assessed By Tester'
+                                child: state.order.status == 'Delivered'
                                     ? sendingFeedback
                                         ? Center(
                                             child: CircularProgressIndicator())
@@ -410,6 +423,20 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                           );
 
                                           if (confirm == true) {
+                                            if (!(await isConnectedToTheInternet())) {
+                                              await sendSMS(context,
+                                                  to: '0931057901',
+                                                  payload: {
+                                                    'oid': state.order.orderId,
+                                                    'rn': _receiverController
+                                                        .value.text,
+                                                    'rp': _phoneController
+                                                        .value.text,
+                                                  },
+                                                  action:
+                                                      TESTER_APPROVE_COURIER_ARRIVAL);
+                                              return;
+                                            }
                                             ordersBloc.add(
                                               CourierApproveArrivalToTestCenter(
                                                 state.order,
@@ -478,6 +505,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
           ),
           child: TextField(
             controller: controller,
+            autofocus: false,
             style: TextStyle(color: Colors.black),
             decoration: InputDecoration(
                 hintText: hint,
@@ -666,6 +694,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   sendingFeedback = true;
                                 });
 
+                                //TODO check internet and send result
+
                                 bool success =
                                     await OrderRepository.editSpecimenFeedback(
                                         index: index,
@@ -786,6 +816,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                   );
                 }).toList(),
                 onChanged: (val) {
+                  FocusScope.of(context).requestFocus(FocusNode());
                   setState(() {
                     inColdChain = val;
                   });
@@ -843,6 +874,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                         );
                       }).toList(),
                       onChanged: (val) {
+                        FocusScope.of(context).requestFocus(FocusNode());
+
                         setState(() {
                           sputumCondition = val;
                         });
@@ -873,6 +906,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                             );
                           }).toList(),
                           onChanged: (val) {
+                            FocusScope.of(context).requestFocus(FocusNode());
                             setState(() {
                               stoolCondition = val;
                             });
@@ -985,6 +1019,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                   );
                 }).toList(),
                 onChanged: (val) {
+                  FocusScope.of(context).requestFocus(FocusNode());
                   setState(() {
                     inColdChain = val;
                   });
@@ -1025,6 +1060,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                   );
                 }).toList(),
                 onChanged: (val) {
+                  FocusScope.of(context).requestFocus(FocusNode());
                   setState(() {
                     sputumCondition = val;
                   });
@@ -1064,6 +1100,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                   );
                 }).toList(),
                 onChanged: (val) {
+                  FocusScope.of(context).requestFocus(FocusNode());
                   setState(() {
                     stoolCondition = val;
                   });

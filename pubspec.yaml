@@ -48,6 +48,8 @@ dependencies:
   badges: ^2.0.2
   pdf: ^3.6.5
   printing: ^5.6.6
+  connectivity_plus: ^2.2.0
+  telephony: ^0.1.4
 
 dev_dependencies:
   flutter_test:

@@ -56,7 +56,7 @@ class OrderRepository {
       'Confirmed',
       'Received',
       'Picked Up',
-      'Being Assessed By Tester'
+      'Delivered'
     ]).get();
     return orders.docs
         .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
@@ -79,12 +79,24 @@ class OrderRepository {
 
   //adding orders for senders
   // @params{courier_id, tester_id, courier_name and tester_name}
+
+  String? getInitials(String val) {
+    List<String> names = val.split(" ");
+    String initials = '';
+    for (var i = 0; i < names.length; i++) {
+      initials += '${names[i][0]}';
+    }
+    return initials;
+  }
+
   Future<String> addOrder({
     required String courier_id,
     required String tester_id,
     required String courier_name,
     required String tester_name,
     required String date,
+    required String courier_phone,
+    required String tester_phone,
   }) async {
     String sender_id = auth.currentUser!.uid;
     var ordersCollection = await database.collection('orders');
@@ -107,17 +119,21 @@ class OrderRepository {
     ];
     var usersCollection = database.collection('users');
     String? sender_name;
+    String? sender_phone;
     var userData =
         await usersCollection.where('user_id', isEqualTo: sender_id).get();
     if (userData.docs.length > 0) {
       sender_name = userData.docs[0].data()['institution']['name'];
+      sender_phone = userData.docs[0].data()['phone'];
     }
     var orders =
         await ordersCollection.where('sender_id', isEqualTo: sender_id).get();
     int length = orders.docs.length;
 
     String id =
-        '${sender_name}_${DateTime.now().toIso8601String()}_${length + 1}';
+        '${getInitials(sender_name ?? "") ?? ""}-${DateTime.now().toIso8601String().replaceAll('T', '_')}';
+    id = id.substring(0, id.lastIndexOf('.'));
+    id = '${id.substring(0, id.lastIndexOf(':'))}_${length + 1}';
     await ordersCollection.doc(id).set({
       'courier_id': courier_id,
       'sender_id': sender_id,
@@ -128,6 +144,9 @@ class OrderRepository {
       'ordered_for': date,
       'tester_name': tester_name,
       'courier_name': courier_name,
+      'tester_phone': tester_phone,
+      'sender_phone': sender_phone,
+      'courier_phone': courier_phone,
       'order_created': DateTime.now()
     });
     // var c = await ordersCollection.add({
@@ -243,7 +262,7 @@ class OrderRepository {
       bool assessed = allSpecimensAssessed(order);
       await orderRef.update({
         'patients': patientsList,
-        'status': assessed ? 'Received' : 'Being Assessed By Tester',
+        'status': assessed ? 'Received' : 'Delivered',
       });
 
       return true;
@@ -260,6 +279,16 @@ class OrderRepository {
       }
     }
     return true;
+  }
+
+  static bool? allPatientsAreTested(Order order) {
+    var o = order.patients ?? [];
+    for (var patient in o) {
+      if (patient.status != 'Draft') {
+        return true;
+      }
+    }
+    return false;
   }
 
   //editing patient info
@@ -380,7 +409,7 @@ class OrderRepository {
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Picked Up') {
       await orderRef.update({
-        'status': 'Being Assessed By Tester',
+        'status': 'Delivered',
         'receiver_tester': receiver,
         'receiver_phone_number': phone,
         'order_received': DateTime.now(),

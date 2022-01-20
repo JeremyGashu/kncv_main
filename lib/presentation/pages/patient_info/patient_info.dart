@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
+import 'package:kncv_flutter/presentation/blocs/locations/location_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/locations/location_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
@@ -29,6 +31,20 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   String? reasonForTest;
   String? registrationGroup;
   String? requestedTests;
+
+  Map<String, List<String>> examinationTypesList = {
+    'Stool': ['AFB microscopy', 'GeneXpret', 'Culture'],
+    'Sputum': ['AFB microscopy', 'GeneXpret', 'Culture'],
+    'Urine': ['LF LAM'],
+    'Blood': ['CD4 Count', 'Viral Load'],
+    'Swab': ['GeneXpret'],
+    'Other': ['GeneXpret']
+  };
+
+  Region? selectedRegion;
+  Zone? selectedZone;
+  Woreda? selectedWoreda;
+
   final TextEditingController MRController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageYearsController = TextEditingController();
@@ -41,8 +57,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   final TextEditingController xMonthsDuringController = TextEditingController();
 
   final TextEditingController ageMonthsController = TextEditingController();
-  final TextEditingController zoneController = TextEditingController();
-  final TextEditingController woredaController = TextEditingController();
+  // final TextEditingController zoneController = TextEditingController();
+  // final TextEditingController woredaController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController patientRemarkController = TextEditingController();
@@ -70,6 +86,12 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kPageBackground,
+      appBar: AppBar(
+        title: Text('Patient Info Page'),
+        centerTitle: true,
+        backgroundColor: kColorsOrangeLight,
+        elevation: 0,
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -148,6 +170,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   );
                                 }).toList(),
                                 onChanged: (val) {
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
                                   setState(() {
                                     sex = val;
                                   });
@@ -157,7 +181,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                           ),
 
                           _buildInputField(
-                              label: 'Age',
+                              label: 'Age in Years',
                               inputType: TextInputType.numberWithOptions(
                                   signed: false, decimal: false),
                               maxCharacters: 2,
@@ -165,37 +189,148 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                               controller: ageYearsController,
                               required: true),
 
-                          _buildInputField(
-                              label: 'Age',
-                              inputType: TextInputType.numberWithOptions(
-                                  signed: false, decimal: false),
-                              maxCharacters: 2,
-                              maxValue: 12,
-                              hint: 'Age (Months)...',
-                              controller: ageMonthsController,
-                              required: true),
-                          _tobLabelBuilder('Address'),
-                          _buildInputField(
-                            label: 'Zone',
-                            hint: 'Enter Your Zone',
-                            controller: zoneController,
-                            required: true,
-                          ),
-                          _buildInputField(
-                            label: 'Woreda',
-                            hint: 'Enter Your Woreda',
-                            controller: woredaController,
-                            required: true,
-                          ),
-                          _buildInputField(
-                            label: 'Address',
-                            hint: 'Enter Your Address',
-                            controller: addressController,
-                            required: true,
-                          ),
+                          ageYearsController.value.text == '0'
+                              ? _buildInputField(
+                                  label: 'Age in Months',
+                                  inputType: TextInputType.numberWithOptions(
+                                      signed: false, decimal: false),
+                                  maxCharacters: 2,
+                                  maxValue: 12,
+                                  hint: 'Age (Months)...',
+                                  controller: ageMonthsController,
+                                  required: true)
+                              : SizedBox(),
+
+                          BlocBuilder<LocationBloc, LocationStates>(
+                              builder: (ctx, s) {
+                            if (s is LoadingLocationsState) {
+                              return CircularProgressIndicator();
+                            } else if (s is LoadedLocationsState) {
+                              return Column(
+                                children: [
+                                  //regions
+                                  _labelBuilder('Region', required: true),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 5),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<Region>(
+                                      value: selectedRegion,
+                                      hint: Text('Region'),
+                                      items: s.regions.map((Region value) {
+                                        return DropdownMenuItem<Region>(
+                                          value: value,
+                                          child: Text(value.name),
+                                        );
+                                      }).toList(),
+                                      onChanged: (val) {
+                                        FocusScope.of(context)
+                                            .requestFocus(FocusNode());
+                                        setState(() {
+                                          selectedRegion = val;
+                                          selectedZone = null;
+                                          selectedWoreda = null;
+                                        });
+                                      },
+                                    )),
+                                  ),
+
+                                  //zones
+                                  _labelBuilder('Zone', required: true),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 5),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<Zone>(
+                                      value: selectedZone,
+                                      hint: Text('Zones'),
+                                      items: selectedRegion?.zones
+                                          .map((Zone value) {
+                                        return DropdownMenuItem<Zone>(
+                                          value: value,
+                                          child: Text(value.name),
+                                        );
+                                      }).toList(),
+                                      onChanged: (val) {
+                                        FocusScope.of(context)
+                                            .requestFocus(FocusNode());
+                                        setState(() {
+                                          selectedZone = val;
+                                          selectedWoreda = null;
+                                        });
+                                      },
+                                    )),
+                                  ),
+
+                                  //woredas
+                                  _labelBuilder('Woreda', required: true),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 5),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<Woreda>(
+                                      value: selectedWoreda,
+                                      hint: Text('Woredas'),
+                                      items: selectedZone?.woredas
+                                          .map((Woreda value) {
+                                        return DropdownMenuItem<Woreda>(
+                                          value: value,
+                                          child: Text(value.name),
+                                        );
+                                      }).toList(),
+                                      onChanged: (val) {
+                                        FocusScope.of(context)
+                                            .requestFocus(FocusNode());
+                                        setState(() {
+                                          selectedWoreda = val;
+                                        });
+                                      },
+                                    )),
+                                  ),
+                                ],
+                              );
+                            }
+                            return Text('Not One');
+                          }),
+
+                          // _tobLabelBuilder('Address'),
+                          // _buildInputField(
+                          //   label: 'Zone',
+                          //   hint: 'Enter Your Zone',
+                          //   controller: zoneController,
+                          //   required: true,
+                          // ),
+                          // _buildInputField(
+                          //   label: 'Woreda',
+                          //   hint: 'Enter Your Woreda',
+                          //   controller: woredaController,
+                          //   required: true,
+                          // ),
+                          // _buildInputField(
+                          //   label: 'Address',
+                          //   hint: 'Enter Your Address',
+                          //   controller: addressController,
+                          //   required: true,
+                          // ),
                           _buildInputField(
                             label: 'Phone',
                             hint: 'Enter Your Phone',
+                            inputType: TextInputType.phone,
                             controller: phoneController,
                           ),
 
@@ -223,6 +358,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 );
                               }).toList(),
                               onChanged: (val) {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
                                 setState(() {
                                   siteOfTB = val;
                                 });
@@ -233,6 +370,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                           siteOfTB == 'Other'
                               ? TextField(
                                   controller: siteOfTBController,
+                                  autofocus: false,
                                   decoration: InputDecoration(
                                       hintText: 'Enter site of TB...'),
                                 )
@@ -265,6 +403,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 );
                               }).toList(),
                               onChanged: (val) {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
                                 setState(() {
                                   registrationGroup = val;
                                 });
@@ -275,6 +415,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                           registrationGroup == 'Other'
                               ? TextField(
                                   controller: registrationGroupController,
+                                  autofocus: false,
                                   decoration: InputDecoration(
                                       hintText: 'Enter registration group...'),
                                 )
@@ -305,6 +446,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 );
                               }).toList(),
                               onChanged: (val) {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
                                 setState(() {
                                   previousTBDrugUse = val;
                                 });
@@ -339,6 +482,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 );
                               }).toList(),
                               onChanged: (val) {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
                                 setState(() {
                                   reasonForTest = val;
                                 });
@@ -349,6 +494,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                           reasonForTest == 'At X months during treatment'
                               ? TextField(
                                   controller: xMonthsDuringController,
+                                  autofocus: false,
                                   keyboardType: TextInputType.numberWithOptions(
                                       decimal: false, signed: false),
                                   decoration: InputDecoration(
@@ -359,6 +505,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                           reasonForTest == 'At X months after treatment'
                               ? TextField(
                                   controller: xMonthsAfterController,
+                                  autofocus: false,
                                   keyboardType: TextInputType.numberWithOptions(
                                       decimal: false, signed: false),
                                   decoration: InputDecoration(
@@ -392,6 +539,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 );
                               }).toList(),
                               onChanged: (val) {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
                                 setState(() {
                                   requestedTests = val;
                                 });
@@ -399,16 +548,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                             )),
                           ),
 
-                          buildRemarkField(
-                            label: 'Remark',
-                            hint: 'Pateint Remark',
-                            controller: patientRemarkController,
-                          ),
+                          // buildRemarkField(
+                          //   label: 'Remark',
+                          //   hint: 'Pateint Remark',
+                          //   controller: patientRemarkController,
+                          // ),
 
-                          _buildInputField(
-                              label: 'Doctor in charge',
-                              hint: 'Doctor in charge',
-                              controller: doctorInChargeController),
+                          // _buildInputField(
+                          //     label: 'Doctor in charge',
+                          //     hint: 'Doctor in charge',
+                          //     controller: doctorInChargeController),
 
                           // _buildInputField(
                           //   label: 'Exam Purpose',
@@ -497,7 +646,10 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                   items: <String>[
                                                     'Stool',
                                                     'Sputum',
-                                                    'Urine'
+                                                    'Urine',
+                                                    'Blood',
+                                                    'Swab',
+                                                    'Other'
                                                   ].map((String value) {
                                                     return DropdownMenuItem<
                                                         String>(
@@ -506,9 +658,13 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     );
                                                   }).toList(),
                                                   onChanged: (val) {
+                                                    FocusScope.of(context)
+                                                        .requestFocus(
+                                                            FocusNode());
                                                     ss(() => 1 == 1);
 
                                                     setState(() {
+                                                      examinationType = null;
                                                       specimenType = val;
                                                     });
                                                   },
@@ -533,11 +689,10 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                   value: examinationType,
                                                   hint:
                                                       Text('Examination Type'),
-                                                  items: <String>[
-                                                    'GeneXpert',
-                                                    'AFB Microscopy',
-                                                    'Other',
-                                                  ].map((String value) {
+                                                  items: (examinationTypesList[
+                                                              specimenType] ??
+                                                          [])
+                                                      .map((String value) {
                                                     return DropdownMenuItem<
                                                         String>(
                                                       value: value,
@@ -545,6 +700,9 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     );
                                                   }).toList(),
                                                   onChanged: (val) {
+                                                    FocusScope.of(context)
+                                                        .requestFocus(
+                                                            FocusNode());
                                                     ss(() => 1 == 1);
 
                                                     setState(() {
@@ -682,6 +840,15 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 : InkWell(
                                     onTap: () {
                                       if (_form.currentState!.validate()) {
+                                        if (selectedRegion == null ||
+                                            selectedZone == null ||
+                                            selectedWoreda == null) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Please enter zone region and woreda')));
+                                          return;
+                                        }
                                         String mr = MRController.value.text;
                                         String name = nameController.value.text;
                                         //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
@@ -690,9 +857,9 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                         String ageMonths =
                                             ageMonthsController.value.text;
 
-                                        String zone = zoneController.value.text;
-                                        String woreda =
-                                            woredaController.value.text;
+                                        String? zone = selectedZone?.code;
+                                        String? woreda = selectedWoreda?.code;
+
                                         String address =
                                             addressController.value.text;
                                         String phone =
@@ -722,12 +889,14 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
 
                                         Patient patient = Patient(
                                           age: age,
-                                          ageMonths: ageMonths,
+                                          ageMonths:
+                                              age == '0' ? '0' : ageMonths,
                                           siteOfTB: site,
                                           doctorInCharge: doctorInCharge,
                                           phone: phone,
                                           zone: zone,
                                           woreda: woreda,
+                                          region: selectedRegion,
                                           address: address,
                                           name: name,
                                           sex: sex,
@@ -857,12 +1026,12 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
     );
   }
 
-  Widget _labelBuilder(String label) {
+  Widget _labelBuilder(String label, {bool required = false}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.only(top: 20, bottom: 10),
       child: Text(
-        label,
+        '$label ${required ? " *" : ""}',
         textAlign: TextAlign.left,
         style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
       ),
@@ -911,14 +1080,21 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
           ),
           child: TextFormField(
             enabled: editable,
+            autofocus: false,
             validator: (value) {
               if (!required) {
                 return null;
+              }
+              if (maxValue != null && num.parse(value ?? '') > maxValue) {
+                return 'Value cannot exceed ${maxValue}';
               }
               if (value == null || value.isEmpty) {
                 return 'Value cannot be empty!';
               }
               return null;
+            },
+            onChanged: (_) {
+              setState(() {});
             },
             controller: controller,
             style: TextStyle(color: Colors.black),
@@ -962,6 +1138,7 @@ Widget buildRemarkField({
         ),
         child: TextFormField(
           keyboardType: TextInputType.multiline,
+          autofocus: false,
           maxLines: null,
           enabled: editable,
           validator: (value) {

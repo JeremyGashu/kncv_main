@@ -130,7 +130,7 @@ class InstroPageTwo extends StatelessWidget {
                           padding: EdgeInsets.all(20),
                           width: double.infinity,
                           child: Text(
-                              'As a courier the app allows to receive notification for incoming orders, confirm schedule for pick up, confirm collection and confirm delivery.',
+                              'As a Courier the app allows to receive notification for incoming orders, confirm schedule for pick up, confirm collection and confirm delivery.',
                               style: TextStyle(
                                 color: kTextColorLight.withOpacity(0.7),
                                 fontSize: 18,

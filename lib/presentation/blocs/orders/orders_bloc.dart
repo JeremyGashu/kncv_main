@@ -38,7 +38,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             tester_id: event.tester_id,
             courier_name: event.courier_name,
             tester_name: event.tester_name,
-            date: event.date);
+            date: event.date,courier_phone: event.courier_phone, tester_phone: event.tester_phone);
         yield SentOrder(orderId: newOrderId);
       } catch (e) {
         yield ErrorState(message: 'Error sending order!');

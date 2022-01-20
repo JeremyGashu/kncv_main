@@ -27,7 +27,19 @@ class _SelectorPageState extends State<SelectorPage> {
   void initState() {
     BlocProvider.of<TesterCourierBloc>(context).courier = null;
     BlocProvider.of<TesterCourierBloc>(context).tester = null;
-    BlocProvider.of<TesterCourierBloc>(context).date = null;
+    // BlocProvider.of<TesterCourierBloc>(context).date = null;
+
+    DateTime t = DateTime.now();
+
+    int month = t.month;
+    int day = t.day;
+    int year = t.year;
+
+    String d = '$day-$month-$year';
+    setState(() {
+      date = d;
+      BlocProvider.of<TesterCourierBloc>(context).date = date;
+    });
     super.initState();
   }
 
@@ -111,6 +123,7 @@ class _SelectorPageState extends State<SelectorPage> {
               child: DropdownButtonHideUnderline(
                   child: DropdownButton<Courier>(
                       onChanged: (val) {
+                        FocusScope.of(context).requestFocus(FocusNode());
                         setState(() {
                           courier = val;
                           BlocProvider.of<TesterCourierBloc>(context).courier =
@@ -156,6 +169,7 @@ class _SelectorPageState extends State<SelectorPage> {
               child: DropdownButtonHideUnderline(
                   child: DropdownButton<Tester>(
                       onChanged: (val) {
+                        FocusScope.of(context).requestFocus(FocusNode());
                         setState(() {
                           tester = val;
                           BlocProvider.of<TesterCourierBloc>(context).tester =

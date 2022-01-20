@@ -4,6 +4,7 @@ import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
@@ -138,9 +139,34 @@ class _SenderHomePageState extends State<SenderHomePage> {
                       color: Colors.black,
                     ),
                     onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(context,
-                          LoginPage.loginPageRouteName, (route) => false);
-                      BlocProvider.of<AuthBloc>(context).add(LogOutUser());
+                      showDialog(
+                          context: context,
+                          builder: (builder) {
+                            return AlertDialog(
+                              title: Text('Log Out'),
+                              content:
+                                  Text('Are you sure you want to Log Out?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        LoginPage.loginPageRouteName,
+                                        (route) => false);
+                                    BlocProvider.of<AuthBloc>(context)
+                                        .add(LogOutUser());
+                                  },
+                                  child: Text('Yes'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('No'),
+                                ),
+                              ],
+                            );
+                          });
                     },
                   ),
                   // Container(
@@ -291,6 +317,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
                         courier_name: courier.name,
                         tester_name: tester.name,
                         date: date!,
+                        courier_phone: courier.phone,
+                        tester_phone: tester.phone,
                       ),
                     );
                   }

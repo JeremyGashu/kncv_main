@@ -138,7 +138,7 @@ class IntroPageOne extends StatelessWidget {
                           padding: EdgeInsets.all(20),
                           width: double.infinity,
                           child: Text(
-                              'As a Sender this is a mobile app allows to create sample orders (i.e Sputum , Stool , Blood , Urine , etc.) , send the orders , confirm collection and view the status of samples.',
+                              'As a Referring Health Facilty this is a mobile app allows to create sample orders (i.e Sputum , Stool , Blood , Urine , etc.) , send the orders , confirm collection and view the status of samples.',
                               style: TextStyle(
                                 color: kTextColorLight.withOpacity(0.7),
                                 fontSize: 18,

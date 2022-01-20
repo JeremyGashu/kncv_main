@@ -112,9 +112,34 @@ class _CourierHomePageState extends State<CourierHomePage> {
                       color: Colors.black,
                     ),
                     onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(context,
-                          LoginPage.loginPageRouteName, (route) => false);
-                      BlocProvider.of<AuthBloc>(context).add(LogOutUser());
+                      showDialog(
+                          context: context,
+                          builder: (builder) {
+                            return AlertDialog(
+                              title: Text('Log Out'),
+                              content:
+                                  Text('Are you sure you want to Log Out?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        LoginPage.loginPageRouteName,
+                                        (route) => false);
+                                    BlocProvider.of<AuthBloc>(context)
+                                        .add(LogOutUser());
+                                  },
+                                  child: Text('Yes'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('No'),
+                                ),
+                              ],
+                            );
+                          });
                     },
                   ),
                 ],

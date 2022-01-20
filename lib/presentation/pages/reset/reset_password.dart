@@ -25,7 +25,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   height: MediaQuery.of(context).size.height * 0.4,
                   child: Center(
                       child: Text(
-                    'e-Specimen e-Referral System Ethiopia',
+                    'Specimen Referral System Ethiopia',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 46,
@@ -50,6 +50,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           ),
                         ),
                         TextField(
+                          autofocus: false,
                           decoration: InputDecoration(
                               prefixIcon: Icon(Icons.phone, color: kIconColors),
                               labelText: 'Phone Number',

@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 20,
                         ),
                         Text(
-                          'E-Specimen referral system Ethiopia',
+                          'Specimen Referral System Ethiopia',
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontSize: 20,
@@ -79,6 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         TextField(
                           controller: _usernameController,
+                          autofocus: false,
                           decoration: InputDecoration(
                               prefixIcon:
                                   Icon(Icons.person, color: kIconColors),
@@ -91,6 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         TextField(
                           controller: _passwordController,
+                          autofocus: false,
                           obscureText: !_passwordVisible,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.vpn_key, color: kIconColors),

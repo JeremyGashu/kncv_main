@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/core/hear_beat.dart';
+import 'package:kncv_flutter/core/message_codes.dart';
+import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
@@ -36,676 +39,749 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<OrderBloc, OrderState>(
-        bloc: ordersBloc,
-        listener: (ctx, state) async {
-          if (state is DeletedOrder) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Order deleted!')));
-            await Future.delayed(Duration(seconds: 1));
-            // ScaffoldMessenger.of(context)
-            //     .showSnackBar(SnackBar(content: Text('Order Delted!')));
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, true);
+        // return false;
+        return true;
+      },
+      child: BlocConsumer<OrderBloc, OrderState>(
+          bloc: ordersBloc,
+          listener: (ctx, state) async {
+            if (state is DeletedOrder) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('Order deleted!')));
+              await Future.delayed(Duration(seconds: 1));
+              // ScaffoldMessenger.of(context)
+              //     .showSnackBar(SnackBar(content: Text('Order Delted!')));
 
-            // bool a = await addNotification(
-            //   orderId: widget.orderId,
-            //   courierContent:
-            //       'Sender ${state.order.sender_name} have deleted order!',
-            //   senderContent: 'You have deleted one order!',
-            //   testerContent:
-            //       'Sender ${state.order.sender_name} have deleted order!',
-            //   content: 'Sender deleted an order!',
-            // );
-            Navigator.pushReplacementNamed(
-                context, SenderHomePage.senderHomePageRouteName);
-          } else if (state is ErrorState) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-            // Navigator.pop(context, true);
-          } else if (state is DeletedPatient) {
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-            // ScaffoldMessenger.of(context)
-            //     .showSnackBar(SnackBar(content: Text()));
-            // Navigator.pop(context, true);
-          } else if (state is PlacedOrder) {
-            await Future.delayed(Duration(seconds: 1));
-            // ScaffoldMessenger.of(context)
-            //     .showSnackBar(SnackBar(content: Text('Order Placed!')));
-            ordersBloc.add(LoadOrders());
-            Navigator.pop(context, true);
-
-            addNotification(
-              orderId: widget.orderId,
-              senderContent:
-                  'You have added new order for courier ${state.order.courier_name} and testing center ${state.order.tester_name}.',
-              testerContent:
-                  'New order is ready from ${state.order.sender_name} & will be transported by ${state.order.courier_name}.',
-              courierContent:
-                  'New order is created for you to accept it from ${state.order.sender_name} to ${state.order.tester_name}.',
-              content: 'New order from ${state.order.sender} is ready.!',
-            );
-          } else if (state is ApprovedArrivalCourier) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Courier collected Order!')));
-            addNotification(
-              orderId: widget.orderId,
-              courierContent:
-                  'Order collected from ${state.order.sender_name} to be transported to ${state.order.tester_name}.',
-              senderContent:
-                  'You have approved departure of specimen from you to ${state.order.tester_name}.',
-              testerContent:
-                  'Specimen collected from ${state.order.sender_name} by courier ${state.order.courier_name}.',
-              content: 'New order from ${state.order.sender} is ready.!',
-            );
-            await Future.delayed(Duration(seconds: 1));
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          } else if (state is EditedOrder) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Changed order info!')));
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          }
-        },
-        builder: (ctx, state) {
-          return RefreshIndicator(
-            onRefresh: () async {
+              // bool a = await addNotification(
+              //   orderId: widget.orderId,
+              //   courierContent:
+              //       'Sender ${state.order.sender_name} have deleted order!',
+              //   senderContent: 'You have deleted one order!',
+              //   testerContent:
+              //       'Sender ${state.order.sender_name} have deleted order!',
+              //   content: 'Sender deleted an order!',
+              // );
+              Navigator.pushReplacementNamed(
+                  context, SenderHomePage.senderHomePageRouteName);
+            } else if (state is ErrorState) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-            },
-            child: Scaffold(
-              // floatingActionButton: FloatingActionButton(
-              //   child: Icon(Icons.add),
-              //   backgroundColor: kColorsOrangeLight,
-              //   onPressed: () {},
-              // ),
-              backgroundColor: kPageBackground,
-              appBar: AppBar(
-                backgroundColor: kColorsOrangeLight,
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.black,
+              // Navigator.pop(context, true);
+            } else if (state is DeletedPatient) {
+              ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+              // ScaffoldMessenger.of(context)
+              //     .showSnackBar(SnackBar(content: Text()));
+              // Navigator.pop(context, true);
+            } else if (state is PlacedOrder) {
+              await Future.delayed(Duration(seconds: 1));
+              // ScaffoldMessenger.of(context)
+              //     .showSnackBar(SnackBar(content: Text('Order Placed!')));
+              ordersBloc.add(LoadOrders());
+              Navigator.pop(context, true);
+
+              addNotification(
+                orderId: widget.orderId,
+                senderContent:
+                    'You have added new order for courier ${state.order.courier_name} and testing center ${state.order.tester_name}.',
+                testerContent:
+                    'New order is ready from ${state.order.sender_name} & will be transported by ${state.order.courier_name}.',
+                courierContent:
+                    'New order is created for you to accept it from ${state.order.sender_name} to ${state.order.tester_name}.',
+                content: 'New order from ${state.order.sender} is ready.!',
+              );
+            } else if (state is ApprovedArrivalCourier) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Courier collected Order!')));
+              addNotification(
+                orderId: widget.orderId,
+                courierContent:
+                    'Order collected from ${state.order.sender_name} to be transported to ${state.order.tester_name}.',
+                senderContent:
+                    'You have approved departure of specimen from you to ${state.order.tester_name}.',
+                testerContent:
+                    'Specimen collected from ${state.order.sender_name} by courier ${state.order.courier_name}.',
+                content: 'New order from ${state.order.sender} is ready.!',
+              );
+              await Future.delayed(Duration(seconds: 1));
+              ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+            } else if (state is EditedOrder) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('Changed order info!')));
+              ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+            }
+          },
+          builder: (ctx, state) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+              },
+              child: Scaffold(
+                // floatingActionButton: FloatingActionButton(
+                //   child: Icon(Icons.add),
+                //   backgroundColor: kColorsOrangeLight,
+                //   onPressed: () {},
+                // ),
+                backgroundColor: kPageBackground,
+                appBar: AppBar(
+                  backgroundColor: kColorsOrangeLight,
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                title: Text(
-                  '${widget.orderId}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                  title: Text(
+                    '${widget.orderId}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                elevation: 0,
-                actions: [
-                  state is DeletingOrder
-                      ? Container()
-                      : state is LoadedSingleOrder
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.delete_outline,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {
-                                if (state.order.status !=
-                                        'Waiting for Confirmation' &&
-                                    state.order.status != 'Draft') {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                  elevation: 0,
+                  actions: [
+                    state is DeletingOrder
+                        ? Container()
+                        : state is LoadedSingleOrder
+                            ? IconButton(
+                                icon: Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () {
+                                  if (state.order.status !=
+                                          'Waiting for Confirmation' &&
+                                      state.order.status != 'Draft') {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Cant delete this order! It is already accepted!')));
+                                    return;
+                                  }
+                                  showDialog(
+                                      context: context,
+                                      builder: (ctx) {
+                                        return AlertDialog(
+                                          title: Text('Delete Order'),
                                           content: Text(
-                                              'Cant delete this order! It is already accepted!')));
-                                  return;
-                                }
-                                showDialog(
-                                    context: context,
-                                    builder: (ctx) {
-                                      return AlertDialog(
-                                        title: Text('Delete Order'),
-                                        content: Text(
-                                            'Are you sure you want to delete this order?'),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                ordersBloc.add(DeleteOrders(
-                                                  order: state.order,
-                                                ));
-                                                Navigator.pop(ctx);
-                                              },
-                                              child: Text('Yes')),
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(ctx);
-                                              },
-                                              child: Text('No')),
-                                        ],
-                                      );
-                                    });
-                                // AlertDialog(),
-                              },
-                            )
-                          : Container(),
-                  // IconButton(
-                  //   icon: Icon(
-                  //     Icons.edit_outlined,
-                  //     color: Colors.black,
-                  //   ),
-                  //   onPressed: () {},
-                  // ),
-                ],
-              ),
-              body: state is LoadedSingleOrder
-                  ? Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 100, left: 10, top: 10, right: 10),
-                          child: CustomScrollView(
-                            slivers: [
-                              state.order.status == 'Draft'
-                                  ? SliverToBoxAdapter(
-                                      child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        IconButton(
-                                            tooltip: 'Edit',
-                                            // backgroundColor: kColorsOrangeLight,
-                                            // elevation: 0,
-                                            onPressed: () async {
-                                              print('here');
-                                              var create =
-                                                  await showModalBottomSheet(
-                                                      backgroundColor:
-                                                          Colors.transparent,
-                                                      isScrollControlled: true,
-                                                      context: context,
-                                                      builder: (ctx) {
-                                                        return Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 30,
-                                                                  left: 20,
-                                                                  right: 20,
-                                                                  bottom: 20),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .only(
-                                                              topLeft: Radius
-                                                                  .circular(
-                                                                30,
-                                                              ),
-                                                              topRight: Radius
-                                                                  .circular(
-                                                                30,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          child: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Container(
-                                                                width: double
-                                                                    .infinity,
-                                                                child: Text(
-                                                                  'Create An Order',
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        32,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
+                                              'Are you sure you want to delete this order?'),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  ordersBloc.add(DeleteOrders(
+                                                    order: state.order,
+                                                  ));
+                                                  Navigator.pop(ctx);
+                                                },
+                                                child: Text('Yes')),
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(ctx);
+                                                },
+                                                child: Text('No')),
+                                          ],
+                                        );
+                                      });
+                                  // AlertDialog(),
+                                },
+                              )
+                            : Container(),
+                    // IconButton(
+                    //   icon: Icon(
+                    //     Icons.edit_outlined,
+                    //     color: Colors.black,
+                    //   ),
+                    //   onPressed: () {},
+                    // ),
+                  ],
+                ),
+                body: state is LoadedSingleOrder
+                    ? Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 100, left: 10, top: 10, right: 10),
+                            child: CustomScrollView(
+                              slivers: [
+                                state.order.status == 'Draft'
+                                    ? SliverToBoxAdapter(
+                                        child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          IconButton(
+                                              tooltip: 'Edit',
+                                              // backgroundColor: kColorsOrangeLight,
+                                              // elevation: 0,
+                                              onPressed: () async {
+                                                print('here');
+                                                var create =
+                                                    await showModalBottomSheet(
+                                                        backgroundColor:
+                                                            Colors.transparent,
+                                                        isScrollControlled:
+                                                            true,
+                                                        context: context,
+                                                        builder: (ctx) {
+                                                          return Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 30,
+                                                                    left: 20,
+                                                                    right: 20,
+                                                                    bottom: 20),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                  30,
+                                                                ),
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                  30,
                                                                 ),
                                                               ),
-                                                              SizedBox(
-                                                                height: 30,
-                                                              ),
-                                                              SelectorPage(
-                                                                buttonText:
-                                                                    'Eedit Order',
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      });
+                                                            ),
+                                                            child: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                  width: double
+                                                                      .infinity,
+                                                                  child: Text(
+                                                                    'Create An Order',
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          32,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 30,
+                                                                ),
+                                                                SelectorPage(
+                                                                  buttonText:
+                                                                      'Edit Order',
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        });
 
-                                              print('create');
-                                              if (create == true) {
-                                                Tester? tester = BlocProvider
-                                                        .of<TesterCourierBloc>(
-                                                            context)
-                                                    .tester;
-                                                Courier? courier = BlocProvider
-                                                        .of<TesterCourierBloc>(
-                                                            context)
-                                                    .courier;
-                                                String? date = BlocProvider.of<
-                                                            TesterCourierBloc>(
-                                                        context)
-                                                    .date;
-                                                print(tester?.name);
-                                                print(courier?.name);
-                                                print(date);
-                                                ordersBloc.add(
-                                                  EditOrder(
-                                                    courier_id: courier!.id,
-                                                    tester_id: tester!.id,
-                                                    courier_name: courier.name,
-                                                    tester_name: tester.name,
-                                                    orderId: widget.orderId,
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                            icon: Icon(
-                                              Icons.edit,
-                                              color: Colors.red,
-                                            )),
-                                      ],
-                                    ))
-                                  : SliverToBoxAdapter(),
-                              SliverToBoxAdapter(
-                                child: ListView(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.all(10),
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: [
-                                    //sender
-                                    //courier
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: Colors.blue,
-                                        radius: 18,
-                                        child: Text(
-                                          'S',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                      ),
-                                      title: Text(
-                                        '${state.order.sender_name}',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      trailing: Text(
-                                        'Sender',
-                                        style: TextStyle(
-                                            color: Colors.green, fontSize: 14),
-                                      ),
-                                    ),
-
-                                    //courier
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: Colors.blue,
-                                        radius: 18,
-                                        child: Text(
-                                          'C',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                      ),
-                                      title: Text(
-                                        '${state.order.courier_name}',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      trailing: Text(
-                                        'Courier',
-                                        style: TextStyle(
-                                            color: Colors.green, fontSize: 14),
-                                      ),
-                                    ),
-                                    //test center
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: Colors.blue,
-                                        radius: 18,
-                                        child: Text(
-                                          'T',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                      ),
-                                      title: Text(
-                                        '${state.order.tester_name}',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      trailing: Text(
-                                        'Test Center',
-                                        style: TextStyle(
-                                            color: Colors.green, fontSize: 14),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              //
-                              SliverToBoxAdapter(
-                                child: Divider(),
-                              ),
-
-                              SliverToBoxAdapter(
-                                child: Container(
-                                    margin: EdgeInsets.symmetric(vertical: 20),
-                                    width: double.infinity,
-                                    child: Text(
-                                      'Current Status = ${state.order.status}',
-                                      style: TextStyle(color: Colors.grey),
-                                      textAlign: TextAlign.center,
-                                    )),
-                              ),
-
-                              state.order.status == 'Draft'
-                                  ? SliverToBoxAdapter(
-                                      child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        FloatingActionButton(
-                                            tooltip: 'Add Patient',
-                                            backgroundColor: kColorsOrangeLight,
-                                            elevation: 0,
-                                            onPressed: () async {
-                                              if (state
-                                                      .order.patients!.length >=
-                                                  4) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                      'Maximum sample quantity is reached!',
+                                                print('create');
+                                                if (create == true) {
+                                                  Tester? tester = BlocProvider
+                                                          .of<TesterCourierBloc>(
+                                                              context)
+                                                      .tester;
+                                                  Courier? courier = BlocProvider
+                                                          .of<TesterCourierBloc>(
+                                                              context)
+                                                      .courier;
+                                                  String? date = BlocProvider
+                                                          .of<TesterCourierBloc>(
+                                                              context)
+                                                      .date;
+                                                  print(tester?.name);
+                                                  print(courier?.name);
+                                                  print(date);
+                                                  ordersBloc.add(
+                                                    EditOrder(
+                                                      courier_id: courier!.id,
+                                                      tester_id: tester!.id,
+                                                      courier_name:
+                                                          courier.name,
+                                                      tester_name: tester.name,
+                                                      orderId: widget.orderId,
                                                     ),
-                                                  ),
-                                                );
-
-                                                return;
-                                              }
-                                              var added = await Navigator.pushNamed(
-                                                  context,
-                                                  PatientInfoPage
-                                                      .patientInfoPageRouteName,
-                                                  arguments: widget.orderId);
-                                              if (added == true) {
-                                                ordersBloc.add(LoadSingleOrder(
-                                                    orderId: widget.orderId));
-                                              }
-                                            },
-                                            child: Icon(Icons.add)),
-                                      ],
-                                    ))
-                                  : SliverToBoxAdapter(),
-
-                              SliverToBoxAdapter(
-                                child: state.order.patients!.length > 0
-                                    ?
-                                    // ListView(
-                                    //     shrinkWrap: true,
-                                    //     physics: NeverScrollableScrollPhysics(),
-                                    //     children: state.order.patients!
-                                    //         .map((e) => buildPatients(
-                                    //             e, widget.orderId))
-                                    //         .toList(),
-                                    //   )
-                                    ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: state.order.patients!.length,
-                                        itemBuilder: (ctx, index) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              Navigator.pushNamed(
-                                                  context,
-                                                  EditPatientInfoPage
-                                                      .editPatientInfoRouteName,
-                                                  arguments: {
-                                                    'patient': state
-                                                        .order.patients![index],
-                                                    'orderId': widget.orderId,
-                                                    'index': index,
-                                                    'canEdit':
-                                                        state.order.status ==
-                                                            'Draft',
-                                                  });
-                                            },
-                                            child: buildPatients(
-                                              context,
-                                              state.order.patients![index],
-                                              widget.orderId,
-                                              index,
-                                              deletable: state.order.status ==
-                                                      'Waiting for Confirmation' ||
-                                                  state.order.status == 'Draft',
-                                                  order: state.order,
-                                            ),
-                                          );
-                                        })
-                                    : Center(
-                                        child: Text('No patient added!'),
-                                      ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        state.order.status == 'Draft'
-                            ? Positioned(
-                                bottom: 0,
-                                left: 10,
-                                right: 10,
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  color: kPageBackground,
-                                  child: InkWell(
-                                    onTap: () {
-                                      if (state.order.patients!.length == 0) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    'Please add patients first!')));
-                                        return;
-                                      }
-
-                                      ordersBloc
-                                          .add(PlaceOrder(order: state.order));
-                                    },
-                                    borderRadius: BorderRadius.circular(37),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: kColorsOrangeDark,
-                                      ),
-                                      height: 62,
-                                      // margin: EdgeInsets.all(20),
-                                      child: Center(
-                                        child: Text(
-                                          'Place Order',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                                  );
+                                                }
+                                              },
+                                              icon: Icon(
+                                                Icons.edit,
+                                                color: Colors.red,
+                                              )),
+                                        ],
+                                      ))
+                                    : SliverToBoxAdapter(),
+                                SliverToBoxAdapter(
+                                  child: ListView(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.all(10),
+                                    physics: NeverScrollableScrollPhysics(),
+                                    children: [
+                                      //sender
+                                      //courier
+                                      ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: Colors.blue,
+                                          radius: 18,
+                                          child: Text(
+                                            'S',
+                                            style: TextStyle(
                                               fontSize: 20,
-                                              color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          '${state.order.sender_name}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        trailing: Text(
+                                          'Referring Health Facilty',
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 14),
+                                        ),
+                                      ),
+
+                                      //courier
+                                      ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: Colors.blue,
+                                          radius: 18,
+                                          child: Text(
+                                            'C',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          '${state.order.courier_name}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        trailing: Text(
+                                          'Courier',
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 14),
+                                        ),
+                                      ),
+                                      //test center
+                                      ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: Colors.blue,
+                                          radius: 18,
+                                          child: Text(
+                                            'T',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          '${state.order.tester_name}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        trailing: Text(
+                                          'Testing Health Facility',
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 14),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                //
+                                SliverToBoxAdapter(
+                                  child: Divider(),
+                                ),
+
+                                SliverToBoxAdapter(
+                                  child: Container(
+                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      width: double.infinity,
+                                      child: Text(
+                                        'Order ID = ${state.order.orderId}',
+                                        style: TextStyle(color: Colors.grey),
+                                        textAlign: TextAlign.left,
+                                      )),
+                                ),
+
+                                SliverToBoxAdapter(
+                                  child: Container(
+                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      width: double.infinity,
+                                      child: Text(
+                                        'Current Status = ${state.order.status}',
+                                        style: TextStyle(color: Colors.grey),
+                                        textAlign: TextAlign.left,
+                                      )),
+                                ),
+
+                                state.order.status == 'Draft'
+                                    ? SliverToBoxAdapter(
+                                        child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          FloatingActionButton(
+                                              tooltip: 'Add Patient',
+                                              backgroundColor:
+                                                  kColorsOrangeLight,
+                                              elevation: 0,
+                                              onPressed: () async {
+                                                if (state.order.patients!
+                                                        .length >=
+                                                    4) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                        'Maximum sample quantity is reached!',
+                                                      ),
+                                                    ),
+                                                  );
+
+                                                  return;
+                                                }
+                                                var added =
+                                                    await Navigator.pushNamed(
+                                                        context,
+                                                        PatientInfoPage
+                                                            .patientInfoPageRouteName,
+                                                        arguments:
+                                                            widget.orderId);
+                                                if (added == true) {
+                                                  ordersBloc.add(
+                                                      LoadSingleOrder(
+                                                          orderId:
+                                                              widget.orderId));
+                                                }
+                                              },
+                                              child: Icon(Icons.add)),
+                                        ],
+                                      ))
+                                    : SliverToBoxAdapter(),
+
+                                SliverToBoxAdapter(
+                                  child: state.order.patients!.length > 0
+                                      ?
+                                      // ListView(
+                                      //     shrinkWrap: true,
+                                      //     physics: NeverScrollableScrollPhysics(),
+                                      //     children: state.order.patients!
+                                      //         .map((e) => buildPatients(
+                                      //             e, widget.orderId))
+                                      //         .toList(),
+                                      //   )
+                                      ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount:
+                                              state.order.patients!.length,
+                                          itemBuilder: (ctx, index) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Navigator.pushNamed(
+                                                    context,
+                                                    EditPatientInfoPage
+                                                        .editPatientInfoRouteName,
+                                                    arguments: {
+                                                      'patient': state.order
+                                                          .patients![index],
+                                                      'orderId': widget.orderId,
+                                                      'index': index,
+                                                      'canEdit':
+                                                          state.order.status ==
+                                                              'Draft',
+                                                    });
+                                              },
+                                              child: buildPatients(
+                                                context,
+                                                state.order.patients![index],
+                                                widget.orderId,
+                                                index,
+                                                deletable: state.order.status ==
+                                                        'Waiting for Confirmation' ||
+                                                    state.order.status ==
+                                                        'Draft',
+                                                order: state.order,
+                                              ),
+                                            );
+                                          })
+                                      : Center(
+                                          child: Text('No patient added!'),
+                                        ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          state.order.status == 'Draft'
+                              ? Positioned(
+                                  bottom: 0,
+                                  left: 10,
+                                  right: 10,
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    color: kPageBackground,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        if (state.order.patients!.length == 0) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Please add patients first!')));
+                                          return;
+                                        }
+                                        //SMS_HANDLED => Placing Order
+                                        if (!(await isConnectedToTheInternet())) {
+                                          await sendSMS(context,
+                                              to: '0931057901',
+                                              payload: {
+                                                'oid': state.order.orderId,
+                                              },
+                                              action: PLACE_ORDER);
+                                          return;
+                                        }
+
+                                        ordersBloc.add(
+                                            PlaceOrder(order: state.order));
+                                      },
+                                      borderRadius: BorderRadius.circular(37),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: kColorsOrangeDark,
+                                        ),
+                                        height: 62,
+                                        // margin: EdgeInsets.all(20),
+                                        child: Center(
+                                          child: Text(
+                                            'Place Order',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
-                            : Container(),
-                        state.order.status == 'Confirmed'
-                            ? Positioned(
-                                bottom: 0,
-                                left: 10,
-                                right: 10,
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  color: kPageBackground,
-                                  child: InkWell(
-                                    onTap: () async {
-                                      bool confirm = await showModalBottomSheet(
-                                          backgroundColor: Colors.transparent,
-                                          isScrollControlled: true,
-                                          context: context,
-                                          builder: (ctx) {
-                                            return StatefulBuilder(
-                                                builder: (ctx, ss) {
-                                              return SingleChildScrollView(
-                                                child: Container(
-                                                  padding: EdgeInsets.only(
-                                                    bottom:
-                                                        MediaQuery.of(context)
-                                                                .viewInsets
-                                                                .bottom +
-                                                            20,
-                                                    top: 30,
-                                                    left: 20,
-                                                    right: 20,
-                                                  ),
-                                                  // padding: EdgeInsets.only(
+                                )
+                              : Container(),
+                          state.order.status == 'Confirmed'
+                              ? Positioned(
+                                  bottom: 0,
+                                  left: 10,
+                                  right: 10,
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    color: kPageBackground,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        bool confirm =
+                                            await showModalBottomSheet(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                isScrollControlled: true,
+                                                context: context,
+                                                builder: (ctx) {
+                                                  return StatefulBuilder(
+                                                      builder: (ctx, ss) {
+                                                    return SingleChildScrollView(
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          bottom: MediaQuery.of(
+                                                                      context)
+                                                                  .viewInsets
+                                                                  .bottom +
+                                                              20,
+                                                          top: 30,
+                                                          left: 20,
+                                                          right: 20,
+                                                        ),
+                                                        // padding: EdgeInsets.only(
 
-                                                  //     bottom: 20),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft: Radius.circular(
-                                                        30,
-                                                      ),
-                                                      topRight: Radius.circular(
-                                                        30,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                        width: double.infinity,
-                                                        child: Text(
-                                                          'Confirm',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                            fontSize: 32,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                        //     bottom: 20),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                              30,
+                                                            ),
+                                                            topRight:
+                                                                Radius.circular(
+                                                              30,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 30,
-                                                      ),
-                                                      _buildInputField(
-                                                          label: 'Receiver',
-                                                          hint:
-                                                              'Enter Receiver',
-                                                          controller:
-                                                              _receiverController),
-                                                      SizedBox(
-                                                        height: 30,
-                                                      ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          print(
-                                                              _receiverController
-                                                                  .value.text);
-
-                                                          if (_receiverController
-                                                                  .value.text !=
-                                                              '') {
-                                                            Navigator.pop(
-                                                                ctx, true);
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            color:
-                                                                kColorsOrangeDark,
-                                                          ),
-                                                          height: 62,
-                                                          // margin: EdgeInsets.all(20),
-                                                          child: Center(
-                                                            child: Text(
-                                                              'Confirm',
-                                                              style: TextStyle(
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Container(
+                                                              width: double
+                                                                  .infinity,
+                                                              child: Text(
+                                                                'Confirm',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 32,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  fontSize: 20,
-                                                                  color: Colors
-                                                                      .white),
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
+                                                            SizedBox(
+                                                              height: 30,
+                                                            ),
+                                                            _buildInputField(
+                                                                label:
+                                                                    'Receiver',
+                                                                hint:
+                                                                    'Enter Receiver',
+                                                                controller:
+                                                                    _receiverController),
+                                                            SizedBox(
+                                                              height: 30,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                print(
+                                                                    _receiverController
+                                                                        .value
+                                                                        .text);
+
+                                                                if (_receiverController
+                                                                        .value
+                                                                        .text !=
+                                                                    '') {
+                                                                  Navigator.pop(
+                                                                      ctx,
+                                                                      true);
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  color:
+                                                                      kColorsOrangeDark,
+                                                                ),
+                                                                height: 62,
+                                                                // margin: EdgeInsets.all(20),
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    'Confirm',
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            20,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            });
-                                          });
+                                                    );
+                                                  });
+                                                });
 
-                                      if (confirm == true) {
-                                        ordersBloc.add(ApproveArrivalCourier(
-                                            state.order,
-                                            _receiverController.value.text));
-                                      }
-                                    },
-                                    borderRadius: BorderRadius.circular(37),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: kColorsOrangeDark,
-                                      ),
-                                      height: 62,
-                                      // margin: EdgeInsets.all(20),
-                                      child: Center(
-                                        child: Text(
-                                          'Approve Courier Arrival',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Colors.white),
+                                        if (confirm == true) {
+                                          if (!(await isConnectedToTheInternet())) {
+                                            await sendSMS(context,
+                                                to: '0931057901',
+                                                payload: {
+                                                  'oid': state.order.orderId,
+                                                  'cn': _receiverController
+                                                      .value.text,
+                                                },
+                                                action:
+                                                    SENDER_APPROVE_COURIER_ARRIVAL);
+                                            return;
+                                          }
+                                          ordersBloc.add(ApproveArrivalCourier(
+                                              state.order,
+                                              _receiverController.value.text));
+                                        }
+                                      },
+                                      borderRadius: BorderRadius.circular(37),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: kColorsOrangeDark,
+                                        ),
+                                        height: 62,
+                                        // margin: EdgeInsets.all(20),
+                                        child: Center(
+                                          child: Text(
+                                            'Approve Courier Arrival',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(),
-                    ),
-            ),
-          );
-        });
+                                )
+                              : Container(),
+                        ],
+                      )
+                    : Center(
+                        child: CircularProgressIndicator(),
+                      ),
+              ),
+            );
+          }),
+    );
   }
 
   Container buildPatients(
@@ -910,6 +986,7 @@ Widget _buildInputField(
         ),
         child: TextField(
           controller: controller,
+          autofocus: false,
           style: TextStyle(color: Colors.black),
           decoration: InputDecoration(
               hintText: hint,

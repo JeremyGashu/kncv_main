@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/core/hear_beat.dart';
+import 'package:kncv_flutter/core/message_codes.dart';
+import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
@@ -51,7 +54,6 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
       time = widget.patient.testResult?.resultTime ?? '';
       date = widget.patient.testResult?.resultDate ?? '';
 
-      
       mtbResult = widget.patient.testResult?.mtbResult;
       quantity = widget.patient.testResult?.quantity;
       resultRR = widget.patient.testResult?.resultRr;
@@ -103,8 +105,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                 Navigator.pop(context);
               }
               if (state is ErrorState) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.message)));
                 await Future.delayed(Duration(seconds: 1));
               }
             },
@@ -242,6 +244,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                             );
                           }).toList(),
                           onChanged: (val) {
+                            FocusScope.of(context).requestFocus(FocusNode());
                             setState(() {
                               if (val == 'MTB Not Detected ') {
                                 resultRR = null;
@@ -284,6 +287,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   );
                                 }).toList(),
                                 onChanged: (val) {
+                                  FocusScope.of(context).requestFocus(FocusNode());
                                   setState(() {
                                     quantity = val;
                                   });
@@ -306,7 +310,6 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                               ),
                               child: DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
-                                    
                                 value: resultRR,
                                 hint: Text('Result RR'),
                                 items: <String>[
@@ -321,6 +324,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   );
                                 }).toList(),
                                 onChanged: (val) {
+                                  FocusScope.of(context).requestFocus(FocusNode());
                                   setState(() {
                                     resultRR = val;
                                   });
@@ -349,8 +353,6 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                       //   disabled: widget.patient.resultAvaiable,
                       // ),
 
-                    
-
                       SizedBox(
                         height: 35,
                       ),
@@ -364,7 +366,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       child: CircularProgressIndicator(),
                                     )
                                   : InkWell(
-                                      onTap: () {
+                                      onTap: () async {
                                         // String resultRR =
                                         //     resultRRController.value.text;
                                         // String mtbResult =
@@ -389,6 +391,17 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                         widget.patient.testResult = result;
                                         widget.patient.resultAvaiable = true;
                                         widget.patient.status = 'Tested';
+                                        if (!(await isConnectedToTheInternet())) {
+                                          await sendSMS(context,
+                                              to: '0931057901',
+                                              payload: {
+                                                'oid': widget.orderId,
+                                                'i': widget.index,
+                                                'p': widget.patient.toJson(),
+                                              },
+                                              action: TESTER_ADD_TEST_RESULT);
+                                          return;
+                                        }
                                         orderBloc.add(
                                           AddTestResult(
                                               orderId: widget.orderId,
@@ -477,6 +490,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
           ),
           child: TextField(
             controller: controller,
+            autofocus: false,
             style: TextStyle(color: Colors.black),
             readOnly: disabled,
             decoration: InputDecoration(
