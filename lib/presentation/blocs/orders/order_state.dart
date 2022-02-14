@@ -117,6 +117,16 @@ class AddedTestResult extends OrderState {
   List<Object> get props => [patient];
 }
 
+class EditingTestResult extends OrderState {}
+
+class EditedTestResult extends OrderState {
+  final Patient patient;
+
+  EditedTestResult(this.patient);
+  @override
+  List<Object> get props => [patient];
+}
+
 class LoadingSingleOrder extends OrderState {}
 
 class LoadedSingleOrder extends OrderState {

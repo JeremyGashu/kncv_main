@@ -19,6 +19,7 @@ class AddTestResultPage extends StatefulWidget {
   final Patient patient;
   final int index;
   final bool accepted;
+  final bool canEdit;
   static const String addTestResultPageRouteName = 'add test result page';
 
   const AddTestResultPage(
@@ -26,6 +27,7 @@ class AddTestResultPage extends StatefulWidget {
       required this.orderId,
       required this.index,
       this.accepted = false,
+      this.canEdit = false,
       required this.patient})
       : super(key: key);
 
@@ -91,7 +93,6 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
               if (state is AddedTestResult) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text('Added Result!')));
-                await Future.delayed(Duration(seconds: 1));
 
                 addNotification(
                   orderId: widget.orderId,
@@ -102,8 +103,27 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                       'You have added test result to patient ${state.patient.name}.',
                   courier: false,
                 );
+                await Future.delayed(Duration(seconds: 1));
+
+                Navigator.pop(context);
+              } else if (state is EditedTestResult) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('Edited Result!')));
+
+                addNotification(
+                  orderId: widget.orderId,
+                  content: 'Added Test Result!',
+                  senderContent:
+                      'Patient result has been edited to patient ${state.patient.name}',
+                  testerContent:
+                      'You have edited test result to patient ${state.patient.name}.',
+                  courier: false,
+                );
+                await Future.delayed(Duration(seconds: 1));
+
                 Navigator.pop(context);
               }
+
               if (state is ErrorState) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.message)));
@@ -136,7 +156,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                       _labelBuilder('Select Date'),
 
                       GestureDetector(
-                          onTap: widget.patient.resultAvaiable
+                          onTap: !widget.canEdit
                               ? () {}
                               : () {
                                   DatePicker.showDatePicker(
@@ -179,7 +199,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                       _labelBuilder('Select Time'),
 
                       GestureDetector(
-                          onTap: widget.patient.resultAvaiable
+                          onTap: !widget.canEdit
                               ? () {}
                               : () {
                                   DatePicker.showTime12hPicker(
@@ -219,7 +239,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                         label: 'Lab Resitration Number',
                         hint: 'Lab Registration Number',
                         controller: resitrationNumberController,
-                        disabled: widget.patient.resultAvaiable,
+                        disabled: !widget.canEdit,
                       ),
 
                       _labelBuilder('MTB Result'),
@@ -238,7 +258,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                           items: <String>['MTB Not Detected', 'MTB Detected']
                               .map((String value) {
                             return DropdownMenuItem<String>(
-                              enabled: !widget.patient.resultAvaiable,
+                              enabled: widget.canEdit,
                               value: value,
                               child: Text(value),
                             );
@@ -281,13 +301,14 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   'Trace'
                                 ].map((String value) {
                                   return DropdownMenuItem<String>(
-                                    enabled: !widget.patient.resultAvaiable,
+                                    enabled: widget.canEdit,
                                     value: value,
                                     child: Text(value),
                                   );
                                 }).toList(),
                                 onChanged: (val) {
-                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
                                   setState(() {
                                     quantity = val;
                                   });
@@ -318,13 +339,14 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   'Rif Res Indeterminate',
                                 ].map((String value) {
                                   return DropdownMenuItem<String>(
-                                    enabled: !widget.patient.resultAvaiable,
+                                    enabled: widget.canEdit,
                                     value: value,
                                     child: Text(value),
                                   );
                                 }).toList(),
                                 onChanged: (val) {
-                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
                                   setState(() {
                                     resultRR = val;
                                   });
@@ -421,6 +443,65 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                         child: Center(
                                           child: Text(
                                             'Add Test Result',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            )
+                          : Container(),
+
+                      widget.patient.resultAvaiable && widget.canEdit
+                          ? Container(
+                              // padding: EdgeInsets.all(10),
+                              color: kPageBackground,
+                              child: state is EditingTestResult
+                                  ? Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : InkWell(
+                                      onTap: () async {
+                                        String registrationNumber =
+                                            resitrationNumberController
+                                                .value.text;
+
+                                        print(
+                                            '$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
+                                        TestResult result = TestResult(
+                                          labRegistratinNumber:
+                                              registrationNumber,
+                                          resultDate: date,
+                                          resultTime: time,
+                                          mtbResult: mtbResult,
+                                          quantity: quantity,
+                                          resultRr: resultRR,
+                                        );
+                                        widget.patient.testResult = result;
+                                        widget.patient.resultAvaiable = true;
+                                        widget.patient.status = 'Tested';
+
+                                        orderBloc.add(
+                                          EditTestResult(
+                                              orderId: widget.orderId,
+                                              index: widget.index,
+                                              patient: widget.patient),
+                                        );
+                                      },
+                                      borderRadius: BorderRadius.circular(37),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: kColorsOrangeDark,
+                                        ),
+                                        height: 62,
+                                        // margin: EdgeInsets.all(20),
+                                        child: Center(
+                                          child: Text(
+                                            'Edit Test Result',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20,

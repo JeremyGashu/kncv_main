@@ -17,6 +17,7 @@ class Order {
       this.sender_phone,
       this.courier_phone,
       this.tester_phone,
+      this.notified_arrival = false,
       this.created_at,
       this.courier_name});
 
@@ -37,6 +38,7 @@ class Order {
   String? sender_phone;
   String? tester_phone;
   String? courier_phone;
+  bool notified_arrival;
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         orderId: json["id"],
@@ -54,6 +56,7 @@ class Order {
         tester_name: json['tester_name'],
         courier_name: json['courier_name'],
         created_at: json['created_at'],
+        notified_arrival: json['notified_arrival'] ?? false,
         timestamp: json["timestamp"],
         patients: json["patients"] != null
             ? List<Patient>.from(
@@ -72,6 +75,7 @@ class Order {
         'sender_phone': sender_phone,
         'tester_phone': tester_phone,
         'courier_phone': courier_phone,
+        'notified_arrival': notified_arrival,
         "sender": sender,
         "timestamp": timestamp,
         "patients": patients != null
@@ -110,6 +114,8 @@ class Patient {
       this.requestedTest,
       this.region,
       this.remark,
+      this.zone_name,
+      this.woreda_name,
       this.resultAvaiable = false,
       this.address});
 
@@ -143,6 +149,8 @@ class Patient {
   TestResult? testResult;
   List<Specimen>? specimens;
   String? dateOfBirth;
+  String? zone_name;
+  String? woreda_name;
 
   factory Patient.fromJson(Map<String, dynamic> json) => Patient(
         mr: json["MR"],
@@ -161,6 +169,8 @@ class Patient {
         previousDrugUse: json['previous_drug_use'],
         tb: json["TB"],
         requestedTest: json['requested_test'],
+        woreda_name: json['woreda_name'],
+        zone_name: json['zone_name'],
         status: json['status'],
         remark: json['remark'],
         childhood: json["childhood"],
@@ -189,6 +199,8 @@ class Patient {
         "woreda": woreda,
         "phone": phone,
         'region': region?.toJson(),
+        'zone_name': zone_name,
+        'woreda_name': woreda_name,
         // "TB": tb,
         'requested_test': requestedTest,
         'registration_group': registrationGroup,

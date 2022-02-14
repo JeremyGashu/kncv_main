@@ -559,18 +559,25 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                           return;
                                         }
                                         //SMS_HANDLED => Placing Order
-                                        if (!(await isConnectedToTheInternet())) {
-                                          await sendSMS(context,
-                                              to: '0931057901',
-                                              payload: {
-                                                'oid': state.order.orderId,
-                                              },
-                                              action: PLACE_ORDER);
-                                          return;
-                                        }
+                                        await sendSMS(context,
+                                            to: '0931057901',
+                                            payload: {
+                                              'oid': state.order.orderId,
+                                            },
+                                            action: PLACE_ORDER);
+                                        return;
+                                        // if (!(await isConnectedToTheInternet())) {
+                                        //   await sendSMS(context,
+                                        //       to: '0931057901',
+                                        //       payload: {
+                                        //         'oid': state.order.orderId,
+                                        //       },
+                                        //       action: PLACE_ORDER);
+                                        //   return;
+                                        // }
 
-                                        ordersBloc.add(
-                                            PlaceOrder(order: state.order));
+                                        // ordersBloc.add(
+                                        //     PlaceOrder(order: state.order));
                                       },
                                       borderRadius: BorderRadius.circular(37),
                                       child: Container(

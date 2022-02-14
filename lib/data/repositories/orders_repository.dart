@@ -258,7 +258,19 @@ class OrderRepository {
     var or = await orderRef.get();
     if (or.exists) {
       List patientsList = or.data()?['patients'];
+      bool finishedAssessingPatient = true;
+      patient.specimens?.forEach((specimen) {
+        if (!specimen.assessed) {
+          finishedAssessingPatient = false;
+        }
+      });
+
+      if (finishedAssessingPatient) {
+        patient.status = 'Inspected';
+      }
+
       patientsList[index] = patient.toJson();
+
       bool assessed = allSpecimensAssessed(order);
       await orderRef.update({
         'patients': patientsList,
@@ -304,6 +316,24 @@ class OrderRepository {
       patientsList[index] = patient.toJson();
       await orderRef.update(
           {'patients': patientsList, 'test_result_added': DateTime.now()});
+      return true;
+    }
+    return false;
+  }
+
+  //editing patient info
+  //params {order_id : string, patient : Patient and  index of the patient int}
+  Future<bool> editTestResult(
+      {required String? orderId,
+      required Patient patient,
+      required int index}) async {
+    var orderRef = await database.collection('orders').doc(orderId);
+    var order = await orderRef.get();
+    if (order.exists) {
+      List patientsList = order.data()?['patients'];
+      patientsList[index] = patient.toJson();
+      await orderRef.update(
+          {'patients': patientsList, 'updated_test_result': DateTime.now()});
       return true;
     }
     return false;

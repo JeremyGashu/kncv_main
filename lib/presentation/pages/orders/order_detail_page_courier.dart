@@ -594,7 +594,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                 ),
                               )
                             : Container(),
-                        state.order.status == 'Picked Up'
+                        state.order.status == 'Picked Up' &&
+                                !state.order.notified_arrival
                             ? Positioned(
                                 bottom: 0,
                                 left: 10,
@@ -633,6 +634,11 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                 .showSnackBar(SnackBar(
                                                     content: Text(
                                                         'Notified Arrivel to Test Center!')));
+                                            await Future.delayed(
+                                                Duration(seconds: 1));
+
+                                            ordersBloc.add(LoadSingleOrder(
+                                                orderId: widget.orderId));
 
                                             setState(() {
                                               notifiyingArrival = false;
@@ -663,7 +669,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                     color: Colors.white,
                                                   )
                                                 : Text(
-                                                    'Notifiy Arrival',
+                                                    'Notify Arrival',
                                                     style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,

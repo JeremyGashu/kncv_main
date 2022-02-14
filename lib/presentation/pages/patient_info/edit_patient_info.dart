@@ -209,7 +209,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Patient Info Page'),
+        title: Text('Edit Patient Info'),
         centerTitle: true,
         backgroundColor: kColorsOrangeLight,
         elevation: 0,
@@ -687,6 +687,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),
+                                  enabled: !widget.patient.resultAvaiable &&
+                                      widget.canEdit,
                                 );
                               }).toList(),
                               onChanged: (val) {
@@ -1145,6 +1147,12 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                               doctorInCharge,
                                                           phone: phone,
                                                           zone: zone,
+                                                          zone_name:
+                                                              selectedZone
+                                                                  ?.name,
+                                                          woreda_name:
+                                                              selectedWoreda
+                                                                  ?.name,
                                                           region:
                                                               selectedRegion,
                                                           woreda: woreda,
@@ -1222,6 +1230,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                 widget.patient,
                                                             'index':
                                                                 widget.index,
+                                                            'canEdit': widget
+                                                                .canAddResult,
                                                           });
                                                     },
                                                     borderRadius:
@@ -1261,15 +1271,15 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               ? InkWell(
                                   onTap: () {
                                     Navigator.pushNamed(
-                                      context,
-                                      AddTestResultPage
-                                          .addTestResultPageRouteName,
-                                      arguments: {
-                                        'orderId': widget.orderId,
-                                        'patient': widget.patient,
-                                        'index': widget.index,
-                                      },
-                                    );
+                                        context,
+                                        AddTestResultPage
+                                            .addTestResultPageRouteName,
+                                        arguments: {
+                                          'orderId': widget.orderId,
+                                          'patient': widget.patient,
+                                          'index': widget.index,
+                                          'canEdit': widget.canAddResult,
+                                        });
                                   },
                                   borderRadius: BorderRadius.circular(37),
                                   child: Container(
@@ -1398,6 +1408,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                           'orderId': widget.orderId,
                                           'patient': widget.patient,
                                           'index': widget.index,
+                                          'canEdit': widget.canAddResult,
                                         });
                                   },
                                   icon: Icon(

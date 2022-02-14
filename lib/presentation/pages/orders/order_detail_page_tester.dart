@@ -694,8 +694,6 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   sendingFeedback = true;
                                 });
 
-                                //TODO check internet and send result
-
                                 bool success =
                                     await OrderRepository.editSpecimenFeedback(
                                         index: index,

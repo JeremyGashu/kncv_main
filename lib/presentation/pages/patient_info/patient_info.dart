@@ -87,7 +87,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
     return Scaffold(
       backgroundColor: kPageBackground,
       appBar: AppBar(
-        title: Text('Patient Info Page'),
+        title: Text('Patient Info'),
         centerTitle: true,
         backgroundColor: kColorsOrangeLight,
         elevation: 0,
@@ -896,6 +896,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                           phone: phone,
                                           zone: zone,
                                           woreda: woreda,
+                                          zone_name : selectedZone?.name,
+                                          woreda_name : selectedWoreda?.name,
                                           region: selectedRegion,
                                           address: address,
                                           name: name,

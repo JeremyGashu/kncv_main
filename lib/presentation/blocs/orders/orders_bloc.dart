@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
@@ -11,6 +12,10 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
   OrderBloc(this.orderRepository) : super(InitialState());
 
   static Future<bool> approveArrivalFromCourier(Order order) async {
+    var orderRef = await FirebaseFirestore.instance
+        .collection('orders')
+        .doc(order.orderId);
+    await orderRef.update({'notified_arrival': true});
     return await addNotification(
       orderId: order.orderId!,
       courierContent:
@@ -38,7 +43,9 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             tester_id: event.tester_id,
             courier_name: event.courier_name,
             tester_name: event.tester_name,
-            date: event.date,courier_phone: event.courier_phone, tester_phone: event.tester_phone);
+            date: event.date,
+            courier_phone: event.courier_phone,
+            tester_phone: event.tester_phone);
         yield SentOrder(orderId: newOrderId);
       } catch (e) {
         yield ErrorState(message: 'Error sending order!');
@@ -203,7 +210,18 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
           yield AddedTestResult(event.patient);
         }
       } catch (e) {
-        yield ErrorState(message: 'Error editing user');
+        yield ErrorState(message: 'Error adding test result');
+      }
+    } else if (event is EditTestResult) {
+      yield EditingTestResult();
+      try {
+        bool edited = await orderRepository.editTestResult(
+            orderId: event.orderId, index: event.index, patient: event.patient);
+        if (edited) {
+          yield EditedTestResult(event.patient);
+        }
+      } catch (e) {
+        yield ErrorState(message: 'Error editing test result');
       }
     } else if (event is PlaceOrder) {
       yield PlacingOrder();
