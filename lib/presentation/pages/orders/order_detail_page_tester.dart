@@ -424,8 +424,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
 
                                           if (confirm == true) {
                                             if (!(await isConnectedToTheInternet())) {
-                                              await sendSMS(context,
-                                                  to: '0931057901',
+                                              await sendSMS(context : context,
+                                                  to: '0936951272',
                                                   payload: {
                                                     'oid': state.order.orderId,
                                                     'rn': _receiverController

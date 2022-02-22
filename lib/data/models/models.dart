@@ -1,5 +1,10 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 
+part 'models.g.dart';
+
+
+@HiveType(typeId: 1)
 class Order {
   Order(
       {this.orderId,
@@ -21,25 +26,43 @@ class Order {
       this.created_at,
       this.courier_name});
 
+  @HiveField(0)
   String? orderId;
+  @HiveField(1)
   String? senderId;
+  @HiveField(2)
   String? courierId;
+  @HiveField(3)
   String? testCenterId;
+  @HiveField(4)
   String? courier;
+  @HiveField(5)
   String? testCenter;
+  @HiveField(6)
   String? sender_name;
+  @HiveField(7)
   String? sender;
+  @HiveField(8)
   String? timestamp;
+  @HiveField(9)
   String? status;
+  @HiveField(10)
   List<Patient>? patients;
+  @HiveField(11)
   String? tester_name;
+  @HiveField(12)
   String? courier_name;
+  @HiveField(13)
   String? created_at;
+  @HiveField(14)
   String? sender_phone;
+  @HiveField(15)
   String? tester_phone;
+  @HiveField(16)
   String? courier_phone;
+  @HiveField(17)
   bool notified_arrival;
-
+  @HiveField(18)
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         orderId: json["id"],
         senderId: json["sender_id"],
@@ -84,6 +107,7 @@ class Order {
       };
 }
 
+@HiveType(typeId: 2)
 class Patient {
   Patient(
       {this.mr,
@@ -119,39 +143,71 @@ class Patient {
       this.resultAvaiable = false,
       this.address});
 
+  @HiveField(0)
   String? mr;
+  @HiveField(1)
   String? name;
+  @HiveField(2)
   String? remark;
+  @HiveField(3)
   String? sex;
+  @HiveField(4)
   String? age;
+  @HiveField(5)
   String? ageMonths;
+  @HiveField(6)
   String? zone;
+  @HiveField(7)
   String? woreda;
+  @HiveField(8)
   String? previousDrugUse;
+  @HiveField(9)
   String? registrationGroup;
+  @HiveField(10)
   String? reasonForTest;
+  @HiveField(11)
   String? requestedTest;
+  @HiveField(12)
   String? phone;
+  @HiveField(13)
   String? tb;
+  @HiveField(14)
   String? childhood;
+  @HiveField(15)
   String? address;
+  @HiveField(16)
   String? hiv;
+  @HiveField(17)
   String? pneumonia;
+  @HiveField(18)
   String? recurrentPneumonia;
+  @HiveField(19)
   String? malnutrition;
+  @HiveField(20)
   String? status = 'Draft';
+  @HiveField(21)
   String? dm;
+  @HiveField(22)
   Region? region;
+  @HiveField(23)
   String? doctorInCharge;
+  @HiveField(24)
   String? siteOfTB;
+  @HiveField(25)
   String? examPurpose;
+  @HiveField(26)
   bool resultAvaiable;
+  @HiveField(27)
   TestResult? testResult;
+  @HiveField(28)
   List<Specimen>? specimens;
+  @HiveField(29)
   String? dateOfBirth;
+  @HiveField(30)
   String? zone_name;
+  @HiveField(31)
   String? woreda_name;
-
+  @HiveField(32)
   factory Patient.fromJson(Map<String, dynamic> json) => Patient(
         mr: json["MR"],
         name: json["name"],
@@ -227,6 +283,7 @@ class Patient {
       };
 }
 
+@HiveType(typeId: 3)
 class Specimen {
   Specimen({
     this.type,
@@ -237,11 +294,17 @@ class Specimen {
     this.reason,
   });
 
+  @HiveField(0)
   String? type;
+  @HiveField(1)
   String? id;
+  @HiveField(2)
   String? examinationType;
+  @HiveField(3)
   bool assessed;
+  @HiveField(4)
   bool rejected;
+  @HiveField(5)
   String? reason;
 
   factory Specimen.fromJson(Map<String, dynamic> json) => Specimen(
@@ -265,9 +328,13 @@ class Specimen {
 
 class TesterCourier {}
 
+@HiveType(typeId: 4)
 class Courier extends TesterCourier {
+  @HiveField(0)
   final String name;
+  @HiveField(1)
   final String phone;
+  @HiveField(2)
   final String id;
   Courier({required this.name, required this.id, required this.phone});
 
@@ -282,9 +349,13 @@ class Courier extends TesterCourier {
   }
 }
 
+@HiveType(typeId: 5)
 class Tester extends TesterCourier {
+  @HiveField(0)
   final String name;
+  @HiveField(1)
   final String phone;
+  @HiveField(2)
   final String id;
   Tester({required this.name, required this.id, required this.phone});
 
@@ -300,6 +371,7 @@ class Tester extends TesterCourier {
   }
 }
 
+@HiveType(typeId: 6)
 class TestResult {
   TestResult({
     this.resultDate,
@@ -310,11 +382,17 @@ class TestResult {
     this.resultRr,
   });
 
+  @HiveField(0)
   String? resultDate;
+  @HiveField(1)
   String? resultTime;
+  @HiveField(2)
   String? labRegistratinNumber;
+  @HiveField(3)
   String? mtbResult;
+  @HiveField(4)
   String? quantity;
+  @HiveField(5)
   String? resultRr;
 
   factory TestResult.fromJson(Map<String, dynamic> json) => TestResult(
@@ -336,6 +414,7 @@ class TestResult {
       };
 }
 
+@HiveType(typeId: 7)
 class NotificationModel {
   NotificationModel({
     this.userId,
@@ -346,11 +425,17 @@ class NotificationModel {
     this.date,
   });
 
+  @HiveField(0)
   String? userId;
+  @HiveField(1)
   String? timestamp;
+  @HiveField(2)
   String? content;
+  @HiveField(3)
   String? id;
+  @HiveField(4)
   bool seen;
+  @HiveField(5)
   DateTime? date;
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) =>
@@ -373,6 +458,7 @@ class NotificationModel {
       };
 }
 
+@HiveType(typeId: 8)
 class Region extends Equatable {
   Region({
     required this.code,
@@ -380,8 +466,11 @@ class Region extends Equatable {
     required this.zones,
   });
 
+  @HiveField(0)
   final String code;
+  @HiveField(1)
   final String name;
+  @HiveField(2)
   final List<Zone> zones;
 
   factory Region.fromJson(Map<String, dynamic> json) => Region(
@@ -407,6 +496,7 @@ class Region extends Equatable {
   List<Object?> get props => [code, name, zones];
 }
 
+@HiveType(typeId: 9)
 class Zone extends Equatable {
   Zone({
     required this.code,
@@ -414,8 +504,11 @@ class Zone extends Equatable {
     required this.woredas,
   });
 
+  @HiveField(0)
   final String code;
+  @HiveField(1)
   final String name;
+  @HiveField(2)
   final List<Woreda> woredas;
 
   factory Zone.fromJson(Map<String, dynamic> json) => Zone(
@@ -441,13 +534,16 @@ class Zone extends Equatable {
   List<Object?> get props => [code, name, woredas];
 }
 
+@HiveType(typeId: 10)
 class Woreda extends Equatable {
   Woreda({
     required this.code,
     required this.name,
   });
 
+  @HiveField(0)
   final String code;
+  @HiveField(1)
   final String name;
 
   factory Woreda.fromJson(Map<String, dynamic> json) => Woreda(

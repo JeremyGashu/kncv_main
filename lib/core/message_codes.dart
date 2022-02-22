@@ -5,3 +5,10 @@ const int SENDER_APPROVE_COURIER_ARRIVAL = 4;
 const int COURIER_NOTIFY_ARRIVAL_TESTER = 5;
 const int TESTER_APPROVE_COURIER_ARRIVAL = 6;
 const int TESTER_ADD_TEST_RESULT = 7;
+
+const int ADD_ORDER = 8;
+const int EDIT_SHIPMENT_INFO = 9;
+const int EDIT_PATIENT_INFO = 10;
+const int DELETE_PATIENT = 11;
+const int ADD_PATIENT = 12;
+const int DELETE_ORDER = 13;

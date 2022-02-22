@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
@@ -45,10 +47,11 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             tester_name: event.tester_name,
             date: event.date,
             courier_phone: event.courier_phone,
-            tester_phone: event.tester_phone);
+            tester_phone: event.tester_phone,
+            sender_id: (await FirebaseAuth.instance.currentUser?.uid ?? ''));
         yield SentOrder(orderId: newOrderId);
       } catch (e) {
-        yield ErrorState(message: 'Error sending order!');
+        yield ErrorState(message: '$e');
       }
     } else if (event is AcceptOrderCourier) {
       yield AcceptingOrderCourier();
@@ -179,7 +182,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is EditOrder) {
       yield EditingOrder();
       try {
-        await orderRepository.editCourierInfo(
+        await orderRepository.editShipmentInfo(
           orderId: event.orderId,
           courier_name: event.courier_name,
           courier_id: event.courier_id,

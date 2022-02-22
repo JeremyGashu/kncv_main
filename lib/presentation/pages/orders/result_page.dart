@@ -414,8 +414,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                         widget.patient.resultAvaiable = true;
                                         widget.patient.status = 'Tested';
                                         if (!(await isConnectedToTheInternet())) {
-                                          await sendSMS(context,
-                                              to: '0931057901',
+                                          await sendSMS(context : context,
+                                              to: '0936951272',
                                               payload: {
                                                 'oid': widget.orderId,
                                                 'i': widget.index,

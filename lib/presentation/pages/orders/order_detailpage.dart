@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
@@ -559,25 +561,16 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                           return;
                                         }
                                         //SMS_HANDLED => Placing Order
-                                        await sendSMS(context,
-                                            to: '0931057901',
-                                            payload: {
-                                              'oid': state.order.orderId,
-                                            },
-                                            action: PLACE_ORDER);
-                                        return;
-                                        // if (!(await isConnectedToTheInternet())) {
-                                        //   await sendSMS(context,
-                                        //       to: '0931057901',
-                                        //       payload: {
-                                        //         'oid': state.order.orderId,
-                                        //       },
-                                        //       action: PLACE_ORDER);
-                                        //   return;
-                                        // }
+                                        // await sendSMS(context : context,
+                                        //     to: '0936951272',
+                                        //     payload: {
+                                        //       'oid': state.order.orderId,
+                                        //     },
+                                        //     action: PLACE_ORDER);
+                                        // return;
 
-                                        // ordersBloc.add(
-                                        //     PlaceOrder(order: state.order));
+                                        ordersBloc.add(
+                                            PlaceOrder(order: state.order));
                                       },
                                       borderRadius: BorderRadius.circular(37),
                                       child: Container(
@@ -741,8 +734,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
                                         if (confirm == true) {
                                           if (!(await isConnectedToTheInternet())) {
-                                            await sendSMS(context,
-                                                to: '0931057901',
+                                            await sendSMS(
+                                                context: context,
+                                                to: '0936951272',
                                                 payload: {
                                                   'oid': state.order.orderId,
                                                   'cn': _receiverController
