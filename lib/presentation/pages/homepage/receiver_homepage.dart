@@ -122,10 +122,8 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.pushNamedAndRemoveUntil(
-                                        context,
-                                        LoginPage.loginPageRouteName,
-                                        (route) => false);
+                                    Navigator.pushNamed(
+                                        context, LoginPage.loginPageRouteName);
                                     BlocProvider.of<AuthBloc>(context)
                                         .add(LogOutUser());
                                   },
@@ -169,7 +167,9 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                               arguments:
                                                   state.orders[index].orderId);
                                           if (load == true) {
-                                            orderBloc.add(LoadOrders());
+                                            orderBloc.add(LoadOrdersForTester());
+                                          } else {
+                                            orderBloc.add(LoadOrdersForTester());
                                           }
                                         },
                                         child: orderCard(state.orders[index]));

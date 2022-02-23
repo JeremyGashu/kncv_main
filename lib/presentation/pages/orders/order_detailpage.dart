@@ -1,11 +1,6 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
-import 'package:kncv_flutter/core/hear_beat.dart';
-import 'package:kncv_flutter/core/message_codes.dart';
-import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
@@ -560,14 +555,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                       'Please add patients first!')));
                                           return;
                                         }
-                                        //SMS_HANDLED => Placing Order
-                                        // await sendSMS(context : context,
-                                        //     to: '0936951272',
-                                        //     payload: {
-                                        //       'oid': state.order.orderId,
-                                        //     },
-                                        //     action: PLACE_ORDER);
-                                        // return;
 
                                         ordersBloc.add(
                                             PlaceOrder(order: state.order));
@@ -733,19 +720,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 });
 
                                         if (confirm == true) {
-                                          if (!(await isConnectedToTheInternet())) {
-                                            await sendSMS(
-                                                context: context,
-                                                to: '0936951272',
-                                                payload: {
-                                                  'oid': state.order.orderId,
-                                                  'cn': _receiverController
-                                                      .value.text,
-                                                },
-                                                action:
-                                                    SENDER_APPROVE_COURIER_ARRIVAL);
-                                            return;
-                                          }
                                           ordersBloc.add(ApproveArrivalCourier(
                                               state.order,
                                               _receiverController.value.text));

@@ -406,13 +406,45 @@ class OrderRepository {
       {required Order order,
       required Patient patient,
       required int index}) async {
-    //TODO
-    var orderRef = await FirebaseFirestore.instance
-        .collection('orders')
-        .doc(order.orderId);
-    var or = await orderRef.get();
-    if (or.exists) {
-      List patientsList = or.data()?['patients'];
+    bool internetAvailable = await isConnectedToTheInternet();
+    Box<Order> ordersBox = Hive.box<Order>('orders');
+
+    if (internetAvailable) {
+      var orderRef = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(order.orderId);
+      var or = await orderRef.get();
+      if (or.exists) {
+        List patientsList = or.data()?['patients'];
+        bool finishedAssessingPatient = true;
+        patient.specimens?.forEach((specimen) {
+          if (!specimen.assessed) {
+            finishedAssessingPatient = false;
+          }
+        });
+
+        if (finishedAssessingPatient) {
+          patient.status = 'Inspected';
+        }
+
+        patientsList[index] = patient.toJson();
+
+        bool assessed = allSpecimensAssessed(order);
+        await orderRef.update({
+          'patients': patientsList,
+          'status': assessed ? 'Received' : 'Delivered',
+        });
+
+        return true;
+      }
+      return false;
+    } else {
+      List<Order> orders = await ordersBox.values.toList();
+      Order order =
+          orders.firstWhere((order) => order.orderId == order.orderId);
+      orders.removeWhere((order) => order.orderId == order.orderId);
+
+      List<Patient>? patientsList = order.patients;
       bool finishedAssessingPatient = true;
       patient.specimens?.forEach((specimen) {
         if (!specimen.assessed) {
@@ -424,17 +456,30 @@ class OrderRepository {
         patient.status = 'Inspected';
       }
 
-      patientsList[index] = patient.toJson();
+      patientsList?[index] = patient;
 
       bool assessed = allSpecimensAssessed(order);
-      await orderRef.update({
-        'patients': patientsList,
-        'status': assessed ? 'Received' : 'Delivered',
-      });
+
+      order.status = assessed ? 'Received' : 'Delivered';
+      order.patients = patientsList;
+
+      order.patients?[index] = patient;
+      orders.add(order);
+      await ordersBox.clear();
+      await ordersBox.addAll(orders);
+
+      await sendSMS(
+        to: '0936951272',
+        payload: {
+          'oid': order.orderId,
+          'p': jsonEncode(patient.toJson()),
+          'i': index,
+        },
+        action: EDIT_SPECIMEN_FEEDBACK,
+      );
 
       return true;
     }
-    return false;
   }
 
   static bool allSpecimensAssessed(Order order) {
@@ -464,17 +509,42 @@ class OrderRepository {
       {required String? orderId,
       required Patient patient,
       required int index}) async {
-    //TODO if internet is not available, manipulate cache and send change request via sms
-    var orderRef = await database.collection('orders').doc(orderId);
-    var order = await orderRef.get();
-    if (order.exists) {
-      List patientsList = order.data()?['patients'];
-      patientsList[index] = patient.toJson();
-      await orderRef.update(
-          {'patients': patientsList, 'test_result_added': DateTime.now()});
+    bool internetAvailable = await isConnectedToTheInternet();
+    Box<Order> ordersBox = Hive.box<Order>('orders');
+
+    if (internetAvailable) {
+      var orderRef = await database.collection('orders').doc(orderId);
+      var order = await orderRef.get();
+      if (order.exists) {
+        List patientsList = order.data()?['patients'];
+        patientsList[index] = patient.toJson();
+        await orderRef.update(
+            {'patients': patientsList, 'test_result_added': DateTime.now()});
+        return true;
+      }
+      return false;
+    } else {
+      List<Order> orders = await ordersBox.values.toList();
+      Order order =
+          orders.firstWhere((order) => order.orderId == order.orderId);
+      orders.removeWhere((order) => order.orderId == order.orderId);
+      order.patients?[index] = patient;
+
+      orders.add(order);
+      await ordersBox.clear();
+      await ordersBox.addAll(orders);
+
+      await sendSMS(
+          to: '0936951272',
+          payload: {
+            'oid': orderId,
+            'i': index,
+            'p': jsonEncode(patient.toJson()),
+          },
+          action: TESTER_ADD_TEST_RESULT);
+
       return true;
     }
-    return false;
   }
 
   //editing patient info
@@ -483,18 +553,41 @@ class OrderRepository {
       {required String? orderId,
       required Patient patient,
       required int index}) async {
-    //TODO if internet is not available, manipulate cache and send change request via sms
+    bool internetAvailable = await isConnectedToTheInternet();
+    Box<Order> ordersBox = Hive.box<Order>('orders');
+    if (internetAvailable) {
+      var orderRef = await database.collection('orders').doc(orderId);
+      var order = await orderRef.get();
+      if (order.exists) {
+        List patientsList = order.data()?['patients'];
+        patientsList[index] = patient.toJson();
+        await orderRef.update(
+            {'patients': patientsList, 'updated_test_result': DateTime.now()});
+        return true;
+      }
+      return false;
+    } else {
+      List<Order> orders = await ordersBox.values.toList();
+      Order order =
+          orders.firstWhere((order) => order.orderId == order.orderId);
+      orders.removeWhere((order) => order.orderId == order.orderId);
+      order.patients?[index] = patient;
 
-    var orderRef = await database.collection('orders').doc(orderId);
-    var order = await orderRef.get();
-    if (order.exists) {
-      List patientsList = order.data()?['patients'];
-      patientsList[index] = patient.toJson();
-      await orderRef.update(
-          {'patients': patientsList, 'updated_test_result': DateTime.now()});
+      orders.add(order);
+      await ordersBox.clear();
+      await ordersBox.addAll(orders);
+
+      await sendSMS(
+          to: '0936951272',
+          payload: {
+            'oid': orderId,
+            'i': index,
+            'p': jsonEncode(patient.toJson()),
+          },
+          action: EDIT_TEST_RESULT);
+
       return true;
     }
-    return false;
   }
 
   Future<bool> deletePatientInfo(
@@ -670,55 +763,125 @@ class OrderRepository {
   }
 
   Future<bool> acceptOrder(String? orderId, String? time, String? date) async {
-    //TODO if internet is not available, manipulate cache and send change request via sms
+    bool internetAvailable = await isConnectedToTheInternet();
+    Box<Order> ordersBox = Hive.box<Order>('orders');
 
-    var orderRef = database.collection('orders').doc(orderId);
-    var order = await orderRef.get();
-    if (order.exists && order.data()!['status'] == 'Waiting for Confirmation') {
-      await orderRef.update({
-        'status': 'Confirmed',
-        'will_reach_at': '$date-$time',
-        'order_confirmed': DateTime.now()
-      });
-      return true;
+    if (internetAvailable) {
+      var orderRef = database.collection('orders').doc(orderId);
+      var order = await orderRef.get();
+      if (order.exists &&
+          order.data()!['status'] == 'Waiting for Confirmation') {
+        await orderRef.update({
+          'status': 'Confirmed',
+          'will_reach_at': '$date-$time',
+          'order_confirmed': DateTime.now()
+        });
+        return true;
+      } else {
+        return false;
+      }
     } else {
+      List<Order> orders = await ordersBox.values.toList();
+      Order order = orders.firstWhere((element) => element.orderId == orderId);
+      if (order.status == 'Waiting for Confirmation') {
+        orders.removeWhere((element) => element.orderId == orderId);
+        order.status = 'Confirmed';
+        orders.add(order);
+        await ordersBox.clear();
+        await ordersBox.addAll(orders);
+        await sendSMS(
+            to: '0936951272',
+            payload: {
+              'oid': orderId,
+              'date': date ?? '',
+              'time': time ?? '',
+            },
+            action: COURIER_ACCEPT_ORDER);
+
+        return true;
+      }
       return false;
     }
+
+    /*
+
+    */
   }
 
   Future<bool> approveArrival(String? orderId, String receiver) async {
-    //TODO if internet is not available, manipulate cache and send change request via sms
-    var orderRef = database.collection('orders').doc(orderId);
-    var order = await orderRef.get();
-    if (order.exists && order.data()!['status'] == 'Confirmed') {
-      await orderRef.update({
-        'status': 'Picked Up',
-        'receiver_courier': receiver,
-        'order_pickedup': DateTime.now(),
-      });
-      return true;
+    bool internetAvailable = await isConnectedToTheInternet();
+    Box<Order> ordersBox = Hive.box<Order>('orders');
+    if (internetAvailable) {
+      var orderRef = database.collection('orders').doc(orderId);
+      var order = await orderRef.get();
+      if (order.exists && order.data()!['status'] == 'Confirmed') {
+        await orderRef.update({
+          'status': 'Picked Up',
+          'receiver_courier': receiver,
+          'order_pickedup': DateTime.now(),
+        });
+        return true;
+      } else {
+        return false;
+      }
     } else {
-      return false;
+      List<Order> orders = await ordersBox.values.toList();
+      Order order = orders.firstWhere((element) => element.orderId == orderId);
+      if (order.status == 'Confirmed') {
+        orders.removeWhere((element) => element.orderId == orderId);
+        order.status = 'Picked Up';
+        orders.add(order);
+        await ordersBox.clear();
+        await ordersBox.addAll(orders);
+
+        await sendSMS(
+            to: '0936951272',
+            payload: {'oid': orderId, 'cn': receiver},
+            action: SENDER_APPROVE_COURIER_ARRIVAL);
+      }
+      return true;
     }
   }
 
   Future<bool> courierApproveArrivalTester(
-      //TODO if internet is not available, manipulate cache and send change request via sms
+      String? orderId, String receiver, String phone) async {
+    bool internetAvailable = await isConnectedToTheInternet();
+    Box<Order> ordersBox = Hive.box<Order>('orders');
 
-      String? orderId,
-      String receiver,
-      String phone) async {
-    var orderRef = database.collection('orders').doc(orderId);
-    var order = await orderRef.get();
-    if (order.exists && order.data()!['status'] == 'Picked Up') {
-      await orderRef.update({
-        'status': 'Delivered',
-        'receiver_tester': receiver,
-        'receiver_phone_number': phone,
-        'order_received': DateTime.now(),
-      });
-      return true;
+    if (internetAvailable) {
+      var orderRef = database.collection('orders').doc(orderId);
+      var order = await orderRef.get();
+      if (order.exists && order.data()!['status'] == 'Picked Up') {
+        await orderRef.update({
+          'status': 'Delivered',
+          'receiver_tester': receiver,
+          'receiver_phone_number': phone,
+          'order_received': DateTime.now(),
+        });
+        return true;
+      } else {
+        return false;
+      }
     } else {
+      List<Order> orders = await ordersBox.values.toList();
+      Order order = orders.firstWhere((element) => element.orderId == orderId);
+      if (order.status == 'Picked Up') {
+        orders.removeWhere((element) => element.orderId == orderId);
+        order.status = 'Delivered';
+        orders.add(order);
+        await ordersBox.clear();
+        await ordersBox.addAll(orders);
+
+        await sendSMS(
+            to: '0936951272',
+            payload: {
+              'oid': orderId,
+              'rn': receiver,
+              'rp': phone,
+            },
+            action: TESTER_APPROVE_COURIER_ARRIVAL);
+        return true;
+      }
       return false;
     }
   }
@@ -728,8 +891,6 @@ class OrderRepository {
       String? coldChainStatus,
       String? sputumCondition,
       String? stoolCondition}) async {
-    //TODO if internet is not available, manipulate cache and send change request via sms
-
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Received') {

@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:kncv_flutter/core/colors.dart';
-import 'package:kncv_flutter/core/hear_beat.dart';
-import 'package:kncv_flutter/core/message_codes.dart';
-import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
@@ -413,17 +410,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                         widget.patient.testResult = result;
                                         widget.patient.resultAvaiable = true;
                                         widget.patient.status = 'Tested';
-                                        if (!(await isConnectedToTheInternet())) {
-                                          await sendSMS(context : context,
-                                              to: '0936951272',
-                                              payload: {
-                                                'oid': widget.orderId,
-                                                'i': widget.index,
-                                                'p': widget.patient.toJson(),
-                                              },
-                                              action: TESTER_ADD_TEST_RESULT);
-                                          return;
-                                        }
+                                        
                                         orderBloc.add(
                                           AddTestResult(
                                               orderId: widget.orderId,

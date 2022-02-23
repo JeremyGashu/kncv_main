@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
-import 'package:kncv_flutter/core/hear_beat.dart';
-import 'package:kncv_flutter/core/message_codes.dart';
-import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -44,441 +41,443 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<OrderBloc, OrderState>(
-        bloc: ordersBloc,
-        listener: (ctx, state) async {
-          if (state is LoadedSingleOrder) {
-            print(state.order.status);
-          } else if (state is CourierApprovedArrivalTester) {
-            addNotification(
-              orderId: widget.orderId,
-              content: 'Courier reached at destination to pick order!',
-              courierContent:
-                  'You have confirmed arrival to ${state.order.tester_name} from ${state.order.sender_name}.',
-              senderContent:
-                  'Your specimen has arrived to ${state.order.tester_name}.',
-              testerContent:
-                  'Courier ${state.order.courier_name} has just arrived from ${state.order.sender_name}.',
-            );
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          }
-
-          if (state is ErrorState) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-            await Future.delayed(Duration(seconds: 1));
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          } else if (state is AcceptedOrderCourier) {
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-          } else if (state is ApprovedArrivalCourier) {
-          } else if (state is ApprovedArrivalTester) {
-            ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-            addNotification(
-              orderId: widget.orderId,
-              content: 'Tester approved arrival of order!',
-              courierContent:
-                  'Tester center ${state.order.tester_name} accepted the order from ${state.order.sender_name}',
-              senderContent:
-                  'Speciment sent to ${state.order.tester_name} via courier ${state.order.courier_name} has been deliverd successfully!',
-              testerContent:
-                  'You have accepted order sent from ${state.order.sender_name} transported by ${state.order.courier_name}.',
-            );
-          }
-        },
-        builder: (ctx, state) {
-          return RefreshIndicator(
-            onRefresh: () async {
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, true);
+        // return false;
+        return true;
+      },
+      child: BlocConsumer<OrderBloc, OrderState>(
+          bloc: ordersBloc,
+          listener: (ctx, state) async {
+            if (state is LoadedSingleOrder) {
+              print(state.order.status);
+            } else if (state is CourierApprovedArrivalTester) {
+              addNotification(
+                orderId: widget.orderId,
+                content: 'Courier reached at destination to pick order!',
+                courierContent:
+                    'You have confirmed arrival to ${state.order.tester_name} from ${state.order.sender_name}.',
+                senderContent:
+                    'Your specimen has arrived to ${state.order.tester_name}.',
+                testerContent:
+                    'Courier ${state.order.courier_name} has just arrived from ${state.order.sender_name}.',
+              );
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-            },
-            child: Scaffold(
-              backgroundColor: kPageBackground,
-              appBar: AppBar(
-                backgroundColor: kColorsOrangeLight,
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.black,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                ),
-                title: Text(
-                  '${widget.orderId}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                elevation: 0,
-              ),
-              body: state is LoadedSingleOrder
-                  ? Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 100, left: 10, top: 10, right: 10),
-                          child: CustomScrollView(
-                            slivers: [
-                              SliverToBoxAdapter(
-                                child: ListView(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.all(10),
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: [
-                                    //sender
-                                    //courier
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: Colors.blue,
-                                        radius: 18,
-                                        child: Text(
-                                          'S',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                      ),
-                                      title: Text(
-                                        '${state.order.sender_name}',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      trailing: Text(
-                                        'Referring Health Facilty',
-                                        style: TextStyle(
-                                            color: Colors.green, fontSize: 14),
-                                      ),
-                                    ),
+            }
 
-                                    //courier
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: Colors.blue,
-                                        radius: 18,
-                                        child: Text(
-                                          'C',
-                                          style: TextStyle(
-                                            fontSize: 20,
+            if (state is ErrorState) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
+              await Future.delayed(Duration(seconds: 1));
+              ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+            } else if (state is AcceptedOrderCourier) {
+              ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+            } else if (state is ApprovedArrivalCourier) {
+            } else if (state is ApprovedArrivalTester) {
+              ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+              addNotification(
+                orderId: widget.orderId,
+                content: 'Tester approved arrival of order!',
+                courierContent:
+                    'Tester center ${state.order.tester_name} accepted the order from ${state.order.sender_name}',
+                senderContent:
+                    'Speciment sent to ${state.order.tester_name} via courier ${state.order.courier_name} has been deliverd successfully!',
+                testerContent:
+                    'You have accepted order sent from ${state.order.sender_name} transported by ${state.order.courier_name}.',
+              );
+            }
+          },
+          builder: (ctx, state) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+              },
+              child: Scaffold(
+                backgroundColor: kPageBackground,
+                appBar: AppBar(
+                  backgroundColor: kColorsOrangeLight,
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                  ),
+                  title: Text(
+                    '${widget.orderId}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  elevation: 0,
+                ),
+                body: state is LoadedSingleOrder
+                    ? Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 100, left: 10, top: 10, right: 10),
+                            child: CustomScrollView(
+                              slivers: [
+                                SliverToBoxAdapter(
+                                  child: ListView(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.all(10),
+                                    physics: NeverScrollableScrollPhysics(),
+                                    children: [
+                                      //sender
+                                      //courier
+                                      ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: Colors.blue,
+                                          radius: 18,
+                                          child: Text(
+                                            'S',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      title: Text(
-                                        '${state.order.courier_name}',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      trailing: Text(
-                                        'Courier',
-                                        style: TextStyle(
-                                            color: Colors.green, fontSize: 14),
-                                      ),
-                                    ),
-                                    //test center
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: Colors.blue,
-                                        radius: 18,
-                                        child: Text(
-                                          'T',
+                                        title: Text(
+                                          '${state.order.sender_name}',
                                           style: TextStyle(
-                                            fontSize: 20,
-                                          ),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        trailing: Text(
+                                          'Referring Health Facilty',
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 14),
                                         ),
                                       ),
-                                      title: Text(
-                                        '${state.order.tester_name}',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
+
+                                      //courier
+                                      ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: Colors.blue,
+                                          radius: 18,
+                                          child: Text(
+                                            'C',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          '${state.order.courier_name}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        trailing: Text(
+                                          'Courier',
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 14),
+                                        ),
                                       ),
-                                      trailing: Text(
-                                        'Testing Health Facility',
-                                        style: TextStyle(
-                                            color: Colors.green, fontSize: 14),
+                                      //test center
+                                      ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundColor: Colors.blue,
+                                          radius: 18,
+                                          child: Text(
+                                            'T',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          '${state.order.tester_name}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        trailing: Text(
+                                          'Testing Health Facility',
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 14),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              //
-                              SliverToBoxAdapter(
-                                child: Divider(),
-                              ),
+                                //
+                                SliverToBoxAdapter(
+                                  child: Divider(),
+                                ),
 
-                              SliverToBoxAdapter(
-                                child: Container(
-                                    margin: EdgeInsets.symmetric(vertical: 5),
-                                    width: double.infinity,
-                                    child: Text(
-                                      'Order ID = ${state.order.orderId}',
-                                      style: TextStyle(color: Colors.grey),
-                                      textAlign: TextAlign.left,
-                                    )),
-                              ),
+                                SliverToBoxAdapter(
+                                  child: Container(
+                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      width: double.infinity,
+                                      child: Text(
+                                        'Order ID = ${state.order.orderId}',
+                                        style: TextStyle(color: Colors.grey),
+                                        textAlign: TextAlign.left,
+                                      )),
+                                ),
 
-                              SliverToBoxAdapter(
-                                child: Container(
-                                    margin: EdgeInsets.symmetric(vertical: 5),
-                                    width: double.infinity,
-                                    child: Text(
-                                      'Current Status = ${state.order.status}',
-                                      style: TextStyle(color: Colors.grey),
-                                      textAlign: TextAlign.left,
-                                    )),
-                              ),
+                                SliverToBoxAdapter(
+                                  child: Container(
+                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      width: double.infinity,
+                                      child: Text(
+                                        'Current Status = ${state.order.status}',
+                                        style: TextStyle(color: Colors.grey),
+                                        textAlign: TextAlign.left,
+                                      )),
+                                ),
 
-                              //change the way to be
-                              SliverToBoxAdapter(
-                                child: state.order.status == 'Delivered'
-                                    ? sendingFeedback
-                                        ? Center(
-                                            child: CircularProgressIndicator())
-                                        : buildSpecimensList(state.order)
-                                    : state.order.patients!.length > 0
-                                        ? ListView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            itemCount:
-                                                state.order.patients!.length,
-                                            itemBuilder: (ctx, index) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pushNamed(
-                                                      context,
-                                                      EditPatientInfoPage
-                                                          .editPatientInfoRouteName,
-                                                      arguments: {
-                                                        'patient': state.order
-                                                            .patients![index],
-                                                        'orderId':
-                                                            widget.orderId,
-                                                        'index': index,
-                                                        'canEdit': false,
-                                                        'canAddResult': true,
-                                                      });
-                                                },
-                                                child: buildPatients(
-                                                  context,
-                                                  state.order.patients![index],
-                                                  widget.orderId,
-                                                  index,
-                                                  false,
-                                                ),
-                                              );
-                                            })
-                                        : Center(
-                                            child: Text('No patient added!'),
-                                          ),
-                              ),
-                            ],
+                                //change the way to be
+                                SliverToBoxAdapter(
+                                  child: state.order.status == 'Delivered'
+                                      ? sendingFeedback
+                                          ? Center(
+                                              child:
+                                                  CircularProgressIndicator())
+                                          : buildSpecimensList(state.order)
+                                      : state.order.patients!.length > 0
+                                          ? ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              itemCount:
+                                                  state.order.patients!.length,
+                                              itemBuilder: (ctx, index) {
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        EditPatientInfoPage
+                                                            .editPatientInfoRouteName,
+                                                        arguments: {
+                                                          'patient': state.order
+                                                              .patients![index],
+                                                          'orderId':
+                                                              widget.orderId,
+                                                          'index': index,
+                                                          'canEdit': false,
+                                                          'canAddResult': true,
+                                                        });
+                                                  },
+                                                  child: buildPatients(
+                                                    context,
+                                                    state
+                                                        .order.patients![index],
+                                                    widget.orderId,
+                                                    index,
+                                                    false,
+                                                  ),
+                                                );
+                                              })
+                                          : Center(
+                                              child: Text('No patient added!'),
+                                            ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        state.order.status == 'Picked Up'
-                            ? Positioned(
-                                left: 10,
-                                bottom: 0,
-                                right: 10,
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      color: kPageBackground,
-                                      child: InkWell(
-                                        onTap: () async {
-                                          bool confirm =
-                                              await showModalBottomSheet(
-                                            backgroundColor: Colors.transparent,
-                                            isScrollControlled: true,
-                                            context: context,
-                                            builder: (ctx) {
-                                              return StatefulBuilder(
-                                                  builder: (ctx, ss) {
-                                                return SingleChildScrollView(
-                                                  child: Container(
-                                                    padding: EdgeInsets.only(
-                                                      bottom:
-                                                          MediaQuery.of(context)
-                                                                  .viewInsets
-                                                                  .bottom +
-                                                              20,
-                                                      top: 30,
-                                                      left: 20,
-                                                      right: 20,
-                                                    ),
-                                                    // padding: EdgeInsets.only(
-
-                                                    //     bottom: 20),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(
-                                                          30,
-                                                        ),
-                                                        topRight:
-                                                            Radius.circular(
-                                                          30,
-                                                        ),
+                          state.order.status == 'Picked Up'
+                              ? Positioned(
+                                  left: 10,
+                                  bottom: 0,
+                                  right: 10,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(10),
+                                        color: kPageBackground,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            bool confirm =
+                                                await showModalBottomSheet(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              isScrollControlled: true,
+                                              context: context,
+                                              builder: (ctx) {
+                                                return StatefulBuilder(
+                                                    builder: (ctx, ss) {
+                                                  return SingleChildScrollView(
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(
+                                                        bottom: MediaQuery.of(
+                                                                    context)
+                                                                .viewInsets
+                                                                .bottom +
+                                                            20,
+                                                        top: 30,
+                                                        left: 20,
+                                                        right: 20,
                                                       ),
-                                                    ),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          width:
-                                                              double.infinity,
-                                                          child: Text(
-                                                            'Confirm Arrival',
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style: TextStyle(
-                                                              fontSize: 32,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
+                                                      // padding: EdgeInsets.only(
+
+                                                      //     bottom: 20),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                            30,
+                                                          ),
+                                                          topRight:
+                                                              Radius.circular(
+                                                            30,
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          height: 30,
-                                                        ),
-                                                        _buildInputField(
-                                                            label: 'Receiver',
-                                                            hint:
-                                                                'Enter Receiver',
-                                                            controller:
-                                                                _receiverController),
-                                                        _buildInputField(
-                                                            label: 'Phone',
-                                                            hint:
-                                                                'Enter Receiver\'s Phone',
-                                                            controller:
-                                                                _phoneController),
-                                                        SizedBox(
-                                                          height: 30,
-                                                        ),
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            print(
-                                                                _receiverController
-                                                                    .value
-                                                                    .text);
-
-                                                            if (_receiverController
-                                                                        .value
-                                                                        .text !=
-                                                                    '' &&
-                                                                _phoneController
-                                                                        .value
-                                                                        .text !=
-                                                                    '') {
-                                                              Navigator.pop(
-                                                                  ctx, true);
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              color:
-                                                                  kColorsOrangeDark,
-                                                            ),
-                                                            height: 62,
-                                                            // margin: EdgeInsets.all(20),
-                                                            child: Center(
-                                                              child: Text(
-                                                                'Confirm',
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        20,
-                                                                    color: Colors
-                                                                        .white),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            width:
+                                                                double.infinity,
+                                                            child: Text(
+                                                              'Confirm Arrival',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                fontSize: 32,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              });
-                                            },
-                                          );
+                                                          SizedBox(
+                                                            height: 30,
+                                                          ),
+                                                          _buildInputField(
+                                                              label: 'Receiver',
+                                                              hint:
+                                                                  'Enter Receiver',
+                                                              controller:
+                                                                  _receiverController),
+                                                          _buildInputField(
+                                                              label: 'Phone',
+                                                              hint:
+                                                                  'Enter Receiver\'s Phone',
+                                                              controller:
+                                                                  _phoneController),
+                                                          SizedBox(
+                                                            height: 30,
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              print(
+                                                                  _receiverController
+                                                                      .value
+                                                                      .text);
 
-                                          if (confirm == true) {
-                                            if (!(await isConnectedToTheInternet())) {
-                                              await sendSMS(context : context,
-                                                  to: '0936951272',
-                                                  payload: {
-                                                    'oid': state.order.orderId,
-                                                    'rn': _receiverController
-                                                        .value.text,
-                                                    'rp': _phoneController
-                                                        .value.text,
-                                                  },
-                                                  action:
-                                                      TESTER_APPROVE_COURIER_ARRIVAL);
-                                              return;
-                                            }
-                                            ordersBloc.add(
-                                              CourierApproveArrivalToTestCenter(
-                                                state.order,
-                                                _receiverController.value.text,
-                                                _phoneController.value.text,
-                                              ),
+                                                              if (_receiverController
+                                                                          .value
+                                                                          .text !=
+                                                                      '' &&
+                                                                  _phoneController
+                                                                          .value
+                                                                          .text !=
+                                                                      '') {
+                                                                Navigator.pop(
+                                                                    ctx, true);
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                                color:
+                                                                    kColorsOrangeDark,
+                                                              ),
+                                                              height: 62,
+                                                              // margin: EdgeInsets.all(20),
+                                                              child: Center(
+                                                                child: Text(
+                                                                  'Confirm',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          20,
+                                                                      color: Colors
+                                                                          .white),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                });
+                                              },
                                             );
-                                          }
-                                        },
-                                        borderRadius: BorderRadius.circular(37),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: kColorsOrangeDark,
-                                          ),
-                                          height: 62,
-                                          // margin: EdgeInsets.all(20),
-                                          child: Center(
-                                            child: Text(
-                                              'Approve Arrival',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
-                                                  color: Colors.white),
+
+                                            if (confirm == true) {
+                                              ordersBloc.add(
+                                                CourierApproveArrivalToTestCenter(
+                                                  state.order,
+                                                  _receiverController
+                                                      .value.text,
+                                                  _phoneController.value.text,
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          borderRadius:
+                                              BorderRadius.circular(37),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: kColorsOrangeDark,
+                                            ),
+                                            height: 62,
+                                            // margin: EdgeInsets.all(20),
+                                            child: Center(
+                                              child: Text(
+                                                'Approve Arrival',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                    color: Colors.white),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(),
-                    ),
-            ),
-          );
-        });
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                        ],
+                      )
+                    : Center(
+                        child: CircularProgressIndicator(),
+                      ),
+              ),
+            );
+          }),
+    );
   }
 
   Widget _buildInputField(

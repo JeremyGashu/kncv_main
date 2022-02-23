@@ -12,3 +12,5 @@ const int EDIT_PATIENT_INFO = 10;
 const int DELETE_PATIENT = 11;
 const int ADD_PATIENT = 12;
 const int DELETE_ORDER = 13;
+const int EDIT_SPECIMEN_FEEDBACK = 14;
+const int EDIT_TEST_RESULT = 15;

@@ -169,7 +169,9 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                               arguments:
                                                   state.orders[index].orderId);
                                           if (load == true) {
-                                            orderBloc.add(LoadOrders());
+                                            orderBloc.add(LoadOrdersForCourier());
+                                          } else {
+                                            orderBloc.add(LoadOrdersForCourier());
                                           }
                                         },
                                         child: orderCard(state.orders[index]));
