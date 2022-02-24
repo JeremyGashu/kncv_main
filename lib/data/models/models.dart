@@ -3,7 +3,6 @@ import 'package:hive/hive.dart';
 
 part 'models.g.dart';
 
-
 @HiveType(typeId: 1)
 class Order {
   Order(
@@ -86,6 +85,24 @@ class Order {
                 json["patients"].map((x) => Patient.fromJson(x)))
             : [],
       );
+
+  Map<String, dynamic> toJsonSMS() => {
+        "order_id": orderId,
+        "sender_id": senderId,
+        "courier_id": courierId,
+        "test_center_id": testCenterId,
+        'sender_name': sender_name,
+        "courier": courier,
+        "test_center": testCenter,
+        'sender_phone': sender_phone,
+        'tester_phone': tester_phone,
+        'courier_phone': courier_phone,
+        "sender": sender,
+        "timestamp": timestamp,
+        "patients": patients != null
+            ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS()))
+            : [],
+      };
 
   Map<String, dynamic> toJson() => {
         "order_id": orderId,
@@ -244,6 +261,21 @@ class Patient {
         specimens: List<Specimen>.from(
             json["specimens"].map((x) => Specimen.fromJson(x))),
       );
+
+  Map<String, dynamic> toJsonSMS() => {
+        "MR": mr,
+        "name": name,
+        'reason_for_test': reasonForTest,
+        'requested_test': requestedTest,
+        'registration_group': registrationGroup,
+        'previous_drug_use': previousDrugUse,
+        'result_available': resultAvaiable,
+        "anatomic_location": siteOfTB,
+        "exam_purpose": examPurpose,
+        "specimens": specimens != null
+            ? List<dynamic>.from(specimens!.map((x) => x.toJson()))
+            : [],
+      };
 
   Map<String, dynamic> toJson() => {
         "MR": mr,

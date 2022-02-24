@@ -722,6 +722,48 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   sendingFeedback = false;
                                   sputumCondition = null;
                                 });
+                              } else if (create == true) {
+                                order.patients![index].specimens![i].assessed =
+                                    true;
+
+                                order.patients![index].specimens![i].rejected =
+                                    false;
+                                order.patients![index].specimens![i].reason =
+                                    '';
+
+                                setState(() {
+                                  sendingFeedback = true;
+                                });
+
+                                bool success =
+                                    await OrderRepository.editSpecimenFeedback(
+                                        index: index,
+                                        order: order,
+                                        patient: order.patients![index]);
+
+                                if (success) {
+                                  addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Accepted Urine specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Urine Specimen is accepted by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got accepted by courier!',
+                                      courier: false);
+                                  setState(() {
+                                    sendingFeedback = false;
+                                  });
+                                  ordersBloc.add(
+                                      LoadSingleOrder(orderId: widget.orderId));
+                                }
+
+                                setState(() {
+                                  inColdChain = null;
+                                  stoolCondition = null;
+                                  sendingFeedback = false;
+                                  sputumCondition = null;
+                                });
                               }
                             },
                             child: Text(

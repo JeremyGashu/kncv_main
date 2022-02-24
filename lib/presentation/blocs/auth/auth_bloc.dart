@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/data/repositories/auth_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_events.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_states.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../service_locator.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
@@ -30,6 +33,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           }
         }
         if (user != null) {
+          SharedPreferences preferences = sl<SharedPreferences>();
+          await preferences.setString('user_type', type ?? '');
           yield AuthenticatedState(user: user, type: type ?? '');
         } else {
           yield UnauthenticatedState();
@@ -43,19 +48,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         User? user = authRepository.auth.currentUser;
         String? type;
         String? uid = user?.uid;
-        
+
         if (uid != null) {
           var userData = await authRepository.database
               .collection('users')
               .where('user_id', isEqualTo: uid)
               .get();
-              
+
           if (userData.docs.isNotEmpty) {
             type = userData.docs[0].data()['type'];
           }
         }
-
-        
 
         if (user != null) {
           yield AuthenticatedState(user: user, type: type ?? '');

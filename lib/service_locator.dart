@@ -12,6 +12,7 @@ import 'package:kncv_flutter/data/repositories/tester_courier_receiver_repositor
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/locations/location_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,7 @@ Future<void> serviceLocatorInit() async {
   sl.registerFactory(() => AuthBloc(sl()));
   sl.registerFactory(() => TesterCourierBloc(sl()));
   sl.registerFactory(() => LocationBloc(sl()));
+  sl.registerLazySingleton(() => SMSBloc());
 
   /// Repositories
   sl.registerFactory<OrderRepository>(() => OrderRepository(sl(), sl()));
@@ -52,7 +54,6 @@ Future<void> serviceLocatorInit() async {
   ///regions
   await Hive.openBox<Order>('orders');
   debugPrint('Opened order box!');
-
 
   await Hive.openBox<Courier>('couriers');
   debugPrint('Opened courier box!');

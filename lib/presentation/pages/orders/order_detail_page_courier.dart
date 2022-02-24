@@ -667,19 +667,14 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             height: 62,
                                             // margin: EdgeInsets.all(20),
                                             child: Center(
-                                              child: notifiyingArrival
-                                                  ? CircularProgressIndicator(
-                                                      color: Colors.white,
-                                                    )
-                                                  : Text(
-                                                      'Notify Arrival',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 20,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
+                                              child: Text(
+                                                'Notify Arrival',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -729,6 +724,10 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                               'Courier Reached at health facility to collect order!',
                                         );
 
+                                        setState(() {
+                                          notifiyingArrival = false;
+                                        });
+
                                         if (success) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
@@ -746,18 +745,13 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                         height: 62,
                                         // margin: EdgeInsets.all(20),
                                         child: Center(
-                                          child: notifyingArrival
-                                              ? CircularProgressIndicator(
-                                                  color: Colors.white,
-                                                )
-                                              : Text(
-                                                  'Notify Arrival At Health Facility',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
+                                          child: Text(
+                                            'Notify Arrival At Health Facility',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
                                         ),
                                       ),
                                     ),

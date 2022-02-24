@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -7,6 +5,7 @@ import 'package:kncv_flutter/core/hear_beat.dart';
 import 'package:kncv_flutter/core/message_codes.dart';
 import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_response_codes.dart';
 
 class OrderRepository {
   final FirebaseFirestore database;
@@ -54,7 +53,10 @@ class OrderRepository {
         'Picked Up',
         'Arrived',
         'Confirmed',
-        // 'Received',
+        'Received',
+        'Delivered',
+        'Tested',
+        'Accepted',
       ]).get();
       List<Order> os = orders.docs
           .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
@@ -393,7 +395,7 @@ class OrderRepository {
         to: '0936951272',
         payload: {
           'oid': orderId,
-          'p': jsonEncode(patient.toJson()),
+          'p': patient.toJson(),
           'i': index,
         },
         action: EDIT_PATIENT_INFO,
@@ -472,7 +474,7 @@ class OrderRepository {
         to: '0936951272',
         payload: {
           'oid': order.orderId,
-          'p': jsonEncode(patient.toJson()),
+          'p': patient.toJson(),
           'i': index,
         },
         action: EDIT_SPECIMEN_FEEDBACK,
@@ -539,7 +541,7 @@ class OrderRepository {
           payload: {
             'oid': orderId,
             'i': index,
-            'p': jsonEncode(patient.toJson()),
+            'p': patient.toJson(),
           },
           action: TESTER_ADD_TEST_RESULT);
 
@@ -582,7 +584,7 @@ class OrderRepository {
           payload: {
             'oid': orderId,
             'i': index,
-            'p': jsonEncode(patient.toJson()),
+            'p': patient.toJson(),
           },
           action: EDIT_TEST_RESULT);
 
@@ -701,7 +703,7 @@ class OrderRepository {
         to: '0936951272',
         payload: {
           'oid': orderId,
-          'p': jsonEncode(patient.toJson()),
+          'p': patient.toJsonSMS(),
         },
         action: ADD_PATIENT,
       );
@@ -735,6 +737,23 @@ class OrderRepository {
           'status': 'Waiting for Confirmation',
           'order_placed': DateTime.now()
         });
+
+        Order o = Order.fromJson(order.data()!);
+
+        //RESPONSE ORDER_PLACED
+        await sendResponseSMS(
+          to: o.courier_phone ?? '',
+          payload: {'o': o.toJsonSMS()},
+          action: ORDER_PLACED,
+        );
+
+        //RESPONSE ORDER_PLACED
+        await sendResponseSMS(
+          to: o.tester_phone ?? '',
+          payload: {'o': o.toJsonSMS()},
+          action: ORDER_PLACED,
+        );
+
         return true;
       } else {
         return false;

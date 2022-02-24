@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:kncv_flutter/core/hear_beat.dart';
+import 'package:kncv_flutter/core/message_codes.dart';
+import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -13,19 +17,44 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
   OrderBloc(this.orderRepository) : super(InitialState());
 
   static Future<bool> approveArrivalFromCourier(Order order) async {
-    var orderRef = await FirebaseFirestore.instance
-        .collection('orders')
-        .doc(order.orderId);
-    await orderRef.update({'notified_arrival': true});
-    return await addNotification(
-      orderId: order.orderId!,
-      courierContent:
-          'You notified the order arrival to ${order.tester_name} from ${order.sender_name}.',
-      testerContent:
-          'Courier arrived from ${order.sender_name} at your test center to deliver specimens.',
-      content: 'One order got accepted by courier!',
-      sender: false,
-    );
+    bool internetAvailable = await isConnectedToTheInternet();
+    Box<Order> ordersBox = Hive.box<Order>('orders');
+
+    if (internetAvailable) {
+      var orderRef = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(order.orderId);
+      await orderRef.update({'notified_arrival': true});
+      return await addNotification(
+        orderId: order.orderId!,
+        courierContent:
+            'You notified the order arrival to ${order.tester_name} from ${order.sender_name}.',
+        testerContent:
+            'Courier arrived from ${order.sender_name} at your test center to deliver specimens.',
+        content: 'One order got accepted by courier!',
+        sender: false,
+      );
+    } else {
+      List<Order> orders = await ordersBox.values.toList();
+      Order order =
+          orders.firstWhere((order) => order.orderId == order.orderId);
+      orders.removeWhere((order) => order.orderId == order.orderId);
+
+      order.notified_arrival = true;
+
+      orders.add(order);
+      await ordersBox.clear();
+      await ordersBox.addAll(orders);
+
+      await sendSMS(
+        to: '0936951272',
+        payload: {
+          'oid': order.orderId,
+        },
+        action: COURIER_NOTIFY_ARRIVAL_TESTER,
+      );
+      return true;
+    }
   }
 
   @override
