@@ -15,6 +15,8 @@ import 'package:kncv_flutter/presentation/blocs/auth/auth_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
@@ -46,287 +48,298 @@ class _SenderHomePageState extends State<SenderHomePage> {
   String testerName = '';
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<OrderBloc, OrderState>(
-        bloc: orderBloc,
-        listener: (ctx, state) async {
-          if (state is SentOrder) {
-            // ScaffoldMessenger.of(context)
-            //     .showSnackBar(SnackBar(content: Text('Created order!')));
-            orderBloc.add(LoadOrders());
-            await Future.delayed(Duration(milliseconds: 500));
-            Navigator.pushNamed(
-                context, PatientInfoPage.patientInfoPageRouteName,
-                arguments: state.orderId);
-          } else if (state is SendingOrder) {
-            // ScaffoldMessenger.of(context)
-            //     .showSnackBar(SnackBar(content: Text('Creating order...')));
-          } else if (state is LaodedState) {
-            print(state.orders);
-          }
-        },
-        builder: (context, state) {
-          return RefreshIndicator(
-            onRefresh: () async {
+    return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
+      if (state is UpdatedDatabase) {
+                ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        orderBloc.add(LoadOrders());
+      }
+    }, builder: (context, snapshot) {
+      return BlocConsumer<OrderBloc, OrderState>(
+          bloc: orderBloc,
+          listener: (ctx, state) async {
+            if (state is SentOrder) {
+              // ScaffoldMessenger.of(context)
+              //     .showSnackBar(SnackBar(content: Text('Created order!')));
               orderBloc.add(LoadOrders());
-            },
-            child: Scaffold(
-              backgroundColor: kPageBackground,
-              appBar: AppBar(
-                backgroundColor: kColorsOrangeLight,
-                automaticallyImplyLeading: false,
-                title: Text(
-                  'Status',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                elevation: 0,
-                actions: [
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('notifications')
-                          .snapshots(),
-                      builder:
-                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        int counter = 0;
-                        if (snapshot.hasData) {
-                          counter = getUnseenNotificationsCount(snapshot.data);
-                        }
-
-                        return Container(
-                          padding: EdgeInsets.only(top: 10, right: 10),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context,
-                                  NotificationsPage.notificationsRouteName);
-                            },
-                            child: Badge(
-                              badgeContent: Text('${counter}'),
-
-                              badgeColor: Colors.white,
-                              // padding: EdgeInsets.only(top: 10),
-
-                              child: Icon(
-                                Icons.notifications_outlined,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-
-                  Center(
-                    child: FutureBuilder(
-                        future: AuthRepository.currentUser(),
-                        builder: (context,
-                            AsyncSnapshot<Map<String, dynamic>> snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(
-                              'Logged in  as: ${snapshot.data?['name'] ?? ''}',
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            );
-                          }
-                          return Container();
-                        }),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.logout,
+              await Future.delayed(Duration(milliseconds: 500));
+              Navigator.pushNamed(
+                  context, PatientInfoPage.patientInfoPageRouteName,
+                  arguments: state.orderId);
+            } else if (state is SendingOrder) {
+              // ScaffoldMessenger.of(context)
+              //     .showSnackBar(SnackBar(content: Text('Creating order...')));
+            } else if (state is LaodedState) {
+              print(state.orders);
+            }
+          },
+          builder: (context, state) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                orderBloc.add(LoadOrders());
+              },
+              child: Scaffold(
+                backgroundColor: kPageBackground,
+                appBar: AppBar(
+                  backgroundColor: kColorsOrangeLight,
+                  automaticallyImplyLeading: false,
+                  title: Text(
+                    'Status',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (builder) {
-                            return AlertDialog(
-                              title: Text('Log Out'),
-                              content:
-                                  Text('Are you sure you want to Log Out?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pushNamedAndRemoveUntil(
-                                        context,
-                                        LoginPage.loginPageRouteName,
-                                        (route) => false);
-                                    BlocProvider.of<AuthBloc>(context)
-                                        .add(LogOutUser());
-                                  },
-                                  child: Text('Yes'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('No'),
-                                ),
-                              ],
-                            );
-                          });
-                    },
                   ),
-                  // Container(
-                  //   padding: EdgeInsets.all(5),
-                  //   child: CircleAvatar(
-                  //     radius: 20,
-                  //     backgroundColor: Colors.white,
-                  //     child: Text(
-                  //       'EG',
-                  //       style: TextStyle(
-                  //         color: Colors.grey,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-              body: state is LoadingState
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : state is LaodedState
-                      ? Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          // child: ListView(
-                          //   children: [
-                          //     orderCard(),
-                          //     orderCard(),
-                          //     orderCard(),
-                          //     orderCard(),
-                          //     orderCard(),
-                          //   ],
-                          // ),
-                          child: state.orders.length == 0
-                              ? Center(
-                                  child: Text('No order is created!'),
-                                )
-                              : ListView.builder(
-                                  itemCount: state.orders.length,
-                                  itemBuilder: (context, index) {
-                                    return GestureDetector(
-                                        onTap: () async {
-                                          print(
-                                              '${state.orders[index].orderId}');
-                                          var load = await Navigator.pushNamed(
-                                              context,
-                                              OrderDetailPage
-                                                  .orderDetailPageRouteName,
-                                              arguments:
-                                                  state.orders[index].orderId);
-                                          if (load == true) {
-                                            orderBloc.add(LoadOrders());
-                                          }
-                                        },
-                                        child: Dismissible(
-                                            background: Container(
-                                                width: 20,
-                                                height: 20,
-                                                child: Center(
-                                                    child:
-                                                        CircularProgressIndicator())),
-                                            onDismissed: (_) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                      content: Text(
-                                                          'Order Deleted')));
+                  elevation: 0,
+                  actions: [
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('notifications')
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          int counter = 0;
+                          if (snapshot.hasData) {
+                            counter =
+                                getUnseenNotificationsCount(snapshot.data);
+                          }
 
-                                              orderBloc.add(LoadOrders());
-                                            },
-                                            confirmDismiss: (_) async {
-                                              OrderRepository r =
-                                                  sl<OrderRepository>();
-                                              var status = await r.deleteOrder(
-                                                  orderId: state
-                                                      .orders[index].orderId!);
-                                              return status['success'];
-                                            },
-                                            key: Key(
-                                                state.orders[index].orderId ??
-                                                    Random()
-                                                        .nextDouble()
-                                                        .toString()),
-                                            child: orderCard(
-                                                state.orders[index])));
-                                  }),
-                        )
-                      : Container(),
-              floatingActionButton: FloatingActionButton(
-                backgroundColor: kColorsOrangeLight,
-                child: Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-                onPressed: () async {
-                  var create = await showModalBottomSheet(
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (ctx) {
-                        return Container(
-                          padding: EdgeInsets.only(
-                              top: 30, left: 20, right: 20, bottom: 20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(
-                                30,
-                              ),
-                              topRight: Radius.circular(
-                                30,
+                          return Container(
+                            padding: EdgeInsets.only(top: 10, right: 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context,
+                                    NotificationsPage.notificationsRouteName);
+                              },
+                              child: Badge(
+                                badgeContent: Text('${counter}'),
+
+                                badgeColor: Colors.white,
+                                // padding: EdgeInsets.only(top: 10),
+
+                                child: Icon(
+                                  Icons.notifications_outlined,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                child: Text(
-                                  'Create An Order',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
+                          );
+                        }),
+
+                    Center(
+                      child: FutureBuilder(
+                          future: AuthRepository.currentUser(),
+                          builder: (context,
+                              AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                'Logged in  as: ${snapshot.data?['name'] ?? ''}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              );
+                            }
+                            return Container();
+                          }),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.logout,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (builder) {
+                              return AlertDialog(
+                                title: Text('Log Out'),
+                                content:
+                                    Text('Are you sure you want to Log Out?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          LoginPage.loginPageRouteName,
+                                          (route) => false);
+                                      BlocProvider.of<AuthBloc>(context)
+                                          .add(LogOutUser());
+                                    },
+                                    child: Text('Yes'),
                                   ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('No'),
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    ),
+                    // Container(
+                    //   padding: EdgeInsets.all(5),
+                    //   child: CircleAvatar(
+                    //     radius: 20,
+                    //     backgroundColor: Colors.white,
+                    //     child: Text(
+                    //       'EG',
+                    //       style: TextStyle(
+                    //         color: Colors.grey,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+                body: state is LoadingState
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : state is LaodedState
+                        ? Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            // child: ListView(
+                            //   children: [
+                            //     orderCard(),
+                            //     orderCard(),
+                            //     orderCard(),
+                            //     orderCard(),
+                            //     orderCard(),
+                            //   ],
+                            // ),
+                            child: state.orders.length == 0
+                                ? Center(
+                                    child: Text('No order is created!'),
+                                  )
+                                : ListView.builder(
+                                    itemCount: state.orders.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                          onTap: () async {
+                                            print(
+                                                '${state.orders[index].orderId}');
+                                            var load = await Navigator.pushNamed(
+                                                context,
+                                                OrderDetailPage
+                                                    .orderDetailPageRouteName,
+                                                arguments: state
+                                                    .orders[index].orderId);
+                                            if (load == true) {
+                                              orderBloc.add(LoadOrders());
+                                            }
+                                          },
+                                          child: Dismissible(
+                                              background: Container(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child: Center(
+                                                      child:
+                                                          CircularProgressIndicator())),
+                                              onDismissed: (_) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        content: Text(
+                                                            'Order Deleted')));
+
+                                                orderBloc.add(LoadOrders());
+                                              },
+                                              confirmDismiss: (_) async {
+                                                OrderRepository r =
+                                                    sl<OrderRepository>();
+                                                var status =
+                                                    await r.deleteOrder(
+                                                        orderId: state
+                                                            .orders[index]
+                                                            .orderId!);
+                                                return status['success'];
+                                              },
+                                              key: Key(
+                                                  state.orders[index].orderId ??
+                                                      Random()
+                                                          .nextDouble()
+                                                          .toString()),
+                                              child: orderCard(
+                                                  state.orders[index])));
+                                    }),
+                          )
+                        : Container(),
+                floatingActionButton: FloatingActionButton(
+                  backgroundColor: kColorsOrangeLight,
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  onPressed: () async {
+                    var create = await showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (ctx) {
+                          return Container(
+                            padding: EdgeInsets.only(
+                                top: 30, left: 20, right: 20, bottom: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(
+                                  30,
+                                ),
+                                topRight: Radius.circular(
+                                  30,
                                 ),
                               ),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              SelectorPage(),
-                            ],
-                          ),
-                        );
-                      });
-                  if (create == true) {
-                    Tester? tester =
-                        BlocProvider.of<TesterCourierBloc>(context).tester;
-                    Courier? courier =
-                        BlocProvider.of<TesterCourierBloc>(context).courier;
-                    String? date =
-                        BlocProvider.of<TesterCourierBloc>(context).date;
-                    orderBloc.add(
-                      AddOrder(
-                        courier_id: courier!.id,
-                        tester_id: tester!.id,
-                        courier_name: courier.name,
-                        tester_name: tester.name,
-                        date: date!,
-                        courier_phone: courier.phone,
-                        tester_phone: tester.phone,
-                      ),
-                    );
-                  }
-                },
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  child: Text(
+                                    'Create An Order',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                SelectorPage(),
+                              ],
+                            ),
+                          );
+                        });
+                    if (create == true) {
+                      Tester? tester =
+                          BlocProvider.of<TesterCourierBloc>(context).tester;
+                      Courier? courier =
+                          BlocProvider.of<TesterCourierBloc>(context).courier;
+                      String? date =
+                          BlocProvider.of<TesterCourierBloc>(context).date;
+                      orderBloc.add(
+                        AddOrder(
+                          courier_id: courier!.id,
+                          tester_id: tester!.id,
+                          courier_name: courier.name,
+                          tester_name: tester.name,
+                          date: date!,
+                          courier_phone: courier.phone,
+                          tester_phone: tester.phone,
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
-            ),
-          );
-        });
+            );
+          });
+    });
   }
 }
 

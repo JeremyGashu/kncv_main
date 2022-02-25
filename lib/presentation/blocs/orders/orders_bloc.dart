@@ -47,7 +47,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       await ordersBox.addAll(orders);
 
       await sendSMS(
-        to: '0936951272',
+        to: '0931057901',
         payload: {
           'oid': order.orderId,
         },
@@ -258,7 +258,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       yield PlacingOrder();
       try {
         bool success =
-            await orderRepository.placeOrder(orderId: event.order.orderId);
+            await orderRepository.placeOrder(order: event.order);
         if (success) {
           yield PlacedOrder(event.order);
         } else {

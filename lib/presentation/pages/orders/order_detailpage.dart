@@ -5,6 +5,8 @@ import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart' as smsState;
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/sender_homepage.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
@@ -36,13 +38,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context, true);
-        // return false;
-        return true;
-      },
-      child: BlocConsumer<OrderBloc, OrderState>(
+    return BlocConsumer<SMSBloc, smsState.SMSState>(listener: (ctx, state) {
+      if (state is smsState.UpdatedDatabase) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+      }
+    }, builder: (context, snapshot) {
+      return BlocConsumer<OrderBloc, OrderState>(
           bloc: ordersBloc,
           listener: (ctx, state) async {
             if (state is DeletedOrder) {
@@ -106,8 +109,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               await Future.delayed(Duration(seconds: 1));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             } else if (state is EditedOrder) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text('Changed order info!')));
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Changed order info!')));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             }
           },
@@ -156,8 +159,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                   if (state.order.status !=
                                           'Waiting for Confirmation' &&
                                       state.order.status != 'Draft') {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
                                             content: Text(
                                                 'Cant delete this order! It is already accepted!')));
                                     return;
@@ -222,22 +225,24 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 var create =
                                                     await showModalBottomSheet(
                                                         backgroundColor:
-                                                            Colors.transparent,
+                                                            Colors
+                                                                .transparent,
                                                         isScrollControlled:
                                                             true,
                                                         context: context,
                                                         builder: (ctx) {
                                                           return Container(
-                                                            padding:
-                                                                EdgeInsets.only(
+                                                            padding: EdgeInsets
+                                                                .only(
                                                                     top: 30,
                                                                     left: 20,
                                                                     right: 20,
-                                                                    bottom: 20),
+                                                                    bottom:
+                                                                        20),
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
+                                                              color: Colors
+                                                                  .white,
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .only(
@@ -272,8 +277,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                                       fontSize:
                                                                           32,
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
+                                                                          FontWeight.bold,
                                                                     ),
                                                                   ),
                                                                 ),
@@ -312,7 +316,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                       tester_id: tester!.id,
                                                       courier_name:
                                                           courier.name,
-                                                      tester_name: tester.name,
+                                                      tester_name:
+                                                          tester.name,
                                                       orderId: widget.orderId,
                                                     ),
                                                   );
@@ -419,7 +424,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
                                 SliverToBoxAdapter(
                                   child: Container(
-                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 5),
                                       width: double.infinity,
                                       child: Text(
                                         'Order ID = ${state.order.orderId}',
@@ -430,7 +436,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
                                 SliverToBoxAdapter(
                                   child: Container(
-                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 5),
                                       width: double.infinity,
                                       child: Text(
                                         'Current Status = ${state.order.status}',
@@ -454,7 +461,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 if (state.order.patients!
                                                         .length >=
                                                     4) {
-                                                  ScaffoldMessenger.of(context)
+                                                  ScaffoldMessenger.of(
+                                                          context)
                                                       .showSnackBar(
                                                     SnackBar(
                                                       content: Text(
@@ -475,8 +483,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 if (added == true) {
                                                   ordersBloc.add(
                                                       LoadSingleOrder(
-                                                          orderId:
-                                                              widget.orderId));
+                                                          orderId: widget
+                                                              .orderId));
                                                 }
                                               },
                                               child: Icon(Icons.add)),
@@ -511,11 +519,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                     arguments: {
                                                       'patient': state.order
                                                           .patients![index],
-                                                      'orderId': widget.orderId,
+                                                      'orderId':
+                                                          widget.orderId,
                                                       'index': index,
-                                                      'canEdit':
-                                                          state.order.status ==
-                                                              'Draft',
+                                                      'canEdit': state
+                                                              .order.status ==
+                                                          'Draft',
                                                     });
                                               },
                                               child: buildPatients(
@@ -523,7 +532,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 state.order.patients![index],
                                                 widget.orderId,
                                                 index,
-                                                deletable: state.order.status ==
+                                                deletable: state
+                                                            .order.status ==
                                                         'Waiting for Confirmation' ||
                                                     state.order.status ==
                                                         'Draft',
@@ -548,13 +558,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                     color: kPageBackground,
                                     child: InkWell(
                                       onTap: () async {
-                                        if (state.order.patients!.length == 0) {
+                                        if (state.order.patients!.length ==
+                                            0) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                                   content: Text(
                                                       'Please add patients first!')));
                                           return;
                                         }
+
+                                        debugPrint(
+                                            '${Order.fromJsonSMS(state.order.toJsonSMS()).orderId}');
 
                                         ordersBloc.add(
                                             PlaceOrder(order: state.order));
@@ -621,20 +635,22 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                             BoxDecoration(
                                                           color: Colors.white,
                                                           borderRadius:
-                                                              BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
+                                                              BorderRadius
+                                                                  .only(
+                                                            topLeft: Radius
+                                                                .circular(
                                                               30,
                                                             ),
-                                                            topRight:
-                                                                Radius.circular(
+                                                            topRight: Radius
+                                                                .circular(
                                                               30,
                                                             ),
                                                           ),
                                                         ),
                                                         child: Column(
                                                           mainAxisSize:
-                                                              MainAxisSize.min,
+                                                              MainAxisSize
+                                                                  .min,
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
                                                                   .start,
@@ -649,7 +665,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                                         .center,
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 32,
+                                                                  fontSize:
+                                                                      32,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -685,13 +702,13 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                                       true);
                                                                 }
                                                               },
-                                                              child: Container(
+                                                              child:
+                                                                  Container(
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
+                                                                      BorderRadius.circular(
+                                                                          10),
                                                                   color:
                                                                       kColorsOrangeDark,
                                                                 ),
@@ -701,13 +718,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                                   child: Text(
                                                                     'Confirm',
                                                                     style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
+                                                                        fontWeight: FontWeight
+                                                                            .bold,
                                                                         fontSize:
                                                                             20,
-                                                                        color: Colors
-                                                                            .white),
+                                                                        color:
+                                                                            Colors.white),
                                                                   ),
                                                                 ),
                                                               ),
@@ -720,9 +736,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 });
 
                                         if (confirm == true) {
-                                          ordersBloc.add(ApproveArrivalCourier(
-                                              state.order,
-                                              _receiverController.value.text));
+                                          ordersBloc.add(
+                                              ApproveArrivalCourier(
+                                                  state.order,
+                                                  _receiverController
+                                                      .value.text));
                                         }
                                       },
                                       borderRadius: BorderRadius.circular(37),
@@ -755,8 +773,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       ),
               ),
             );
-          }),
-    );
+          });
+    });
   }
 
   Container buildPatients(

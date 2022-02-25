@@ -53,10 +53,10 @@ void main() async {
           create: (_) => sl<LocationBloc>()..add(LoadLocations()),
           lazy: false,
         ),
-        // BlocProvider<SMSBloc>(
-        //   create: (_) => sl<SMSBloc>()..add(InitSMSListening()),
-        //   lazy: false,
-        // ),
+        BlocProvider<SMSBloc>(
+          create: (_) => sl<SMSBloc>()..add(InitSMSListening()),
+          lazy: false,
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

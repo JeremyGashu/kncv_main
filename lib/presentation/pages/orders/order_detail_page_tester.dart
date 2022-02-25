@@ -6,6 +6,8 @@ import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart' as smsState;
 import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
@@ -41,13 +43,14 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context, true);
-        // return false;
-        return true;
-      },
-      child: BlocConsumer<OrderBloc, OrderState>(
+    return BlocConsumer<SMSBloc, smsState.SMSState>(listener: (ctx, state) {
+      if (state is smsState.UpdatedDatabase) {
+                ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+      }
+    }, builder: (context, snapshot) {
+      return BlocConsumer<OrderBloc, OrderState>(
           bloc: ordersBloc,
           listener: (ctx, state) async {
             if (state is LoadedSingleOrder) {
@@ -218,7 +221,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
 
                                 SliverToBoxAdapter(
                                   child: Container(
-                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 5),
                                       width: double.infinity,
                                       child: Text(
                                         'Order ID = ${state.order.orderId}',
@@ -229,7 +233,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
 
                                 SliverToBoxAdapter(
                                   child: Container(
-                                      margin: EdgeInsets.symmetric(vertical: 5),
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 5),
                                       width: double.infinity,
                                       child: Text(
                                         'Current Status = ${state.order.status}',
@@ -251,8 +256,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                               shrinkWrap: true,
                                               physics:
                                                   NeverScrollableScrollPhysics(),
-                                              itemCount:
-                                                  state.order.patients!.length,
+                                              itemCount: state
+                                                  .order.patients!.length,
                                               itemBuilder: (ctx, index) {
                                                 return GestureDetector(
                                                   onTap: () {
@@ -261,19 +266,22 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                         EditPatientInfoPage
                                                             .editPatientInfoRouteName,
                                                         arguments: {
-                                                          'patient': state.order
-                                                              .patients![index],
+                                                          'patient': state
+                                                                  .order
+                                                                  .patients![
+                                                              index],
                                                           'orderId':
                                                               widget.orderId,
                                                           'index': index,
                                                           'canEdit': false,
-                                                          'canAddResult': true,
+                                                          'canAddResult':
+                                                              true,
                                                         });
                                                   },
                                                   child: buildPatients(
                                                     context,
-                                                    state
-                                                        .order.patients![index],
+                                                    state.order
+                                                        .patients![index],
                                                     widget.orderId,
                                                     index,
                                                     false,
@@ -281,7 +289,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                 );
                                               })
                                           : Center(
-                                              child: Text('No patient added!'),
+                                              child:
+                                                  Text('No patient added!'),
                                             ),
                                 ),
                               ],
@@ -310,7 +319,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                     builder: (ctx, ss) {
                                                   return SingleChildScrollView(
                                                     child: Container(
-                                                      padding: EdgeInsets.only(
+                                                      padding:
+                                                          EdgeInsets.only(
                                                         bottom: MediaQuery.of(
                                                                     context)
                                                                 .viewInsets
@@ -323,7 +333,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                       // padding: EdgeInsets.only(
 
                                                       //     bottom: 20),
-                                                      decoration: BoxDecoration(
+                                                      decoration:
+                                                          BoxDecoration(
                                                         color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius.only(
@@ -345,14 +356,15 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                                 .start,
                                                         children: [
                                                           Container(
-                                                            width:
-                                                                double.infinity,
+                                                            width: double
+                                                                .infinity,
                                                             child: Text(
                                                               'Confirm Arrival',
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,
-                                                              style: TextStyle(
+                                                              style:
+                                                                  TextStyle(
                                                                 fontSize: 32,
                                                                 fontWeight:
                                                                     FontWeight
@@ -364,7 +376,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                             height: 30,
                                                           ),
                                                           _buildInputField(
-                                                              label: 'Receiver',
+                                                              label:
+                                                                  'Receiver',
                                                               hint:
                                                                   'Enter Receiver',
                                                               controller:
@@ -394,7 +407,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                                           .text !=
                                                                       '') {
                                                                 Navigator.pop(
-                                                                    ctx, true);
+                                                                    ctx,
+                                                                    true);
                                                               }
                                                             },
                                                             child: Container(
@@ -457,7 +471,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                               child: Text(
                                                 'Approve Arrival',
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
+                                                    fontWeight:
+                                                        FontWeight.bold,
                                                     fontSize: 20,
                                                     color: Colors.white),
                                               ),
@@ -476,8 +491,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                       ),
               ),
             );
-          }),
-    );
+          });
+    });
   }
 
   Widget _buildInputField(

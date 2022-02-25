@@ -10,6 +10,9 @@ import 'package:kncv_flutter/presentation/blocs/auth/auth_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_event.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/widgets/item_cart.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
@@ -35,150 +38,162 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<OrderBloc, OrderState>(
-        bloc: orderBloc,
-        listener: (ctx, state) async {},
-        builder: (context, state) {
-          return RefreshIndicator(
-            onRefresh: () async {
-              orderBloc.add(LoadOrdersForTester());
-            },
-            child: Scaffold(
-              backgroundColor: kPageBackground,
-              appBar: AppBar(
-                backgroundColor: kColorsOrangeLight,
-                automaticallyImplyLeading: false,
-                title: Text(
-                  'Status',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                elevation: 0,
-                actions: [
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('notifications')
-                          .snapshots(),
-                      builder:
-                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        int counter = 0;
-                        if (snapshot.hasData) {
-                          counter = getUnseenNotificationsCount(snapshot.data);
-                        }
-
-                        return Container(
-                          padding: EdgeInsets.only(top: 10, right: 10),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context,
-                                  NotificationsPage.notificationsRouteName);
-                            },
-                            child: Badge(
-                              badgeContent: Text('${counter}'),
-
-                              badgeColor: Colors.white,
-                              // padding: EdgeInsets.only(top: 10),
-
-                              child: Icon(
-                                Icons.notifications_outlined,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                  Center(
-                    child: FutureBuilder(
-                        future: AuthRepository.currentUser(),
-                        builder: (context,
-                            AsyncSnapshot<Map<String, dynamic>> snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(
-                              'Logged in  as: ${snapshot.data?['name'] ?? ''}',
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            );
-                          }
-                          return Container();
-                        }),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.logout,
+    return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
+      if (state is UpdatedDatabase) {
+                ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        orderBloc.add(LoadOrdersForTester());
+      }
+    }, builder: (context, snapshot) {
+      return BlocConsumer<OrderBloc, OrderState>(
+          bloc: orderBloc,
+          listener: (ctx, state) async {},
+          builder: (context, state) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                orderBloc.add(LoadOrdersForTester());
+              },
+              child: Scaffold(
+                backgroundColor: kPageBackground,
+                appBar: AppBar(
+                  backgroundColor: kColorsOrangeLight,
+                  automaticallyImplyLeading: false,
+                  title: Text(
+                    'Status',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (builder) {
-                            return AlertDialog(
-                              title: Text('Log Out'),
-                              content:
-                                  Text('Are you sure you want to Log Out?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                        context, LoginPage.loginPageRouteName);
-                                    BlocProvider.of<AuthBloc>(context)
-                                        .add(LogOutUser());
-                                  },
-                                  child: Text('Yes'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text('No'),
-                                ),
-                              ],
-                            );
-                          });
-                    },
                   ),
-                ],
+                  elevation: 0,
+                  actions: [
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('notifications')
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          int counter = 0;
+                          if (snapshot.hasData) {
+                            counter =
+                                getUnseenNotificationsCount(snapshot.data);
+                          }
+
+                          return Container(
+                            padding: EdgeInsets.only(top: 10, right: 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context,
+                                    NotificationsPage.notificationsRouteName);
+                              },
+                              child: Badge(
+                                badgeContent: Text('${counter}'),
+
+                                badgeColor: Colors.white,
+                                // padding: EdgeInsets.only(top: 10),
+
+                                child: Icon(
+                                  Icons.notifications_outlined,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                    Center(
+                      child: FutureBuilder(
+                          future: AuthRepository.currentUser(),
+                          builder: (context,
+                              AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                'Logged in  as: ${snapshot.data?['name'] ?? ''}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              );
+                            }
+                            return Container();
+                          }),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.logout,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (builder) {
+                              return AlertDialog(
+                                title: Text('Log Out'),
+                                content:
+                                    Text('Are you sure you want to Log Out?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context,
+                                          LoginPage.loginPageRouteName);
+                                      BlocProvider.of<AuthBloc>(context)
+                                          .add(LogOutUser());
+                                    },
+                                    child: Text('Yes'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('No'),
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                    ),
+                  ],
+                ),
+                body: state is LoadingOrderForTester
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : state is LoadedOrdersForTester
+                        ? Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: state.orders.length == 0
+                                ? Center(
+                                    child: Text('No Orders Available!'),
+                                  )
+                                : ListView.builder(
+                                    itemCount: state.orders.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                          onTap: () async {
+                                            print(
+                                                '${state.orders[index].orderId}');
+                                            var load = await Navigator.pushNamed(
+                                                context,
+                                                OrderDetailTester
+                                                    .orderDetailTesterPageRouteName,
+                                                arguments: state
+                                                    .orders[index].orderId);
+                                            if (load == true) {
+                                              orderBloc
+                                                  .add(LoadOrdersForTester());
+                                            } else {
+                                              orderBloc
+                                                  .add(LoadOrdersForTester());
+                                            }
+                                          },
+                                          child:
+                                              orderCard(state.orders[index]));
+                                    }),
+                          )
+                        : Container(),
               ),
-              body: state is LoadingOrderForTester
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : state is LoadedOrdersForTester
-                      ? Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: state.orders.length == 0
-                              ? Center(
-                                  child: Text('No Orders Available!'),
-                                )
-                              : ListView.builder(
-                                  itemCount: state.orders.length,
-                                  itemBuilder: (context, index) {
-                                    return GestureDetector(
-                                        onTap: () async {
-                                          print(
-                                              '${state.orders[index].orderId}');
-                                          var load = await Navigator.pushNamed(
-                                              context,
-                                              OrderDetailTester
-                                                  .orderDetailTesterPageRouteName,
-                                              arguments:
-                                                  state.orders[index].orderId);
-                                          if (load == true) {
-                                            orderBloc.add(LoadOrdersForTester());
-                                          } else {
-                                            orderBloc.add(LoadOrdersForTester());
-                                          }
-                                        },
-                                        child: orderCard(state.orders[index]));
-                                  }),
-                        )
-                      : Container(),
-            ),
-          );
-        });
+            );
+          });
+    });
   }
 }
 

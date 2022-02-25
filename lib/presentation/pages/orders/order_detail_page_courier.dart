@@ -9,6 +9,8 @@ import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart' as smsState;
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
@@ -41,13 +43,14 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context, true);
-        // return false;
-        return true;
-      },
-      child: BlocConsumer<OrderBloc, OrderState>(
+    return BlocConsumer<SMSBloc, smsState.SMSState>(listener: (ctx, state) {
+      if (state is smsState.UpdatedDatabase) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+      }
+    }, builder: (context, snapshot) {
+      return BlocConsumer<OrderBloc, OrderState>(
           bloc: ordersBloc,
           listener: (ctx, state) async {
             if (state is ErrorState) {
@@ -699,7 +702,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                         if (!(await isConnectedToTheInternet())) {
                                           await sendSMS(
                                             context: context,
-                                            to: '0936951272',
+                                            to: '0931057901',
                                             payload: {
                                               'oid': state.order.orderId,
                                             },
@@ -765,8 +768,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                       ),
               ),
             );
-          }),
-    );
+          });
+    });
   }
 
   Container buildPatients(

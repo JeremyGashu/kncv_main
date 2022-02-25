@@ -11,7 +11,7 @@ Future sendSMS(
   bool? granted = await Telephony.instance.requestSmsPermissions;
   if (granted == true) {
     await Telephony.instance.sendSms(
-      to: '0936951272',
+      to: '0931057901',
       message: jsonEncode(
         {
           'action': action,
@@ -50,7 +50,7 @@ Future sendResponseSMS(
   bool? granted = await Telephony.instance.requestSmsPermissions;
   if (granted == true) {
     await Telephony.instance.sendSms(
-      to: '0936951272',
+      to: to,
       message: jsonEncode(
         {
           'action': action,

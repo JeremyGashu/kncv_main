@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kncv_flutter/core/hear_beat.dart';
 import 'package:kncv_flutter/core/message_codes.dart';
@@ -238,7 +239,7 @@ class OrderRepository {
       //send sms here
       await sendSMS(
         // context,
-        to: '0936951272',
+        to: '0931057901',
         payload: {
           'oid': id,
           'cid': courier_id,
@@ -292,7 +293,7 @@ class OrderRepository {
       await ordersBox.addAll(orders);
       await sendSMS(
         // context,
-        to: '0936951272',
+        to: '0931057901',
         payload: {
           'oid': orderId,
           'cid': courier_id,
@@ -368,6 +369,7 @@ class OrderRepository {
       {required String orderId,
       required Patient patient,
       required int index}) async {
+    //TODO send response to sender
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -392,7 +394,7 @@ class OrderRepository {
       //send sms
       await sendSMS(
         // context,
-        to: '0936951272',
+        to: '0931057901',
         payload: {
           'oid': orderId,
           'p': patient.toJson(),
@@ -408,6 +410,7 @@ class OrderRepository {
       {required Order order,
       required Patient patient,
       required int index}) async {
+    //TODO send response to sender
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -471,10 +474,10 @@ class OrderRepository {
       await ordersBox.addAll(orders);
 
       await sendSMS(
-        to: '0936951272',
+        to: '0931057901',
         payload: {
           'oid': order.orderId,
-          'p': patient.toJson(),
+          'p': patient.toJsonSMS(),
           'i': index,
         },
         action: EDIT_SPECIMEN_FEEDBACK,
@@ -511,6 +514,7 @@ class OrderRepository {
       {required String? orderId,
       required Patient patient,
       required int index}) async {
+    //TODO send response to sender
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -537,7 +541,7 @@ class OrderRepository {
       await ordersBox.addAll(orders);
 
       await sendSMS(
-          to: '0936951272',
+          to: '0931057901',
           payload: {
             'oid': orderId,
             'i': index,
@@ -555,6 +559,7 @@ class OrderRepository {
       {required String? orderId,
       required Patient patient,
       required int index}) async {
+    //TODO send result to sender
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
@@ -580,7 +585,7 @@ class OrderRepository {
       await ordersBox.addAll(orders);
 
       await sendSMS(
-          to: '0936951272',
+          to: '0931057901',
           payload: {
             'oid': orderId,
             'i': index,
@@ -619,7 +624,7 @@ class OrderRepository {
 
       await sendSMS(
         // context,
-        to: '0936951272',
+        to: '0931057901',
         payload: {
           'oid': orderId,
           'i': index,
@@ -662,7 +667,7 @@ class OrderRepository {
         await ordersBox.addAll(orders);
         await sendSMS(
           // context,
-          to: '0936951272',
+          to: '0931057901',
           payload: {
             'oid': orderId,
           },
@@ -700,7 +705,7 @@ class OrderRepository {
 
       await sendSMS(
         // context,
-        to: '0936951272',
+        to: '0931057901',
         payload: {
           'oid': orderId,
           'p': patient.toJsonSMS(),
@@ -726,31 +731,33 @@ class OrderRepository {
     return null;
   }
 
-  Future placeOrder({required String? orderId}) async {
+  Future placeOrder({required Order order}) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
-      var orderRef = database.collection('orders').doc(orderId);
-      var order = await orderRef.get();
-      if (order.exists && order.data()!['status'] == 'Draft') {
+      var orderRef = database.collection('orders').doc(order.orderId);
+      if (order.status == 'Draft') {
         await orderRef.update({
           'status': 'Waiting for Confirmation',
           'order_placed': DateTime.now()
         });
 
-        Order o = Order.fromJson(order.data()!);
-
+        order.status = 'Waiting for Confirmation';
+        debugPrint('please sms ${order.orderId}');
         //RESPONSE ORDER_PLACED
         await sendResponseSMS(
-          to: o.courier_phone ?? '',
-          payload: {'o': o.toJsonSMS()},
+          to: order.courier_phone ?? '',
+          payload: {
+            'o': order.toJsonSMS(),
+            'response': true,
+          },
           action: ORDER_PLACED,
         );
 
         //RESPONSE ORDER_PLACED
         await sendResponseSMS(
-          to: o.tester_phone ?? '',
-          payload: {'o': o.toJsonSMS()},
+          to: order.tester_phone ?? '',
+          payload: {'o': order.toJsonSMS(), 'response': true},
           action: ORDER_PLACED,
         );
 
@@ -760,18 +767,18 @@ class OrderRepository {
       }
     } else {
       List<Order> orders = await ordersBox.values.toList();
-      Order order = orders.firstWhere((element) => element.orderId == orderId);
-      if (order.status == 'Draft' ||
-          order.status == 'Waiting for Confirmation') {
-        orders.removeWhere((element) => element.orderId == orderId);
-        order.status = 'Waiting for Confirmation';
-        orders.add(order);
+      Order or =
+          orders.firstWhere((element) => element.orderId == order.orderId);
+      if (or.status == 'Draft' || or.status == 'Waiting for Confirmation') {
+        orders.removeWhere((element) => element.orderId == or.orderId);
+        or.status = 'Waiting for Confirmation';
+        orders.add(or);
         await ordersBox.clear();
         await ordersBox.addAll(orders);
         await sendSMS(
-            to: '0936951272',
+            to: '0931057901',
             payload: {
-              'oid': orderId,
+              'oid': or.orderId,
             },
             action: PLACE_ORDER);
 
@@ -795,6 +802,23 @@ class OrderRepository {
           'will_reach_at': '$date-$time',
           'order_confirmed': DateTime.now()
         });
+
+        Order o = Order.fromJson(order.data()!);
+
+        //RESPONSE ORDER_ACCEPTED
+        await sendResponseSMS(
+          to: o.sender_phone ?? '',
+          payload: {'oid': orderId, 'response': true},
+          action: ORDER_ACCEPTED,
+        );
+
+        //RESPONSE ORDER_ACCEPTED
+        await sendResponseSMS(
+          to: o.tester_phone ?? '',
+          payload: {'oid': orderId, 'response': true},
+          action: ORDER_ACCEPTED,
+        );
+
         return true;
       } else {
         return false;
@@ -809,7 +833,7 @@ class OrderRepository {
         await ordersBox.clear();
         await ordersBox.addAll(orders);
         await sendSMS(
-            to: '0936951272',
+            to: '0931057901',
             payload: {
               'oid': orderId,
               'date': date ?? '',
@@ -839,6 +863,23 @@ class OrderRepository {
           'receiver_courier': receiver,
           'order_pickedup': DateTime.now(),
         });
+
+        Order o = Order.fromJson(order.data()!);
+
+        //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
+        await sendResponseSMS(
+          to: o.tester_phone ?? '',
+          payload: {'oid': orderId},
+          action: SENDER_APPROVED_COURIER_DEPARTURE,
+        );
+
+        //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
+        await sendResponseSMS(
+          to: o.courier_phone ?? '',
+          payload: {'oid': orderId, 'response': true},
+          action: SENDER_APPROVED_COURIER_DEPARTURE,
+        );
+
         return true;
       } else {
         return false;
@@ -854,7 +895,7 @@ class OrderRepository {
         await ordersBox.addAll(orders);
 
         await sendSMS(
-            to: '0936951272',
+            to: '0931057901',
             payload: {'oid': orderId, 'cn': receiver},
             action: SENDER_APPROVE_COURIER_ARRIVAL);
       }
@@ -877,6 +918,23 @@ class OrderRepository {
           'receiver_phone_number': phone,
           'order_received': DateTime.now(),
         });
+
+        Order o = Order.fromJson(order.data()!);
+
+        //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
+        await sendResponseSMS(
+          to: o.courier_phone ?? '',
+          payload: {'oid': orderId, 'response': true},
+          action: TESTER_APPROVED_COURIER_ARRIVAL,
+        );
+
+        //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
+        await sendResponseSMS(
+          to: o.sender_phone ?? '',
+          payload: {'oid': orderId, 'response': true},
+          action: TESTER_APPROVED_COURIER_ARRIVAL,
+        );
+
         return true;
       } else {
         return false;
@@ -892,7 +950,7 @@ class OrderRepository {
         await ordersBox.addAll(orders);
 
         await sendSMS(
-            to: '0936951272',
+            to: '0931057901',
             payload: {
               'oid': orderId,
               'rn': receiver,

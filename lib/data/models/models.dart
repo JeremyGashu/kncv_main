@@ -79,27 +79,63 @@ class Order {
         courier_name: json['courier_name'],
         created_at: json['created_at'],
         notified_arrival: json['notified_arrival'] ?? false,
-        timestamp: json["timestamp"],
+        timestamp: json["timestamp"] ?? '',
         patients: json["patients"] != null
             ? List<Patient>.from(
                 json["patients"].map((x) => Patient.fromJson(x)))
             : [],
       );
 
+  factory Order.fromJsonSMS(Map<String, dynamic> json) => Order(
+        orderId: json["oid"],
+        senderId: json["sid"],
+        courierId: json["cid"],
+        testCenterId: json["tid"],
+        courier: json["courier"],
+        testCenter: json["test_center"],
+        sender_name: json['sender_name'],
+        sender: json["sender"],
+        status: json['status'],
+        sender_phone: json['sp'],
+        tester_phone: json['tp'],
+        courier_phone: json['cp'],
+        tester_name: json['tester_name'],
+        courier_name: json['courier_name'],
+        created_at: json['created_at'],
+        notified_arrival: json['notified_arrival'] ?? false,
+        timestamp: json["timestamp"] ?? '',
+        patients: json["p"] != null
+            ? List<Patient>.from(json["p"].map((x) => Patient.fromJson(x)))
+            : [],
+      );
+
+  // Map<String, dynamic> toJsonSMS() => {
+  //       "order_id": orderId,
+  //       "sender_id": senderId,
+  //       "courier_id": courierId,
+  //       "test_center_id": testCenterId,
+  //       'sender_name': sender_name,
+  //       "courier": courier,
+  //       "test_center": testCenter,
+  //       'sender_phone': sender_phone,
+  //       'tester_phone': tester_phone,
+  //       'courier_phone': courier_phone,
+  //       "sender": sender,
+  //       "timestamp": timestamp,
+  //       "patients": patients != null
+  //           ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS()))
+  //           : [],
+  //     };
+
   Map<String, dynamic> toJsonSMS() => {
-        "order_id": orderId,
-        "sender_id": senderId,
-        "courier_id": courierId,
-        "test_center_id": testCenterId,
-        'sender_name': sender_name,
-        "courier": courier,
-        "test_center": testCenter,
-        'sender_phone': sender_phone,
-        'tester_phone': tester_phone,
-        'courier_phone': courier_phone,
-        "sender": sender,
-        "timestamp": timestamp,
-        "patients": patients != null
+        "oid": orderId,
+        "sid": senderId,
+        "cid": courierId,
+        "tid": testCenterId,
+        'sp': sender_phone,
+        'tp': tester_phone,
+        'cp': courier_phone,
+        "p": patients != null
             ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS()))
             : [],
       };
@@ -262,16 +298,33 @@ class Patient {
             json["specimens"].map((x) => Specimen.fromJson(x))),
       );
 
+  // Map<String, dynamic> toJsonSMS() => {
+  //       "MR": mr,
+  //       "name": name,
+  //       'reason_for_test': reasonForTest,
+  //       'requested_test': requestedTest,
+  //       'result': testResult?.toJson(),
+  //       'registration_group': registrationGroup,
+  //       'previous_drug_use': previousDrugUse,
+  //       'result_available': resultAvaiable,
+  //       "anatomic_location": siteOfTB,
+  //       "exam_purpose": examPurpose,
+  //       "specimens": specimens != null
+  //           ? List<dynamic>.from(specimens!.map((x) => x.toJson()))
+  //           : [],
+  //     };
+
   Map<String, dynamic> toJsonSMS() => {
         "MR": mr,
         "name": name,
-        'reason_for_test': reasonForTest,
-        'requested_test': requestedTest,
-        'registration_group': registrationGroup,
-        'previous_drug_use': previousDrugUse,
-        'result_available': resultAvaiable,
-        "anatomic_location": siteOfTB,
-        "exam_purpose": examPurpose,
+        // 'reason_for_test': reasonForTest,
+        // 'requested_test': requestedTest,
+        // 'registration_group': registrationGroup,
+        // 'previous_drug_use': previousDrugUse,
+        'result': testResult?.toJson(),
+        // 'result_available': resultAvaiable,
+        // "anatomic_location": siteOfTB,
+        // "exam_purpose": examPurpose,
         "specimens": specimens != null
             ? List<dynamic>.from(specimens!.map((x) => x.toJson()))
             : [],
