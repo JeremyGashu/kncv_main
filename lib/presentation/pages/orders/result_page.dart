@@ -114,7 +114,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                 );
                 await Future.delayed(Duration(seconds: 1));
 
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               } else if (state is EditedTestResult) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text('Edited Result!')));
@@ -130,7 +130,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                 );
                 await Future.delayed(Duration(seconds: 1));
 
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               }
 
               if (state is ErrorState) {

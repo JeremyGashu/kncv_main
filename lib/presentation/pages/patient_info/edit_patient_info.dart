@@ -1407,9 +1407,9 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 alignment: AlignmentDirectional.centerEnd,
                                 child: IconButton(
                                   color: Colors.green,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     debugPrint(e.id);
-                                    Navigator.pushNamed(
+                                    var success = await Navigator.pushNamed(
                                         context,
                                         AddTestResultPage
                                             .addTestResultPageRouteName,
@@ -1420,6 +1420,12 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                           'canEdit': widget.canAddResult,
                                           'specimen': e,
                                         });
+
+                                    if (success == true) {
+                                      orderBloc.add(LoadSingleOrder(
+                                        orderId: widget.orderId,
+                                      ));
+                                    }
                                   },
                                   icon: e.testResult == null
                                       ? Icon(

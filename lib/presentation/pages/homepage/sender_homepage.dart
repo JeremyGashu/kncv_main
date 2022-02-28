@@ -50,7 +50,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
   Widget build(BuildContext context) {
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
-                ScaffoldMessenger.of(context)
+        ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
         orderBloc.add(LoadOrders());
       }
@@ -63,9 +63,12 @@ class _SenderHomePageState extends State<SenderHomePage> {
               //     .showSnackBar(SnackBar(content: Text('Created order!')));
               orderBloc.add(LoadOrders());
               await Future.delayed(Duration(milliseconds: 500));
-              Navigator.pushNamed(
+              var success = await Navigator.pushNamed(
                   context, PatientInfoPage.patientInfoPageRouteName,
                   arguments: state.orderId);
+              if (success == true) {
+                orderBloc.add(LoadOrders());
+              }
             } else if (state is SendingOrder) {
               // ScaffoldMessenger.of(context)
               //     .showSnackBar(SnackBar(content: Text('Creating order...')));

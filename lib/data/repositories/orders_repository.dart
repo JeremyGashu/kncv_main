@@ -548,6 +548,10 @@ class OrderRepository {
           action: SPECIMEN_EDITED,
         );
 
+        sendCustomSMS(
+            to: o.sender_phone ?? '',
+            body: 'Test Result has been added to patient ${patient.name}.');
+
         return true;
       }
       return false;
@@ -603,6 +607,11 @@ class OrderRepository {
           },
           action: SPECIMEN_EDITED,
         );
+
+        sendCustomSMS(
+            to: o.sender_phone ?? '',
+            body: 'Test Result has been edited to patient ${patient.name}.');
+
         return true;
       }
       return false;
@@ -794,6 +803,16 @@ class OrderRepository {
           action: ORDER_PLACED,
         );
 
+        sendCustomSMS(
+            to: order.courier_phone ?? '',
+            body:
+                'New order is palced for you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
+
+        sendCustomSMS(
+            to: order.tester_phone ?? '',
+            body:
+                'New order is being transported to you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
+
         return true;
       } else {
         return false;
@@ -851,6 +870,11 @@ class OrderRepository {
           payload: {'oid': orderId, 'response': true},
           action: ORDER_ACCEPTED,
         );
+
+        sendCustomSMS(
+            to: o.sender_phone ?? '',
+            body:
+                'One order got accepted. The selected courier\'s will notify you when they get at your place.');
 
         return true;
       } else {
@@ -913,6 +937,11 @@ class OrderRepository {
           action: SENDER_APPROVED_COURIER_DEPARTURE,
         );
 
+        sendCustomSMS(
+            to: o.tester_phone ?? '',
+            body:
+                'One order is picked up. It will be deliverd by ${o.courier_name}');
+
         return true;
       } else {
         return false;
@@ -967,6 +996,10 @@ class OrderRepository {
           payload: {'oid': orderId, 'response': true},
           action: TESTER_APPROVED_COURIER_ARRIVAL,
         );
+
+        sendCustomSMS(
+            to: o.sender_phone ?? '',
+            body: 'The order sent to ${o.tester_name} has been accepted!');
 
         return true;
       } else {

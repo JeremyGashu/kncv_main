@@ -259,8 +259,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is PlaceOrder) {
       yield PlacingOrder();
       try {
-        bool success =
-            await orderRepository.placeOrder(order: event.order);
+        bool success = await orderRepository.placeOrder(order: event.order);
         if (success) {
           yield PlacedOrder(event.order);
         } else {
