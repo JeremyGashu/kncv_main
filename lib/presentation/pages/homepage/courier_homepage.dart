@@ -11,7 +11,6 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
-import 'package:kncv_flutter/presentation/blocs/sms/sms_event.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/widgets/item_cart.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';

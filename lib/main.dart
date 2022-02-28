@@ -100,5 +100,6 @@ class _SMSListenerState extends State<SMSListener> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return widget.child;
+    //this widget will render everytime the app loads
   }
 }

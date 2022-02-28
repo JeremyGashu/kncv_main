@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
+import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/locations/location_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/locations/location_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -12,6 +13,7 @@ import 'package:kncv_flutter/presentation/pages/orders/result_page.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 
 import '../../../service_locator.dart';
+import '../notificatins.dart';
 
 class EditPatientInfoPage extends StatefulWidget {
   final String orderId;
@@ -36,9 +38,15 @@ class EditPatientInfoPage extends StatefulWidget {
 }
 
 class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
+  bool sendingFeedback = false;
+
   Region? selectedRegion;
   Zone? selectedZone;
   Woreda? selectedWoreda;
+
+  String? inColdChain;
+  String? sputumCondition;
+  String? stoolCondition;
 
   var siteOfTbChoices = [
     'Pulmonary',
@@ -1267,40 +1275,40 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 )
                               : Container(),
 
-                          widget.patient.resultAvaiable
-                              ? InkWell(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context,
-                                        AddTestResultPage
-                                            .addTestResultPageRouteName,
-                                        arguments: {
-                                          'orderId': widget.orderId,
-                                          'patient': widget.patient,
-                                          'index': widget.index,
-                                          'canEdit': widget.canAddResult,
-                                        });
-                                  },
-                                  borderRadius: BorderRadius.circular(37),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: kColorsOrangeDark,
-                                    ),
-                                    height: 62,
-                                    // margin: EdgeInsets.all(20),
-                                    child: Center(
-                                      child: Text(
-                                        'View Result',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
+                          // widget.patient.resultAvaiable
+                          //     ? InkWell(
+                          //         onTap: () {
+                          //           Navigator.pushNamed(
+                          //               context,
+                          //               AddTestResultPage
+                          //                   .addTestResultPageRouteName,
+                          //               arguments: {
+                          //                 'orderId': widget.orderId,
+                          //                 'patient': widget.patient,
+                          //                 'index': widget.index,
+                          //                 'canEdit': widget.canAddResult,
+                          //               });
+                          //         },
+                          //         borderRadius: BorderRadius.circular(37),
+                          //         child: Container(
+                          //           decoration: BoxDecoration(
+                          //             borderRadius: BorderRadius.circular(10),
+                          //             color: kColorsOrangeDark,
+                          //           ),
+                          //           height: 62,
+                          //           // margin: EdgeInsets.all(20),
+                          //           child: Center(
+                          //             child: Text(
+                          //               'View Result',
+                          //               style: TextStyle(
+                          //                   fontWeight: FontWeight.bold,
+                          //                   fontSize: 20,
+                          //                   color: Colors.white),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //       )
+                          //     : Container(),
                         ],
                       ),
                     ),
@@ -1393,8 +1401,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                         widget.canAddResult &&
                                 (state is LoadedSingleOrder &&
                                     state.order.status == 'Received') &&
-                                (!e.rejected) &&
-                                !widget.patient.resultAvaiable
+                                (!e.rejected)
                             ? Align(
                                 alignment: AlignmentDirectional.centerEnd,
                                 child: IconButton(
@@ -1411,8 +1418,223 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                           'canEdit': widget.canAddResult,
                                         });
                                   },
+                                  icon: !widget.patient.resultAvaiable
+                                      ? Icon(
+                                          Icons.add,
+                                        )
+                                      : Icon(Icons.visibility),
+                                ),
+                              )
+                            : SizedBox(),
+
+                        widget.canAddResult &&
+                                (state is LoadedSingleOrder &&
+                                    state.order.status == 'Received') &&
+                                !widget.patient.resultAvaiable
+                            ? Align(
+                                alignment: AlignmentDirectional.centerEnd,
+                                child: IconButton(
+                                  color: Colors.green,
+                                  onPressed: () async {
+                                    bool create = await showModalBottomSheet(
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (ctx) {
+                                          return AssessSpecimen(ctx, e);
+                                        });
+
+                                    if (create == true && e.type == 'Sputum') {
+                                      e.assessed = true;
+                                      e.rejected =
+                                          'Mucoid Purulent' != sputumCondition;
+                                      e.reason =
+                                          'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
+
+                                      setState(() {
+                                        sendingFeedback = true;
+                                      });
+
+                                      bool success = await OrderRepository
+                                          .editSpecimenFeedback(
+                                              index: widget.index,
+                                              order: state.order,
+                                              patient: state.order
+                                                  .patients![widget.index]);
+
+                                      if (success) {
+                                        addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent:
+                                                'You Accepted Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent:
+                                                '${state.order.patients![widget.index].name}\'s Sputum Specimen have accepted by ${state.order.tester_name}.',
+                                            content:
+                                                'One specimen got accepted by courier!',
+                                            courier: false);
+                                        orderBloc.add(LoadSingleOrder(
+                                            orderId: widget.orderId));
+                                      }
+
+                                      if ('Mucoid Purulent' !=
+                                          sputumCondition) {
+                                        addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent:
+                                                'You Rejected Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent:
+                                                '${state.order.patients![widget.index].name}\'s Sputum Specimen have been rejected by ${state.order.tester_name}.',
+                                            content:
+                                                'One specimen got rejected by tester!',
+                                            courier: false);
+                                      }
+
+                                      setState(() {
+                                        inColdChain = null;
+                                        stoolCondition = null;
+                                        sputumCondition = null;
+                                        sendingFeedback = false;
+                                      });
+                                    } else if (create == true &&
+                                        e.type == 'Stool') {
+                                      e.assessed = true;
+                                      e.rejected = 'Formed' != stoolCondition;
+                                      e.reason =
+                                          'Stool Specimen is in $stoolCondition type. Not in Formed State!';
+
+                                      setState(() {
+                                        sendingFeedback = true;
+                                      });
+
+                                      bool success = await OrderRepository
+                                          .editSpecimenFeedback(
+                                              index: widget.index,
+                                              order: state.order,
+                                              patient: state.order
+                                                  .patients![widget.index]);
+
+                                      if (success) {
+                                        addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent:
+                                                'You Accepted Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent:
+                                                '${state.order.patients![widget.index].name}\'s Stool Specimen is accepted by ${state.order.tester_name}.',
+                                            content:
+                                                'One specimen got accepted by tester!',
+                                            courier: false);
+                                        setState(() {
+                                          sendingFeedback = false;
+                                        });
+                                        orderBloc.add(LoadSingleOrder(
+                                            orderId: widget.orderId));
+                                      }
+                                      if ('Formed' != stoolCondition) {
+                                        addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent:
+                                                'You Rejected Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent:
+                                                '${state.order.patients![widget.index].name}\'s Stool Specimen have been rejected by ${state.order.tester_name}.',
+                                            content:
+                                                'One specimen got rejected by tester!',
+                                            courier: false);
+
+                                        orderBloc.add(LoadSingleOrder(
+                                            orderId: widget.orderId));
+                                      }
+
+                                      setState(() {
+                                        inColdChain = null;
+                                        stoolCondition = null;
+                                        sendingFeedback = false;
+                                        sputumCondition = null;
+                                      });
+                                    } else if (create == true &&
+                                        e.type == 'Urine') {
+                                      e.assessed = true;
+
+                                      e.rejected = false;
+                                      e.reason = '';
+
+                                      setState(() {
+                                        sendingFeedback = true;
+                                      });
+
+                                      bool success = await OrderRepository
+                                          .editSpecimenFeedback(
+                                              index: widget.index,
+                                              order: state.order,
+                                              patient: state.order
+                                                  .patients![widget.index]);
+
+                                      if (success) {
+                                        addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent:
+                                                'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent:
+                                                '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
+                                            content:
+                                                'One specimen got accepted by courier!',
+                                            courier: false);
+                                        setState(() {
+                                          sendingFeedback = false;
+                                        });
+                                        orderBloc.add(LoadSingleOrder(
+                                            orderId: widget.orderId));
+                                      }
+
+                                      setState(() {
+                                        inColdChain = null;
+                                        stoolCondition = null;
+                                        sendingFeedback = false;
+                                        sputumCondition = null;
+                                      });
+                                    } else if (create == true) {
+                                      e.assessed = true;
+
+                                      e.rejected = false;
+                                      e.reason = '';
+
+                                      setState(() {
+                                        sendingFeedback = true;
+                                      });
+
+                                      bool success = await OrderRepository
+                                          .editSpecimenFeedback(
+                                              index: widget.index,
+                                              order: state.order,
+                                              patient: state.order
+                                                  .patients![widget.index]);
+
+                                      if (success) {
+                                        addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent:
+                                                'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent:
+                                                '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
+                                            content:
+                                                'One specimen got accepted by courier!',
+                                            courier: false);
+                                        setState(() {
+                                          sendingFeedback = false;
+                                        });
+                                        orderBloc.add(LoadSingleOrder(
+                                            orderId: widget.orderId));
+                                      }
+
+                                      setState(() {
+                                        inColdChain = null;
+                                        stoolCondition = null;
+                                        sendingFeedback = false;
+                                        sputumCondition = null;
+                                      });
+                                    }
+                                  },
                                   icon: Icon(
-                                    Icons.edit,
+                                    Icons.tune,
                                   ),
                                 ),
                               )
@@ -1424,6 +1646,209 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
               ),
             )
             .toList(),
+      ),
+    );
+  }
+
+  Widget AssessSpecimen(BuildContext context, Specimen specimen) {
+    return Container(
+      padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(
+            30,
+          ),
+          topRight: Radius.circular(
+            30,
+          ),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            child: Text(
+              'Assess Specimen',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+
+          //cold chain status
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 20, bottom: 10),
+            child: Text(
+              'Cold Chain Status',
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: StatefulBuilder(builder: (context, ss) {
+              return DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                value: inColdChain,
+                hint: Text('Transported in cold Chain?'),
+                items: <String>[
+                  'Yes, end to end',
+                  'Yes, partly',
+                  'No, not at all'
+                ].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  setState(() {
+                    inColdChain = val;
+                  });
+
+                  ss(() {});
+                },
+              ));
+            }),
+          ),
+
+          //sputum cndition
+          specimen.type == 'Sputum'
+              ? Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(top: 20, bottom: 10),
+                  child: Text(
+                    'Sputum Condition',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                  ),
+                )
+              : specimen.type == 'Stool'
+                  ? Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.only(top: 20, bottom: 10),
+                      child: Text(
+                        'Stool Condition',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w500),
+                      ),
+                    )
+                  : Container(),
+          specimen.type == 'Sputum'
+              ? Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                  child: StatefulBuilder(builder: (context, ss) {
+                    return DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                      value: sputumCondition,
+                      hint: Text('Sputum Condition?'),
+                      items: <String>[
+                        'Mucoid Purulent',
+                        'Bloodstreak',
+                        'Saliva'
+                      ].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (val) {
+                        FocusScope.of(context).requestFocus(FocusNode());
+
+                        setState(() {
+                          sputumCondition = val;
+                        });
+                        ss(() {});
+                      },
+                    ));
+                  }),
+                )
+              : specimen.type == 'Stool'
+                  ? Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: StatefulBuilder(builder: (context, ss) {
+                        return DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                          value: stoolCondition,
+                          hint: Text('Stool Condition?'),
+                          items: <String>['Formed', 'Unformed', 'Liquid']
+                              .map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            setState(() {
+                              stoolCondition = val;
+                            });
+                            ss(() {});
+                          },
+                        ));
+                      }),
+                    )
+                  : Container(),
+
+          SizedBox(
+            height: 20,
+          ),
+
+          GestureDetector(
+            onTap: () {
+              if (inColdChain != null) {
+                // ordersBloc.add(event)
+                Navigator.pop(context, true);
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: kColorsOrangeDark,
+              ),
+              height: 62,
+              // margin: EdgeInsets.all(20),
+              child: Center(
+                child: Text(
+                  'Assess',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          // SelectorPage(),
+        ],
       ),
     );
   }

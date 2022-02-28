@@ -377,6 +377,7 @@ class Specimen {
     this.assessed = false,
     this.rejected = false,
     this.reason,
+    this.testResult,
   });
 
   @HiveField(0)
@@ -391,12 +392,15 @@ class Specimen {
   bool rejected;
   @HiveField(5)
   String? reason;
+  @HiveField(6)
+  TestResult? testResult;
 
   factory Specimen.fromJson(Map<String, dynamic> json) => Specimen(
         type: json["type"],
         id: json["id"],
         examinationType: json['examination_type'],
         reason: json['reason'],
+        testResult: json['result'],
         assessed: json['assessed'] ?? false,
         rejected: json['rejected'] ?? false,
       );
@@ -407,6 +411,7 @@ class Specimen {
         'examination_type': examinationType,
         'assessed': assessed,
         'rejected': rejected,
+        'result': testResult?.toJson(),
         'reason': reason,
       };
 }

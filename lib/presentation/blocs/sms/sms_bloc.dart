@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kncv_flutter/core/hear_beat.dart';
@@ -111,8 +112,20 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
           await ordersBox.addAll(orders);
           add(UpdatedDatabaseEvent());
         }
+      } else if (body['action'] == SPECIMEN_EDITED) {
+        print('Listening to SMS Entry');
+        List<Order> orders = await ordersBox.values.toList();
+        Order order = orders
+            .firstWhere((element) => element.orderId == body['payload']['oid']);
+        orders.removeWhere((element) => element.orderId == order.orderId);
+        order.patients![body['payload']?['i']] =
+            Patient.fromJson(body['payload']['p']);
+        orders.add(order);
+        await ordersBox.clear();
+        await ordersBox.addAll(orders);
+        add(UpdatedDatabaseEvent());
       } else {
-        //It is non of known formats of sms
+        debugPrint('received another sms');
       }
     } catch (e) {
       add(ErrorEvent(error: e.toString()));

@@ -369,7 +369,6 @@ class OrderRepository {
       {required String orderId,
       required Patient patient,
       required int index}) async {
-    //TODO send response to sender
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -410,7 +409,6 @@ class OrderRepository {
       {required Order order,
       required Patient patient,
       required int index}) async {
-    //TODO send response to sender
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -439,6 +437,17 @@ class OrderRepository {
           'patients': patientsList,
           'status': assessed ? 'Received' : 'Delivered',
         });
+
+        //RESPONSE SPECIMEN_EDITED
+        await sendResponseSMS(
+          to: order.sender_phone ?? '',
+          payload: {
+            'oid': order.orderId,
+            'p': patient.toJsonSMS(),
+            'i': index,
+          },
+          action: SPECIMEN_EDITED,
+        );
 
         return true;
       }
@@ -514,7 +523,6 @@ class OrderRepository {
       {required String? orderId,
       required Patient patient,
       required int index}) async {
-    //TODO send response to sender
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -526,6 +534,20 @@ class OrderRepository {
         patientsList[index] = patient.toJson();
         await orderRef.update(
             {'patients': patientsList, 'test_result_added': DateTime.now()});
+
+        Order o = Order.fromJson(order.data()!);
+
+        //RESPONSE SPECIMEN_EDITED
+        await sendResponseSMS(
+          to: o.sender_phone ?? '',
+          payload: {
+            'oid': orderId,
+            'p': patient.toJsonSMS(),
+            'i': index,
+          },
+          action: SPECIMEN_EDITED,
+        );
+
         return true;
       }
       return false;
@@ -545,7 +567,7 @@ class OrderRepository {
           payload: {
             'oid': orderId,
             'i': index,
-            'p': patient.toJson(),
+            'p': patient.toJsonSMS(),
           },
           action: TESTER_ADD_TEST_RESULT);
 
@@ -559,7 +581,6 @@ class OrderRepository {
       {required String? orderId,
       required Patient patient,
       required int index}) async {
-    //TODO send result to sender
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
@@ -570,6 +591,18 @@ class OrderRepository {
         patientsList[index] = patient.toJson();
         await orderRef.update(
             {'patients': patientsList, 'updated_test_result': DateTime.now()});
+
+        Order o = Order.fromJson(order.data()!);
+
+        await sendResponseSMS(
+          to: o.sender_phone ?? '',
+          payload: {
+            'oid': orderId,
+            'p': patient.toJsonSMS(),
+            'i': index,
+          },
+          action: SPECIMEN_EDITED,
+        );
         return true;
       }
       return false;
