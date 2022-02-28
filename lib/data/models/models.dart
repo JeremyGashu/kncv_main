@@ -400,7 +400,8 @@ class Specimen {
         id: json["id"],
         examinationType: json['examination_type'],
         reason: json['reason'],
-        testResult: json['result'],
+        testResult:
+            json["result"] != null ? TestResult.fromJson(json['result']) : null,
         assessed: json['assessed'] ?? false,
         rejected: json['rejected'] ?? false,
       );

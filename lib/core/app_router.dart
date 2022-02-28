@@ -101,7 +101,8 @@ class AppRouter {
             orderId: args['orderId'],
             patient: args['patient'],
             index: args['index'],
-            canEdit:args['canEdit'] || false,
+            specimen: args['specimen'],
+            canEdit: args['canEdit'] || false,
           ),
         );
 
@@ -109,7 +110,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => NotificationsPage());
 
       case ReportPage.reportPage:
-        return MaterialPageRoute(builder: (_) => ReportPage(patient: args,));
+        return MaterialPageRoute(
+            builder: (_) => ReportPage(
+                  patient: args,
+                ));
     }
   }
 }

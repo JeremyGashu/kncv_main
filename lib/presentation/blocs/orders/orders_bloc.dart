@@ -175,6 +175,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         List<Order> orders = await orderRepository.loadOrdersForCourier();
         yield LoadedOrdersForCourier(orders: orders);
       } catch (e) {
+        // throw Exception(e);
         yield ErrorState(message: 'Error Loading Orders!');
       }
     } else if (event is LoadOrdersForTester) {
@@ -196,6 +197,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
           yield ErrorState(message: 'Cannot find order with this id!');
         }
       } catch (e) {
+        // throw Exception(e);
         yield ErrorState(message: 'Error Loading Order!');
       }
     } else if (event is AddPatientToOrder) {

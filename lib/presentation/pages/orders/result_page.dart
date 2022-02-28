@@ -14,6 +14,7 @@ import '../notificatins.dart';
 class AddTestResultPage extends StatefulWidget {
   final String orderId;
   final Patient patient;
+  final Specimen specimen;
   final int index;
   final bool accepted;
   final bool canEdit;
@@ -23,6 +24,7 @@ class AddTestResultPage extends StatefulWidget {
       {Key? key,
       required this.orderId,
       required this.index,
+      required this.specimen,
       this.accepted = false,
       this.canEdit = false,
       required this.patient})
@@ -47,17 +49,26 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
 
   @override
   void initState() {
-    if (widget.patient.resultAvaiable) {
-      resitrationNumberController.text =
-          widget.patient.testResult?.labRegistratinNumber ?? '';
+    debugPrint('Selected specimen ${widget.specimen.id}');
 
-      time = widget.patient.testResult?.resultTime ?? '';
-      date = widget.patient.testResult?.resultDate ?? '';
+    var d = DateTime.now();
+    int month = d.month;
+    int year = d.year;
+    int day = d.day;
 
-      mtbResult = widget.patient.testResult?.mtbResult;
-      quantity = widget.patient.testResult?.quantity;
-      resultRR = widget.patient.testResult?.resultRr;
-    }
+    int minute = d.hour;
+    int seconds = d.minute;
+
+    resitrationNumberController.text =
+        widget.specimen.testResult?.labRegistratinNumber ?? '';
+
+    time = widget.specimen.testResult?.resultTime ?? '$minute:$seconds';
+    date = widget.specimen.testResult?.resultDate ?? '$day-$month-$year';
+
+    mtbResult = widget.specimen.testResult?.mtbResult;
+    quantity = widget.specimen.testResult?.quantity;
+    resultRR = widget.specimen.testResult?.resultRr;
+
     super.initState();
   }
 
@@ -135,7 +146,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                       EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
                   child: ListView(
                     shrinkWrap: true,
-                    children: !editingResult
+                    children: !editingResult &&
+                            widget.specimen.testResult != null
                         ? [
                             // _labelBuilder('Test Date'),
                             Container(
@@ -185,7 +197,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   width: double.infinity,
                                   padding: EdgeInsets.only(left: 20),
                                   child: Text(
-                                    date ?? 'Please Select Date',
+                                    widget.specimen.testResult?.resultDate ??
+                                        'Please Select Date',
                                     style: TextStyle(
                                         color: Colors.black87.withOpacity(0.8),
                                         fontSize: 15),
@@ -206,7 +219,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   width: double.infinity,
                                   padding: EdgeInsets.only(left: 20),
                                   child: Text(
-                                    time ?? 'Please Select Time',
+                                    widget.specimen.testResult?.resultTime ??
+                                        'Please Select Time',
                                     style: TextStyle(
                                         color: Colors.black87.withOpacity(0.8),
                                         fontSize: 15),
@@ -229,7 +243,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   width: double.infinity,
                                   padding: EdgeInsets.only(left: 20),
                                   child: Text(
-                                    mtbResult ?? '',
+                                    widget.specimen.testResult?.mtbResult ?? '',
                                     style: TextStyle(
                                         color: Colors.black87.withOpacity(0.8),
                                         fontSize: 15),
@@ -252,7 +266,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   width: double.infinity,
                                   padding: EdgeInsets.only(left: 20),
                                   child: Text(
-                                    quantity ?? '',
+                                    widget.specimen.testResult?.quantity ?? '',
                                     style: TextStyle(
                                         color: Colors.black87.withOpacity(0.8),
                                         fontSize: 15),
@@ -275,7 +289,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   width: double.infinity,
                                   padding: EdgeInsets.only(left: 20),
                                   child: Text(
-                                    resultRR ?? '',
+                                    widget.specimen.testResult?.resultRr ?? '',
                                     style: TextStyle(
                                         color: Colors.black87.withOpacity(0.8),
                                         fontSize: 15),
@@ -589,6 +603,19 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                   true;
                                               widget.patient.status = 'Tested';
 
+                                              int? specimentIndex = widget
+                                                  .patient.specimens
+                                                  ?.indexWhere((element) =>
+                                                      element.id ==
+                                                      widget.specimen.id);
+
+                                              if (specimentIndex != null) {
+                                                widget
+                                                    .patient
+                                                    .specimens?[specimentIndex]
+                                                    .testResult = result;
+                                              }
+
                                               orderBloc.add(
                                                 AddTestResult(
                                                     orderId: widget.orderId,
@@ -652,6 +679,19 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                   true;
                                               widget.patient.status = 'Tested';
 
+                                              int? specimentIndex = widget
+                                                  .patient.specimens
+                                                  ?.indexWhere((element) =>
+                                                      element.id ==
+                                                      widget.specimen.id);
+
+                                              if (specimentIndex != null) {
+                                                widget
+                                                    .patient
+                                                    .specimens?[specimentIndex]
+                                                    .testResult = result;
+                                              }
+
                                               orderBloc.add(
                                                 EditTestResult(
                                                     orderId: widget.orderId,
@@ -671,7 +711,10 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                               // margin: EdgeInsets.all(20),
                                               child: Center(
                                                 child: Text(
-                                                  'Edit Test Result',
+                                                  widget.specimen.testResult !=
+                                                          null
+                                                      ? 'Edit Test Result'
+                                                      : 'Add Test Result',
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,

@@ -1224,52 +1224,53 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                 : Container(),
 
                                             //view result
-                                            widget.patient.resultAvaiable
-                                                ? InkWell(
-                                                    onTap: () {
-                                                      Navigator.pushNamed(
-                                                          context,
-                                                          AddTestResultPage
-                                                              .addTestResultPageRouteName,
-                                                          arguments: {
-                                                            'orderId':
-                                                                widget.orderId,
-                                                            'patient':
-                                                                widget.patient,
-                                                            'index':
-                                                                widget.index,
-                                                            'canEdit': widget
-                                                                .canAddResult,
-                                                          });
-                                                    },
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            37),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        color:
-                                                            kColorsOrangeDark,
-                                                      ),
-                                                      height: 62,
-                                                      // margin: EdgeInsets.all(20),
-                                                      child: Center(
-                                                        child: Text(
-                                                          'View Result',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 20,
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Container(),
+                                            // widget.patient.resultAvaiable
+                                            //     ? InkWell(
+                                            //         onTap: () {
+                                            //           Navigator.pushNamed(
+                                            //               context,
+                                            //               AddTestResultPage
+                                            //                   .addTestResultPageRouteName,
+                                            //               arguments: {
+                                            //                 'orderId':
+                                            //                     widget.orderId,
+                                            //                 'patient':
+                                            //                     widget.patient,
+                                            //                 'index':
+                                            //                     widget.index,
+                                            //                 'canEdit': widget
+                                            //                     .canAddResult,
+                                            //                 // 'specimen': e,
+                                            //               });
+                                            //         },
+                                            //         borderRadius:
+                                            //             BorderRadius.circular(
+                                            //                 37),
+                                            //         child: Container(
+                                            //           decoration: BoxDecoration(
+                                            //             borderRadius:
+                                            //                 BorderRadius
+                                            //                     .circular(10),
+                                            //             color:
+                                            //                 kColorsOrangeDark,
+                                            //           ),
+                                            //           height: 62,
+                                            //           // margin: EdgeInsets.all(20),
+                                            //           child: Center(
+                                            //             child: Text(
+                                            //               'View Result',
+                                            //               style: TextStyle(
+                                            //                   fontWeight:
+                                            //                       FontWeight
+                                            //                           .bold,
+                                            //                   fontSize: 20,
+                                            //                   color:
+                                            //                       Colors.white),
+                                            //             ),
+                                            //           ),
+                                            //         ),
+                                            //       )
+                                            //     : Container(),
                                           ],
                                         ),
                                 )
@@ -1398,8 +1399,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             ? Text('Rejected : ${e.rejected}')
                             : Container(),
                         e.rejected ? Text('Reason : ${e.reason}') : Container(),
-                        widget.canAddResult &&
-                                (state is LoadedSingleOrder &&
+
+                        (state is LoadedSingleOrder &&
                                     state.order.status == 'Received') &&
                                 (!e.rejected)
                             ? Align(
@@ -1407,6 +1408,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 child: IconButton(
                                   color: Colors.green,
                                   onPressed: () {
+                                    debugPrint(e.id);
                                     Navigator.pushNamed(
                                         context,
                                         AddTestResultPage
@@ -1416,9 +1418,10 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                           'patient': widget.patient,
                                           'index': widget.index,
                                           'canEdit': widget.canAddResult,
+                                          'specimen': e,
                                         });
                                   },
-                                  icon: !widget.patient.resultAvaiable
+                                  icon: e.testResult == null
                                       ? Icon(
                                           Icons.add,
                                         )

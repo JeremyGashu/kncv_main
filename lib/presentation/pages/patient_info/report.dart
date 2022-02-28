@@ -152,72 +152,98 @@ class ReportPage extends StatelessWidget {
                     ),
                     pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text('Patient Test Result',
-                            style: pw.TextStyle(
-                                fontSize: 20, fontWeight: pw.FontWeight.bold)),
-                        pw.SizedBox(height: 10),
-                        pw.Text(
-                          'Lab Reg No : ${patient.testResult?.labRegistratinNumber ?? ''}',
-                          style: pw.TextStyle(
-                            // color: Colors.black87,
-                            fontSize: 13,
-                          ),
-                        ),
-                        pw.SizedBox(
-                          height: 10,
-                        ),
-                        pw.Text(
-                          'MTB Result : ${patient.testResult?.mtbResult ?? ''}',
-                          style: pw.TextStyle(
-                            // color: Colors.black87,
-                            fontSize: 13,
-                          ),
-                        ),
-                        pw.SizedBox(
-                          height: 10,
-                        ),
-                        pw.Text(
-                          'Quantity: ${patient.testResult?.quantity ?? ''}',
-                          style: pw.TextStyle(
-                            // color: Colors.black87,
-                            fontSize: 13,
-                          ),
-                        ),
-                        pw.SizedBox(
-                          height: 10,
-                        ),
-                        pw.Text(
-                          'Result Date : ${patient.testResult?.resultDate ?? ''}',
-                          style: pw.TextStyle(
-                            // color: Colors.black87,
-                            fontSize: 13,
-                          ),
-                        ),
-                        pw.SizedBox(
-                          height: 10,
-                        ),
-                        pw.Text(
-                          'Time : ${patient.testResult?.resultTime ?? ''}',
-                          style: pw.TextStyle(
-                            // color: Colors.black87,
-                            fontSize: 13,
-                          ),
-                        ),
-                        pw.SizedBox(
-                          height: 10,
-                        ),
-                        pw.Text(
-                          'Result RR : ${patient.testResult?.resultRr ?? ''}',
-                          style: pw.TextStyle(
-                            // color: Colors.black87,
-                            fontSize: 13,
-                          ),
-                        ),
-                        pw.SizedBox(
-                          height: 10,
-                        ),
-                      ],
+                      children: patient.specimens?.map((e) {
+                            return pw.Column(
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: [
+                                  pw.Text('Patient Test Result',
+                                      style: pw.TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: pw.FontWeight.bold)),
+                                  pw.SizedBox(height: 10),
+                                  pw.Text(
+                                    'Specimen Type ${e.type}',
+                                    style: pw.TextStyle(
+                                      // color: Colors.black87,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  pw.SizedBox(
+                                    height: 10,
+                                  ),
+                                  pw.Text(
+                                    'Specimen ID : ${e.id}',
+                                    style: pw.TextStyle(
+                                      // color: Colors.black87,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  pw.SizedBox(
+                                    height: 10,
+                                  ),
+                                  pw.Text(
+                                    'Lab Reg No : ${patient.testResult?.labRegistratinNumber ?? ''}',
+                                    style: pw.TextStyle(
+                                      // color: Colors.black87,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  pw.SizedBox(
+                                    height: 10,
+                                  ),
+                                  pw.Text(
+                                    'MTB Result : ${patient.testResult?.mtbResult ?? ''}',
+                                    style: pw.TextStyle(
+                                      // color: Colors.black87,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  pw.SizedBox(
+                                    height: 10,
+                                  ),
+                                  pw.Text(
+                                    'Quantity: ${patient.testResult?.quantity ?? ''}',
+                                    style: pw.TextStyle(
+                                      // color: Colors.black87,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  pw.SizedBox(
+                                    height: 10,
+                                  ),
+                                  pw.Text(
+                                    'Result Date : ${patient.testResult?.resultDate ?? ''}',
+                                    style: pw.TextStyle(
+                                      // color: Colors.black87,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  pw.SizedBox(
+                                    height: 10,
+                                  ),
+                                  pw.Text(
+                                    'Time : ${patient.testResult?.resultTime ?? ''}',
+                                    style: pw.TextStyle(
+                                      // color: Colors.black87,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  pw.SizedBox(
+                                    height: 10,
+                                  ),
+                                  pw.Text(
+                                    'Result RR : ${patient.testResult?.resultRr ?? ''}',
+                                    style: pw.TextStyle(
+                                      // color: Colors.black87,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  pw.SizedBox(
+                                    height: 10,
+                                  ),
+                                ]);
+                          }).toList() ??
+                          [],
                     ),
                   ],
                 ),
@@ -375,72 +401,159 @@ class ReportPage extends StatelessWidget {
                 Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Patient Test Result',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 10),
-                      Text(
-                        'Lab Reg No : ${patient.testResult?.labRegistratinNumber ?? ''}',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'MTB Result : ${patient.testResult?.mtbResult ?? ''}',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Quantity: ${patient.testResult?.quantity ?? ''}',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Result Date : ${patient.testResult?.resultDate ?? ''}',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Result RR : ${patient.testResult?.resultRr ?? ''}',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Time : ${patient.testResult?.resultTime ?? ''}',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
+                    children: patient.specimens?.map((specimen) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Patient Test Result',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold)),
+                              SizedBox(height: 10),
+                              Text(
+                                'Speciemen : ${specimen.type}',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Speciemen ID : ${specimen.id}',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Lab Reg No : ${specimen.testResult?.labRegistratinNumber ?? ''}',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'MTB Result : ${specimen.testResult?.mtbResult ?? ''}',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Quantity: ${specimen.testResult?.quantity ?? ''}',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Result RR : ${specimen.testResult?.resultRr ?? ''}',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              Text(
+                                'Result Date : ${specimen.testResult?.resultDate ?? ''}',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Time : ${specimen.testResult?.resultTime ?? ''}',
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                            ],
+                          );
+                        }).toList() ??
+                        [],
+                    // children: [
+                    //   patient.specimens.map(val => Text('')).toList(),
+                    //   Text('Patient Test Result',
+                    //       style: TextStyle(
+                    //           fontSize: 20, fontWeight: FontWeight.bold)),
+                    //   SizedBox(height: 10),
+                    //   Text(
+                    //     'Lab Reg No : ${patient.testResult?.labRegistratinNumber ?? ''}',
+                    //     style: TextStyle(
+                    //       color: Colors.black87,
+                    //       fontSize: 13,
+                    //     ),
+                    //   ),
+                    //   SizedBox(
+                    //     height: 10,
+                    //   ),
+                    //   Text(
+                    //     'MTB Result : ${patient.testResult?.mtbResult ?? ''}',
+                    //     style: TextStyle(
+                    //       color: Colors.black87,
+                    //       fontSize: 13,
+                    //     ),
+                    //   ),
+                    //   SizedBox(
+                    //     height: 10,
+                    //   ),
+                    //   Text(
+                    //     'Quantity: ${patient.testResult?.quantity ?? ''}',
+                    //     style: TextStyle(
+                    //       color: Colors.black87,
+                    //       fontSize: 13,
+                    //     ),
+                    //   ),
+                    //   SizedBox(
+                    //     height: 10,
+                    //   ),
+                    //   Text(
+                    //     'Result Date : ${patient.testResult?.resultDate ?? ''}',
+                    //     style: TextStyle(
+                    //       color: Colors.black87,
+                    //       fontSize: 13,
+                    //     ),
+                    //   ),
+                    //   SizedBox(
+                    //     height: 10,
+                    //   ),
+                    //   Text(
+                    //     'Result RR : ${patient.testResult?.resultRr ?? ''}',
+                    //     style: TextStyle(
+                    //       color: Colors.black87,
+                    //       fontSize: 13,
+                    //     ),
+                    //   ),
+                    //   SizedBox(
+                    //     height: 10,
+                    //   ),
+                    //   Text(
+                    //     'Time : ${patient.testResult?.resultTime ?? ''}',
+                    //     style: TextStyle(
+                    //       color: Colors.black87,
+                    //       fontSize: 13,
+                    //     ),
+                    //   ),
+                    //   SizedBox(
+                    //     height: 10,
+                    //   ),
+                    // ],
                   ),
                 ),
               ],
