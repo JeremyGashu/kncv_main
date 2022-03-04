@@ -147,6 +147,10 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
               orders.removeWhere((element) => element.orderId == order.orderId);
               order.patients![body['payload']?['i']] =
                   Patient.fromJson(body['payload']['p']);
+
+              bool assessed = allSpecimensAssessed(order);
+
+              order.status = assessed ? 'Received' : 'Delivered';
               orders.add(order);
               await ordersBox.clear();
               await ordersBox.addAll(orders);
@@ -170,6 +174,17 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
 
       // var decoded = messages?.map((e) => jsonDecode(e)).toList();
     }
+  }
+
+  static bool allSpecimensAssessed(Order order) {
+    List<Specimen> specimens = [];
+    order.patients?.forEach((e) => specimens = [...specimens, ...?e.specimens]);
+    for (int i = 0; i < specimens.length; i++) {
+      if (!specimens[i].assessed) {
+        return false;
+      }
+    }
+    return true;
   }
 
   Future<bool> canEditResult(
