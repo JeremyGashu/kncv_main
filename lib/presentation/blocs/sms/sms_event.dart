@@ -9,6 +9,8 @@ class InitSMSListening extends SMSEvent {}
 
 class UpdatingDatabaseEvent extends SMSEvent {}
 
+class UpdateDatabaseFromSharedPreferenceEvent extends SMSEvent {}
+
 class UpdatedDatabaseEvent extends SMSEvent {}
 
 class ErrorEvent extends SMSEvent {

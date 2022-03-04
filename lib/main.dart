@@ -58,10 +58,12 @@ void main() async {
           lazy: false,
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        onGenerateRoute: AppRouter.onGenerateRoute,
-        initialRoute: SplashPage.splashPageRouteName,
+      child: SMSListener(
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          initialRoute: SplashPage.splashPageRouteName,
+        ),
       ),
     ),
   );
@@ -93,7 +95,9 @@ class _SMSListenerState extends State<SMSListener> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      widget.onResume != null ? widget.onResume!() : () {};
+      debugPrint('===========Resumed and updating data============');
+      BlocProvider.of<SMSBloc>(context)
+          .add(UpdateDatabaseFromSharedPreferenceEvent());
     }
   }
 

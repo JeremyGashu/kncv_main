@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kncv_flutter/core/hear_beat.dart';
@@ -198,6 +199,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         }
       } catch (e) {
         // throw Exception(e);
+        debugPrint('$e');
         yield ErrorState(message: 'Error Loading Order!');
       }
     } else if (event is AddPatientToOrder) {

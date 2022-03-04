@@ -352,8 +352,8 @@ int getUnseenNotificationsCount(QuerySnapshot? snapshot) {
 
   snapshot?.docs.forEach((e) {
     Map? d = e.data() as Map;
-    print('current user ${currentUser == d['user_id']}');
-    print('current user ${currentUser == d['user_id']}');
+    // print('current user ${currentUser == d['user_id']}');
+    // print('current user ${currentUser == d['user_id']}');
     if ((currentUser == d['user_id']) && (d['seen'] == false)) {
       counter++;
     }

@@ -24,7 +24,7 @@ Future<void> serviceLocatorInit() async {
   sl.registerFactory(() => AuthBloc(sl()));
   sl.registerFactory(() => TesterCourierBloc(sl()));
   sl.registerFactory(() => LocationBloc(sl()));
-  sl.registerLazySingleton(() => SMSBloc());
+  sl.registerLazySingleton<SMSBloc>(() => SMSBloc());
 
   /// Repositories
   sl.registerFactory<OrderRepository>(() => OrderRepository(sl(), sl()));

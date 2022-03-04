@@ -86,7 +86,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               addNotification(
                 orderId: widget.orderId,
                 senderContent:
-                    'You have added new order for courier ${state.order.courier_name} and testing center ${state.order.tester_name}.',
+                    'You have added new order for courier ${state.order.courier_name ?? ""} and testing center ${state.order.tester_name}.',
                 testerContent:
                     'New order is ready from ${state.order.sender_name} & will be transported by ${state.order.courier_name}.',
                 courierContent:
@@ -351,7 +351,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                           ),
                                         ),
                                         title: Text(
-                                          '${state.order.sender_name}',
+                                          '${state.order.sender_name ?? ""}',
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
@@ -377,7 +377,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                           ),
                                         ),
                                         title: Text(
-                                          '${state.order.courier_name}',
+                                          '${state.order.courier_name ?? ""}',
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
@@ -402,7 +402,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                           ),
                                         ),
                                         title: Text(
-                                          '${state.order.tester_name}',
+                                          '${state.order.tester_name ?? ""}',
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),

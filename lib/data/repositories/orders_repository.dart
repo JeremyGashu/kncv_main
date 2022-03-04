@@ -167,9 +167,11 @@ class OrderRepository {
       String? sender_phone;
       var userData =
           await usersCollection.where('user_id', isEqualTo: sender_id).get();
+      debugPrint('Sender data from user id  ======== ${userData.docs.length}');
+
       if (userData.docs.length > 0) {
         sender_name = userData.docs[0].data()['institution']['name'];
-        sender_phone = userData.docs[0].data()['phone'];
+        sender_phone = userData.docs[0].data()['phone_number'];
       }
       var orders =
           await ordersCollection.where('sender_id', isEqualTo: sender_id).get();
@@ -396,7 +398,7 @@ class OrderRepository {
         to: '0931057901',
         payload: {
           'oid': orderId,
-          'p': patient.toJson(),
+          'p': patient.toJsonSMS(),
           'i': index,
         },
         action: EDIT_PATIENT_INFO,
@@ -631,7 +633,7 @@ class OrderRepository {
           payload: {
             'oid': orderId,
             'i': index,
-            'p': patient.toJson(),
+            'p': patient.toJsonSMS(),
           },
           action: EDIT_TEST_RESULT);
 
@@ -830,7 +832,7 @@ class OrderRepository {
         await sendSMS(
             to: '0931057901',
             payload: {
-              'oid': or.orderId,
+              'oid': order.orderId,
             },
             action: PLACE_ORDER);
 

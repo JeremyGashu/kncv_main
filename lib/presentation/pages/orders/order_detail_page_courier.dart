@@ -145,7 +145,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                           ),
                                         ),
                                         title: Text(
-                                          '${state.order.sender_name}',
+                                          '${state.order.sender_name ?? ""}',
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
@@ -171,7 +171,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                           ),
                                         ),
                                         title: Text(
-                                          '${state.order.courier_name}',
+                                          '${state.order.courier_name ?? ""}',
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
@@ -196,7 +196,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                           ),
                                         ),
                                         title: Text(
-                                          '${state.order.tester_name}',
+                                          '${state.order.tester_name ?? ""}',
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),

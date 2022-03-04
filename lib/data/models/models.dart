@@ -93,14 +93,14 @@ class Order {
         testCenterId: json["tid"],
         courier: json["courier"],
         testCenter: json["test_center"],
-        sender_name: json['sender_name'],
-        sender: json["sender"],
+        sender_name: json['sn'],
+        sender: json["sn"],
         status: json['status'],
         sender_phone: json['sp'],
         tester_phone: json['tp'],
         courier_phone: json['cp'],
-        tester_name: json['tester_name'],
-        courier_name: json['courier_name'],
+        tester_name: json['tn'],
+        courier_name: json['cn'],
         created_at: json['created_at'],
         notified_arrival: json['notified_arrival'] ?? false,
         timestamp: json["timestamp"] ?? '',
@@ -108,24 +108,6 @@ class Order {
             ? List<Patient>.from(json["p"].map((x) => Patient.fromJson(x)))
             : [],
       );
-
-  // Map<String, dynamic> toJsonSMS() => {
-  //       "order_id": orderId,
-  //       "sender_id": senderId,
-  //       "courier_id": courierId,
-  //       "test_center_id": testCenterId,
-  //       'sender_name': sender_name,
-  //       "courier": courier,
-  //       "test_center": testCenter,
-  //       'sender_phone': sender_phone,
-  //       'tester_phone': tester_phone,
-  //       'courier_phone': courier_phone,
-  //       "sender": sender,
-  //       "timestamp": timestamp,
-  //       "patients": patients != null
-  //           ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS()))
-  //           : [],
-  //     };
 
   Map<String, dynamic> toJsonSMS() => {
         "oid": orderId,
@@ -135,6 +117,9 @@ class Order {
         'sp': sender_phone,
         'tp': tester_phone,
         'cp': courier_phone,
+        'sn': sender_name,
+        'tn': tester_name,
+        'cn': courier_name,
         "p": patients != null
             ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS()))
             : [],
@@ -430,9 +415,10 @@ class Courier extends TesterCourier {
   Courier({required this.name, required this.id, required this.phone});
 
   factory Courier.fromJson(Map<String, dynamic> json) =>
-      Courier(name: json['name'], phone: json['phone'], id: json['id']);
+      Courier(name: json['name'], phone: json['phone_number'], id: json['id']);
 
-  Map<String, dynamic> toJson() => {'name': name, 'phone': phone, 'id': id};
+  Map<String, dynamic> toJson() =>
+      {'name': name, 'phone_number': phone, 'id': id};
 
   @override
   String toString() {
