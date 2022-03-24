@@ -271,7 +271,7 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
           Order order = orders.firstWhere(
               (element) => element.orderId == body['payload']['oid']);
           orders.removeWhere((element) => element.orderId == order.orderId);
-          order.status = 'Deliverd';
+          order.status = 'Delivered';
           orders.add(order);
           await ordersBox.clear();
           await ordersBox.addAll(orders);
@@ -285,6 +285,22 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
         orders.removeWhere((element) => element.orderId == order.orderId);
         order.patients![body['payload']?['i']] =
             Patient.fromJson(body['payload']['p']);
+
+        bool finishedAssessingPatient = true;
+        order.patients![body['payload']?['i']].specimens?.forEach((specimen) {
+          if (!specimen.assessed) {
+            finishedAssessingPatient = false;
+          }
+        });
+
+        if (finishedAssessingPatient) {
+          order.patients![body['payload']?['i']].status = 'Inspected';
+        }
+
+        bool assessed = allSpecimensAssessed(order);
+
+        order.status = assessed ? 'Received' : 'Delivered';
+
         orders.add(order);
         await ordersBox.clear();
         await ordersBox.addAll(orders);

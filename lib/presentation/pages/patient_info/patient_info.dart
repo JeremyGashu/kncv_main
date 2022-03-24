@@ -33,8 +33,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   String? requestedTests;
 
   Map<String, List<String>> examinationTypesList = {
-    'Stool': ['AFB microscopy', 'GeneXpret', 'Culture'],
-    'Sputum': ['AFB microscopy', 'GeneXpret', 'Culture'],
+    'Stool': ['AFB microscopy', 'GeneXpret', 'Culture', 'LPA', 'DST'],
+    'Sputum': ['AFB microscopy', 'GeneXpret', 'Culture', 'LPA', 'DST'],
     'Urine': ['LF LAM'],
     'Blood': ['CD4 Count', 'Viral Load'],
     'Swab': ['GeneXpret'],
@@ -470,7 +470,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                               hint: Text('Reason for Test'),
                               items: <String>[
                                 'Diagnostic',
-                                'Presumptive',
+                                'Presumptive TB',
                                 'Presumptive RR-TB',
                                 'Presumptive MDR-TB',
                                 'At X months during treatment',

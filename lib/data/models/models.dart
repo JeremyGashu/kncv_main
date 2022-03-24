@@ -434,10 +434,24 @@ class Tester extends TesterCourier {
   final String phone;
   @HiveField(2)
   final String id;
-  Tester({required this.name, required this.id, required this.phone});
+  @HiveField(3)
+  final Map? region;
+  @HiveField(4)
+  final Map? zone;
+  Tester(
+      {required this.name,
+      required this.id,
+      required this.phone,
+      this.zone,
+      this.region});
 
-  factory Tester.fromJson(Map<String, dynamic> json) =>
-      Tester(name: json['name'], phone: json['phone_number'], id: json['id']);
+  factory Tester.fromJson(Map<String, dynamic> json) => Tester(
+        name: json['name'],
+        phone: json['phone_number'],
+        id: json['id'],
+        zone: json['zone'],
+        region: json['region'],
+      );
 
   Map<String, dynamic> toJson() =>
       {'name': name, 'phone_number': phone, 'id': id};

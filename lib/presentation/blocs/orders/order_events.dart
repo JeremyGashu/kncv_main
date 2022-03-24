@@ -19,6 +19,8 @@ class AddOrder extends OrderEvents {
   final String courier_phone;
   final String tester_phone;
   final String date;
+  final Map region;
+  final Map zone;
 
   AddOrder({
     required this.courier_id,
@@ -28,6 +30,8 @@ class AddOrder extends OrderEvents {
     required this.date,
     required this.courier_phone,
     required this.tester_phone,
+    required this.region,
+    required this.zone,
   });
   @override
   List<Object> get props =>

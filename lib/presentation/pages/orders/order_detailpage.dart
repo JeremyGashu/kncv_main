@@ -109,8 +109,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               await Future.delayed(Duration(seconds: 1));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             } else if (state is EditedOrder) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Changed order info!')));
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text('Changed order info!')));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             }
           },
@@ -159,8 +159,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                   if (state.order.status !=
                                           'Waiting for Confirmation' &&
                                       state.order.status != 'Draft') {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
                                             content: Text(
                                                 'Cant delete this order! It is already accepted!')));
                                     return;
@@ -225,24 +225,22 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 var create =
                                                     await showModalBottomSheet(
                                                         backgroundColor:
-                                                            Colors
-                                                                .transparent,
+                                                            Colors.transparent,
                                                         isScrollControlled:
                                                             true,
                                                         context: context,
                                                         builder: (ctx) {
                                                           return Container(
-                                                            padding: EdgeInsets
-                                                                .only(
+                                                            padding:
+                                                                EdgeInsets.only(
                                                                     top: 30,
                                                                     left: 20,
                                                                     right: 20,
-                                                                    bottom:
-                                                                        20),
+                                                                    bottom: 20),
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: Colors
-                                                                  .white,
+                                                              color:
+                                                                  Colors.white,
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .only(
@@ -277,7 +275,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                                       fontSize:
                                                                           32,
                                                                       fontWeight:
-                                                                          FontWeight.bold,
+                                                                          FontWeight
+                                                                              .bold,
                                                                     ),
                                                                   ),
                                                                 ),
@@ -316,8 +315,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                       tester_id: tester!.id,
                                                       courier_name:
                                                           courier.name,
-                                                      tester_name:
-                                                          tester.name,
+                                                      tester_name: tester.name,
                                                       orderId: widget.orderId,
                                                     ),
                                                   );
@@ -424,8 +422,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
                                 SliverToBoxAdapter(
                                   child: Container(
-                                      margin:
-                                          EdgeInsets.symmetric(vertical: 5),
+                                      margin: EdgeInsets.symmetric(vertical: 5),
                                       width: double.infinity,
                                       child: Text(
                                         'Order ID = ${state.order.orderId}',
@@ -436,8 +433,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
                                 SliverToBoxAdapter(
                                   child: Container(
-                                      margin:
-                                          EdgeInsets.symmetric(vertical: 5),
+                                      margin: EdgeInsets.symmetric(vertical: 5),
                                       width: double.infinity,
                                       child: Text(
                                         'Current Status = ${state.order.status}',
@@ -461,8 +457,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 if (state.order.patients!
                                                         .length >=
                                                     4) {
-                                                  ScaffoldMessenger.of(
-                                                          context)
+                                                  ScaffoldMessenger.of(context)
                                                       .showSnackBar(
                                                     SnackBar(
                                                       content: Text(
@@ -483,8 +478,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 if (added == true) {
                                                   ordersBloc.add(
                                                       LoadSingleOrder(
-                                                          orderId: widget
-                                                              .orderId));
+                                                          orderId:
+                                                              widget.orderId));
                                                 }
                                               },
                                               child: Icon(Icons.add)),
@@ -519,12 +514,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                     arguments: {
                                                       'patient': state.order
                                                           .patients![index],
-                                                      'orderId':
-                                                          widget.orderId,
+                                                      'orderId': widget.orderId,
                                                       'index': index,
-                                                      'canEdit': state
-                                                              .order.status ==
-                                                          'Draft',
+                                                      'canEdit':
+                                                          state.order.status ==
+                                                              'Draft',
                                                     });
                                               },
                                               child: buildPatients(
@@ -532,8 +526,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 state.order.patients![index],
                                                 widget.orderId,
                                                 index,
-                                                deletable: state
-                                                            .order.status ==
+                                                deletable: state.order.status ==
                                                         'Waiting for Confirmation' ||
                                                     state.order.status ==
                                                         'Draft',
@@ -558,8 +551,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                     color: kPageBackground,
                                     child: InkWell(
                                       onTap: () async {
-                                        if (state.order.patients!.length ==
-                                            0) {
+                                        if (state.order.patients!.length == 0) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                                   content: Text(
@@ -606,142 +598,163 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                     color: kPageBackground,
                                     child: InkWell(
                                       onTap: () async {
-                                        bool confirm =
-                                            await showModalBottomSheet(
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                isScrollControlled: true,
-                                                context: context,
-                                                builder: (ctx) {
-                                                  return StatefulBuilder(
-                                                      builder: (ctx, ss) {
-                                                    return SingleChildScrollView(
-                                                      child: Container(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                          bottom: MediaQuery.of(
-                                                                      context)
-                                                                  .viewInsets
-                                                                  .bottom +
-                                                              20,
-                                                          top: 30,
-                                                          left: 20,
-                                                          right: 20,
-                                                        ),
-                                                        // padding: EdgeInsets.only(
+                                        // bool confirm =
+                                        //     await showModalBottomSheet(
+                                        //         backgroundColor:
+                                        //             Colors.transparent,
+                                        //         isScrollControlled: true,
+                                        //         context: context,
+                                        //         builder: (ctx) {
+                                        //           return StatefulBuilder(
+                                        //               builder: (ctx, ss) {
+                                        //             return SingleChildScrollView(
+                                        //               child: Container(
+                                        //                 padding:
+                                        //                     EdgeInsets.only(
+                                        //                   bottom: MediaQuery.of(
+                                        //                               context)
+                                        //                           .viewInsets
+                                        //                           .bottom +
+                                        //                       20,
+                                        //                   top: 30,
+                                        //                   left: 20,
+                                        //                   right: 20,
+                                        //                 ),
+                                        //                 // padding: EdgeInsets.only(
 
-                                                        //     bottom: 20),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .only(
-                                                            topLeft: Radius
-                                                                .circular(
-                                                              30,
-                                                            ),
-                                                            topRight: Radius
-                                                                .circular(
-                                                              30,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize
-                                                                  .min,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Container(
-                                                              width: double
-                                                                  .infinity,
-                                                              child: Text(
-                                                                'Confirm',
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      32,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 30,
-                                                            ),
-                                                            _buildInputField(
-                                                                label:
-                                                                    'Receiver',
-                                                                hint:
-                                                                    'Enter Receiver',
-                                                                controller:
-                                                                    _receiverController),
-                                                            SizedBox(
-                                                              height: 30,
-                                                            ),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                print(
-                                                                    _receiverController
-                                                                        .value
-                                                                        .text);
+                                        //                 //     bottom: 20),
+                                        //                 decoration:
+                                        //                     BoxDecoration(
+                                        //                   color: Colors.white,
+                                        //                   borderRadius:
+                                        //                       BorderRadius
+                                        //                           .only(
+                                        //                     topLeft: Radius
+                                        //                         .circular(
+                                        //                       30,
+                                        //                     ),
+                                        //                     topRight: Radius
+                                        //                         .circular(
+                                        //                       30,
+                                        //                     ),
+                                        //                   ),
+                                        //                 ),
+                                        //                 child: Column(
+                                        //                   mainAxisSize:
+                                        //                       MainAxisSize
+                                        //                           .min,
+                                        //                   crossAxisAlignment:
+                                        //                       CrossAxisAlignment
+                                        //                           .start,
+                                        //                   children: [
+                                        //                     Container(
+                                        //                       width: double
+                                        //                           .infinity,
+                                        //                       child: Text(
+                                        //                         'Confirm',
+                                        //                         textAlign:
+                                        //                             TextAlign
+                                        //                                 .center,
+                                        //                         style:
+                                        //                             TextStyle(
+                                        //                           fontSize:
+                                        //                               32,
+                                        //                           fontWeight:
+                                        //                               FontWeight
+                                        //                                   .bold,
+                                        //                         ),
+                                        //                       ),
+                                        //                     ),
+                                        //                     SizedBox(
+                                        //                       height: 30,
+                                        //                     ),
+                                        //                     _buildInputField(
+                                        //                         label:
+                                        //                             'Receiver',
+                                        //                         hint:
+                                        //                             'Enter Receiver',
+                                        //                         controller:
+                                        //                             _receiverController),
+                                        //                     SizedBox(
+                                        //                       height: 30,
+                                        //                     ),
+                                        //                     GestureDetector(
+                                        //                       onTap: () {
+                                        //                         print(
+                                        //                             _receiverController
+                                        //                                 .value
+                                        //                                 .text);
 
-                                                                if (_receiverController
-                                                                        .value
-                                                                        .text !=
-                                                                    '') {
-                                                                  Navigator.pop(
-                                                                      ctx,
-                                                                      true);
-                                                                }
-                                                              },
-                                                              child:
-                                                                  Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          10),
-                                                                  color:
-                                                                      kColorsOrangeDark,
-                                                                ),
-                                                                height: 62,
-                                                                // margin: EdgeInsets.all(20),
-                                                                child: Center(
-                                                                  child: Text(
-                                                                    'Confirm',
-                                                                    style: TextStyle(
-                                                                        fontWeight: FontWeight
-                                                                            .bold,
-                                                                        fontSize:
-                                                                            20,
-                                                                        color:
-                                                                            Colors.white),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  });
-                                                });
+                                        //                         if (_receiverController
+                                        //                                 .value
+                                        //                                 .text !=
+                                        //                             '') {
+                                        //                           Navigator.pop(
+                                        //                               ctx,
+                                        //                               true);
+                                        //                         }
+                                        //                       },
+                                        //                       child:
+                                        //                           Container(
+                                        //                         decoration:
+                                        //                             BoxDecoration(
+                                        //                           borderRadius:
+                                        //                               BorderRadius.circular(
+                                        //                                   10),
+                                        //                           color:
+                                        //                               kColorsOrangeDark,
+                                        //                         ),
+                                        //                         height: 62,
+                                        //                         // margin: EdgeInsets.all(20),
+                                        //                         child: Center(
+                                        //                           child: Text(
+                                        //                             'Confirm',
+                                        //                             style: TextStyle(
+                                        //                                 fontWeight: FontWeight
+                                        //                                     .bold,
+                                        //                                 fontSize:
+                                        //                                     20,
+                                        //                                 color:
+                                        //                                     Colors.white),
+                                        //                           ),
+                                        //                         ),
+                                        //                       ),
+                                        //                     ),
+                                        //                   ],
+                                        //                 ),
+                                        //               ),
+                                        //             );
+                                        //           });
+                                        //         });
 
-                                        if (confirm == true) {
-                                          ordersBloc.add(
-                                              ApproveArrivalCourier(
-                                                  state.order,
-                                                  _receiverController
-                                                      .value.text));
-                                        }
+                                        showDialog(
+                                            context: context,
+                                            builder: (ctx) {
+                                              return AlertDialog(
+                                                title: Text('Confirm'),
+                                                content: Text(
+                                                    'Are you sure you want to confirm order departure?'),
+                                                actions: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        ordersBloc.add(
+                                                            ApproveArrivalCourier(
+                                                                state.order,
+                                                                state.order
+                                                                        .courier_name ??
+                                                                    ''));
+
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text('Yes')),
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text('No'))
+                                                ],
+                                              );
+                                            });
                                       },
                                       borderRadius: BorderRadius.circular(37),
                                       child: Container(

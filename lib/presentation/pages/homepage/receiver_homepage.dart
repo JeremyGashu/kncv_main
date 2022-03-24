@@ -160,8 +160,20 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                         ? Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: state.orders.length == 0
-                                ? Center(
-                                    child: Text('No Orders Available!'),
+                                ? ListView(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        height: 500,
+                                        // color: Colors.red,
+                                        child: Center(
+                                          child: Text(
+                                            'No order is created!',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   )
                                 : ListView.builder(
                                     itemCount: state.orders.length,

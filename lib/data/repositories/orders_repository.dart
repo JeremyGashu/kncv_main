@@ -84,14 +84,7 @@ class OrderRepository {
 
       var orders = await ordersCollection
           .where('tester_id', isEqualTo: testCenter?['key'])
-          .where('status', whereIn: [
-        'Arrived',
-        'Accepted',
-        'Confirmed',
-        'Received',
-        'Picked Up',
-        'Delivered'
-      ]).get();
+          .get();
       List<Order> os = orders.docs
           .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
           .toList();
@@ -130,15 +123,18 @@ class OrderRepository {
     return initials;
   }
 
-  Future<String> addOrder(
-      {required String courier_id,
-      required String tester_id,
-      required String courier_name,
-      required String tester_name,
-      required String date,
-      required String courier_phone,
-      required String tester_phone,
-      required String sender_id}) async {
+  Future<String> addOrder({
+    required String courier_id,
+    required String tester_id,
+    required String courier_name,
+    required String tester_name,
+    required String date,
+    required String courier_phone,
+    required String tester_phone,
+    required String sender_id,
+    required Map region,
+    required Map zone,
+  }) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -195,7 +191,9 @@ class OrderRepository {
         'tester_phone': tester_phone,
         'sender_phone': sender_phone,
         'courier_phone': courier_phone,
-        'order_created': DateTime.now()
+        'order_created': DateTime.now(),
+        'region': region,
+        'zone': zone,
       });
       return id;
     } else {

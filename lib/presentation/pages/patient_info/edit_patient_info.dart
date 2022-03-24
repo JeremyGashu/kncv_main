@@ -63,7 +63,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
   ];
   var reasonForTestChoices = [
     'Diagnostic',
-    'Presumptive',
+    'Presumptive TB',
     'Presumptive RR-TB',
     'Presumptive MDR-TB',
     'At X months during treatment',
@@ -82,8 +82,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
   String? examinationType;
 
   Map<String, List<String>> examinationTypesList = {
-    'Stool': ['AFB microscopy', 'GeneXpret', 'Culture'],
-    'Sputum': ['AFB microscopy', 'GeneXpret', 'Culture'],
+    'Stool': ['AFB microscopy', 'GeneXpret', 'Culture', 'LPA', 'DST'],
+    'Sputum': ['AFB microscopy', 'GeneXpret', 'Culture', 'LPA', 'DST'],
     'Urine': ['LF LAM'],
     'Blood': ['CD4 Count', 'Viral Load'],
     'Swab': ['GeneXpret'],
@@ -622,7 +622,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               hint: Text('Reason for Test'),
                               items: <String>[
                                 'Diagnostic',
-                                'Presumptive',
+                                'Presumptive TB',
                                 'Presumptive RR-TB',
                                 'Presumptive MDR-TB',
                                 'At X months during treatment',

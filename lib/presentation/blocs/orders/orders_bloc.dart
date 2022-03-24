@@ -77,6 +77,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             date: event.date,
             courier_phone: event.courier_phone,
             tester_phone: event.tester_phone,
+            zone: event.zone,
+            region: event.region,
             sender_id: (await FirebaseAuth.instance.currentUser?.uid ?? ''));
         yield SentOrder(orderId: newOrderId);
       } catch (e) {

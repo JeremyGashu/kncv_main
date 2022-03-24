@@ -214,8 +214,20 @@ class _SenderHomePageState extends State<SenderHomePage> {
                             //   ],
                             // ),
                             child: state.orders.length == 0
-                                ? Center(
-                                    child: Text('No order is created!'),
+                                ? ListView(
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        height: 500,
+                                        // color: Colors.red,
+                                        child: Center(
+                                          child: Text(
+                                            'No order is created!',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   )
                                 : ListView.builder(
                                     itemCount: state.orders.length,
@@ -334,6 +346,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
                           date: date!,
                           courier_phone: courier.phone,
                           tester_phone: tester.phone,
+                          zone: tester.zone ?? {},
+                          region: tester.region ?? {},
                         ),
                       );
                     }

@@ -324,19 +324,25 @@ class TesterAdapter extends TypeAdapter<Tester> {
       name: fields[0] as String,
       id: fields[2] as String,
       phone: fields[1] as String,
+      zone: (fields[4] as Map?)?.cast<dynamic, dynamic>(),
+      region: (fields[3] as Map?)?.cast<dynamic, dynamic>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Tester obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.phone)
       ..writeByte(2)
-      ..write(obj.id);
+      ..write(obj.id)
+      ..writeByte(3)
+      ..write(obj.region)
+      ..writeByte(4)
+      ..write(obj.zone);
   }
 
   @override
