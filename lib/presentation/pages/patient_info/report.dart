@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/rendering.dart';
 import 'package:kncv_flutter/core/colors.dart';
+import 'package:kncv_flutter/core/get_areainfo.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -86,7 +87,7 @@ class ReportPage extends StatelessWidget {
                         ),
                         pw.SizedBox(height: 10),
                         pw.Text(
-                          'Zone : ${patient.zone ?? ''}',
+                          'Region : ${getAreaInfo(patient.region, patient.zone, patient.woreda)['region'] ?? ''}',
                           style: pw.TextStyle(
                             // color: Colors.black87,
                             fontSize: 13,
@@ -94,7 +95,15 @@ class ReportPage extends StatelessWidget {
                         ),
                         pw.SizedBox(height: 10),
                         pw.Text(
-                          'Woreda : ${patient.woreda ?? ''}',
+                          'Zone : ${getAreaInfo(patient.region, patient.zone, patient.woreda)['zone'] ?? ''}',
+                          style: pw.TextStyle(
+                            // color: Colors.black87,
+                            fontSize: 13,
+                          ),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Zone : ${getAreaInfo(patient.region, patient.zone, patient.woreda)['woreda'] ?? ''}',
                           style: pw.TextStyle(
                             // color: Colors.black87,
                             fontSize: 13,

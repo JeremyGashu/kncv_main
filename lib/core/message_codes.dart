@@ -15,4 +15,5 @@ const int DELETE_ORDER = 13;
 const int EDIT_SPECIMEN_FEEDBACK = 14;
 const int EDIT_TEST_RESULT = 15;
 
-const int SEND_SMS = 16;
+const int SEND_SMS_TO_LISTENER = 16;
+const int SEND_NOTIFICATION_SMS = 17;

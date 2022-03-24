@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:kncv_flutter/core/message_codes.dart';
 import 'package:telephony/telephony.dart';
 
 Future sendSMS(
@@ -47,8 +48,16 @@ Future sendCustomSMS(
   bool? granted = await Telephony.instance.requestSmsPermissions;
   if (granted == true) {
     await Telephony.instance.sendSms(
-      to: to,
-      message: body,
+      to: '0931057901',
+      message: jsonEncode(
+        {
+          'action': SEND_NOTIFICATION_SMS,
+          'payload': {
+            'to': to,
+            'body': body,
+          }
+        },
+      ),
       isMultipart: true,
       statusListener: (SendStatus status) {
         if (context != null) {
@@ -73,7 +82,46 @@ Future sendCustomSMS(
   }
 }
 
-Future sendResponseSMS(
+// Future sendResponseSMS(
+//     {BuildContext? context,
+//     required String to,
+//     required dynamic payload,
+//     required int action}) async {
+//   bool? granted = await Telephony.instance.requestSmsPermissions;
+//   if (granted == true) {
+//     await Telephony.instance.sendSms(
+//       to: to,
+//       message: jsonEncode(
+//         {
+//           'action': action,
+//           'payload': payload,
+//         },
+//       ),
+//       isMultipart: true,
+//       statusListener: (SendStatus status) {
+//         if (context != null) {
+//           ScaffoldMessenger.of(context)
+//               .showSnackBar(const SnackBar(content: Text('Sending SMS...!')));
+//           if (status == SendStatus.SENT) {
+//             ScaffoldMessenger.of(context)
+//                 .showSnackBar(const SnackBar(content: Text('SMS is Sent!')));
+//           } else if (status == SendStatus.DELIVERED) {
+//             ScaffoldMessenger.of(context).hideCurrentSnackBar();
+//             ScaffoldMessenger.of(context).showSnackBar(
+//                 const SnackBar(content: Text('SMS is Delivered!')));
+//           }
+//         }
+//       },
+//     );
+//   } else {
+//     if (context != null) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//           const SnackBar(content: Text('Please grant permissin to send SMS!')));
+//     }
+//   }
+// }
+
+Future sendSmsViaListenerToEndUser(
     {BuildContext? context,
     required String to,
     required dynamic payload,
@@ -81,11 +129,13 @@ Future sendResponseSMS(
   bool? granted = await Telephony.instance.requestSmsPermissions;
   if (granted == true) {
     await Telephony.instance.sendSms(
-      to: to,
+      to: '0931057901',
       message: jsonEncode(
         {
-          'action': action,
+          'action': SEND_SMS_TO_LISTENER,
           'payload': payload,
+          'notify_action': action,
+          'to': to,
         },
       ),
       isMultipart: true,

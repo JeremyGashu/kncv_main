@@ -439,7 +439,7 @@ class OrderRepository {
         });
 
         //RESPONSE SPECIMEN_EDITED
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: order.sender_phone ?? '',
           payload: {
             'oid': order.orderId,
@@ -538,7 +538,7 @@ class OrderRepository {
         Order o = Order.fromJson(order.data()!);
 
         //RESPONSE SPECIMEN_EDITED
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: o.sender_phone ?? '',
           payload: {
             'oid': orderId,
@@ -598,7 +598,7 @@ class OrderRepository {
 
         Order o = Order.fromJson(order.data()!);
 
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: o.sender_phone ?? '',
           payload: {
             'oid': orderId,
@@ -787,7 +787,7 @@ class OrderRepository {
         order.status = 'Waiting for Confirmation';
         debugPrint('please sms ${order.orderId}');
         //RESPONSE ORDER_PLACED
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: order.courier_phone ?? '',
           payload: {
             'o': order.toJsonSMS(),
@@ -797,7 +797,7 @@ class OrderRepository {
         );
 
         //RESPONSE ORDER_PLACED
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: order.tester_phone ?? '',
           payload: {'o': order.toJsonSMS(), 'response': true},
           action: ORDER_PLACED,
@@ -806,7 +806,7 @@ class OrderRepository {
         sendCustomSMS(
             to: order.courier_phone ?? '',
             body:
-                'New order is palced for you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
+                'New order is plaed for you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
 
         sendCustomSMS(
             to: order.tester_phone ?? '',
@@ -858,14 +858,14 @@ class OrderRepository {
         Order o = Order.fromJson(order.data()!);
 
         //RESPONSE ORDER_ACCEPTED
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: o.sender_phone ?? '',
           payload: {'oid': orderId, 'response': true},
           action: ORDER_ACCEPTED,
         );
 
         //RESPONSE ORDER_ACCEPTED
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: o.tester_phone ?? '',
           payload: {'oid': orderId, 'response': true},
           action: ORDER_ACCEPTED,
@@ -924,14 +924,14 @@ class OrderRepository {
         Order o = Order.fromJson(order.data()!);
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: o.tester_phone ?? '',
           payload: {'oid': orderId},
           action: SENDER_APPROVED_COURIER_DEPARTURE,
         );
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: o.courier_phone ?? '',
           payload: {'oid': orderId, 'response': true},
           action: SENDER_APPROVED_COURIER_DEPARTURE,
@@ -984,14 +984,14 @@ class OrderRepository {
         Order o = Order.fromJson(order.data()!);
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: o.courier_phone ?? '',
           payload: {'oid': orderId, 'response': true},
           action: TESTER_APPROVED_COURIER_ARRIVAL,
         );
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
-        await sendResponseSMS(
+        await sendSmsViaListenerToEndUser(
           to: o.sender_phone ?? '',
           payload: {'oid': orderId, 'response': true},
           action: TESTER_APPROVED_COURIER_ARRIVAL,
