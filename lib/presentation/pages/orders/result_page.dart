@@ -614,6 +614,11 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                     .patient
                                                     .specimens?[specimentIndex]
                                                     .testResult = result;
+
+                                                widget
+                                                    .patient
+                                                    .specimens?[specimentIndex]
+                                                    .testResultAddedAt = DateTime.now();
                                               }
 
                                               orderBloc.add(

@@ -236,13 +236,14 @@ class SpecimenAdapter extends TypeAdapter<Specimen> {
       rejected: fields[4] as bool,
       reason: fields[5] as String?,
       testResult: fields[6] as TestResult?,
+      testResultAddedAt: fields[7] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Specimen obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
@@ -256,7 +257,9 @@ class SpecimenAdapter extends TypeAdapter<Specimen> {
       ..writeByte(5)
       ..write(obj.reason)
       ..writeByte(6)
-      ..write(obj.testResult);
+      ..write(obj.testResult)
+      ..writeByte(7)
+      ..write(obj.testResultAddedAt);
   }
 
   @override

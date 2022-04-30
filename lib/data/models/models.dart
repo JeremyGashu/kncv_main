@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
@@ -355,15 +356,15 @@ class Patient {
 
 @HiveType(typeId: 3)
 class Specimen {
-  Specimen({
-    this.type,
-    this.id,
-    this.examinationType,
-    this.assessed = false,
-    this.rejected = false,
-    this.reason,
-    this.testResult,
-  });
+  Specimen(
+      {this.type,
+      this.id,
+      this.examinationType,
+      this.assessed = false,
+      this.rejected = false,
+      this.reason,
+      this.testResult,
+      this.testResultAddedAt});
 
   @HiveField(0)
   String? type;
@@ -379,17 +380,25 @@ class Specimen {
   String? reason;
   @HiveField(6)
   TestResult? testResult;
+  @HiveField(7)
+  DateTime? testResultAddedAt;
 
-  factory Specimen.fromJson(Map<String, dynamic> json) => Specimen(
-        type: json["type"],
-        id: json["id"],
-        examinationType: json['examination_type'],
-        reason: json['reason'],
-        testResult:
-            json["result"] != null ? TestResult.fromJson(json['result']) : null,
-        assessed: json['assessed'] ?? false,
-        rejected: json['rejected'] ?? false,
-      );
+  factory Specimen.fromJson(Map<String, dynamic> json) {
+    Timestamp? timestamp = json['testResultAddedAt'];
+    DateTime? dateTime = timestamp?.toDate();
+
+    return Specimen(
+      type: json["type"],
+      id: json["id"],
+      examinationType: json['examination_type'],
+      reason: json['reason'],
+      testResult:
+          json["result"] != null ? TestResult.fromJson(json['result']) : null,
+      assessed: json['assessed'] ?? false,
+      rejected: json['rejected'] ?? false,
+      testResultAddedAt: dateTime,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "type": type,
@@ -399,6 +408,7 @@ class Specimen {
         'rejected': rejected,
         'result': testResult?.toJson(),
         'reason': reason,
+        'testResultAddedAt': testResultAddedAt
       };
 }
 
