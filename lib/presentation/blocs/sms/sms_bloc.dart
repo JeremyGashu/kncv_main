@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,11 +14,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telephony/telephony.dart';
 
 backgrounMessageHandler(SmsMessage message) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  print('Before saving ${await preferences.getStringList('messages')}');
-  List<String> values = preferences.getStringList('messages') ?? [];
-  await preferences.setStringList('messages', [...values, message.body ?? '']);
-  print('After saving ${preferences.getStringList('messages')}');
+  // SharedPreferences preferences = await SharedPreferences.getInstance();
+  // print('Before saving ${await preferences.getStringList('messages')}');
+  // List<String> values = preferences.getStringList('messages') ?? [];
+  // await preferences.setStringList('messages', [...values, message.body ?? '']);
+  // print('After saving ${preferences.getStringList('messages')}');
+
+  //send from background isolate
+  print('I have send $message from background isolate');
+  IsolateNameServer.lookupPortByName('main_port')?.send(message);
 }
 
 class SMSBloc extends Bloc<SMSEvent, SMSState> {
@@ -53,126 +58,6 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
       yield UpdatedDatabase();
     } else if (event is ErrorEvent) {
       yield ErrorState(message: event.error);
-    } else if (event is UpdateDatabaseFromSharedPreferenceEvent) {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      debugPrint(
-          'Read and update data ${preferences.getStringList('messages')}');
-
-      List<String>? messages = preferences.getStringList('messages');
-      messages?.forEach((message) async {
-        try {
-          var body = jsonDecode(message);
-
-          try {
-            // var body = jsonDecode(message.body ?? "{\"action\" : \"-1\"}");
-            if (body['action'] == ORDER_PLACED) {
-              debugPrint('Create order ${body}');
-              bool internetAvailable = await isConnectedToTheInternet();
-              if (!internetAvailable) {
-                print('Listening to SMS Entry');
-                Order? order = Order.fromJsonSMS(body['payload']['o']);
-                order.status = 'Waiting for Confirmation';
-
-                if (await canEditResult(
-                    orderId: order.orderId ?? '', action: ORDER_PLACED)) {
-                  List<Order> orders = await ordersBox.values.toList();
-                  orders.removeWhere(
-                      (element) => element.orderId == order.orderId);
-                  orders.add(order);
-                  await ordersBox.clear();
-                  await ordersBox.addAll(orders);
-                }
-
-                // add(UpdatedDatabaseEvent());
-              }
-            } else if (body['action'] == ORDER_ACCEPTED) {
-              bool internetAvailable = await isConnectedToTheInternet();
-              if (!internetAvailable &&
-                  (await canEditResult(
-                      orderId: body['payload']['oid'],
-                      action: ORDER_ACCEPTED))) {
-                print('Listening to SMS Entry');
-                List<Order> orders = await ordersBox.values.toList();
-                Order order = orders.firstWhere(
-                    (element) => element.orderId == body['payload']['oid']);
-                orders
-                    .removeWhere((element) => element.orderId == order.orderId);
-                order.status = 'Confirmed';
-                orders.add(order);
-                await ordersBox.clear();
-                await ordersBox.addAll(orders);
-                // add(UpdatedDatabaseEvent());
-              }
-            } else if (body['action'] == SENDER_APPROVED_COURIER_DEPARTURE) {
-              bool internetAvailable = await isConnectedToTheInternet();
-              if (!internetAvailable &&
-                  (await canEditResult(
-                      orderId: body['payload']['oid'],
-                      action: SENDER_APPROVED_COURIER_DEPARTURE))) {
-                print('Listening to SMS Entry');
-                List<Order> orders = await ordersBox.values.toList();
-                Order order = orders.firstWhere(
-                    (element) => element.orderId == body['payload']['oid']);
-                orders
-                    .removeWhere((element) => element.orderId == order.orderId);
-                order.status = 'Picked Up';
-                orders.add(order);
-                await ordersBox.clear();
-                await ordersBox.addAll(orders);
-                // add(UpdatedDatabaseEvent());
-              }
-            } else if (body['action'] == TESTER_APPROVED_COURIER_ARRIVAL) {
-              bool internetAvailable = await isConnectedToTheInternet();
-              if (!internetAvailable &&
-                  (await canEditResult(
-                      orderId: body['payload']['oid'],
-                      action: TESTER_APPROVED_COURIER_ARRIVAL))) {
-                print('Listening to SMS Entry');
-                List<Order> orders = await ordersBox.values.toList();
-                Order order = orders.firstWhere(
-                    (element) => element.orderId == body['payload']['oid']);
-                orders
-                    .removeWhere((element) => element.orderId == order.orderId);
-                order.status = 'Deliverd';
-                orders.add(order);
-                await ordersBox.clear();
-                await ordersBox.addAll(orders);
-                // add(UpdatedDatabaseEvent());
-              }
-            } else if (body['action'] == SPECIMEN_EDITED) {
-              print('Listening to SMS Entry');
-              List<Order> orders = await ordersBox.values.toList();
-              Order order = orders.firstWhere(
-                  (element) => element.orderId == body['payload']['oid']);
-              orders.removeWhere((element) => element.orderId == order.orderId);
-              order.patients![body['payload']?['i']] =
-                  Patient.fromJson(body['payload']['p']);
-
-              bool assessed = allSpecimensAssessed(order);
-
-              order.status = assessed ? 'Received' : 'Delivered';
-              orders.add(order);
-              await ordersBox.clear();
-              await ordersBox.addAll(orders);
-              // add(UpdatedDatabaseEvent());
-            } else {
-              debugPrint('received another sms');
-            }
-          } catch (e) {
-            add(ErrorEvent(error: e.toString()));
-          }
-
-          // ===?
-        } catch (e) {
-          debugPrint('Decoded Error  $e');
-        }
-      });
-
-      await preferences.remove('messages');
-
-      yield UpdatedDatabase();
-
-      // var decoded = messages?.map((e) => jsonDecode(e)).toList();
     }
   }
 
@@ -185,34 +70,6 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
       }
     }
     return true;
-  }
-
-  Future<bool> canEditResult(
-      {required String orderId, required int action}) async {
-    List<Order> orders = await ordersBox.values.toList();
-    int orderIndex = orders.indexWhere((element) => element.orderId == orderId);
-    //if it has not been created
-    if (orderIndex == -1) {
-      return true;
-    }
-
-    Order order = orders[orderIndex];
-
-    switch (action) {
-      case ORDER_PLACED:
-        return orderIndex == -1;
-      case ORDER_ACCEPTED:
-        return order.status == 'Waiting for Confirmation' ||
-            order.status == 'Confirmed';
-      case SENDER_APPROVED_COURIER_DEPARTURE:
-        return order.status == 'Confirmed';
-      case TESTER_APPROVED_COURIER_ARRIVAL:
-        return order.status == 'Picked Up';
-      case SPECIMEN_EDITED:
-        return ['Delivered', 'Accepted', 'Inspected', 'Tested', 'Received']
-            .contains(order.status);
-    }
-    return false;
   }
 
   updateDataOnSms(SmsMessage message) async {
@@ -309,7 +166,9 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
         debugPrint('received another sms');
       }
     } catch (e) {
-      add(ErrorEvent(error: e.toString()));
+      add(UpdatedDatabaseEvent());
+      // throw Exception(e);
+      // add(ErrorEvent(error: e.toString()));
     }
   }
 }

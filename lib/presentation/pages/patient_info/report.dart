@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/rendering.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/core/get_areainfo.dart';
 import 'package:kncv_flutter/data/models/models.dart';

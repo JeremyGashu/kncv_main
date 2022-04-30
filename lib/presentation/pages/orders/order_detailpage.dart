@@ -27,7 +27,7 @@ class OrderDetailPage extends StatefulWidget {
 }
 
 class _OrderDetailPageState extends State<OrderDetailPage> {
-  TextEditingController _receiverController = TextEditingController();
+  // TextEditingController _receiverController = TextEditingController();
 
   OrderBloc ordersBloc = sl<OrderBloc>();
   @override
@@ -966,40 +966,4 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       ),
     );
   }
-}
-
-Widget _buildInputField(
-    {required String label,
-    required String hint,
-    required TextEditingController controller}) {
-  return Column(
-    children: [
-      Container(
-        width: double.infinity,
-        padding: const EdgeInsets.only(top: 20),
-        child: Text(
-          label,
-          textAlign: TextAlign.left,
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.only(top: 10),
-        padding: EdgeInsets.only(left: 10, right: 10, bottom: 4, top: 4),
-        decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.3),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: TextField(
-          controller: controller,
-          autofocus: false,
-          style: TextStyle(color: Colors.black),
-          decoration: InputDecoration(
-              hintText: hint,
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(left: 10, top: 2, bottom: 3)),
-        ),
-      ),
-    ],
-  );
 }
