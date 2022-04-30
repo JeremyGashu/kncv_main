@@ -267,7 +267,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                           _tobLabelBuilder('Basic Info'),
                           _buildInputField(
                             label: 'MRN',
-                            hint: 'Enter Your MR',
+                            hint: 'Enter Patient MR',
                             controller: MRController,
                             editable: !(widget.patient.status == 'Tested') &&
                                 widget.canEdit,
@@ -276,7 +276,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               label: 'Name',
                               editable: !(widget.patient.status == 'Tested') &&
                                   widget.canEdit,
-                              hint: 'Enter Your Name',
+                              hint: 'Enter Patient\'s Name',
                               controller: nameController),
                           _buildInputField(
                             label: 'Age In Years',
@@ -470,7 +470,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               label: 'Phone',
                               editable: !(widget.patient.status == 'Tested') &&
                                   widget.canEdit,
-                              hint: 'Enter Your Phone',
+                              hint: 'Enter Patient\'s Phone',
                               controller: phoneController),
 
                           _tobLabelBuilder('Observation'),

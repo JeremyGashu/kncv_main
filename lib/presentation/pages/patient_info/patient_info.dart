@@ -136,13 +136,13 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                           _tobLabelBuilder('Basic Info'),
                           _buildInputField(
                             label: 'MRN',
-                            hint: 'Enter Your MR',
+                            hint: 'Enter Patient\'s MRN',
                             controller: MRController,
                             required: true,
                           ),
                           _buildInputField(
                               label: 'Name',
-                              hint: 'Enter Your Name',
+                              hint: 'Enter Patient\'s Name',
                               controller: nameController,
                               required: true),
                           _labelBuilder('Sex'),
