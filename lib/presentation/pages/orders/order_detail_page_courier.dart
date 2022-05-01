@@ -68,23 +68,13 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                 testerContent:
                     'Courier going to collect order from ${state.order.sender_name}.',
                 content: 'One order got accepted by courier!',
+                courierAction: NotificationAction.NavigateToOrderDetalCourier,
+                testerAction: NotificationAction.NavigateToOrderDetalTester,
+                senderAction: NotificationAction.NavigateToOrderDetalSender,
+                payload: {'orderId': widget.orderId},
               );
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-            }
-            //  else if (state is CourierApprovedArrivalTester) {
-            //   addNotification(
-            //     orderId: widget.orderId,
-            //     content: 'Courier reached at destination to pick order!',
-            //     courierContent:
-            //         'You have confirmed arrival to ${state.order.tester_name} from ${state.order.sender_name}.',
-            //     senderContent:
-            //         'Your specimen has arrived to ${state.order.tester_name}.',
-            //     testerContent:
-            //         'Courier ${state.order.courier_name} has just arrived from ${state.order.sender_name}.',
-            //   );
-            //   ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
-            // }
-            else if (state is ApprovedArrivalTester) {
+            } else if (state is ApprovedArrivalTester) {
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             }
           },
@@ -725,6 +715,13 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                               'Courier is at ${state.order.sender_name} to bring specimen to you.',
                                           content:
                                               'Courier Reached at health facility to collect order!',
+                                          courierAction: NotificationAction
+                                              .NavigateToOrderDetalCourier,
+                                          testerAction: NotificationAction
+                                              .NavigateToOrderDetalTester,
+                                          senderAction: NotificationAction
+                                              .NavigateToOrderDetalSender,
+                                          payload: {'orderId': widget.orderId},
                                         );
 
                                         setState(() {

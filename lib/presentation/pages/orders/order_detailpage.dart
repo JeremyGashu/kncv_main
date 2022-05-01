@@ -52,18 +52,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text('Order deleted!')));
               await Future.delayed(Duration(seconds: 1));
-              // ScaffoldMessenger.of(context)
-              //     .showSnackBar(SnackBar(content: Text('Order Delted!')));
 
-              // bool a = await addNotification(
-              //   orderId: widget.orderId,
-              //   courierContent:
-              //       'Sender ${state.order.sender_name} have deleted order!',
-              //   senderContent: 'You have deleted one order!',
-              //   testerContent:
-              //       'Sender ${state.order.sender_name} have deleted order!',
-              //   content: 'Sender deleted an order!',
-              // );
               Navigator.pushReplacementNamed(
                   context, SenderHomePage.senderHomePageRouteName);
             } else if (state is ErrorState) {
@@ -92,6 +81,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 courierContent:
                     'New order is created for you to accept it from ${state.order.sender_name} to ${state.order.tester_name}.',
                 content: 'New order from ${state.order.sender} is ready.!',
+
+                courierAction: NotificationAction.NavigateToOrderDetalCourier,
+                testerAction: NotificationAction.NavigateToOrderDetalTester,
+                senderAction: NotificationAction.NavigateToOrderDetalSender,
+                payload: {'orderId': widget.orderId},
+                
               );
             } else if (state is ApprovedArrivalCourier) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -105,6 +100,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 testerContent:
                     'Specimen collected from ${state.order.sender_name} by courier ${state.order.courier_name}.',
                 content: 'New order from ${state.order.sender} is ready.!',
+                courierAction: NotificationAction.NavigateToOrderDetalCourier,
+                testerAction: NotificationAction.NavigateToOrderDetalTester,
+                senderAction: NotificationAction.NavigateToOrderDetalSender,
+                payload: {'orderId': widget.orderId},
               );
               await Future.delayed(Duration(seconds: 1));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));

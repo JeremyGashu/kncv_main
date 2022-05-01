@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
+import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_tester.dart';
+
+import 'orders/order_detail_page_courier.dart';
 
 class NotificationsPage extends StatelessWidget {
   static const String notificationsRouteName = 'notificatins page route name';
@@ -27,8 +30,34 @@ class NotificationsPage extends StatelessWidget {
                     getNotificationsFromQuerySnapshot(snapshot.data);
               }
               return ListView(
-                children:
-                    notifications.map((e) => notificationCard(e)).toList(),
+                children: notifications.map((e) {
+                  return GestureDetector(
+                    onTap: () {
+                      switch (e.action) {
+                        case NotificationAction.NavigateToOrderDetalCourier:
+                          Navigator.pushNamed(
+                              context,
+                              OrderDetailCourier
+                                  .orderDetailCourierPageRouteName,
+                              arguments: e.payload?['orderId']);
+                          break;
+                        case NotificationAction.NavigateToOrderDetalSender:
+                          Navigator.pushNamed(context,
+                              OrderDetailTester.orderDetailTesterPageRouteName,
+                              arguments: e.payload?['orderId']);
+                          break;
+                        case NotificationAction.NavigateToOrderDetalTester:
+                          Navigator.pushNamed(context,
+                              OrderDetailTester.orderDetailTesterPageRouteName,
+                              arguments: e.payload?['orderId']);
+                          break;
+                        default:
+                          return;
+                      }
+                    },
+                    child: notificationCard(e),
+                  );
+                }).toList(),
               );
             }),
       ),
@@ -51,7 +80,7 @@ Stream<QuerySnapshot<Map<String, dynamic>>> getNotificationSnapshot() {
       .collection('notifications')
       .where('user_id', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
       .orderBy('seen')
-      .orderBy('date',descending: true)
+      .orderBy('date', descending: true)
       .snapshots();
 }
 
@@ -114,75 +143,95 @@ Widget notificationCard(NotificationModel notificationModel) {
   );
 }
 
-Future<bool >addNotification(
+enum NotificationAction {
+  NavigateToOrderDetalSender,
+  NavigateToOrderDetalCourier,
+  NavigateToOrderDetalTester,
+  // NavigateToTestResultPage,
+  // NavigateToPatientInfoPageSender,
+  // NavigateToPatientInfoPageCourier,
+  // NavigateToPatientInfoPageTester,
+}
+
+Future<bool> addNotification(
     {required String orderId,
     required String content,
     String? courierContent,
     String? senderContent,
     String? testerContent,
+    NotificationAction? senderAction,
+    NotificationAction? courierAction,
+    NotificationAction? testerAction,
+    Map? payload,
     bool courier = true,
     bool sender = true,
     bool tester = true}) async {
   try {
     var database = FirebaseFirestore.instance;
-  var ordersCollection = await database.collection('orders').doc(orderId).get();
-  Order order = Order.fromJson(ordersCollection.data() as Map<String, dynamic>);
-  List<String?> sendList = [];
-  var dateTime = DateTime.now();
-  int month = dateTime.month;
-  int day = dateTime.day;
-  int year = dateTime.year;
+    var ordersCollection =
+        await database.collection('orders').doc(orderId).get();
+    Order order =
+        Order.fromJson(ordersCollection.data() as Map<String, dynamic>);
+    List<String?> sendList = [];
+    var dateTime = DateTime.now();
+    int month = dateTime.month;
+    int day = dateTime.day;
+    int year = dateTime.year;
 
-  int hour = dateTime.hour;
-  int minutes = dateTime.minute;
-  if (sender) {
-    NotificationModel newNotification = NotificationModel(
-      content: senderContent ?? content,
-      seen: false,
-      userId: order.senderId,
-      timestamp: '$day-$month-$year at $hour:$minutes',
-      date: DateTime.now(),
-    );
+    int hour = dateTime.hour;
+    int minutes = dateTime.minute;
+    if (sender) {
+      NotificationModel newNotification = NotificationModel(
+          content: senderContent ?? content,
+          seen: false,
+          userId: order.senderId,
+          timestamp: '$day-$month-$year at $hour:$minutes',
+          date: DateTime.now(),
+          action: senderAction,
+          payload: payload);
 
-    await FirebaseFirestore.instance
-        .collection('notifications')
-        .add(newNotification.toJson());
-  }
-  if (courier) {
-    NotificationModel newNotification = NotificationModel(
-      content: courierContent ?? content,
-      seen: false,
-      userId: order.courierId,
-      timestamp: '$day-$month-$year at $hour:$minutes',
-      date: DateTime.now(),
-    );
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .add(newNotification.toJson());
+    }
+    if (courier) {
+      NotificationModel newNotification = NotificationModel(
+          content: courierContent ?? content,
+          seen: false,
+          userId: order.courierId,
+          timestamp: '$day-$month-$year at $hour:$minutes',
+          date: DateTime.now(),
+          action: courierAction,
+          payload: payload);
 
-    await FirebaseFirestore.instance
-        .collection('notifications')
-        .add(newNotification.toJson());
-  }
-  if (tester) {
-    var testers = await getTestCenterAdminsFromTestCenterId(order.testCenterId);
-    testers.forEach((element) {
-      sendList.add(element);
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .add(newNotification.toJson());
+    }
+    if (tester) {
+      var testers =
+          await getTestCenterAdminsFromTestCenterId(order.testCenterId);
+      testers.forEach((element) {
+        sendList.add(element);
+      });
+    }
+
+    sendList.forEach((element) async {
+      NotificationModel newNotification = NotificationModel(
+          content: testerContent ?? content,
+          seen: false,
+          userId: element,
+          timestamp: '$day-$month-$year at $hour:$minutes',
+          date: DateTime.now(),
+          action: testerAction,
+          payload: payload);
+
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .add(newNotification.toJson());
     });
-  }
 
-  sendList.forEach((element) async {
-    NotificationModel newNotification = NotificationModel(
-      content: testerContent ?? content,
-      seen: false,
-      userId: element,
-      timestamp: '$day-$month-$year at $hour:$minutes',
-      date: DateTime.now(),
-    );
-
-    await FirebaseFirestore.instance
-        .collection('notifications')
-        .add(newNotification.toJson());
-  });
-
-  return true;
+    return true;
   } catch (e) {
     // throw Exception(e);
     return false;

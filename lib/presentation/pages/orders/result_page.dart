@@ -111,6 +111,9 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                   testerContent:
                       'You have added test result to patient ${state.patient.name}.',
                   courier: false,
+                  testerAction: NotificationAction.NavigateToOrderDetalTester,
+                  senderAction: NotificationAction.NavigateToOrderDetalSender,
+                  payload: {'orderId': widget.orderId},
                 );
                 await Future.delayed(Duration(seconds: 1));
 
@@ -127,6 +130,9 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                   testerContent:
                       'You have edited test result to patient ${state.patient.name}.',
                   courier: false,
+                  testerAction: NotificationAction.NavigateToOrderDetalTester,
+                  senderAction: NotificationAction.NavigateToOrderDetalSender,
+                  payload: {'orderId': widget.orderId},
                 );
                 await Future.delayed(Duration(seconds: 1));
 
@@ -616,9 +622,10 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                     .testResult = result;
 
                                                 widget
-                                                    .patient
-                                                    .specimens?[specimentIndex]
-                                                    .testResultAddedAt = DateTime.now();
+                                                        .patient
+                                                        .specimens?[specimentIndex]
+                                                        .testResultAddedAt =
+                                                    DateTime.now();
                                               }
 
                                               orderBloc.add(

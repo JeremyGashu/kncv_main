@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
+import '../../presentation/pages/notificatins.dart';
+
 part 'models.g.dart';
 
 @HiveType(typeId: 1)
@@ -524,6 +526,8 @@ class NotificationModel {
     this.content,
     this.seen = false,
     this.date,
+    this.action,
+    this.payload,
   });
 
   @HiveField(0)
@@ -538,16 +542,20 @@ class NotificationModel {
   bool seen;
   @HiveField(5)
   DateTime? date;
+  @HiveField(6)
+  NotificationAction? action;
+  @HiveField(7)
+  Map? payload;
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) =>
       NotificationModel(
-        userId: json["user_id"],
-        timestamp: json["timestamp"],
-        content: json["content"],
-        seen: json["seen"],
-        id: json['id'],
-        // date: json['date'],
-      );
+          userId: json["user_id"],
+          timestamp: json["timestamp"],
+          content: json["content"],
+          seen: json["seen"],
+          id: json['id'],
+          action: NotificationAction.values.elementAt(json['action']),
+          payload: json['payload']);
 
   Map<String, dynamic> toJson() => {
         "user_id": userId,
@@ -555,7 +563,9 @@ class NotificationModel {
         "content": content,
         "seen": seen,
         'id': id,
-        'date': date
+        'date': date,
+        'action': action?.index ?? -1,
+        'payload': payload,
       };
 }
 

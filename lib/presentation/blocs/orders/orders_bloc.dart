@@ -34,6 +34,9 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             'Courier arrived from ${order.sender_name} at your test center to deliver specimens.',
         content: 'One order got accepted by courier!',
         sender: false,
+        courierAction: NotificationAction.NavigateToOrderDetalCourier,
+        testerAction: NotificationAction.NavigateToOrderDetalTester,
+        payload: {'orderId': order.orderId},
       );
     } else {
       List<Order> orders = await ordersBox.values.toList();

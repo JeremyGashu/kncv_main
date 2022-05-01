@@ -1473,14 +1473,20 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
                                       if (success) {
                                         addNotification(
-                                            orderId: state.order.orderId!,
-                                            testerContent:
-                                                'You Accepted Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                            senderContent:
-                                                '${state.order.patients![widget.index].name}\'s Sputum Specimen have accepted by ${state.order.tester_name}.',
-                                            content:
-                                                'One specimen got accepted by courier!',
-                                            courier: false);
+                                          orderId: state.order.orderId!,
+                                          testerContent:
+                                              'You Accepted Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent:
+                                              '${state.order.patients![widget.index].name}\'s Sputum Specimen have accepted by ${state.order.tester_name}.',
+                                          content:
+                                              'One specimen got accepted by courier!',
+                                          courier: false,
+                                          testerAction: NotificationAction
+                                              .NavigateToOrderDetalTester,
+                                          senderAction: NotificationAction
+                                              .NavigateToOrderDetalSender,
+                                          payload: {'orderId': widget.orderId},
+                                        );
                                         orderBloc.add(LoadSingleOrder(
                                             orderId: widget.orderId));
                                       }
@@ -1488,14 +1494,20 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       if ('Mucoid Purulent' !=
                                           sputumCondition) {
                                         addNotification(
-                                            orderId: state.order.orderId!,
-                                            testerContent:
-                                                'You Rejected Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                            senderContent:
-                                                '${state.order.patients![widget.index].name}\'s Sputum Specimen have been rejected by ${state.order.tester_name}.',
-                                            content:
-                                                'One specimen got rejected by tester!',
-                                            courier: false);
+                                          orderId: state.order.orderId!,
+                                          testerContent:
+                                              'You Rejected Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent:
+                                              '${state.order.patients![widget.index].name}\'s Sputum Specimen have been rejected by ${state.order.tester_name}.',
+                                          content:
+                                              'One specimen got rejected by tester!',
+                                          courier: false,
+                                          testerAction: NotificationAction
+                                              .NavigateToOrderDetalTester,
+                                          senderAction: NotificationAction
+                                              .NavigateToOrderDetalSender,
+                                          payload: {'orderId': widget.orderId},
+                                        );
                                       }
 
                                       setState(() {
@@ -1524,14 +1536,20 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
                                       if (success) {
                                         addNotification(
-                                            orderId: state.order.orderId!,
-                                            testerContent:
-                                                'You Accepted Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                            senderContent:
-                                                '${state.order.patients![widget.index].name}\'s Stool Specimen is accepted by ${state.order.tester_name}.',
-                                            content:
-                                                'One specimen got accepted by tester!',
-                                            courier: false);
+                                          orderId: state.order.orderId!,
+                                          testerContent:
+                                              'You Accepted Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent:
+                                              '${state.order.patients![widget.index].name}\'s Stool Specimen is accepted by ${state.order.tester_name}.',
+                                          content:
+                                              'One specimen got accepted by tester!',
+                                          courier: false,
+                                          testerAction: NotificationAction
+                                              .NavigateToOrderDetalTester,
+                                          senderAction: NotificationAction
+                                              .NavigateToOrderDetalSender,
+                                          payload: {'orderId': widget.orderId},
+                                        );
                                         setState(() {
                                           sendingFeedback = false;
                                         });
@@ -1540,14 +1558,22 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       }
                                       if ('Formed' != stoolCondition) {
                                         addNotification(
-                                            orderId: state.order.orderId!,
-                                            testerContent:
-                                                'You Rejected Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                            senderContent:
-                                                '${state.order.patients![widget.index].name}\'s Stool Specimen have been rejected by ${state.order.tester_name}.',
-                                            content:
-                                                'One specimen got rejected by tester!',
-                                            courier: false);
+                                          orderId: state.order.orderId!,
+                                          testerContent:
+                                              'You Rejected Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent:
+                                              '${state.order.patients![widget.index].name}\'s Stool Specimen have been rejected by ${state.order.tester_name}.',
+                                          content:
+                                              'One specimen got rejected by tester!',
+                                          courier: false,
+                                          courierAction: NotificationAction
+                                              .NavigateToOrderDetalCourier,
+                                          testerAction: NotificationAction
+                                              .NavigateToOrderDetalTester,
+                                          senderAction: NotificationAction
+                                              .NavigateToOrderDetalSender,
+                                          payload: {'orderId': widget.orderId},
+                                        );
 
                                         orderBloc.add(LoadSingleOrder(
                                             orderId: widget.orderId));
@@ -1579,14 +1605,20 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
                                       if (success) {
                                         addNotification(
-                                            orderId: state.order.orderId!,
-                                            testerContent:
-                                                'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                            senderContent:
-                                                '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
-                                            content:
-                                                'One specimen got accepted by courier!',
-                                            courier: false);
+                                          orderId: state.order.orderId!,
+                                          testerContent:
+                                              'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent:
+                                              '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
+                                          content:
+                                              'One specimen got accepted by courier!',
+                                          courier: false,
+                                          testerAction: NotificationAction
+                                              .NavigateToOrderDetalTester,
+                                          senderAction: NotificationAction
+                                              .NavigateToOrderDetalSender,
+                                          payload: {'orderId': widget.orderId},
+                                        );
                                         setState(() {
                                           sendingFeedback = false;
                                         });
@@ -1619,14 +1651,20 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
                                       if (success) {
                                         addNotification(
-                                            orderId: state.order.orderId!,
-                                            testerContent:
-                                                'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                            senderContent:
-                                                '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
-                                            content:
-                                                'One specimen got accepted by courier!',
-                                            courier: false);
+                                          orderId: state.order.orderId!,
+                                          testerContent:
+                                              'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent:
+                                              '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
+                                          content:
+                                              'One specimen got accepted by courier!',
+                                          courier: false,
+                                          testerAction: NotificationAction
+                                              .NavigateToOrderDetalTester,
+                                          senderAction: NotificationAction
+                                              .NavigateToOrderDetalSender,
+                                          payload: {'orderId': widget.orderId},
+                                        );
                                         setState(() {
                                           sendingFeedback = false;
                                         });

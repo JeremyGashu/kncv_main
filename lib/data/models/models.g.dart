@@ -425,13 +425,15 @@ class NotificationModelAdapter extends TypeAdapter<NotificationModel> {
       content: fields[2] as String?,
       seen: fields[4] as bool,
       date: fields[5] as DateTime?,
+      action: fields[6] as NotificationAction?,
+      payload: (fields[7] as Map?)?.cast<dynamic, dynamic>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, NotificationModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
@@ -443,7 +445,11 @@ class NotificationModelAdapter extends TypeAdapter<NotificationModel> {
       ..writeByte(4)
       ..write(obj.seen)
       ..writeByte(5)
-      ..write(obj.date);
+      ..write(obj.date)
+      ..writeByte(6)
+      ..write(obj.action)
+      ..writeByte(7)
+      ..write(obj.payload);
   }
 
   @override
