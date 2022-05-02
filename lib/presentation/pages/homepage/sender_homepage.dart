@@ -347,6 +347,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                           tester_phone: tester.phone,
                           zone: tester.zone ?? {},
                           region: tester.region ?? {},
+                          // woreda: tester.wo
                         ),
                       );
                     }

@@ -305,12 +305,13 @@ class Patient {
   Map<String, dynamic> toJsonSMS() => {
         "MR": mr,
         "name": name,
+        'status' : status,
         // 'reason_for_test': reasonForTest,
         // 'requested_test': requestedTest,
         // 'registration_group': registrationGroup,
         // 'previous_drug_use': previousDrugUse,
         'result': testResult?.toJson(),
-        // 'result_available': resultAvaiable,
+        'result_available': resultAvaiable,
         // "anatomic_location": siteOfTB,
         // "exam_purpose": examPurpose,
         "specimens": specimens != null
@@ -386,8 +387,8 @@ class Specimen {
   DateTime? testResultAddedAt;
 
   factory Specimen.fromJson(Map<String, dynamic> json) {
-    Timestamp? timestamp = json['testResultAddedAt'];
-    DateTime? dateTime = timestamp?.toDate();
+    // Timestamp? timestamp = json['testResultAddedAt'];
+    // DateTime? dateTime = timestamp?.toDate();
 
     return Specimen(
       type: json["type"],
@@ -398,7 +399,9 @@ class Specimen {
           json["result"] != null ? TestResult.fromJson(json['result']) : null,
       assessed: json['assessed'] ?? false,
       rejected: json['rejected'] ?? false,
-      testResultAddedAt: dateTime,
+      testResultAddedAt: json["testResultAddedAt"] == null
+          ? null
+          : DateTime.parse(json["testResultAddedAt"]),
     );
   }
 
@@ -410,7 +413,7 @@ class Specimen {
         'rejected': rejected,
         'result': testResult?.toJson(),
         'reason': reason,
-        'testResultAddedAt': testResultAddedAt
+        'testResultAddedAt': testResultAddedAt?.toIso8601String(),
       };
 }
 

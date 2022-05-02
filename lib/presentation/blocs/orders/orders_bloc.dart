@@ -82,6 +82,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             tester_phone: event.tester_phone,
             zone: event.zone,
             region: event.region,
+            // woreda: event.woreda,
             sender_id: (await FirebaseAuth.instance.currentUser?.uid ?? ''));
         yield SentOrder(orderId: newOrderId);
       } catch (e) {
@@ -181,6 +182,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         List<Order> orders = await orderRepository.loadOrdersForCourier();
         yield LoadedOrdersForCourier(orders: orders);
       } catch (e) {
+        debugPrint('Error loading order =>${e.toString()}');
         // throw Exception(e);
         yield ErrorState(message: 'Error Loading Orders!');
       }
@@ -190,6 +192,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         List<Order> orders = await orderRepository.loadOrdersForTestCenters();
         yield LoadedOrdersForTester(orders: orders);
       } catch (e) {
+        debugPrint('Error loading order =>${e.toString()}');
+
         yield ErrorState(message: 'Error Loading Orders!');
       }
     } else if (event is LoadSingleOrder) {
@@ -204,7 +208,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         }
       } catch (e) {
         // throw Exception(e);
-        debugPrint('$e');
+        debugPrint('Error loading order =>${e.toString()}');
+
         yield ErrorState(message: 'Error Loading Order!');
       }
     } else if (event is AddPatientToOrder) {
@@ -250,6 +255,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
           yield AddedTestResult(event.patient);
         }
       } catch (e) {
+        throw Exception(e);
         yield ErrorState(message: 'Error adding test result');
       }
     } else if (event is EditTestResult) {
@@ -261,7 +267,9 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
           yield EditedTestResult(event.patient);
         }
       } catch (e) {
-        yield ErrorState(message: 'Error editing test result');
+        throw Exception(e);
+        debugPrint('$e');
+        // yield ErrorState(message: 'Error editing test result');
       }
     } else if (event is PlaceOrder) {
       yield PlacingOrder();

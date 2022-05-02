@@ -136,6 +136,7 @@ class OrderRepository {
     required String sender_id,
     required Map region,
     required Map zone,
+    // required Map woreda,
   }) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
@@ -196,6 +197,7 @@ class OrderRepository {
         'order_created': DateTime.now(),
         'region': region,
         'zone': zone,
+        // 'woreda' : woreda,
       });
       return id;
     } else {
