@@ -35,6 +35,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (user != null) {
           SharedPreferences preferences = sl<SharedPreferences>();
           await preferences.setString('user_type', type ?? '');
+          if (type == 'COURIER_ADMIN') {
+            yield UnauthenticatedState();
+            return;
+          }
           yield AuthenticatedState(user: user, type: type ?? '');
         } else {
           yield UnauthenticatedState();
@@ -61,6 +65,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
 
         if (user != null) {
+          if (type == 'COURIER_ADMIN') {
+            yield UnauthenticatedState();
+            return;
+          }
           yield AuthenticatedState(user: user, type: type ?? '');
         } else {
           yield UnauthenticatedState();

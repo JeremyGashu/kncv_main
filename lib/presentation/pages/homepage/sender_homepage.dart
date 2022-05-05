@@ -228,56 +228,62 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                       ),
                                     ],
                                   )
-                                : ListView.builder(
-                                    itemCount: state.orders.length,
-                                    itemBuilder: (context, index) {
-                                      return GestureDetector(
-                                          onTap: () async {
-                                            print(
-                                                '${state.orders[index].orderId}');
-                                            var load = await Navigator.pushNamed(
-                                                context,
-                                                OrderDetailPage
-                                                    .orderDetailPageRouteName,
-                                                arguments: state
-                                                    .orders[index].orderId);
-                                            if (load == true) {
-                                              orderBloc.add(LoadOrders());
-                                            }
-                                          },
-                                          child: Dismissible(
-                                              background: Container(
-                                                  width: 20,
-                                                  height: 20,
-                                                  child: Center(
-                                                      child:
-                                                          CircularProgressIndicator())),
-                                              onDismissed: (_) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(SnackBar(
-                                                        content: Text(
-                                                            'Order Deleted')));
-
-                                                orderBloc.add(LoadOrders());
+                                : Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    constraints: BoxConstraints(maxWidth: 700),
+                                    child: ListView.builder(
+                                        itemCount: state.orders.length,
+                                        itemBuilder: (context, index) {
+                                          return GestureDetector(
+                                              onTap: () async {
+                                                print(
+                                                    '${state.orders[index].orderId}');
+                                                var load = await Navigator.pushNamed(
+                                                    context,
+                                                    OrderDetailPage
+                                                        .orderDetailPageRouteName,
+                                                    arguments: state
+                                                        .orders[index].orderId);
+                                                if (load == true) {
+                                                  orderBloc.add(LoadOrders());
+                                                }
                                               },
-                                              confirmDismiss: (_) async {
-                                                OrderRepository r =
-                                                    sl<OrderRepository>();
-                                                var status =
-                                                    await r.deleteOrder(
-                                                        orderId: state
-                                                            .orders[index]
-                                                            .orderId!);
-                                                return status['success'];
-                                              },
-                                              key: Key(
-                                                  state.orders[index].orderId ??
-                                                      Random()
-                                                          .nextDouble()
-                                                          .toString()),
-                                              child: orderCard(
-                                                  state.orders[index])));
-                                    }),
+                                              child: Dismissible(
+                                                  background: Container(
+                                                      width: 20,
+                                                      height: 20,
+                                                      child: Center(
+                                                          child:
+                                                              CircularProgressIndicator())),
+                                                  onDismissed: (_) {
+                                                    ScaffoldMessenger.of(context)
+                                                        .showSnackBar(SnackBar(
+                                                            content: Text(
+                                                                'Order Deleted')));
+                                
+                                                    orderBloc.add(LoadOrders());
+                                                  },
+                                                  confirmDismiss: (_) async {
+                                                    OrderRepository r =
+                                                        sl<OrderRepository>();
+                                                    var status =
+                                                        await r.deleteOrder(
+                                                            orderId: state
+                                                                .orders[index]
+                                                                .orderId!);
+                                                    return status['success'];
+                                                  },
+                                                  key: Key(
+                                                      state.orders[index].orderId ??
+                                                          Random()
+                                                              .nextDouble()
+                                                              .toString()),
+                                                  child: orderCard(
+                                                      state.orders[index])));
+                                        }),
+                                  ),
+                                ),
                           )
                         : Container(),
                 floatingActionButton: FloatingActionButton(

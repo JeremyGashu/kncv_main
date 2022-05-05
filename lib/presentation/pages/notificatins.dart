@@ -29,35 +29,41 @@ class NotificationsPage extends StatelessWidget {
                 notifications =
                     getNotificationsFromQuerySnapshot(snapshot.data);
               }
-              return ListView(
-                children: notifications.map((e) {
-                  return GestureDetector(
-                    onTap: () {
-                      switch (e.action) {
-                        case NotificationAction.NavigateToOrderDetalCourier:
-                          Navigator.pushNamed(
-                              context,
-                              OrderDetailCourier
-                                  .orderDetailCourierPageRouteName,
-                              arguments: e.payload?['orderId']);
-                          break;
-                        case NotificationAction.NavigateToOrderDetalSender:
-                          Navigator.pushNamed(context,
-                              OrderDetailTester.orderDetailTesterPageRouteName,
-                              arguments: e.payload?['orderId']);
-                          break;
-                        case NotificationAction.NavigateToOrderDetalTester:
-                          Navigator.pushNamed(context,
-                              OrderDetailTester.orderDetailTesterPageRouteName,
-                              arguments: e.payload?['orderId']);
-                          break;
-                        default:
-                          return;
-                      }
-                    },
-                    child: notificationCard(e),
-                  );
-                }).toList(),
+              return Align(
+                alignment: Alignment.center,
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 700),
+                  child: ListView(
+                    children: notifications.map((e) {
+                      return GestureDetector(
+                        onTap: () {
+                          switch (e.action) {
+                            case NotificationAction.NavigateToOrderDetalCourier:
+                              Navigator.pushNamed(
+                                  context,
+                                  OrderDetailCourier
+                                      .orderDetailCourierPageRouteName,
+                                  arguments: e.payload?['orderId']);
+                              break;
+                            case NotificationAction.NavigateToOrderDetalSender:
+                              Navigator.pushNamed(context,
+                                  OrderDetailTester.orderDetailTesterPageRouteName,
+                                  arguments: e.payload?['orderId']);
+                              break;
+                            case NotificationAction.NavigateToOrderDetalTester:
+                              Navigator.pushNamed(context,
+                                  OrderDetailTester.orderDetailTesterPageRouteName,
+                                  arguments: e.payload?['orderId']);
+                              break;
+                            default:
+                              return;
+                          }
+                        },
+                        child: notificationCard(e),
+                      );
+                    }).toList(),
+                  ),
+                ),
               );
             }),
       ),

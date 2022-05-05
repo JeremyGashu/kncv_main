@@ -21,7 +21,7 @@ backgrounMessageHandler(SmsMessage message) async {
   // print('After saving ${preferences.getStringList('messages')}');
 
   //send from background isolate
-  print('I have send $message from background isolate');
+  // print('I have send $message from background isolate');
   IsolateNameServer.lookupPortByName('main_port')?.send(message);
 }
 

@@ -62,12 +62,10 @@ void main() async {
           lazy: false,
         ),
       ],
-      child: SMSListener(
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          onGenerateRoute: AppRouter.onGenerateRoute,
-          initialRoute: SplashPage.splashPageRouteName,
-        ),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: AppRouter.onGenerateRoute,
+        initialRoute: SplashPage.splashPageRouteName,
       ),
     ),
   );

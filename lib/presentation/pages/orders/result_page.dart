@@ -147,219 +147,262 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
             },
             builder: (context, state) {
               return SafeArea(
-                child: Container(
-                  padding:
-                      EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: !editingResult &&
-                            widget.specimen.testResult != null
-                        ? [
-                            // _labelBuilder('Test Date'),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.only(top: 20),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    widget.patient.resultAvaiable
-                                        ? 'Test Result'
-                                        : 'Add Test Result',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  widget.canEdit
-                                      ? IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              editingResult = !editingResult;
-                                              print('plrase');
-                                            });
-                                          },
-                                          icon: Icon(
-                                            Icons.edit,
-                                            color: kColorsOrangeDark,
-                                          ))
-                                      : SizedBox(),
-                                ],
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    constraints: BoxConstraints(maxWidth: 700),
+                    padding:
+                        EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: !editingResult &&
+                              widget.specimen.testResult != null
+                          ? [
+                              // _labelBuilder('Test Date'),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      widget.patient.resultAvaiable
+                                          ? 'Test Result'
+                                          : 'Add Test Result',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    widget.canEdit
+                                        ? IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                editingResult = !editingResult;
+                                                print('plrase');
+                                              });
+                                            },
+                                            icon: Icon(
+                                              Icons.edit,
+                                              color: kColorsOrangeDark,
+                                            ))
+                                        : SizedBox(),
+                                  ],
+                                ),
                               ),
-                            ),
-                            _labelBuilder('Test Date'),
-
-                            Container(
-                              width: double.infinity,
-                              height: 54,
-                              // margin: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: Text(
-                                    widget.specimen.testResult?.resultDate ??
-                                        'Please Select Date',
-                                    style: TextStyle(
-                                        color: Colors.black87.withOpacity(0.8),
-                                        fontSize: 15),
+                              _labelBuilder('Test Date'),
+                
+                              Container(
+                                width: double.infinity,
+                                height: 54,
+                                // margin: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.only(left: 20),
+                                    child: Text(
+                                      widget.specimen.testResult?.resultDate ??
+                                          'Please Select Date',
+                                      style: TextStyle(
+                                          color: Colors.black87.withOpacity(0.8),
+                                          fontSize: 15),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            _labelBuilder('Test Time'),
-                            Container(
-                              width: double.infinity,
-                              height: 54,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: Text(
-                                    widget.specimen.testResult?.resultTime ??
-                                        'Please Select Time',
-                                    style: TextStyle(
-                                        color: Colors.black87.withOpacity(0.8),
-                                        fontSize: 15),
+                              _labelBuilder('Test Time'),
+                              Container(
+                                width: double.infinity,
+                                height: 54,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.only(left: 20),
+                                    child: Text(
+                                      widget.specimen.testResult?.resultTime ??
+                                          'Please Select Time',
+                                      style: TextStyle(
+                                          color: Colors.black87.withOpacity(0.8),
+                                          fontSize: 15),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-
-                            _labelBuilder('MTB Result'),
-
-                            Container(
-                              width: double.infinity,
-                              height: 54,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: Text(
-                                    widget.specimen.testResult?.mtbResult ?? '',
-                                    style: TextStyle(
-                                        color: Colors.black87.withOpacity(0.8),
-                                        fontSize: 15),
+                
+                              _labelBuilder('MTB Result'),
+                
+                              Container(
+                                width: double.infinity,
+                                height: 54,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.only(left: 20),
+                                    child: Text(
+                                      widget.specimen.testResult?.mtbResult ?? '',
+                                      style: TextStyle(
+                                          color: Colors.black87.withOpacity(0.8),
+                                          fontSize: 15),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-
-                            _labelBuilder('Quantity'),
-
-                            Container(
-                              width: double.infinity,
-                              height: 54,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: Text(
-                                    widget.specimen.testResult?.quantity ?? '',
-                                    style: TextStyle(
-                                        color: Colors.black87.withOpacity(0.8),
-                                        fontSize: 15),
+                
+                              _labelBuilder('Quantity'),
+                
+                              Container(
+                                width: double.infinity,
+                                height: 54,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.only(left: 20),
+                                    child: Text(
+                                      widget.specimen.testResult?.quantity ?? '',
+                                      style: TextStyle(
+                                          color: Colors.black87.withOpacity(0.8),
+                                          fontSize: 15),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-
-                            _labelBuilder('Result RR'),
-
-                            Container(
-                              width: double.infinity,
-                              height: 54,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: Text(
-                                    widget.specimen.testResult?.resultRr ?? '',
-                                    style: TextStyle(
-                                        color: Colors.black87.withOpacity(0.8),
-                                        fontSize: 15),
+                
+                              _labelBuilder('Result RR'),
+                
+                              Container(
+                                width: double.infinity,
+                                height: 54,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.only(left: 20),
+                                    child: Text(
+                                      widget.specimen.testResult?.resultRr ?? '',
+                                      style: TextStyle(
+                                          color: Colors.black87.withOpacity(0.8),
+                                          fontSize: 15),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ]
-                        : [
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.only(top: 20),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    widget.patient.resultAvaiable
-                                        ? 'Test Result'
-                                        : 'Add Test Result',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  widget.canEdit
-                                      ? IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              editingResult = !editingResult;
-                                              print('plrase');
-                                            });
-                                          },
-                                          icon: Icon(
-                                            Icons.edit,
-                                            color: kColorsOrangeDark,
-                                          ))
-                                      : SizedBox(),
-                                ],
+                            ]
+                          : [
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      widget.patient.resultAvaiable
+                                          ? 'Test Result'
+                                          : 'Add Test Result',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    widget.canEdit
+                                        ? IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                editingResult = !editingResult;
+                                                print('plrase');
+                                              });
+                                            },
+                                            icon: Icon(
+                                              Icons.edit,
+                                              color: kColorsOrangeDark,
+                                            ))
+                                        : SizedBox(),
+                                  ],
+                                ),
                               ),
-                            ),
-
-                            _tobLabelBuilder('Test Result'),
-
-                            _labelBuilder('Select Date'),
-
-                            GestureDetector(
+                
+                              _tobLabelBuilder('Test Result'),
+                
+                              _labelBuilder('Select Date'),
+                
+                              GestureDetector(
+                                  onTap: !widget.canEdit
+                                      ? () {}
+                                      : () {
+                                          DatePicker.showDatePicker(
+                                            context,
+                                            showTitleActions: true,
+                                            minTime: DateTime.now(),
+                                            onConfirm: (d) {
+                                              int month = d.month;
+                                              int year = d.year;
+                                              int day = d.day;
+                                              setState(() {
+                                                date = '$day-$month-$year';
+                                              });
+                                            },
+                                            currentTime: DateTime.now(),
+                                            locale: LocaleType.en,
+                                          );
+                                        },
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 54,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: EdgeInsets.only(left: 20),
+                                        child: Text(
+                                          date ?? 'Please Select Date',
+                                          style: TextStyle(
+                                              color:
+                                                  Colors.black87.withOpacity(0.8),
+                                              fontSize: 15),
+                                        ),
+                                      ),
+                                    ),
+                                  )),
+                
+                              _labelBuilder('Select Time'),
+                
+                              GestureDetector(
                                 onTap: !widget.canEdit
                                     ? () {}
                                     : () {
-                                        DatePicker.showDatePicker(
+                                        DatePicker.showTime12hPicker(
                                           context,
-                                          showTitleActions: true,
-                                          minTime: DateTime.now(),
-                                          onConfirm: (d) {
-                                            int month = d.month;
-                                            int year = d.year;
-                                            int day = d.day;
+                                          currentTime: DateTime.now(),
+                                          onConfirm: (t) {
+                                            int hour = t.hour;
+                                            int minutes = t.minute;
                                             setState(() {
-                                              date = '$day-$month-$year';
+                                              time = '$hour:$minutes';
                                             });
                                           },
-                                          currentTime: DateTime.now(),
-                                          locale: LocaleType.en,
                                         );
                                       },
                                 child: Container(
@@ -374,7 +417,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       width: double.infinity,
                                       padding: EdgeInsets.only(left: 20),
                                       child: Text(
-                                        date ?? 'Please Select Date',
+                                        time ?? 'Please Select Time',
                                         style: TextStyle(
                                             color:
                                                 Colors.black87.withOpacity(0.8),
@@ -382,363 +425,324 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       ),
                                     ),
                                   ),
+                                ),
+                              ),
+                
+                              _buildInputField(
+                                label: 'Lab Resitration Number',
+                                hint: 'Lab Registration Number',
+                                controller: resitrationNumberController,
+                                disabled: !widget.canEdit,
+                              ),
+                
+                              _labelBuilder('MTB Result'),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(7),
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                  value: mtbResult,
+                                  hint: Text('MTB Result'),
+                                  items: <String>[
+                                    'MTB Not Detected',
+                                    'MTB Detected'
+                                  ].map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      enabled: widget.canEdit,
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (val) {
+                                    FocusScope.of(context)
+                                        .requestFocus(FocusNode());
+                                    setState(() {
+                                      if (val == 'MTB Not Detected ') {
+                                        resultRR = null;
+                                        quantity = null;
+                                      }
+                                      print(val == 'MTB Not Detected');
+                                      mtbResult = val;
+                                    });
+                                  },
                                 )),
-
-                            _labelBuilder('Select Time'),
-
-                            GestureDetector(
-                              onTap: !widget.canEdit
-                                  ? () {}
-                                  : () {
-                                      DatePicker.showTime12hPicker(
-                                        context,
-                                        currentTime: DateTime.now(),
-                                        onConfirm: (t) {
-                                          int hour = t.hour;
-                                          int minutes = t.minute;
+                              ),
+                
+                              mtbResult == 'MTB Detected'
+                                  ? _labelBuilder('Quantity')
+                                  : SizedBox(),
+                              mtbResult == 'MTB Detected'
+                                  ? Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(7),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                        value: quantity,
+                                        hint: Text('Quantity'),
+                                        items: <String>[
+                                          'High',
+                                          'Medium',
+                                          'Low',
+                                          'Very Low',
+                                          'Trace'
+                                        ].map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            enabled: widget.canEdit,
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                        onChanged: (val) {
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
                                           setState(() {
-                                            time = '$hour:$minutes';
+                                            quantity = val;
                                           });
                                         },
-                                      );
-                                    },
-                              child: Container(
-                                width: double.infinity,
-                                height: 54,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Center(
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.only(left: 20),
-                                    child: Text(
-                                      time ?? 'Please Select Time',
-                                      style: TextStyle(
-                                          color:
-                                              Colors.black87.withOpacity(0.8),
-                                          fontSize: 15),
-                                    ),
-                                  ),
-                                ),
+                                      )),
+                                    )
+                                  : SizedBox(),
+                
+                              mtbResult == 'MTB Detected'
+                                  ? _labelBuilder('Result RR')
+                                  : SizedBox(),
+                              mtbResult == 'MTB Detected'
+                                  ? Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(7),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                        value: resultRR,
+                                        hint: Text('Result RR'),
+                                        items: <String>[
+                                          'Rif Res Detected',
+                                          'Rif Res Not Detected',
+                                          'Rif Res Indeterminate',
+                                        ].map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            enabled: widget.canEdit,
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                        onChanged: (val) {
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
+                                          setState(() {
+                                            resultRR = val;
+                                          });
+                                        },
+                                      )),
+                                    )
+                                  : SizedBox(),
+                
+                              // _buildInputField(
+                              //   label: 'MTB Result',
+                              //   hint: 'MTB Result',
+                              //   controller: mtbResultController,
+                              //   disabled: widget.patient.resultAvaiable,
+                              // ),
+                              // _buildInputField(
+                              //   label: 'Quantity',
+                              //   hint: 'Quantity',
+                              //   controller: quantityController,
+                              //   disabled: widget.patient.resultAvaiable,
+                              // ),
+                
+                              // _buildInputField(
+                              //   label: 'Result RR',
+                              //   hint: 'Result RR',
+                              //   controller: resultRRController,
+                              //   disabled: widget.patient.resultAvaiable,
+                              // ),
+                
+                              SizedBox(
+                                height: 35,
                               ),
-                            ),
-
-                            _buildInputField(
-                              label: 'Lab Resitration Number',
-                              hint: 'Lab Registration Number',
-                              controller: resitrationNumberController,
-                              disabled: !widget.canEdit,
-                            ),
-
-                            _labelBuilder('MTB Result'),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                value: mtbResult,
-                                hint: Text('MTB Result'),
-                                items: <String>[
-                                  'MTB Not Detected',
-                                  'MTB Detected'
-                                ].map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    enabled: widget.canEdit,
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (val) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                  setState(() {
-                                    if (val == 'MTB Not Detected ') {
-                                      resultRR = null;
-                                      quantity = null;
-                                    }
-                                    print(val == 'MTB Not Detected');
-                                    mtbResult = val;
-                                  });
-                                },
-                              )),
-                            ),
-
-                            mtbResult == 'MTB Detected'
-                                ? _labelBuilder('Quantity')
-                                : SizedBox(),
-                            mtbResult == 'MTB Detected'
-                                ? Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                      value: quantity,
-                                      hint: Text('Quantity'),
-                                      items: <String>[
-                                        'High',
-                                        'Medium',
-                                        'Low',
-                                        'Very Low',
-                                        'Trace'
-                                      ].map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          enabled: widget.canEdit,
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                      onChanged: (val) {
-                                        FocusScope.of(context)
-                                            .requestFocus(FocusNode());
-                                        setState(() {
-                                          quantity = val;
-                                        });
-                                      },
-                                    )),
-                                  )
-                                : SizedBox(),
-
-                            mtbResult == 'MTB Detected'
-                                ? _labelBuilder('Result RR')
-                                : SizedBox(),
-                            mtbResult == 'MTB Detected'
-                                ? Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                      value: resultRR,
-                                      hint: Text('Result RR'),
-                                      items: <String>[
-                                        'Rif Res Detected',
-                                        'Rif Res Not Detected',
-                                        'Rif Res Indeterminate',
-                                      ].map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          enabled: widget.canEdit,
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                      onChanged: (val) {
-                                        FocusScope.of(context)
-                                            .requestFocus(FocusNode());
-                                        setState(() {
-                                          resultRR = val;
-                                        });
-                                      },
-                                    )),
-                                  )
-                                : SizedBox(),
-
-                            // _buildInputField(
-                            //   label: 'MTB Result',
-                            //   hint: 'MTB Result',
-                            //   controller: mtbResultController,
-                            //   disabled: widget.patient.resultAvaiable,
-                            // ),
-                            // _buildInputField(
-                            //   label: 'Quantity',
-                            //   hint: 'Quantity',
-                            //   controller: quantityController,
-                            //   disabled: widget.patient.resultAvaiable,
-                            // ),
-
-                            // _buildInputField(
-                            //   label: 'Result RR',
-                            //   hint: 'Result RR',
-                            //   controller: resultRRController,
-                            //   disabled: widget.patient.resultAvaiable,
-                            // ),
-
-                            SizedBox(
-                              height: 35,
-                            ),
-
-                            !widget.patient.resultAvaiable
-                                ? Container(
-                                    // padding: EdgeInsets.all(10),
-                                    color: kPageBackground,
-                                    child: state is AddingTestResult
-                                        ? Center(
-                                            child: CircularProgressIndicator(),
-                                          )
-                                        : InkWell(
-                                            onTap: () async {
-                                              // String resultRR =
-                                              //     resultRRController.value.text;
-                                              // String mtbResult =
-                                              //     mtbResultController.value.text;
-                                              // String quantity =
-                                              //     quantityController.value.text;
-                                              String registrationNumber =
-                                                  resitrationNumberController
-                                                      .value.text;
-
-                                              print(
-                                                  '$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
-                                              TestResult result = TestResult(
-                                                labRegistratinNumber:
-                                                    registrationNumber,
-                                                resultDate: date,
-                                                resultTime: time,
-                                                mtbResult: mtbResult,
-                                                quantity: quantity,
-                                                resultRr: resultRR,
-                                              );
-                                              widget.patient.testResult =
-                                                  result;
-                                              widget.patient.resultAvaiable =
-                                                  true;
-                                              widget.patient.status = 'Tested';
-
-                                              int? specimentIndex = widget
-                                                  .patient.specimens
-                                                  ?.indexWhere((element) =>
-                                                      element.id ==
-                                                      widget.specimen.id);
-
-                                              if (specimentIndex != null) {
-                                                widget
-                                                    .patient
-                                                    .specimens?[specimentIndex]
-                                                    .testResult = result;
-
-                                                widget
-                                                        .patient
-                                                        .specimens?[specimentIndex]
-                                                        .testResultAddedAt =
-                                                    DateTime.now();
-                                              }
-
-                                              orderBloc.add(
-                                                AddTestResult(
-                                                    orderId: widget.orderId,
-                                                    index: widget.index,
-                                                    patient: widget.patient),
-                                              );
-                                            },
-                                            borderRadius:
-                                                BorderRadius.circular(37),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                color: kColorsOrangeDark,
-                                              ),
-                                              height: 62,
-                                              // margin: EdgeInsets.all(20),
-                                              child: Center(
-                                                child: Text(
-                                                  'Add Test Result',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20,
-                                                      color: Colors.white),
+                
+                              !widget.patient.resultAvaiable
+                                  ? Container(
+                                      // padding: EdgeInsets.all(10),
+                                      color: kPageBackground,
+                                      child: state is AddingTestResult
+                                          ? Center(
+                                              child: CircularProgressIndicator(),
+                                            )
+                                          : InkWell(
+                                              onTap: () async {
+                                                // String resultRR =
+                                                //     resultRRController.value.text;
+                                                // String mtbResult =
+                                                //     mtbResultController.value.text;
+                                                // String quantity =
+                                                //     quantityController.value.text;
+                                                String registrationNumber =
+                                                    resitrationNumberController
+                                                        .value.text;
+                
+                                                print(
+                                                    '$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
+                                                TestResult result = TestResult(
+                                                  labRegistratinNumber:
+                                                      registrationNumber,
+                                                  resultDate: date,
+                                                  resultTime: time,
+                                                  mtbResult: mtbResult,
+                                                  quantity: quantity,
+                                                  resultRr: resultRR,
+                                                );
+                                                widget.patient.testResult =
+                                                    result;
+                                                widget.patient.resultAvaiable =
+                                                    true;
+                                                widget.patient.status = 'Tested';
+                
+                                                int? specimentIndex = widget
+                                                    .patient.specimens
+                                                    ?.indexWhere((element) =>
+                                                        element.id ==
+                                                        widget.specimen.id);
+                
+                                                if (specimentIndex != null) {
+                                                  widget
+                                                      .patient
+                                                      .specimens?[specimentIndex]
+                                                      .testResult = result;
+                
+                                                  widget
+                                                          .patient
+                                                          .specimens?[specimentIndex]
+                                                          .testResultAddedAt =
+                                                      DateTime.now();
+                                                }
+                
+                                                orderBloc.add(
+                                                  AddTestResult(
+                                                      orderId: widget.orderId,
+                                                      index: widget.index,
+                                                      patient: widget.patient),
+                                                );
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(37),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: kColorsOrangeDark,
+                                                ),
+                                                height: 62,
+                                                // margin: EdgeInsets.all(20),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Add Test Result',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                  )
-                                : Container(),
-
-                            widget.patient.resultAvaiable && widget.canEdit
-                                ? Container(
-                                    // padding: EdgeInsets.all(10),
-                                    color: kPageBackground,
-                                    child: state is EditingTestResult
-                                        ? Center(
-                                            child: CircularProgressIndicator(),
-                                          )
-                                        : InkWell(
-                                            onTap: () async {
-                                              String registrationNumber =
-                                                  resitrationNumberController
-                                                      .value.text;
-
-                                              print(
-                                                  '$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
-                                              TestResult result = TestResult(
-                                                labRegistratinNumber:
-                                                    registrationNumber,
-                                                resultDate: date,
-                                                resultTime: time,
-                                                mtbResult: mtbResult,
-                                                quantity: quantity,
-                                                resultRr: resultRR,
-                                              );
-                                              widget.patient.testResult =
-                                                  result;
-                                              widget.patient.resultAvaiable =
-                                                  true;
-                                              widget.patient.status = 'Tested';
-
-                                              int? specimentIndex = widget
-                                                  .patient.specimens
-                                                  ?.indexWhere((element) =>
-                                                      element.id ==
-                                                      widget.specimen.id);
-
-                                              if (specimentIndex != null) {
-                                                widget
-                                                    .patient
-                                                    .specimens?[specimentIndex]
-                                                    .testResult = result;
-                                              }
-
-                                              orderBloc.add(
-                                                EditTestResult(
-                                                    orderId: widget.orderId,
-                                                    index: widget.index,
-                                                    patient: widget.patient),
-                                              );
-                                            },
-                                            borderRadius:
-                                                BorderRadius.circular(37),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                color: kColorsOrangeDark,
-                                              ),
-                                              height: 62,
-                                              // margin: EdgeInsets.all(20),
-                                              child: Center(
-                                                child: Text(
-                                                  widget.specimen.testResult !=
-                                                          null
-                                                      ? 'Edit Test Result'
-                                                      : 'Add Test Result',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20,
-                                                      color: Colors.white),
+                                    )
+                                  : Container(),
+                
+                              widget.patient.resultAvaiable && widget.canEdit
+                                  ? Container(
+                                      // padding: EdgeInsets.all(10),
+                                      color: kPageBackground,
+                                      child: state is EditingTestResult
+                                          ? Center(
+                                              child: CircularProgressIndicator(),
+                                            )
+                                          : InkWell(
+                                              onTap: () async {
+                                                String registrationNumber =
+                                                    resitrationNumberController
+                                                        .value.text;
+                
+                                                print(
+                                                    '$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
+                                                TestResult result = TestResult(
+                                                  labRegistratinNumber:
+                                                      registrationNumber,
+                                                  resultDate: date,
+                                                  resultTime: time,
+                                                  mtbResult: mtbResult,
+                                                  quantity: quantity,
+                                                  resultRr: resultRR,
+                                                );
+                                                widget.patient.testResult =
+                                                    result;
+                                                widget.patient.resultAvaiable =
+                                                    true;
+                                                widget.patient.status = 'Tested';
+                
+                                                int? specimentIndex = widget
+                                                    .patient.specimens
+                                                    ?.indexWhere((element) =>
+                                                        element.id ==
+                                                        widget.specimen.id);
+                
+                                                if (specimentIndex != null) {
+                                                  widget
+                                                      .patient
+                                                      .specimens?[specimentIndex]
+                                                      .testResult = result;
+                                                }
+                
+                                                orderBloc.add(
+                                                  EditTestResult(
+                                                      orderId: widget.orderId,
+                                                      index: widget.index,
+                                                      patient: widget.patient),
+                                                );
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(37),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: kColorsOrangeDark,
+                                                ),
+                                                height: 62,
+                                                // margin: EdgeInsets.all(20),
+                                                child: Center(
+                                                  child: Text(
+                                                    widget.specimen.testResult !=
+                                                            null
+                                                        ? 'Edit Test Result'
+                                                        : 'Add Test Result',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20,
+                                                        color: Colors.white),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                  )
-                                : Container(),
-                          ],
+                                    )
+                                  : Container(),
+                            ],
+                    ),
                   ),
                 ),
               );

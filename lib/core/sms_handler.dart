@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kncv_flutter/core/message_codes.dart';
 import 'package:telephony/telephony.dart';
@@ -9,6 +10,9 @@ Future sendSMS(
     required String to,
     required dynamic payload,
     required int action}) async {
+  if (kIsWeb) {
+    return true;
+  }
   bool? granted = await Telephony.instance.requestSmsPermissions;
   if (granted == true) {
     await Telephony.instance.sendSms(
@@ -47,6 +51,10 @@ Future sendCustomSMS(
     {BuildContext? context, required String to, required String body}) async {
   bool? granted = await Telephony.instance.requestSmsPermissions;
   if (granted == true) {
+    if (kIsWeb) {
+      return true;
+    }
+
     await Telephony.instance.sendSms(
       to: '0931057901',
       message: jsonEncode(
@@ -126,6 +134,10 @@ Future sendSmsViaListenerToEndUser(
     required String to,
     required dynamic payload,
     required int action}) async {
+  if (kIsWeb) {
+    return true;
+  }
+
   bool? granted = await Telephony.instance.requestSmsPermissions;
   if (granted == true) {
     await Telephony.instance.sendSms(

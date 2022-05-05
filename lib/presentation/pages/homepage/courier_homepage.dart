@@ -177,30 +177,40 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                       ),
                                     ],
                                   )
-                                : ListView.builder(
-                                    itemCount: state.orders.length,
-                                    itemBuilder: (context, index) {
-                                      return GestureDetector(
-                                          onTap: () async {
-                                            print(
-                                                '${state.orders[index].orderId}');
-                                            var load = await Navigator.pushNamed(
-                                                context,
-                                                OrderDetailCourier
-                                                    .orderDetailCourierPageRouteName,
-                                                arguments: state
-                                                    .orders[index].orderId);
-                                            if (load == true) {
-                                              orderBloc
-                                                  .add(LoadOrdersForCourier());
-                                            } else {
-                                              orderBloc
-                                                  .add(LoadOrdersForCourier());
-                                            }
-                                          },
-                                          child:
-                                              orderCard(state.orders[index]));
-                                    }),
+                                : Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                      constraints: BoxConstraints(maxWidth: 700),
+                                      child: Center(
+                                        child: ListView.builder(
+                                            itemCount: state.orders.length,
+                                            itemBuilder: (context, index) {
+                                              return GestureDetector(
+                                                  onTap: () async {
+                                                    print(
+                                                        '${state.orders[index].orderId}');
+                                                    var load =
+                                                        await Navigator.pushNamed(
+                                                            context,
+                                                            OrderDetailCourier
+                                                                .orderDetailCourierPageRouteName,
+                                                            arguments: state
+                                                                .orders[index]
+                                                                .orderId);
+                                                    if (load == true) {
+                                                      orderBloc.add(
+                                                          LoadOrdersForCourier());
+                                                    } else {
+                                                      orderBloc.add(
+                                                          LoadOrdersForCourier());
+                                                    }
+                                                  },
+                                                  child: orderCard(
+                                                      state.orders[index]));
+                                            }),
+                                      ),
+                                    ),
+                                ),
                           )
                         : Container(),
               ),

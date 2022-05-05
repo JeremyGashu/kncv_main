@@ -67,77 +67,90 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
+                          
                           width: double.infinity,
                           child: Text(
                             'Login',
-                            textAlign: TextAlign.left,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 40,
                             ),
                           ),
                         ),
-                        TextField(
-                          controller: _usernameController,
-                          autofocus: false,
-                          decoration: InputDecoration(
-                              prefixIcon:
-                                  Icon(Icons.person, color: kIconColors),
-                              labelText: 'Username',
-                              labelStyle: TextStyle(color: Colors.grey),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                color: Colors.grey.withOpacity(0.5),
-                              ))),
-                        ),
-                        TextField(
-                          controller: _passwordController,
-                          autofocus: false,
-                          obscureText: !_passwordVisible,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.vpn_key, color: kIconColors),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _passwordVisible
-                                    ? Icons.visibility_off
-                                    : Icons.visibility_rounded,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _passwordVisible = !_passwordVisible;
-                                });
-                              },
-                            ),
-                            labelText: 'Password',
-                            labelStyle: TextStyle(color: Colors.grey),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey.withOpacity(0.8),
-                              ),
-                            ),
-                            // border: UnderlineInputBorder(
-                            //   borderSide: BorderSide(
-                            //     color: Colors.grey.withOpacity(0.1),
-                            //   ),
-                            // ),
+                        Container(
+                          constraints: BoxConstraints(maxWidth: 500),
+                          child: TextField(
+                            controller: _usernameController,
+                            autofocus: false,
+                            decoration: InputDecoration(
+                                prefixIcon:
+                                    Icon(Icons.person, color: kIconColors),
+                                labelText: 'Username',
+                                labelStyle: TextStyle(color: Colors.grey),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                  color: Colors.grey.withOpacity(0.5),
+                                ))),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Container(
-                            // width: double.infinity,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.pushNamed(context,
-                                    ResetPasswordPage.resetPasswordPageName);
-                              },
-                              child: Text(
-                                'Forgot Password',
-                                textAlign: TextAlign.end,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: kColorsOrangeLight,
+                        Container(
+                          constraints: BoxConstraints(maxWidth: 500),
+                          child: TextField(
+                            controller: _passwordController,
+                            autofocus: false,
+                            obscureText: !_passwordVisible,
+                            decoration: InputDecoration(
+                              prefixIcon:
+                                  Icon(Icons.vpn_key, color: kIconColors),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _passwordVisible
+                                      ? Icons.visibility_off
+                                      : Icons.visibility_rounded,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _passwordVisible = !_passwordVisible;
+                                  });
+                                },
+                              ),
+                              labelText: 'Password',
+                              labelStyle: TextStyle(color: Colors.grey),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey.withOpacity(0.8),
+                                ),
+                              ),
+                              // border: UnderlineInputBorder(
+                              //   borderSide: BorderSide(
+                              //     color: Colors.grey.withOpacity(0.1),
+                              //   ),
+                              // ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          constraints: BoxConstraints(
+                            maxWidth: 500
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                              // width: double.infinity,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(context,
+                                      ResetPasswordPage.resetPasswordPageName);
+                                },
+                                child: Text(
+                                  'Forgot Password',
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: kColorsOrangeLight,
+                                  ),
                                 ),
                               ),
                             ),
@@ -180,32 +193,38 @@ class _LoginPageState extends State<LoginPage> {
                               ? Center(
                                   child: CircularProgressIndicator(),
                                 )
-                              : InkWell(
-                                  onTap: () {
-                                    String email =
-                                        _usernameController.value.text;
-                                    String password =
-                                        _passwordController.value.text;
-                                    BlocProvider.of<AuthBloc>(context).add(
-                                        LoginUser(
-                                            email: '$email@kncv.com',
-                                            password: password));
-                                  },
-                                  borderRadius: BorderRadius.circular(37),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: kColorsOrangeDark,
-                                    ),
-                                    height: 62,
-                                    // margin: EdgeInsets.all(20),
-                                    child: Center(
-                                      child: Text(
-                                        'Log In',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                            color: Colors.white),
+                              : Container(
+                                  constraints: BoxConstraints(maxWidth: 500),
+                                  child: InkWell(
+                                    onTap: () {
+                                      String email =
+                                          _usernameController.value.text;
+                                      String password =
+                                          _passwordController.value.text;
+                                      BlocProvider.of<AuthBloc>(context).add(
+                                          LoginUser(
+                                              email: '$email@kncv.com',
+                                              password: password));
+                                    },
+                                    borderRadius: BorderRadius.circular(37),
+                                    child: Container(
+                                      constraints:
+                                          BoxConstraints(maxWidth: 500),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: kColorsOrangeDark,
+                                      ),
+                                      height: 62,
+                                      // margin: EdgeInsets.all(20),
+                                      child: Center(
+                                        child: Text(
+                                          'Log In',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              color: Colors.white),
+                                        ),
                                       ),
                                     ),
                                   ),

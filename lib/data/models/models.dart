@@ -557,7 +557,7 @@ class NotificationModel {
           content: json["content"],
           seen: json["seen"],
           id: json['id'],
-          action: NotificationAction.values.elementAt(json['action']),
+          action:json['action'] != null ? NotificationAction.values.elementAt(json['action']) : null,
           payload: json['payload']);
 
   Map<String, dynamic> toJson() => {

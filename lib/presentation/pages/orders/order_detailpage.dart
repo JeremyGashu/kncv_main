@@ -202,584 +202,590 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ],
                 ),
                 body: state is LoadedSingleOrder
-                    ? Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 100, left: 10, top: 10, right: 10),
-                            child: CustomScrollView(
-                              slivers: [
-                                state.order.status == 'Draft'
-                                    ? SliverToBoxAdapter(
-                                        child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          IconButton(
-                                              tooltip: 'Edit',
-                                              // backgroundColor: kColorsOrangeLight,
-                                              // elevation: 0,
-                                              onPressed: () async {
-                                                print('here');
-                                                var create =
-                                                    await showModalBottomSheet(
-                                                        backgroundColor:
-                                                            Colors.transparent,
-                                                        isScrollControlled:
-                                                            true,
-                                                        context: context,
-                                                        builder: (ctx) {
-                                                          return Container(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 30,
-                                                                    left: 20,
-                                                                    right: 20,
-                                                                    bottom: 20),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                  30,
-                                                                ),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                  30,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            child: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Container(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  child: Text(
-                                                                    'Create An Order',
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          32,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
+                    ? Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: 700),
+                        child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    bottom: 100, left: 10, top: 10, right: 10),
+                                child: CustomScrollView(
+                                  slivers: [
+                                    state.order.status == 'Draft'
+                                        ? SliverToBoxAdapter(
+                                            child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              IconButton(
+                                                  tooltip: 'Edit',
+                                                  // backgroundColor: kColorsOrangeLight,
+                                                  // elevation: 0,
+                                                  onPressed: () async {
+                                                    print('here');
+                                                    var create =
+                                                        await showModalBottomSheet(
+                                                            backgroundColor:
+                                                                Colors.transparent,
+                                                            isScrollControlled:
+                                                                true,
+                                                            context: context,
+                                                            builder: (ctx) {
+                                                              return Container(
+                                                                padding:
+                                                                    EdgeInsets.only(
+                                                                        top: 30,
+                                                                        left: 20,
+                                                                        right: 20,
+                                                                        bottom: 20),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      Colors.white,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .only(
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                      30,
+                                                                    ),
+                                                                    topRight: Radius
+                                                                        .circular(
+                                                                      30,
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                SizedBox(
-                                                                  height: 30,
+                                                                child: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Container(
+                                                                      width: double
+                                                                          .infinity,
+                                                                      child: Text(
+                                                                        'Create An Order',
+                                                                        textAlign:
+                                                                            TextAlign
+                                                                                .center,
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              32,
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .bold,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height: 30,
+                                                                    ),
+                                                                    SelectorPage(
+                                                                      buttonText:
+                                                                          'Edit Order',
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                                SelectorPage(
-                                                                  buttonText:
-                                                                      'Edit Order',
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        });
-
-                                                print('create');
-                                                if (create == true) {
-                                                  Tester? tester = BlocProvider
-                                                          .of<TesterCourierBloc>(
-                                                              context)
-                                                      .tester;
-                                                  Courier? courier = BlocProvider
-                                                          .of<TesterCourierBloc>(
-                                                              context)
-                                                      .courier;
-                                                  String? date = BlocProvider
-                                                          .of<TesterCourierBloc>(
-                                                              context)
-                                                      .date;
-                                                  print(tester?.name);
-                                                  print(courier?.name);
-                                                  print(date);
-                                                  ordersBloc.add(
-                                                    EditOrder(
-                                                      courier_id: courier!.id,
-                                                      tester_id: tester!.id,
-                                                      courier_name:
-                                                          courier.name,
-                                                      tester_name: tester.name,
-                                                      orderId: widget.orderId,
-                                                    ),
-                                                  );
-                                                }
-                                              },
-                                              icon: Icon(
-                                                Icons.edit,
-                                                color: Colors.red,
-                                              )),
-                                        ],
-                                      ))
-                                    : SliverToBoxAdapter(),
-                                SliverToBoxAdapter(
-                                  child: ListView(
-                                    primary: false,
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets.all(10),
-                                    physics: NeverScrollableScrollPhysics(),
-                                    children: [
-                                      //sender
-                                      //courier
-                                      ListTile(
-                                        leading: CircleAvatar(
-                                          backgroundColor: Colors.blue,
-                                          radius: 18,
-                                          child: Text(
-                                            'S',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                        title: Text(
-                                          '${state.order.sender_name ?? ""}',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        trailing: Text(
-                                          'Referring Health Facilty',
-                                          style: TextStyle(
-                                              color: Colors.green,
-                                              fontSize: 14),
-                                        ),
-                                      ),
-
-                                      //courier
-                                      ListTile(
-                                        leading: CircleAvatar(
-                                          backgroundColor: Colors.blue,
-                                          radius: 18,
-                                          child: Text(
-                                            'C',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                        title: Text(
-                                          '${state.order.courier_name ?? ""}',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        trailing: Text(
-                                          'Courier',
-                                          style: TextStyle(
-                                              color: Colors.green,
-                                              fontSize: 14),
-                                        ),
-                                      ),
-                                      //test center
-                                      ListTile(
-                                        leading: CircleAvatar(
-                                          backgroundColor: Colors.blue,
-                                          radius: 18,
-                                          child: Text(
-                                            'T',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                        title: Text(
-                                          '${state.order.tester_name ?? ""}',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        trailing: Text(
-                                          'Testing Health Facility',
-                                          style: TextStyle(
-                                              color: Colors.green,
-                                              fontSize: 14),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                //
-                                SliverToBoxAdapter(
-                                  child: Divider(),
-                                ),
-
-                                SliverToBoxAdapter(
-                                  child: Container(
-                                      margin: EdgeInsets.symmetric(vertical: 5),
-                                      width: double.infinity,
-                                      child: Text(
-                                        'Order ID = ${state.order.orderId}',
-                                        style: TextStyle(color: Colors.grey),
-                                        textAlign: TextAlign.left,
-                                      )),
-                                ),
-
-                                SliverToBoxAdapter(
-                                  child: Container(
-                                      margin: EdgeInsets.symmetric(vertical: 5),
-                                      width: double.infinity,
-                                      child: Text(
-                                        'Current Status = ${state.order.status}',
-                                        style: TextStyle(color: Colors.grey),
-                                        textAlign: TextAlign.left,
-                                      )),
-                                ),
-
-                                state.order.status == 'Draft'
-                                    ? SliverToBoxAdapter(
-                                        child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
+                                                              );
+                                                            });
+                    
+                                                    print('create');
+                                                    if (create == true) {
+                                                      Tester? tester = BlocProvider
+                                                              .of<TesterCourierBloc>(
+                                                                  context)
+                                                          .tester;
+                                                      Courier? courier = BlocProvider
+                                                              .of<TesterCourierBloc>(
+                                                                  context)
+                                                          .courier;
+                                                      String? date = BlocProvider
+                                                              .of<TesterCourierBloc>(
+                                                                  context)
+                                                          .date;
+                                                      print(tester?.name);
+                                                      print(courier?.name);
+                                                      print(date);
+                                                      ordersBloc.add(
+                                                        EditOrder(
+                                                          courier_id: courier!.id,
+                                                          tester_id: tester!.id,
+                                                          courier_name:
+                                                              courier.name,
+                                                          tester_name: tester.name,
+                                                          orderId: widget.orderId,
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.edit,
+                                                    color: Colors.red,
+                                                  )),
+                                            ],
+                                          ))
+                                        : SliverToBoxAdapter(),
+                                    SliverToBoxAdapter(
+                                      child: ListView(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        padding: EdgeInsets.all(10),
+                                        physics: NeverScrollableScrollPhysics(),
                                         children: [
-                                          FloatingActionButton(
-                                              tooltip: 'Add Patient',
-                                              backgroundColor:
-                                                  kColorsOrangeLight,
-                                              elevation: 0,
-                                              onPressed: () async {
-                                                if (state.order.patients!
-                                                        .length >=
-                                                    4) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                        'Maximum sample quantity is reached!',
-                                                      ),
-                                                    ),
-                                                  );
-
-                                                  return;
-                                                }
-                                                var added =
-                                                    await Navigator.pushNamed(
-                                                        context,
-                                                        PatientInfoPage
-                                                            .patientInfoPageRouteName,
-                                                        arguments:
-                                                            widget.orderId);
-                                                if (added == true) {
-                                                  ordersBloc.add(
-                                                      LoadSingleOrder(
-                                                          orderId:
-                                                              widget.orderId));
-                                                }
-                                              },
-                                              child: Icon(Icons.add)),
-                                        ],
-                                      ))
-                                    : SliverToBoxAdapter(),
-
-                                SliverToBoxAdapter(
-                                  child: state.order.patients!.length > 0
-                                      ?
-                                      // ListView(
-                                      //     shrinkWrap: true,
-                                      //     physics: NeverScrollableScrollPhysics(),
-                                      //     children: state.order.patients!
-                                      //         .map((e) => buildPatients(
-                                      //             e, widget.orderId))
-                                      //         .toList(),
-                                      //   )
-                                      ListView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          itemCount:
-                                              state.order.patients!.length,
-                                          itemBuilder: (ctx, index) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context,
-                                                    EditPatientInfoPage
-                                                        .editPatientInfoRouteName,
-                                                    arguments: {
-                                                      'patient': state.order
-                                                          .patients![index],
-                                                      'orderId': widget.orderId,
-                                                      'index': index,
-                                                      'canEdit':
-                                                          state.order.status ==
-                                                              'Draft',
-                                                    });
-                                              },
-                                              child: buildPatients(
-                                                context,
-                                                state.order.patients![index],
-                                                widget.orderId,
-                                                index,
-                                                deletable: state.order.status ==
-                                                        'Waiting for Confirmation' ||
-                                                    state.order.status ==
-                                                        'Draft',
-                                                order: state.order,
+                                          //sender
+                                          //courier
+                                          ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: Colors.blue,
+                                              radius: 18,
+                                              child: Text(
+                                                'S',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                ),
                                               ),
-                                            );
-                                          })
-                                      : Center(
-                                          child: Text('No patient added!'),
-                                        ),
+                                            ),
+                                            title: Text(
+                                              '${state.order.sender_name ?? ""}',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            trailing: Text(
+                                              'Referring Health Facilty',
+                                              style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 14),
+                                            ),
+                                          ),
+                    
+                                          //courier
+                                          ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: Colors.blue,
+                                              radius: 18,
+                                              child: Text(
+                                                'C',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                            title: Text(
+                                              '${state.order.courier_name ?? ""}',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            trailing: Text(
+                                              'Courier',
+                                              style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 14),
+                                            ),
+                                          ),
+                                          //test center
+                                          ListTile(
+                                            leading: CircleAvatar(
+                                              backgroundColor: Colors.blue,
+                                              radius: 18,
+                                              child: Text(
+                                                'T',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                            title: Text(
+                                              '${state.order.tester_name ?? ""}',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            trailing: Text(
+                                              'Testing Health Facility',
+                                              style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 14),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    //
+                                    SliverToBoxAdapter(
+                                      child: Divider(),
+                                    ),
+                    
+                                    SliverToBoxAdapter(
+                                      child: Container(
+                                          margin: EdgeInsets.symmetric(vertical: 5),
+                                          width: double.infinity,
+                                          child: Text(
+                                            'Order ID = ${state.order.orderId}',
+                                            style: TextStyle(color: Colors.grey),
+                                            textAlign: TextAlign.left,
+                                          )),
+                                    ),
+                    
+                                    SliverToBoxAdapter(
+                                      child: Container(
+                                          margin: EdgeInsets.symmetric(vertical: 5),
+                                          width: double.infinity,
+                                          child: Text(
+                                            'Current Status = ${state.order.status}',
+                                            style: TextStyle(color: Colors.grey),
+                                            textAlign: TextAlign.left,
+                                          )),
+                                    ),
+                    
+                                    state.order.status == 'Draft'
+                                        ? SliverToBoxAdapter(
+                                            child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              FloatingActionButton(
+                                                  tooltip: 'Add Patient',
+                                                  backgroundColor:
+                                                      kColorsOrangeLight,
+                                                  elevation: 0,
+                                                  onPressed: () async {
+                                                    if (state.order.patients!
+                                                            .length >=
+                                                        4) {
+                                                      ScaffoldMessenger.of(context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            'Maximum sample quantity is reached!',
+                                                          ),
+                                                        ),
+                                                      );
+                    
+                                                      return;
+                                                    }
+                                                    var added =
+                                                        await Navigator.pushNamed(
+                                                            context,
+                                                            PatientInfoPage
+                                                                .patientInfoPageRouteName,
+                                                            arguments:
+                                                                widget.orderId);
+                                                    if (added == true) {
+                                                      ordersBloc.add(
+                                                          LoadSingleOrder(
+                                                              orderId:
+                                                                  widget.orderId));
+                                                    }
+                                                  },
+                                                  child: Icon(Icons.add)),
+                                            ],
+                                          ))
+                                        : SliverToBoxAdapter(),
+                    
+                                    SliverToBoxAdapter(
+                                      child: state.order.patients!.length > 0
+                                          ?
+                                          // ListView(
+                                          //     shrinkWrap: true,
+                                          //     physics: NeverScrollableScrollPhysics(),
+                                          //     children: state.order.patients!
+                                          //         .map((e) => buildPatients(
+                                          //             e, widget.orderId))
+                                          //         .toList(),
+                                          //   )
+                                          ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              itemCount:
+                                                  state.order.patients!.length,
+                                              itemBuilder: (ctx, index) {
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                        context,
+                                                        EditPatientInfoPage
+                                                            .editPatientInfoRouteName,
+                                                        arguments: {
+                                                          'patient': state.order
+                                                              .patients![index],
+                                                          'orderId': widget.orderId,
+                                                          'index': index,
+                                                          'canEdit':
+                                                              state.order.status ==
+                                                                  'Draft',
+                                                        });
+                                                  },
+                                                  child: buildPatients(
+                                                    context,
+                                                    state.order.patients![index],
+                                                    widget.orderId,
+                                                    index,
+                                                    deletable: state.order.status ==
+                                                            'Waiting for Confirmation' ||
+                                                        state.order.status ==
+                                                            'Draft',
+                                                    order: state.order,
+                                                  ),
+                                                );
+                                              })
+                                          : Center(
+                                              child: Text('No patient added!'),
+                                            ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              state.order.status == 'Draft'
+                                  ? Positioned(
+                                      bottom: 0,
+                                      left: 10,
+                                      right: 10,
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        color: kPageBackground,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            if (state.order.patients!.length == 0) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Please add patients first!')));
+                                              return;
+                                            }
+                    
+                                            debugPrint(
+                                                '${Order.fromJsonSMS(state.order.toJsonSMS()).orderId}');
+                    
+                                            ordersBloc.add(
+                                                PlaceOrder(order: state.order));
+                                          },
+                                          borderRadius: BorderRadius.circular(37),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: kColorsOrangeDark,
+                                            ),
+                                            height: 62,
+                                            // margin: EdgeInsets.all(20),
+                                            child: Center(
+                                              child: Text(
+                                                'Place Order',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                              state.order.status == 'Confirmed'
+                                  ? Positioned(
+                                      bottom: 0,
+                                      left: 10,
+                                      right: 10,
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        color: kPageBackground,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            // bool confirm =
+                                            //     await showModalBottomSheet(
+                                            //         backgroundColor:
+                                            //             Colors.transparent,
+                                            //         isScrollControlled: true,
+                                            //         context: context,
+                                            //         builder: (ctx) {
+                                            //           return StatefulBuilder(
+                                            //               builder: (ctx, ss) {
+                                            //             return SingleChildScrollView(
+                                            //               child: Container(
+                                            //                 padding:
+                                            //                     EdgeInsets.only(
+                                            //                   bottom: MediaQuery.of(
+                                            //                               context)
+                                            //                           .viewInsets
+                                            //                           .bottom +
+                                            //                       20,
+                                            //                   top: 30,
+                                            //                   left: 20,
+                                            //                   right: 20,
+                                            //                 ),
+                                            //                 // padding: EdgeInsets.only(
+                    
+                                            //                 //     bottom: 20),
+                                            //                 decoration:
+                                            //                     BoxDecoration(
+                                            //                   color: Colors.white,
+                                            //                   borderRadius:
+                                            //                       BorderRadius
+                                            //                           .only(
+                                            //                     topLeft: Radius
+                                            //                         .circular(
+                                            //                       30,
+                                            //                     ),
+                                            //                     topRight: Radius
+                                            //                         .circular(
+                                            //                       30,
+                                            //                     ),
+                                            //                   ),
+                                            //                 ),
+                                            //                 child: Column(
+                                            //                   mainAxisSize:
+                                            //                       MainAxisSize
+                                            //                           .min,
+                                            //                   crossAxisAlignment:
+                                            //                       CrossAxisAlignment
+                                            //                           .start,
+                                            //                   children: [
+                                            //                     Container(
+                                            //                       width: double
+                                            //                           .infinity,
+                                            //                       child: Text(
+                                            //                         'Confirm',
+                                            //                         textAlign:
+                                            //                             TextAlign
+                                            //                                 .center,
+                                            //                         style:
+                                            //                             TextStyle(
+                                            //                           fontSize:
+                                            //                               32,
+                                            //                           fontWeight:
+                                            //                               FontWeight
+                                            //                                   .bold,
+                                            //                         ),
+                                            //                       ),
+                                            //                     ),
+                                            //                     SizedBox(
+                                            //                       height: 30,
+                                            //                     ),
+                                            //                     _buildInputField(
+                                            //                         label:
+                                            //                             'Receiver',
+                                            //                         hint:
+                                            //                             'Enter Receiver',
+                                            //                         controller:
+                                            //                             _receiverController),
+                                            //                     SizedBox(
+                                            //                       height: 30,
+                                            //                     ),
+                                            //                     GestureDetector(
+                                            //                       onTap: () {
+                                            //                         print(
+                                            //                             _receiverController
+                                            //                                 .value
+                                            //                                 .text);
+                    
+                                            //                         if (_receiverController
+                                            //                                 .value
+                                            //                                 .text !=
+                                            //                             '') {
+                                            //                           Navigator.pop(
+                                            //                               ctx,
+                                            //                               true);
+                                            //                         }
+                                            //                       },
+                                            //                       child:
+                                            //                           Container(
+                                            //                         decoration:
+                                            //                             BoxDecoration(
+                                            //                           borderRadius:
+                                            //                               BorderRadius.circular(
+                                            //                                   10),
+                                            //                           color:
+                                            //                               kColorsOrangeDark,
+                                            //                         ),
+                                            //                         height: 62,
+                                            //                         // margin: EdgeInsets.all(20),
+                                            //                         child: Center(
+                                            //                           child: Text(
+                                            //                             'Confirm',
+                                            //                             style: TextStyle(
+                                            //                                 fontWeight: FontWeight
+                                            //                                     .bold,
+                                            //                                 fontSize:
+                                            //                                     20,
+                                            //                                 color:
+                                            //                                     Colors.white),
+                                            //                           ),
+                                            //                         ),
+                                            //                       ),
+                                            //                     ),
+                                            //                   ],
+                                            //                 ),
+                                            //               ),
+                                            //             );
+                                            //           });
+                                            //         });
+                    
+                                            showDialog(
+                                                context: context,
+                                                builder: (ctx) {
+                                                  return AlertDialog(
+                                                    title: Text('Confirm'),
+                                                    content: Text(
+                                                        'Are you sure you want to confirm order departure?'),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            ordersBloc.add(
+                                                                ApproveArrivalCourier(
+                                                                    state.order,
+                                                                    state.order
+                                                                            .courier_name ??
+                                                                        ''));
+                    
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: Text('Yes')),
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: Text('No'))
+                                                    ],
+                                                  );
+                                                });
+                                          },
+                                          borderRadius: BorderRadius.circular(37),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: kColorsOrangeDark,
+                                            ),
+                                            height: 62,
+                                            // margin: EdgeInsets.all(20),
+                                            child: Center(
+                                              child: Text(
+                                                'Approve Courier Arrival',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
                           ),
-                          state.order.status == 'Draft'
-                              ? Positioned(
-                                  bottom: 0,
-                                  left: 10,
-                                  right: 10,
-                                  child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    color: kPageBackground,
-                                    child: InkWell(
-                                      onTap: () async {
-                                        if (state.order.patients!.length == 0) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      'Please add patients first!')));
-                                          return;
-                                        }
-
-                                        debugPrint(
-                                            '${Order.fromJsonSMS(state.order.toJsonSMS()).orderId}');
-
-                                        ordersBloc.add(
-                                            PlaceOrder(order: state.order));
-                                      },
-                                      borderRadius: BorderRadius.circular(37),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: kColorsOrangeDark,
-                                        ),
-                                        height: 62,
-                                        // margin: EdgeInsets.all(20),
-                                        child: Center(
-                                          child: Text(
-                                            'Place Order',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                          state.order.status == 'Confirmed'
-                              ? Positioned(
-                                  bottom: 0,
-                                  left: 10,
-                                  right: 10,
-                                  child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    color: kPageBackground,
-                                    child: InkWell(
-                                      onTap: () async {
-                                        // bool confirm =
-                                        //     await showModalBottomSheet(
-                                        //         backgroundColor:
-                                        //             Colors.transparent,
-                                        //         isScrollControlled: true,
-                                        //         context: context,
-                                        //         builder: (ctx) {
-                                        //           return StatefulBuilder(
-                                        //               builder: (ctx, ss) {
-                                        //             return SingleChildScrollView(
-                                        //               child: Container(
-                                        //                 padding:
-                                        //                     EdgeInsets.only(
-                                        //                   bottom: MediaQuery.of(
-                                        //                               context)
-                                        //                           .viewInsets
-                                        //                           .bottom +
-                                        //                       20,
-                                        //                   top: 30,
-                                        //                   left: 20,
-                                        //                   right: 20,
-                                        //                 ),
-                                        //                 // padding: EdgeInsets.only(
-
-                                        //                 //     bottom: 20),
-                                        //                 decoration:
-                                        //                     BoxDecoration(
-                                        //                   color: Colors.white,
-                                        //                   borderRadius:
-                                        //                       BorderRadius
-                                        //                           .only(
-                                        //                     topLeft: Radius
-                                        //                         .circular(
-                                        //                       30,
-                                        //                     ),
-                                        //                     topRight: Radius
-                                        //                         .circular(
-                                        //                       30,
-                                        //                     ),
-                                        //                   ),
-                                        //                 ),
-                                        //                 child: Column(
-                                        //                   mainAxisSize:
-                                        //                       MainAxisSize
-                                        //                           .min,
-                                        //                   crossAxisAlignment:
-                                        //                       CrossAxisAlignment
-                                        //                           .start,
-                                        //                   children: [
-                                        //                     Container(
-                                        //                       width: double
-                                        //                           .infinity,
-                                        //                       child: Text(
-                                        //                         'Confirm',
-                                        //                         textAlign:
-                                        //                             TextAlign
-                                        //                                 .center,
-                                        //                         style:
-                                        //                             TextStyle(
-                                        //                           fontSize:
-                                        //                               32,
-                                        //                           fontWeight:
-                                        //                               FontWeight
-                                        //                                   .bold,
-                                        //                         ),
-                                        //                       ),
-                                        //                     ),
-                                        //                     SizedBox(
-                                        //                       height: 30,
-                                        //                     ),
-                                        //                     _buildInputField(
-                                        //                         label:
-                                        //                             'Receiver',
-                                        //                         hint:
-                                        //                             'Enter Receiver',
-                                        //                         controller:
-                                        //                             _receiverController),
-                                        //                     SizedBox(
-                                        //                       height: 30,
-                                        //                     ),
-                                        //                     GestureDetector(
-                                        //                       onTap: () {
-                                        //                         print(
-                                        //                             _receiverController
-                                        //                                 .value
-                                        //                                 .text);
-
-                                        //                         if (_receiverController
-                                        //                                 .value
-                                        //                                 .text !=
-                                        //                             '') {
-                                        //                           Navigator.pop(
-                                        //                               ctx,
-                                        //                               true);
-                                        //                         }
-                                        //                       },
-                                        //                       child:
-                                        //                           Container(
-                                        //                         decoration:
-                                        //                             BoxDecoration(
-                                        //                           borderRadius:
-                                        //                               BorderRadius.circular(
-                                        //                                   10),
-                                        //                           color:
-                                        //                               kColorsOrangeDark,
-                                        //                         ),
-                                        //                         height: 62,
-                                        //                         // margin: EdgeInsets.all(20),
-                                        //                         child: Center(
-                                        //                           child: Text(
-                                        //                             'Confirm',
-                                        //                             style: TextStyle(
-                                        //                                 fontWeight: FontWeight
-                                        //                                     .bold,
-                                        //                                 fontSize:
-                                        //                                     20,
-                                        //                                 color:
-                                        //                                     Colors.white),
-                                        //                           ),
-                                        //                         ),
-                                        //                       ),
-                                        //                     ),
-                                        //                   ],
-                                        //                 ),
-                                        //               ),
-                                        //             );
-                                        //           });
-                                        //         });
-
-                                        showDialog(
-                                            context: context,
-                                            builder: (ctx) {
-                                              return AlertDialog(
-                                                title: Text('Confirm'),
-                                                content: Text(
-                                                    'Are you sure you want to confirm order departure?'),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        ordersBloc.add(
-                                                            ApproveArrivalCourier(
-                                                                state.order,
-                                                                state.order
-                                                                        .courier_name ??
-                                                                    ''));
-
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text('Yes')),
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text('No'))
-                                                ],
-                                              );
-                                            });
-                                      },
-                                      borderRadius: BorderRadius.circular(37),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: kColorsOrangeDark,
-                                        ),
-                                        height: 62,
-                                        // margin: EdgeInsets.all(20),
-                                        child: Center(
-                                          child: Text(
-                                            'Approve Courier Arrival',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      )
+                      ),
+                    )
                     : Center(
                         child: CircularProgressIndicator(),
                       ),
