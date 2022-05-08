@@ -62,10 +62,12 @@ void main() async {
           lazy: false,
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        onGenerateRoute: AppRouter.onGenerateRoute,
-        initialRoute: SplashPage.splashPageRouteName,
+      child: SMSListener(
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          initialRoute: SplashPage.splashPageRouteName,
+        ),
       ),
     ),
   );
@@ -95,9 +97,10 @@ class _SMSListenerState extends State<SMSListener> with WidgetsBindingObserver {
       if (message is SmsMessage) {
         print(
             'I have received $message from background service i can save it to hive database');
-            if(Hive.isBoxOpen('orders')) {
-              print('Yes the box is open you can add data into it ${Hive.box<Order>('orders').values}');
-            }
+        if (Hive.isBoxOpen('orders')) {
+          print(
+              'Yes the box is open you can add data into it ${Hive.box<Order>('orders').values}');
+        }
 
         smsBloc.updateDataOnSms(message);
       }

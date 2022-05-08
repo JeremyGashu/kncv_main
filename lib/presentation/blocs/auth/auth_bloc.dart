@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/data/repositories/auth_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_events.dart';
@@ -35,7 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (user != null) {
           SharedPreferences preferences = sl<SharedPreferences>();
           await preferences.setString('user_type', type ?? '');
-          if (type == 'COURIER_ADMIN') {
+          if (type == 'COURIER_ADMIN' && kIsWeb) {
             yield UnauthenticatedState();
             return;
           }
@@ -65,7 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
 
         if (user != null) {
-          if (type == 'COURIER_ADMIN') {
+          if (type == 'COURIER_ADMIN' && kIsWeb) {
             yield UnauthenticatedState();
             return;
           }

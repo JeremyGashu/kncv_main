@@ -305,7 +305,7 @@ class Patient {
   Map<String, dynamic> toJsonSMS() => {
         "MR": mr,
         "name": name,
-        'status' : status,
+        'status': status,
         // 'reason_for_test': reasonForTest,
         // 'requested_test': requestedTest,
         // 'registration_group': registrationGroup,
@@ -557,7 +557,9 @@ class NotificationModel {
           content: json["content"],
           seen: json["seen"],
           id: json['id'],
-          action:json['action'] != null ? NotificationAction.values.elementAt(json['action']) : null,
+          action: json['action'] != null
+              ? NotificationAction.values.elementAt(json['action'])
+              : null,
           payload: json['payload']);
 
   Map<String, dynamic> toJson() => {
