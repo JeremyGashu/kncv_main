@@ -2,6 +2,7 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/app_router.dart';
@@ -62,13 +63,19 @@ void main() async {
           lazy: false,
         ),
       ],
-      child: SMSListener(
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          onGenerateRoute: AppRouter.onGenerateRoute,
-          initialRoute: SplashPage.splashPageRouteName,
-        ),
-      ),
+      child: kIsWeb
+          ? MaterialApp(
+              debugShowCheckedModeBanner: false,
+              onGenerateRoute: AppRouter.onGenerateRoute,
+              initialRoute: SplashPage.splashPageRouteName,
+            )
+          : SMSListener(
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                onGenerateRoute: AppRouter.onGenerateRoute,
+                initialRoute: SplashPage.splashPageRouteName,
+              ),
+            ),
     ),
   );
 }

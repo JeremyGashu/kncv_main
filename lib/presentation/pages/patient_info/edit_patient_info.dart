@@ -248,8 +248,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
               builder: (context, state) {
                 return SafeArea(
                   child: Container(
-                    padding:
-                        EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
+                    padding: EdgeInsets.only(
+                        bottom: 15, left: 25, top: 10, right: 25),
                     child: SingleChildScrollView(
                       child: Form(
                         key: _form,
@@ -278,8 +278,9 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             ),
                             _buildInputField(
                                 label: 'Name',
-                                editable: !(widget.patient.status == 'Tested') &&
-                                    widget.canEdit,
+                                editable:
+                                    !(widget.patient.status == 'Tested') &&
+                                        widget.canEdit,
                                 hint: 'Enter Patient\'s Name',
                                 controller: nameController),
                             _buildInputField(
@@ -293,7 +294,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               editable: !(widget.patient.status == 'Tested') &&
                                   widget.canEdit,
                             ),
-      
+
                             ageYearsController.value.text == '0'
                                 ? _buildInputField(
                                     label: 'Age In Months',
@@ -309,7 +310,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                     required: true)
                                 : SizedBox(),
                             _labelBuilder('Sex'),
-      
+
                             GestureDetector(
                               onTap: () {
                                 // FocusScope.of(context).requestFocus(new FocusNode());
@@ -345,7 +346,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 )),
                               ),
                             ),
-      
+
                             BlocBuilder<LocationBloc, LocationStates>(
                                 builder: (ctx, s) {
                               if (s is LoadingLocationsState) {
@@ -387,7 +388,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         },
                                       )),
                                     ),
-      
+
                                     //zones
                                     _labelBuilder('Zone', required: true),
                                     Container(
@@ -405,9 +406,9 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         items: selectedRegion?.zones
                                             .map((Zone value) {
                                           return DropdownMenuItem<Zone>(
-                                            enabled:
-                                                !widget.patient.resultAvaiable &&
-                                                    widget.canEdit,
+                                            enabled: !widget
+                                                    .patient.resultAvaiable &&
+                                                widget.canEdit,
                                             value: value,
                                             child: Text(value.name),
                                           );
@@ -422,7 +423,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         },
                                       )),
                                     ),
-      
+
                                     //woredas
                                     _labelBuilder('Woredas', required: true),
                                     Container(
@@ -440,9 +441,9 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         items: selectedZone?.woredas
                                             .map((Woreda value) {
                                           return DropdownMenuItem<Woreda>(
-                                            enabled:
-                                                !widget.patient.resultAvaiable &&
-                                                    widget.canEdit,
+                                            enabled: !widget
+                                                    .patient.resultAvaiable &&
+                                                widget.canEdit,
                                             value: value,
                                             child: Text(value.name),
                                           );
@@ -461,9 +462,9 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               }
                               return Text('Not One');
                             }),
-      
+
                             // _tobLabelBuilder('Address'),
-      
+
                             // _buildInputField(
                             //     label: 'Address',
                             //     editable: !(widget.patient.status == 'Tested') &&
@@ -472,15 +473,16 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             //     controller: addressController),
                             _buildInputField(
                                 label: 'Phone',
-                                editable: !(widget.patient.status == 'Tested') &&
-                                    widget.canEdit,
+                                editable:
+                                    !(widget.patient.status == 'Tested') &&
+                                        widget.canEdit,
                                 hint: 'Enter Patient\'s Phone',
                                 controller: phoneController),
-      
+
                             _tobLabelBuilder('Observation'),
-      
+
                             _labelBuilder('Site of TB'),
-      
+
                             Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 5),
@@ -514,7 +516,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             !widget.patient.resultAvaiable &&
                                     widget.canEdit &&
                                     siteOfTB == 'Other'
@@ -525,7 +527,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         hintText: 'Enter site of TB...'),
                                   )
                                 : SizedBox(),
-      
+
                             _labelBuilder('Registration Group'),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -563,7 +565,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             !widget.patient.resultAvaiable &&
                                     widget.canEdit &&
                                     registrationGroup == 'Other'
@@ -571,10 +573,11 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                     controller: registrationGroupController,
                                     autofocus: false,
                                     decoration: InputDecoration(
-                                        hintText: 'Enter registration group...'),
+                                        hintText:
+                                            'Enter registration group...'),
                                   )
                                 : SizedBox(),
-      
+
                             _labelBuilder('Previous TB Drug use'),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -610,7 +613,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             _labelBuilder('Reason for Test'),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -648,7 +651,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             !widget.patient.resultAvaiable &&
                                     widget.canEdit &&
                                     reasonForTest ==
@@ -656,26 +659,31 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 ? TextField(
                                     controller: xMonthsDuringController,
                                     autofocus: false,
-                                    keyboardType: TextInputType.numberWithOptions(
-                                        decimal: false, signed: false),
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: false, signed: false),
                                     decoration: InputDecoration(
-                                        hintText: 'X Months during treatment...'),
+                                        hintText:
+                                            'X Months during treatment...'),
                                   )
                                 : SizedBox(),
-      
+
                             !widget.patient.resultAvaiable &&
                                     widget.canEdit &&
-                                    reasonForTest == 'At X months after treatment'
+                                    reasonForTest ==
+                                        'At X months after treatment'
                                 ? TextField(
                                     controller: xMonthsAfterController,
                                     autofocus: false,
-                                    keyboardType: TextInputType.numberWithOptions(
-                                        decimal: false, signed: false),
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: false, signed: false),
                                     decoration: InputDecoration(
-                                        hintText: 'X Months after treatment...'),
+                                        hintText:
+                                            'X Months after treatment...'),
                                   )
                                 : SizedBox(),
-      
+
                             _labelBuilder('Requested Tests'),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -712,7 +720,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             // buildRemarkField(
                             //   label: 'Remark',
                             //   hint: 'Pateint Remark',
@@ -720,18 +728,18 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             //   editable: !widget.patient.resultAvaiable &&
                             //       widget.canEdit,
                             // ),
-      
+
                             // _buildInputField(
                             //     label: 'Doctor in charge',
                             //     hint: 'Doctor in charge',
                             //     editable: !(widget.patient.status == 'Tested') &&
                             //         widget.canEdit,
                             //     controller: doctorInChargeController),
-      
+
                             SizedBox(
                               height: 15,
                             ),
-      
+
                             !widget.patient.resultAvaiable
                                 ? widget.canEdit
                                     ? GestureDetector(
@@ -747,17 +755,19 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                       builder: (ctx, ss) {
                                                     return SingleChildScrollView(
                                                       child: Container(
-                                                        padding: EdgeInsets.only(
+                                                        padding:
+                                                            EdgeInsets.only(
                                                           top: 30,
                                                           left: 20,
                                                           right: 20,
-                                                          bottom:
-                                                              MediaQuery.of(ctx)
-                                                                      .viewInsets
-                                                                      .bottom +
-                                                                  20,
+                                                          bottom: MediaQuery.of(
+                                                                      ctx)
+                                                                  .viewInsets
+                                                                  .bottom +
+                                                              20,
                                                         ),
-                                                        decoration: BoxDecoration(
+                                                        decoration:
+                                                            BoxDecoration(
                                                           color: Colors.white,
                                                           borderRadius:
                                                               BorderRadius.only(
@@ -779,14 +789,15 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                   .start,
                                                           children: [
                                                             Container(
-                                                              width:
-                                                                  double.infinity,
+                                                              width: double
+                                                                  .infinity,
                                                               child: Text(
                                                                 'Create Specimen',
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center,
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 32,
                                                                   fontWeight:
                                                                       FontWeight
@@ -813,11 +824,12 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                           10,
                                                                       vertical:
                                                                           5),
-                                                              width:
-                                                                  double.infinity,
+                                                              width: double
+                                                                  .infinity,
                                                               decoration:
                                                                   BoxDecoration(
-                                                                color: Colors.grey
+                                                                color: Colors
+                                                                    .grey
                                                                     .withOpacity(
                                                                         0.2),
                                                                 borderRadius:
@@ -849,19 +861,21 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                             .resultAvaiable &&
                                                                         widget
                                                                             .canEdit,
-                                                                    value: value,
+                                                                    value:
+                                                                        value,
                                                                     child: Text(
                                                                         value),
                                                                   );
                                                                 }).toList(),
-                                                                onChanged: (val) {
+                                                                onChanged:
+                                                                    (val) {
                                                                   FocusScope.of(
                                                                           context)
                                                                       .requestFocus(
                                                                           FocusNode());
                                                                   ss(() =>
                                                                       1 == 1);
-      
+
                                                                   setState(() {
                                                                     examinationType =
                                                                         null;
@@ -880,11 +894,12 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                           10,
                                                                       vertical:
                                                                           5),
-                                                              width:
-                                                                  double.infinity,
+                                                              width: double
+                                                                  .infinity,
                                                               decoration:
                                                                   BoxDecoration(
-                                                                color: Colors.grey
+                                                                color: Colors
+                                                                    .grey
                                                                     .withOpacity(
                                                                         0.2),
                                                                 borderRadius:
@@ -907,19 +922,21 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                         value) {
                                                                   return DropdownMenuItem<
                                                                       String>(
-                                                                    value: value,
+                                                                    value:
+                                                                        value,
                                                                     child: Text(
                                                                         value),
                                                                   );
                                                                 }).toList(),
-                                                                onChanged: (val) {
+                                                                onChanged:
+                                                                    (val) {
                                                                   FocusScope.of(
                                                                           context)
                                                                       .requestFocus(
                                                                           FocusNode());
                                                                   ss(() =>
                                                                       1 == 1);
-      
+
                                                                   setState(() {
                                                                     examinationType =
                                                                         val;
@@ -943,30 +960,28 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                               '' ||
                                                                           specimenType ==
                                                                               null) {
-                                                                        ScaffoldMessenger.of(
-                                                                                context)
-                                                                            .showSnackBar(
-                                                                                SnackBar(content: Text('Please enter complete information')));
+                                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                                            content:
+                                                                                Text('Please enter complete information')));
                                                                         Navigator.pop(
                                                                             context);
                                                                         return;
                                                                       }
-      
+
                                                                       if (specimenExists(
                                                                           specimens,
                                                                           specimenIdController
                                                                               .value
                                                                               .text,
                                                                           specimenType!)) {
-                                                                        ScaffoldMessenger.of(
-                                                                                context)
-                                                                            .showSnackBar(
-                                                                                SnackBar(content: Text('This specimen is already added please try editing fields.')));
+                                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                                            content:
+                                                                                Text('This specimen is already added please try editing fields.')));
                                                                         Navigator.pop(
                                                                             context);
                                                                         return;
                                                                       }
-      
+
                                                                       Specimen specimen = Specimen(
                                                                           id: specimenIdController
                                                                               .value
@@ -1048,19 +1063,19 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       )
                                     : Container()
                                 : Container(),
-      
+
                             SizedBox(
                               height: 15,
                             ),
-      
+
                             _labelBuilder('Specimens'),
-      
+
                             getSpecimensFromState(state),
-      
+
                             SizedBox(
                               height: 10,
                             ),
-      
+
                             !widget.patient.resultAvaiable
                                 ? Container(
                                     // padding: EdgeInsets.all(10),
@@ -1086,16 +1101,18 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                   null ||
                                                               selectedWoreda ==
                                                                   null) {
-                                                            ScaffoldMessenger.of(
-                                                                    context)
-                                                                .showSnackBar(SnackBar(
-                                                                    content: Text(
-                                                                        'Please enter zone region and woreda')));
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    SnackBar(
+                                                                        content:
+                                                                            Text('Please enter zone region and woreda')));
                                                             return;
                                                           }
-      
-                                                          String mr = MRController
-                                                              .value.text;
+
+                                                          String mr =
+                                                              MRController
+                                                                  .value.text;
                                                           String name =
                                                               nameController
                                                                   .value.text;
@@ -1106,35 +1123,38 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                           String ageMonths =
                                                               ageMonthsController
                                                                   .value.text;
-      
+
                                                           String? zone =
-                                                              selectedZone?.code;
+                                                              selectedZone
+                                                                  ?.code;
                                                           String? woreda =
                                                               selectedWoreda
                                                                   ?.code;
-      
+
                                                           String address =
                                                               addressController
                                                                   .value.text;
                                                           String phone =
                                                               phoneController
                                                                   .value.text;
-                                                          String doctorInCharge =
+                                                          String
+                                                              doctorInCharge =
                                                               doctorInChargeController
                                                                   .value.text;
                                                           String patientRemark =
                                                               patientRemarkController
                                                                   .value.text;
-      
+
                                                           String? regGroup =
                                                               registrationGroup ==
                                                                       'Other'
                                                                   ? registrationGroupController
-                                                                      .value.text
+                                                                      .value
+                                                                      .text
                                                                   : registrationGroup;
-                                                          regGroup =
-                                                              regGroup ?? 'Other';
-      
+                                                          regGroup = regGroup ??
+                                                              'Other';
+
                                                           String? reason = reasonForTest ==
                                                                   'At X months during treatment'
                                                               ? 'At ${xMonthsDuringController.value.text} months during treatment'
@@ -1147,13 +1167,14 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                               ? siteOfTBController
                                                                   .value.text
                                                               : siteOfTB;
-      
+
                                                           Patient patient =
                                                               Patient(
                                                             age: age,
-                                                            ageMonths: age == '0'
-                                                                ? '0'
-                                                                : ageMonths,
+                                                            ageMonths:
+                                                                age == '0'
+                                                                    ? '0'
+                                                                    : ageMonths,
                                                             siteOfTB: site,
                                                             doctorInCharge:
                                                                 doctorInCharge,
@@ -1171,18 +1192,21 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                             address: address,
                                                             name: name,
                                                             sex: sex,
-                                                            specimens: specimens,
+                                                            specimens:
+                                                                specimens,
                                                             mr: mr,
-                                                            remark: patientRemark,
+                                                            remark:
+                                                                patientRemark,
                                                             registrationGroup:
                                                                 regGroup,
-                                                            reasonForTest: reason,
+                                                            reasonForTest:
+                                                                reason,
                                                             requestedTest:
                                                                 requestedTests,
                                                             previousDrugUse:
                                                                 previousTBDrugUse,
                                                           );
-      
+
                                                           orderBloc.add(
                                                               EditPtientInfo(
                                                                   orderId: widget
@@ -1197,7 +1221,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                           BorderRadius.circular(
                                                               37),
                                                       child: Container(
-                                                        decoration: BoxDecoration(
+                                                        decoration:
+                                                            BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
@@ -1219,14 +1244,14 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                     FontWeight
                                                                         .bold,
                                                                 fontSize: 20,
-                                                                color:
-                                                                    Colors.white),
+                                                                color: Colors
+                                                                    .white),
                                                           ),
                                                         ),
                                                       ),
                                                     )
                                                   : Container(),
-      
+
                                               //view result
                                               // widget.patient.resultAvaiable
                                               //     ? InkWell(
@@ -1279,7 +1304,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                           ),
                                   )
                                 : Container(),
-      
+
                             // widget.patient.resultAvaiable
                             //     ? InkWell(
                             //         onTap: () {
@@ -1407,7 +1432,41 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
                         (state is LoadedSingleOrder &&
                                     state.order.status == 'Received') &&
-                                (!e.rejected)
+                                (!e.rejected) &&
+                                widget.canAddResult && (e.testResult == null)
+                            ? Align(
+                                alignment: AlignmentDirectional.centerEnd,
+                                child: IconButton(
+                                    color: Colors.green,
+                                    onPressed: () async {
+                                      debugPrint(e.id);
+                                      var success = await Navigator.pushNamed(
+                                          context,
+                                          AddTestResultPage
+                                              .addTestResultPageRouteName,
+                                          arguments: {
+                                            'orderId': widget.orderId,
+                                            'patient': widget.patient,
+                                            'index': widget.index,
+                                            'canEdit': widget.canAddResult,
+                                            'specimen': e,
+                                          });
+
+                                      if (success == true) {
+                                        orderBloc.add(LoadSingleOrder(
+                                          orderId: widget.orderId,
+                                        ));
+                                      }
+                                    },
+                                    icon: Icon(
+                                      Icons.add,
+                                    )),
+                              )
+                            : SizedBox(),
+
+                        (state is LoadedSingleOrder &&
+                                    state.order.status == 'Received') &&
+                                (!e.rejected) && (e.testResult != null)
                             ? Align(
                                 alignment: AlignmentDirectional.centerEnd,
                                 child: IconButton(
@@ -1432,11 +1491,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       ));
                                     }
                                   },
-                                  icon: e.testResult == null
-                                      ? Icon(
-                                          Icons.add,
-                                        )
-                                      : Icon(Icons.visibility),
+                                  icon: Icon(Icons.visibility),
                                 ),
                               )
                             : SizedBox(),

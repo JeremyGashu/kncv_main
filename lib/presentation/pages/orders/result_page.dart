@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -324,7 +326,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                           fontSize: 32,
                                           fontWeight: FontWeight.w500),
                                     ),
-                                    widget.canEdit
+                                    widget.canEdit && (widget.specimen.testResult != null)
                                         ? IconButton(
                                             onPressed: () {
                                               setState(() {
