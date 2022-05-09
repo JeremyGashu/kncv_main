@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
@@ -16,6 +17,7 @@ import 'package:kncv_flutter/presentation/pages/homepage/widgets/item_cart.dart'
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_tester.dart';
+import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 
 import '../../../service_locator.dart';
 
@@ -67,6 +69,19 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                   ),
                   elevation: 0,
                   actions: [
+                    kIsWeb
+                        ? Container(
+                            margin: EdgeInsets.only(top: 7),
+                            child: IconButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context,
+                                      ResetPasswordPage.resetPasswordPageName);
+                                },
+                                icon: Icon(
+                                  Icons.person,
+                                  color: Colors.black,
+                                )))
+                        : SizedBox(),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('notifications')
@@ -176,9 +191,10 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                     ],
                                   )
                                 : Align(
-                                  alignment: Alignment.center,
-                                  child: Container(
-                                      constraints: BoxConstraints(maxWidth: 700),
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      constraints:
+                                          BoxConstraints(maxWidth: 700),
                                       child: ListView.builder(
                                           itemCount: state.orders.length,
                                           itemBuilder: (context, index) {
@@ -206,7 +222,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                                     state.orders[index]));
                                           }),
                                     ),
-                                ),
+                                  ),
                           )
                         : Container(),
               ),

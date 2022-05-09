@@ -130,32 +130,32 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                        Container(
-                          constraints: BoxConstraints(
-                            maxWidth: 500
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Container(
-                              // width: double.infinity,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.pushNamed(context,
-                                      ResetPasswordPage.resetPasswordPageName);
-                                },
-                                child: Text(
-                                  'Forgot Password',
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: kColorsOrangeLight,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   constraints: BoxConstraints(
+                        //     maxWidth: 500
+                        //   ),
+                        //   child: Align(
+                        //     alignment: Alignment.centerRight,
+                        //     child: Container(
+                        //       // width: double.infinity,
+                        //       child: InkWell(
+                        //         onTap: () {
+                        //           Navigator.pushNamed(context,
+                        //               ResetPasswordPage.resetPasswordPageName);
+                        //         },
+                        //         child: Text(
+                        //           'Forgot Password',
+                        //           textAlign: TextAlign.end,
+                        //           style: TextStyle(
+                        //             fontWeight: FontWeight.w600,
+                        //             fontSize: 14,
+                        //             color: kColorsOrangeLight,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(
                           height: 20,
                         ),

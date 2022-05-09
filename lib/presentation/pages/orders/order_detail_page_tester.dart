@@ -126,10 +126,10 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                 ),
                 body: state is LoadedSingleOrder
                     ? Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        constraints: BoxConstraints(maxWidth: 700),
-                        child: Stack(
+                        alignment: Alignment.center,
+                        child: Container(
+                          constraints: BoxConstraints(maxWidth: 700),
+                          child: Stack(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -169,7 +169,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                   fontSize: 14),
                                             ),
                                           ),
-                    
+
                                           //courier
                                           ListTile(
                                             leading: CircleAvatar(
@@ -227,29 +227,33 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                     SliverToBoxAdapter(
                                       child: Divider(),
                                     ),
-                    
+
                                     SliverToBoxAdapter(
                                       child: Container(
-                                          margin: EdgeInsets.symmetric(vertical: 5),
+                                          margin:
+                                              EdgeInsets.symmetric(vertical: 5),
                                           width: double.infinity,
                                           child: Text(
                                             'Order ID = ${state.order.orderId}',
-                                            style: TextStyle(color: Colors.grey),
+                                            style:
+                                                TextStyle(color: Colors.grey),
                                             textAlign: TextAlign.left,
                                           )),
                                     ),
-                    
+
                                     SliverToBoxAdapter(
                                       child: Container(
-                                          margin: EdgeInsets.symmetric(vertical: 5),
+                                          margin:
+                                              EdgeInsets.symmetric(vertical: 5),
                                           width: double.infinity,
                                           child: Text(
                                             'Current Status = ${state.order.status}',
-                                            style: TextStyle(color: Colors.grey),
+                                            style:
+                                                TextStyle(color: Colors.grey),
                                             textAlign: TextAlign.left,
                                           )),
                                     ),
-                    
+
                                     //change the way to be
                                     SliverToBoxAdapter(
                                       child: state.order.status == 'Delivered'
@@ -263,8 +267,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                   shrinkWrap: true,
                                                   physics:
                                                       NeverScrollableScrollPhysics(),
-                                                  itemCount:
-                                                      state.order.patients!.length,
+                                                  itemCount: state
+                                                      .order.patients!.length,
                                                   itemBuilder: (ctx, index) {
                                                     return GestureDetector(
                                                       onTap: () {
@@ -273,19 +277,22 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                             EditPatientInfoPage
                                                                 .editPatientInfoRouteName,
                                                             arguments: {
-                                                              'patient': state.order
-                                                                  .patients![index],
-                                                              'orderId':
-                                                                  widget.orderId,
+                                                              'patient': state
+                                                                      .order
+                                                                      .patients![
+                                                                  index],
+                                                              'orderId': widget
+                                                                  .orderId,
                                                               'index': index,
                                                               'canEdit': false,
-                                                              'canAddResult': true,
+                                                              'canAddResult':
+                                                                  true,
                                                             });
                                                       },
                                                       child: buildPatients(
                                                         context,
-                                                        state
-                                                            .order.patients![index],
+                                                        state.order
+                                                            .patients![index],
                                                         widget.orderId,
                                                         index,
                                                         false,
@@ -293,7 +300,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                     );
                                                   })
                                               : Center(
-                                                  child: Text('No patient added!'),
+                                                  child:
+                                                      Text('No patient added!'),
                                                 ),
                                     ),
                                   ],
@@ -332,11 +340,12 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                                         '',
                                                                   ),
                                                                 );
-                    
+
                                                                 Navigator.pop(
                                                                     context);
                                                               },
-                                                              child: Text('Yes')),
+                                                              child:
+                                                                  Text('Yes')),
                                                           TextButton(
                                                               onPressed: () {
                                                                 Navigator.pop(
@@ -361,7 +370,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                   child: Text(
                                                     'Approve Sample Arrival',
                                                     style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         fontSize: 20,
                                                         color: Colors.white),
                                                   ),
@@ -375,8 +385,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   : Container(),
                             ],
                           ),
-                      ),
-                    )
+                        ),
+                      )
                     : Center(
                         child: CircularProgressIndicator(),
                       ),
@@ -1098,6 +1108,15 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
   Container buildPatients(
       BuildContext context, Patient patient, String orderId, int index,
       [bool isFromCourier = false]) {
+
+        String message = '';
+        int counter = 0;
+        patient.specimens?.forEach((specimen) {
+          if(specimen.testResult != null){
+            counter++;
+          }
+        });
+        message = 'Tested: $counter/${patient.specimens?.length ?? ''}';
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -1137,22 +1156,38 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                 SizedBox(
                   height: 7,
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                      20,
+                Row(
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          20,
+                        ),
+                        color: Colors.green,
+                      ),
+                      child: Text(
+                        patient.status ?? 'Draft',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    color: Colors.green,
-                  ),
-                  child: Text(
-                    patient.status ?? 'Draft',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                    Container(
+                      margin: EdgeInsets.only(left: 10),
+                      child: Text(
+                        message,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
