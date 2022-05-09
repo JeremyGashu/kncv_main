@@ -359,7 +359,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                 // margin: EdgeInsets.all(20),
                                                 child: Center(
                                                   child: Text(
-                                                    'Approve Arrival',
+                                                    'Approve Sample Arrival',
                                                     style: TextStyle(
                                                         fontWeight: FontWeight.bold,
                                                         fontSize: 20,

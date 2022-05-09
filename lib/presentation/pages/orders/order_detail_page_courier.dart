@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/core/hear_beat.dart';
 import 'package:kncv_flutter/core/message_codes.dart';
@@ -108,10 +109,10 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                 ),
                 body: state is LoadedSingleOrder
                     ? Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        constraints: BoxConstraints(maxWidth: 700),
-                        child: Stack(
+                        alignment: Alignment.center,
+                        child: Container(
+                          constraints: BoxConstraints(maxWidth: 700),
+                          child: Stack(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -151,7 +152,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                   fontSize: 14),
                                             ),
                                           ),
-                    
+
                                           //courier
                                           ListTile(
                                             leading: CircleAvatar(
@@ -209,29 +210,33 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                     SliverToBoxAdapter(
                                       child: Divider(),
                                     ),
-                    
+
                                     SliverToBoxAdapter(
                                       child: Container(
-                                          margin: EdgeInsets.symmetric(vertical: 5),
+                                          margin:
+                                              EdgeInsets.symmetric(vertical: 5),
                                           width: double.infinity,
                                           child: Text(
                                             'Order ID = ${state.order.orderId}',
-                                            style: TextStyle(color: Colors.grey),
+                                            style:
+                                                TextStyle(color: Colors.grey),
                                             textAlign: TextAlign.left,
                                           )),
                                     ),
-                    
+
                                     SliverToBoxAdapter(
                                       child: Container(
-                                          margin: EdgeInsets.symmetric(vertical: 5),
+                                          margin:
+                                              EdgeInsets.symmetric(vertical: 5),
                                           width: double.infinity,
                                           child: Text(
                                             'Current Status = ${state.order.status}',
-                                            style: TextStyle(color: Colors.grey),
+                                            style:
+                                                TextStyle(color: Colors.grey),
                                             textAlign: TextAlign.left,
                                           )),
                                     ),
-                    
+
                                     SliverToBoxAdapter(
                                       child: state.order.patients!.length > 0
                                           ? ListView.builder(
@@ -248,8 +253,10 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                         builder: (ctx) {
                                                           return Container(
                                                             padding:
-                                                                EdgeInsets.all(10),
-                                                            width: double.infinity,
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            width:
+                                                                double.infinity,
                                                             height: 300,
                                                             child: Dialog(
                                                               child: Column(
@@ -269,21 +276,15 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                                           .specimens!
                                                                           .map((e) =>
                                                                               Container(
-                                                                                width:
-                                                                                    120,
-                                                                                height:
-                                                                                    80,
-                                                                                margin:
-                                                                                    EdgeInsets.all(10),
-                                                                                decoration:
-                                                                                    BoxDecoration(
+                                                                                width: 120,
+                                                                                height: 80,
+                                                                                margin: EdgeInsets.all(10),
+                                                                                decoration: BoxDecoration(
                                                                                   color: Colors.grey.withOpacity(0.2),
                                                                                   borderRadius: BorderRadius.circular(15),
                                                                                 ),
-                                                                                padding:
-                                                                                    EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                                                                                child:
-                                                                                    Column(
+                                                                                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                                                                                child: Column(
                                                                                   // crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                   children: [
@@ -306,9 +307,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                                   TextButton(
                                                                       onPressed:
                                                                           () {
-                                                                        Navigator
-                                                                            .pop(
-                                                                                ctx);
+                                                                        Navigator.pop(
+                                                                            ctx);
                                                                       },
                                                                       child: Text(
                                                                           'OK')),
@@ -320,7 +320,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                   },
                                                   child: buildPatients(
                                                     context,
-                                                    state.order.patients![index],
+                                                    state
+                                                        .order.patients![index],
                                                     widget.orderId,
                                                     index,
                                                     false,
@@ -367,26 +368,29 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                               right: 20,
                                                             ),
                                                             // padding: EdgeInsets.only(
-                    
+
                                                             //     bottom: 20),
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               borderRadius:
-                                                                  BorderRadius.only(
-                                                                topLeft:
-                                                                    Radius.circular(
+                                                                  BorderRadius
+                                                                      .only(
+                                                                topLeft: Radius
+                                                                    .circular(
                                                                   30,
                                                                 ),
-                                                                topRight:
-                                                                    Radius.circular(
+                                                                topRight: Radius
+                                                                    .circular(
                                                                   30,
                                                                 ),
                                                               ),
                                                             ),
                                                             child: Column(
                                                               mainAxisSize:
-                                                                  MainAxisSize.min,
+                                                                  MainAxisSize
+                                                                      .min,
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
                                                                       .start,
@@ -401,7 +405,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                                             .center,
                                                                     style:
                                                                         TextStyle(
-                                                                      fontSize: 32,
+                                                                      fontSize:
+                                                                          32,
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold,
@@ -417,8 +422,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                                           .showDatePicker(
                                                                         context,
                                                                         minTime:
-                                                                            DateTime
-                                                                                .now(),
+                                                                            DateTime.now(),
                                                                         onConfirm:
                                                                             (t) {
                                                                           int day =
@@ -440,33 +444,30 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                                         Container(
                                                                       width: double
                                                                           .infinity,
-                                                                      height: 54,
+                                                                      height:
+                                                                          54,
                                                                       decoration:
                                                                           BoxDecoration(
                                                                         color: Colors
                                                                             .grey
-                                                                            .withOpacity(
-                                                                                0.3),
+                                                                            .withOpacity(0.3),
                                                                         borderRadius:
-                                                                            BorderRadius
-                                                                                .circular(5),
+                                                                            BorderRadius.circular(5),
                                                                       ),
-                                                                      child: Center(
+                                                                      child:
+                                                                          Center(
                                                                         child:
                                                                             Container(
-                                                                          width: double
-                                                                              .infinity,
-                                                                          padding: EdgeInsets.only(
-                                                                              left:
-                                                                                  20),
+                                                                          width:
+                                                                              double.infinity,
+                                                                          padding:
+                                                                              EdgeInsets.only(left: 20),
                                                                           child:
                                                                               Text(
                                                                             date ??
                                                                                 'Please Select Date',
-                                                                            style: TextStyle(
-                                                                                color:
-                                                                                    Colors.black87.withOpacity(0.8),
-                                                                                fontSize: 15),
+                                                                            style:
+                                                                                TextStyle(color: Colors.black87.withOpacity(0.8), fontSize: 15),
                                                                           ),
                                                                         ),
                                                                       ),
@@ -480,8 +481,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                                           .showTimePicker(
                                                                         context,
                                                                         currentTime:
-                                                                            DateTime
-                                                                                .now(),
+                                                                            DateTime.now(),
                                                                         onConfirm:
                                                                             (t) {
                                                                           int hour =
@@ -501,33 +501,30 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                                         Container(
                                                                       width: double
                                                                           .infinity,
-                                                                      height: 54,
+                                                                      height:
+                                                                          54,
                                                                       decoration:
                                                                           BoxDecoration(
                                                                         color: Colors
                                                                             .grey
-                                                                            .withOpacity(
-                                                                                0.3),
+                                                                            .withOpacity(0.3),
                                                                         borderRadius:
-                                                                            BorderRadius
-                                                                                .circular(5),
+                                                                            BorderRadius.circular(5),
                                                                       ),
-                                                                      child: Center(
+                                                                      child:
+                                                                          Center(
                                                                         child:
                                                                             Container(
-                                                                          width: double
-                                                                              .infinity,
-                                                                          padding: EdgeInsets.only(
-                                                                              left:
-                                                                                  20),
+                                                                          width:
+                                                                              double.infinity,
+                                                                          padding:
+                                                                              EdgeInsets.only(left: 20),
                                                                           child:
                                                                               Text(
                                                                             time ??
                                                                                 'Please Select Time',
-                                                                            style: TextStyle(
-                                                                                color:
-                                                                                    Colors.black87.withOpacity(0.8),
-                                                                                fontSize: 15),
+                                                                            style:
+                                                                                TextStyle(color: Colors.black87.withOpacity(0.8), fontSize: 15),
                                                                           ),
                                                                         ),
                                                                       ),
@@ -546,29 +543,30 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                                           true);
                                                                     }
                                                                   },
-                                                                  child: Container(
+                                                                  child:
+                                                                      Container(
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       borderRadius:
-                                                                          BorderRadius
-                                                                              .circular(
-                                                                                  10),
+                                                                          BorderRadius.circular(
+                                                                              10),
                                                                       color:
                                                                           kColorsOrangeDark,
                                                                     ),
                                                                     height: 62,
                                                                     // margin: EdgeInsets.all(20),
-                                                                    child: Center(
-                                                                      child: Text(
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          Text(
                                                                         'Accept Order',
                                                                         style: TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight
-                                                                                    .bold,
+                                                                            fontWeight: FontWeight
+                                                                                .bold,
                                                                             fontSize:
                                                                                 20,
-                                                                            color: Colors
-                                                                                .white),
+                                                                            color:
+                                                                                Colors.white),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -579,7 +577,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                         );
                                                       });
                                                     });
-                    
+
                                             if (success == true) {
                                               ordersBloc.add(AcceptOrderCourier(
                                                   state.order,
@@ -587,7 +585,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                   date ?? ''));
                                             }
                                           },
-                                          borderRadius: BorderRadius.circular(37),
+                                          borderRadius:
+                                              BorderRadius.circular(37),
                                           child: Container(
                                             decoration: BoxDecoration(
                                               borderRadius:
@@ -624,7 +623,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             child: InkWell(
                                               onTap: () async {
                                                 print('Notifying Arrival');
-                    
+
                                                 bool success = await OrderBloc
                                                     .approveArrivalFromCourier(
                                                         state.order);
@@ -635,10 +634,12 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                               'Notified Arrivel to Test Center!')));
                                                   await Future.delayed(
                                                       Duration(seconds: 1));
-                    
-                                                  ordersBloc.add(LoadSingleOrder(
-                                                      orderId: widget.orderId));
-                    
+
+                                                  ordersBloc.add(
+                                                      LoadSingleOrder(
+                                                          orderId:
+                                                              widget.orderId));
+
                                                   setState(() {
                                                     notifiyingArrival = false;
                                                   });
@@ -647,7 +648,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       .showSnackBar(SnackBar(
                                                           content: Text(
                                                               'Error Notifiying Test Center!')));
-                    
+
                                                   setState(() {
                                                     notifiyingArrival = false;
                                                   });
@@ -667,7 +668,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                   child: Text(
                                                     'Notify Arrival',
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 20,
                                                       color: Colors.white,
                                                     ),
@@ -681,91 +683,134 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                     )
                                   : Container(),
                               state.order.status == 'Confirmed'
-                                  ? Positioned(
-                                      bottom: 0,
-                                      left: 10,
-                                      right: 10,
-                                      child: Container(
-                                        padding: EdgeInsets.all(10),
-                                        color: kPageBackground,
-                                        child: InkWell(
-                                          onTap: () async {
-                                            setState(() {
-                                              notifyingArrival = true;
-                                            });
-                                            if (!(await isConnectedToTheInternet())) {
-                                              await sendSMS(
-                                                context: context,
-                                                to: '0931057901',
-                                                payload: {
-                                                  'oid': state.order.orderId,
-                                                },
-                                                action:
-                                                    COURIER_NOTIFY_ARRIVAL_SENDER,
-                                              );
-                                              setState(() {
-                                                notifiyingArrival = false;
-                                              });
-                    
-                                              return;
-                                            }
-                                            bool success = await addNotification(
-                                              orderId: widget.orderId,
-                                              courierContent:
-                                                  'You have notified arrival at ${state.order.sender_name} to transport specimen to ${state.order.tester_name}.',
-                                              senderContent:
-                                                  'Courier ${state.order.courier_name} is at your place to collect specimen to ${state.order.tester_name}.',
-                                              testerContent:
-                                                  'Courier is at ${state.order.sender_name} to bring specimen to you.',
-                                              content:
-                                                  'Courier Reached at health facility to collect order!',
-                                              courierAction: NotificationAction
-                                                  .NavigateToOrderDetalCourier,
-                                              testerAction: NotificationAction
-                                                  .NavigateToOrderDetalTester,
-                                              senderAction: NotificationAction
-                                                  .NavigateToOrderDetalSender,
-                                              payload: {'orderId': widget.orderId},
-                                            );
-                    
-                                            setState(() {
-                                              notifiyingArrival = false;
-                                            });
-                    
-                                            if (success) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                      content: Text(
-                                                          'Sent notification to health facility!')));
-                                            }
-                                          },
-                                          borderRadius: BorderRadius.circular(37),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: kColorsOrangeDark,
-                                            ),
-                                            height: 62,
-                                            // margin: EdgeInsets.all(20),
-                                            child: Center(
-                                              child: Text(
-                                                'Notify Arrival At Health Facility',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
+                                  ? ValueListenableBuilder(
+                                      valueListenable:
+                                          Hive.box('notified_orders')
+                                              .listenable(),
+                                      builder:
+                                          (BuildContext context, Box box, _) {
+                                        debugPrint(
+                                            '${box.values.contains(state.order.orderId)}');
+                                        return !box.values
+                                                .contains(state.order.orderId)
+                                            ? Positioned(
+                                                bottom: 0,
+                                                left: 10,
+                                                right: 10,
+                                                child: Container(
+                                                  padding: EdgeInsets.all(10),
+                                                  color: kPageBackground,
+                                                  child: InkWell(
+                                                    onTap: () async {
+                                                      setState(() {
+                                                        notifyingArrival = true;
+                                                      });
+
+                                                      Box notified_box =
+                                                          Hive.box(
+                                                              'notified_orders');
+                                                      debugPrint(
+                                                          'Before ${notified_box.values.length}');
+
+                                                      await notified_box.add(
+                                                          state.order.orderId);
+
+                                                      debugPrint(
+                                                          'After ${notified_box.values.length}');
+
+                                                      if (!(await isConnectedToTheInternet())) {
+                                                        await sendSMS(
+                                                          context: context,
+                                                          to: '0931057901',
+                                                          payload: {
+                                                            'oid': state
+                                                                .order.orderId,
+                                                          },
+                                                          action:
+                                                              COURIER_NOTIFY_ARRIVAL_SENDER,
+                                                        );
+                                                        setState(() {
+                                                          notifiyingArrival =
+                                                              false;
+                                                        });
+
+                                                        return;
+                                                      }
+                                                      bool success =
+                                                          await addNotification(
+                                                        orderId: widget.orderId,
+                                                        courierContent:
+                                                            'You have notified arrival at ${state.order.sender_name} to transport specimen to ${state.order.tester_name}.',
+                                                        senderContent:
+                                                            'Courier ${state.order.courier_name} is at your place to collect specimen to ${state.order.tester_name}.',
+                                                        testerContent:
+                                                            'Courier is at ${state.order.sender_name} to bring specimen to you.',
+                                                        content:
+                                                            'Courier Reached at health facility to collect order!',
+                                                        courierAction:
+                                                            NotificationAction
+                                                                .NavigateToOrderDetalCourier,
+                                                        testerAction:
+                                                            NotificationAction
+                                                                .NavigateToOrderDetalTester,
+                                                        senderAction:
+                                                            NotificationAction
+                                                                .NavigateToOrderDetalSender,
+                                                        payload: {
+                                                          'orderId':
+                                                              widget.orderId
+                                                        },
+                                                      );
+
+                                                      setState(() {
+                                                        notifiyingArrival =
+                                                            false;
+                                                      });
+
+                                                      if (success) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(SnackBar(
+                                                                content: Text(
+                                                                    'Sent notification to health facility!')));
+                                                      }
+                                                    },
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            37),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        color:
+                                                            kColorsOrangeDark,
+                                                      ),
+                                                      height: 62,
+                                                      // margin: EdgeInsets.all(20),
+                                                      child: Center(
+                                                        child: Text(
+                                                          'Notify Arrival At Health Facility',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            : SizedBox();
+                                      })
                                   : Container(),
                             ],
                           ),
-                      ),
-                    )
+                        ),
+                      )
                     : Center(
                         child: CircularProgressIndicator(),
                       ),

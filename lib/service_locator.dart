@@ -64,6 +64,9 @@ Future<void> serviceLocatorInit() async {
   await Hive.openBox<Region>('regions');
   debugPrint('Opened region box!');
 
+  await Hive.openBox('notified_orders');
+  debugPrint('Opened ordered id boxes!');
+
   SharedPreferences preferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => preferences);
 
