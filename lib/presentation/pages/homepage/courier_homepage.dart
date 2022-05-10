@@ -12,6 +12,8 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart';
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_event.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/widgets/item_cart.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
@@ -51,6 +53,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
             return RefreshIndicator(
               onRefresh: () async {
                 orderBloc.add(LoadOrdersForCourier());
+                sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
               },
               child: Scaffold(
                 backgroundColor: kPageBackground,
@@ -178,9 +181,10 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                     ],
                                   )
                                 : Align(
-                                  alignment: Alignment.center,
-                                  child: Container(
-                                      constraints: BoxConstraints(maxWidth: 700),
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      constraints:
+                                          BoxConstraints(maxWidth: 700),
                                       child: Center(
                                         child: ListView.builder(
                                             itemCount: state.orders.length,
@@ -189,8 +193,8 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                                   onTap: () async {
                                                     print(
                                                         '${state.orders[index].orderId}');
-                                                    var load =
-                                                        await Navigator.pushNamed(
+                                                    var load = await Navigator
+                                                        .pushNamed(
                                                             context,
                                                             OrderDetailCourier
                                                                 .orderDetailCourierPageRouteName,
@@ -210,7 +214,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                             }),
                                       ),
                                     ),
-                                ),
+                                  ),
                           )
                         : Container(),
               ),

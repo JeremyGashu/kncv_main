@@ -13,6 +13,8 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart';
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_event.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/widgets/item_cart.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
@@ -53,6 +55,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
             return RefreshIndicator(
               onRefresh: () async {
                 orderBloc.add(LoadOrdersForTester());
+                sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
               },
               child: Scaffold(
                 backgroundColor: kPageBackground,

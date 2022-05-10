@@ -12,6 +12,8 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart' as smsState;
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_event.dart';
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/service_locator.dart';
 
@@ -83,6 +85,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
             return RefreshIndicator(
               onRefresh: () async {
                 ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
+                sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
               },
               child: Scaffold(
                 backgroundColor: kPageBackground,

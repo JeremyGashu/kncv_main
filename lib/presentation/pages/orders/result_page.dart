@@ -111,7 +111,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                 addNotification(
                   orderId: widget.orderId,
                   content: 'Added Test Result!',
-                  senderContent:
+                  senderContent:  
                       'Patient result has been added to patient ${state.patient.name}',
                   testerContent:
                       'You have added test result to patient ${state.patient.name}.',

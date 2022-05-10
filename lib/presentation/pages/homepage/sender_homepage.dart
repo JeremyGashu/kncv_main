@@ -18,6 +18,7 @@ import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_state.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_event.dart';
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
@@ -81,6 +82,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
             return RefreshIndicator(
               onRefresh: () async {
                 orderBloc.add(LoadOrders());
+                sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
               },
               child: Scaffold(
                 backgroundColor: kPageBackground,
