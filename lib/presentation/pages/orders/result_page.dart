@@ -81,7 +81,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
       appBar: widget.patient.resultAvaiable
           ? AppBar(
               backgroundColor: kColorsOrangeLight,
-              title: Text('Result'),
+              title: Text('Test Result'),
               actions: [
                 IconButton(
                   onPressed: () {
@@ -94,7 +94,10 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                 )
               ],
             )
-          : null,
+          : AppBar(
+              backgroundColor: kColorsOrangeLight,
+              title: Text('Test Result'),
+            ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -153,8 +156,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                   alignment: Alignment.center,
                   child: Container(
                     constraints: BoxConstraints(maxWidth: 700),
-                    padding:
-                        EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
+                    padding: EdgeInsets.only(
+                        bottom: 15, left: 25, top: 10, right: 25),
                     child: ListView(
                       shrinkWrap: true,
                       children: !editingResult &&
@@ -194,7 +197,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                 ),
                               ),
                               _labelBuilder('Test Date'),
-                
+
                               Container(
                                 width: double.infinity,
                                 height: 54,
@@ -211,7 +214,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       widget.specimen.testResult?.resultDate ??
                                           'Please Select Date',
                                       style: TextStyle(
-                                          color: Colors.black87.withOpacity(0.8),
+                                          color:
+                                              Colors.black87.withOpacity(0.8),
                                           fontSize: 15),
                                     ),
                                   ),
@@ -233,15 +237,16 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       widget.specimen.testResult?.resultTime ??
                                           'Please Select Time',
                                       style: TextStyle(
-                                          color: Colors.black87.withOpacity(0.8),
+                                          color:
+                                              Colors.black87.withOpacity(0.8),
                                           fontSize: 15),
                                     ),
                                   ),
                                 ),
                               ),
-                
+
                               _labelBuilder('MTB Result'),
-                
+
                               Container(
                                 width: double.infinity,
                                 height: 54,
@@ -254,17 +259,19 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                     width: double.infinity,
                                     padding: EdgeInsets.only(left: 20),
                                     child: Text(
-                                      widget.specimen.testResult?.mtbResult ?? '',
+                                      widget.specimen.testResult?.mtbResult ??
+                                          '',
                                       style: TextStyle(
-                                          color: Colors.black87.withOpacity(0.8),
+                                          color:
+                                              Colors.black87.withOpacity(0.8),
                                           fontSize: 15),
                                     ),
                                   ),
                                 ),
                               ),
-                
+
                               _labelBuilder('Quantity'),
-                
+
                               Container(
                                 width: double.infinity,
                                 height: 54,
@@ -277,17 +284,19 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                     width: double.infinity,
                                     padding: EdgeInsets.only(left: 20),
                                     child: Text(
-                                      widget.specimen.testResult?.quantity ?? '',
+                                      widget.specimen.testResult?.quantity ??
+                                          '',
                                       style: TextStyle(
-                                          color: Colors.black87.withOpacity(0.8),
+                                          color:
+                                              Colors.black87.withOpacity(0.8),
                                           fontSize: 15),
                                     ),
                                   ),
                                 ),
                               ),
-                
+
                               _labelBuilder('Result RR'),
-                
+
                               Container(
                                 width: double.infinity,
                                 height: 54,
@@ -300,9 +309,11 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                     width: double.infinity,
                                     padding: EdgeInsets.only(left: 20),
                                     child: Text(
-                                      widget.specimen.testResult?.resultRr ?? '',
+                                      widget.specimen.testResult?.resultRr ??
+                                          '',
                                       style: TextStyle(
-                                          color: Colors.black87.withOpacity(0.8),
+                                          color:
+                                              Colors.black87.withOpacity(0.8),
                                           fontSize: 15),
                                     ),
                                   ),
@@ -326,7 +337,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                           fontSize: 32,
                                           fontWeight: FontWeight.w500),
                                     ),
-                                    widget.canEdit && (widget.specimen.testResult != null)
+                                    widget.canEdit &&
+                                            (widget.specimen.testResult != null)
                                         ? IconButton(
                                             onPressed: () {
                                               setState(() {
@@ -342,11 +354,11 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   ],
                                 ),
                               ),
-                
+
                               _tobLabelBuilder('Test Result'),
-                
+
                               _labelBuilder('Select Date'),
-                
+
                               GestureDetector(
                                   onTap: !widget.canEdit
                                       ? () {}
@@ -381,16 +393,16 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                         child: Text(
                                           date ?? 'Please Select Date',
                                           style: TextStyle(
-                                              color:
-                                                  Colors.black87.withOpacity(0.8),
+                                              color: Colors.black87
+                                                  .withOpacity(0.8),
                                               fontSize: 15),
                                         ),
                                       ),
                                     ),
                                   )),
-                
+
                               _labelBuilder('Select Time'),
-                
+
                               GestureDetector(
                                 onTap: !widget.canEdit
                                     ? () {}
@@ -429,14 +441,14 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   ),
                                 ),
                               ),
-                
+
                               _buildInputField(
                                 label: 'Lab Resitration Number',
                                 hint: 'Lab Registration Number',
                                 controller: resitrationNumberController,
                                 disabled: !widget.canEdit,
                               ),
-                
+
                               _labelBuilder('MTB Result'),
                               Container(
                                 padding: EdgeInsets.symmetric(
@@ -474,7 +486,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   },
                                 )),
                               ),
-                
+
                               mtbResult == 'MTB Detected'
                                   ? _labelBuilder('Quantity')
                                   : SizedBox(),
@@ -514,7 +526,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       )),
                                     )
                                   : SizedBox(),
-                
+
                               mtbResult == 'MTB Detected'
                                   ? _labelBuilder('Result RR')
                                   : SizedBox(),
@@ -552,7 +564,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       )),
                                     )
                                   : SizedBox(),
-                
+
                               // _buildInputField(
                               //   label: 'MTB Result',
                               //   hint: 'MTB Result',
@@ -565,25 +577,26 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                               //   controller: quantityController,
                               //   disabled: widget.patient.resultAvaiable,
                               // ),
-                
+
                               // _buildInputField(
                               //   label: 'Result RR',
                               //   hint: 'Result RR',
                               //   controller: resultRRController,
                               //   disabled: widget.patient.resultAvaiable,
                               // ),
-                
+
                               SizedBox(
                                 height: 35,
                               ),
-                
+
                               !widget.patient.resultAvaiable
                                   ? Container(
                                       // padding: EdgeInsets.all(10),
                                       color: kPageBackground,
                                       child: state is AddingTestResult
                                           ? Center(
-                                              child: CircularProgressIndicator(),
+                                              child:
+                                                  CircularProgressIndicator(),
                                             )
                                           : InkWell(
                                               onTap: () async {
@@ -596,7 +609,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                 String registrationNumber =
                                                     resitrationNumberController
                                                         .value.text;
-                
+
                                                 print(
                                                     '$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
                                                 TestResult result = TestResult(
@@ -612,27 +625,30 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                     result;
                                                 widget.patient.resultAvaiable =
                                                     true;
-                                                widget.patient.status = 'Tested';
-                
+                                                widget.patient.status =
+                                                    'Tested';
+
                                                 int? specimentIndex = widget
                                                     .patient.specimens
                                                     ?.indexWhere((element) =>
                                                         element.id ==
                                                         widget.specimen.id);
-                
+
                                                 if (specimentIndex != null) {
                                                   widget
                                                       .patient
-                                                      .specimens?[specimentIndex]
+                                                      .specimens?[
+                                                          specimentIndex]
                                                       .testResult = result;
-                
+
                                                   widget
                                                           .patient
-                                                          .specimens?[specimentIndex]
+                                                          .specimens?[
+                                                              specimentIndex]
                                                           .testResultAddedAt =
                                                       DateTime.now();
                                                 }
-                
+
                                                 orderBloc.add(
                                                   AddTestResult(
                                                       orderId: widget.orderId,
@@ -664,21 +680,22 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                             ),
                                     )
                                   : Container(),
-                
+
                               widget.patient.resultAvaiable && widget.canEdit
                                   ? Container(
                                       // padding: EdgeInsets.all(10),
                                       color: kPageBackground,
                                       child: state is EditingTestResult
                                           ? Center(
-                                              child: CircularProgressIndicator(),
+                                              child:
+                                                  CircularProgressIndicator(),
                                             )
                                           : InkWell(
                                               onTap: () async {
                                                 String registrationNumber =
                                                     resitrationNumberController
                                                         .value.text;
-                
+
                                                 print(
                                                     '$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
                                                 TestResult result = TestResult(
@@ -694,21 +711,23 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                     result;
                                                 widget.patient.resultAvaiable =
                                                     true;
-                                                widget.patient.status = 'Tested';
-                
+                                                widget.patient.status =
+                                                    'Tested';
+
                                                 int? specimentIndex = widget
                                                     .patient.specimens
                                                     ?.indexWhere((element) =>
                                                         element.id ==
                                                         widget.specimen.id);
-                
+
                                                 if (specimentIndex != null) {
                                                   widget
                                                       .patient
-                                                      .specimens?[specimentIndex]
+                                                      .specimens?[
+                                                          specimentIndex]
                                                       .testResult = result;
                                                 }
-                
+
                                                 orderBloc.add(
                                                   EditTestResult(
                                                       orderId: widget.orderId,
@@ -728,7 +747,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                 // margin: EdgeInsets.all(20),
                                                 child: Center(
                                                   child: Text(
-                                                    widget.specimen.testResult !=
+                                                    widget.specimen
+                                                                .testResult !=
                                                             null
                                                         ? 'Edit Test Result'
                                                         : 'Add Test Result',

@@ -1499,7 +1499,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                         widget.canAddResult &&
                                 (state is LoadedSingleOrder &&
                                     state.order.status == 'Received') &&
-                                !widget.patient.resultAvaiable
+                                (e.testResult == null)
                             ? Align(
                                 alignment: AlignmentDirectional.centerEnd,
                                 child: IconButton(
