@@ -1,5 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:kncv_flutter/core/hear_beat.dart';
+import 'package:kncv_flutter/core/message_codes.dart';
+import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -12,19 +18,47 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
   OrderBloc(this.orderRepository) : super(InitialState());
 
   static Future<bool> approveArrivalFromCourier(Order order) async {
-    var orderRef = await FirebaseFirestore.instance
-        .collection('orders')
-        .doc(order.orderId);
-    await orderRef.update({'notified_arrival': true});
-    return await addNotification(
-      orderId: order.orderId!,
-      courierContent:
-          'You notified the order arrival to ${order.tester_name} from ${order.sender_name}.',
-      testerContent:
-          'Courier arrived from ${order.sender_name} at your test center to deliver specimens.',
-      content: 'One order got accepted by courier!',
-      sender: false,
-    );
+    bool internetAvailable = await isConnectedToTheInternet();
+    Box<Order> ordersBox = Hive.box<Order>('orders');
+
+    if (internetAvailable) {
+      var orderRef = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(order.orderId);
+      await orderRef.update({'notified_arrival': true});
+      return await addNotification(
+        orderId: order.orderId!,
+        courierContent:
+            'You notified the order arrival to ${order.tester_name} from ${order.sender_name}.',
+        testerContent:
+            'Courier arrived from ${order.sender_name} at your test center to deliver specimens.',
+        content: 'One order got accepted by courier!',
+        sender: false,
+        courierAction: NotificationAction.NavigateToOrderDetalCourier,
+        testerAction: NotificationAction.NavigateToOrderDetalTester,
+        payload: {'orderId': order.orderId},
+      );
+    } else {
+      List<Order> orders = await ordersBox.values.toList();
+      Order order =
+          orders.firstWhere((order) => order.orderId == order.orderId);
+      orders.removeWhere((order) => order.orderId == order.orderId);
+
+      order.notified_arrival = true;
+
+      orders.add(order);
+      await ordersBox.clear();
+      await ordersBox.addAll(orders);
+
+      await sendSMS(
+        to: '0931057901',
+        payload: {
+          'oid': order.orderId,
+        },
+        action: COURIER_NOTIFY_ARRIVAL_TESTER,
+      );
+      return true;
+    }
   }
 
   @override
@@ -45,10 +79,14 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             tester_name: event.tester_name,
             date: event.date,
             courier_phone: event.courier_phone,
-            tester_phone: event.tester_phone);
+            tester_phone: event.tester_phone,
+            zone: event.zone,
+            region: event.region,
+            // woreda: event.woreda,
+            sender_id: (await FirebaseAuth.instance.currentUser?.uid ?? ''));
         yield SentOrder(orderId: newOrderId);
       } catch (e) {
-        yield ErrorState(message: 'Error sending order!');
+        yield ErrorState(message: '$e');
       }
     } else if (event is AcceptOrderCourier) {
       yield AcceptingOrderCourier();
@@ -144,6 +182,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         List<Order> orders = await orderRepository.loadOrdersForCourier();
         yield LoadedOrdersForCourier(orders: orders);
       } catch (e) {
+        debugPrint('Error loading order =>${e.toString()}');
+        // throw Exception(e);
         yield ErrorState(message: 'Error Loading Orders!');
       }
     } else if (event is LoadOrdersForTester) {
@@ -152,6 +192,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         List<Order> orders = await orderRepository.loadOrdersForTestCenters();
         yield LoadedOrdersForTester(orders: orders);
       } catch (e) {
+        debugPrint('Error loading order =>${e.toString()}');
+
         yield ErrorState(message: 'Error Loading Orders!');
       }
     } else if (event is LoadSingleOrder) {
@@ -165,6 +207,9 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
           yield ErrorState(message: 'Cannot find order with this id!');
         }
       } catch (e) {
+        // throw Exception(e);
+        debugPrint('Error loading order =>${e.toString()}');
+
         yield ErrorState(message: 'Error Loading Order!');
       }
     } else if (event is AddPatientToOrder) {
@@ -179,7 +224,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is EditOrder) {
       yield EditingOrder();
       try {
-        await orderRepository.editCourierInfo(
+        await orderRepository.editShipmentInfo(
           orderId: event.orderId,
           courier_name: event.courier_name,
           courier_id: event.courier_id,
@@ -210,6 +255,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
           yield AddedTestResult(event.patient);
         }
       } catch (e) {
+        throw Exception(e);
         yield ErrorState(message: 'Error adding test result');
       }
     } else if (event is EditTestResult) {
@@ -221,13 +267,14 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
           yield EditedTestResult(event.patient);
         }
       } catch (e) {
-        yield ErrorState(message: 'Error editing test result');
+        throw Exception(e);
+        debugPrint('$e');
+        // yield ErrorState(message: 'Error editing test result');
       }
     } else if (event is PlaceOrder) {
       yield PlacingOrder();
       try {
-        bool success =
-            await orderRepository.placeOrder(orderId: event.order.orderId);
+        bool success = await orderRepository.placeOrder(order: event.order);
         if (success) {
           yield PlacedOrder(event.order);
         } else {

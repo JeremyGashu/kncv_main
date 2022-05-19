@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/courier_homepage.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/receiver_homepage.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/sender_homepage.dart';
@@ -101,7 +100,8 @@ class AppRouter {
             orderId: args['orderId'],
             patient: args['patient'],
             index: args['index'],
-            canEdit:args['canEdit'] || false,
+            specimen: args['specimen'],
+            canEdit: args['canEdit'] || false,
           ),
         );
 
@@ -109,7 +109,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => NotificationsPage());
 
       case ReportPage.reportPage:
-        return MaterialPageRoute(builder: (_) => ReportPage(patient: args,));
+        return MaterialPageRoute(
+            builder: (_) => ReportPage(
+                  patient: args,
+                ));
     }
+
+    return null;
   }
 }

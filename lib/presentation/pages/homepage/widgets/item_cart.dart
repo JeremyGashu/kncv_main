@@ -72,7 +72,7 @@ Widget orderCard(Order order) {
               onPressed: () {},
             ),
             Text(
-              '${order.created_at}',
+              '${order.created_at ?? ""}',
               style: TextStyle(
                 color: kTextColorLight.withOpacity(0.5),
                 fontSize: 14,

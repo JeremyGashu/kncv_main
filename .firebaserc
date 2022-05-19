@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "kncv-360"
+  },
+  "targets": {
+    "kncv-360": {
+      "hosting": {
+        "webapp": [
+          "webapp-kncv"
+        ]
+      }
+    }
+  }
+}

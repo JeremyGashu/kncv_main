@@ -31,7 +31,7 @@ class IntroPageOne extends StatelessWidget {
               end: AlignmentDirectional.bottomCenter,
             ),
           ),
-          height: double.infinity,
+          // height: double.infinity,
           width: double.infinity,
           // color: Colors.red,
           child: Column(
@@ -143,7 +143,7 @@ class IntroPageOne extends StatelessWidget {
                                 color: kTextColorLight.withOpacity(0.7),
                                 fontSize: 18,
                               ))),
-
+      
                       Padding(
                         padding: const EdgeInsets.only(bottom: 30),
                         child: Row(
