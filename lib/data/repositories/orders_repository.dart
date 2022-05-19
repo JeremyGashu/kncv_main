@@ -49,16 +49,7 @@ class OrderRepository {
       String? currentUserId = auth.currentUser?.uid;
       var orders = await ordersCollection
           .where('courier_id', isEqualTo: currentUserId)
-          .where('status', whereIn: [
-        'Waiting for Confirmation',
-        'Picked Up',
-        'Arrived',
-        'Confirmed',
-        'Received',
-        'Delivered',
-        'Tested',
-        'Accepted',
-      ]).get();
+          .get();
       List<Order> os = orders.docs
           .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
           .toList();
