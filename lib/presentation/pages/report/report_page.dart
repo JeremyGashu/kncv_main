@@ -174,8 +174,11 @@ class _ReportScreenState extends State<ReportScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
+                                Text('Order', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                Divider(),
                                 //!
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -248,6 +251,18 @@ class _ReportScreenState extends State<ReportScreen> {
                                   ],
                                 ),
                                 SizedBox(height: 10),
+
+                                // Text('Result', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                // Divider(),
+                                // //!
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text('Courier Phone', style: TextStyle(fontSize: 16.0)),
+                                //     Text(reports[index]['courier_phone']),
+                                //   ],
+                                // ),
+                                // SizedBox(height: 10),
                               ],
                             ),
                           ),
