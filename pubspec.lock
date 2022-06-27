@@ -365,6 +365,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  fl_chart:
+    dependency: "direct main"
+    description:
+      name: fl_chart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.55.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -541,6 +548,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.4.0"
+  lazy_data_table:
+    dependency: "direct main"
+    description:
+      name: lazy_data_table
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1"
   logging:
     dependency: transitive
     description:
@@ -722,7 +736,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.1"
+    version: "6.0.3"
   pub_semver:
     dependency: transitive
     description:

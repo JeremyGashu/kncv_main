@@ -1,8 +1,10 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kncv_flutter/presentation/pages/report/report_controller.dart';
+import 'package:lazy_data_table/lazy_data_table.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../../core/colors.dart';
 
@@ -43,6 +45,80 @@ class _ReportScreenState extends State<ReportScreen> {
     super.initState();
   }
 
+  int getOrdersWaitingForPickup(List<Map<String, dynamic>>? reportsData) {
+    int ordersWaitingPickup = 0;
+    for (var i = 0; i < reportsData!.length; i++) {
+      if (reportsData[i]['status'] == 'Waiting for Confirmation') {
+        ordersWaitingPickup++;
+      }
+    }
+    return ordersWaitingPickup;
+  }
+
+  //TODO: specimen enroute
+  int getOrdersEnRoute(List<Map<String, dynamic>>? reportsData) {
+    int ordersEnRoute = 0;
+    for (var i = 0; i < reportsData!.length; i++) {
+      if (reportsData[i]['status'] == 'Confirmed') {
+        ordersEnRoute++;
+      }
+    }
+    return ordersEnRoute;
+  }
+
+  int getOrdersDeliveredAccepted(List<Map<String, dynamic>>? reportsData) {
+    int ordersDeliveredAccepted = 0;
+    for (var reportData in reportsData!) {
+      for (var patient in reportData['patients']) {
+        for (var specimen in patient['specimens']) {
+          print(specimen.length);
+          if (!specimen['rejected']) {
+            ordersDeliveredAccepted++;
+          }
+        }
+      }
+    }
+    return ordersDeliveredAccepted;
+  }
+
+  int getOrdersDeliveredRejected(List<Map<String, dynamic>>? reportsData) {
+    int ordersDeliveredRejected = 0;
+    for (var reportData in reportsData!) {
+      for (var patient in reportData['patients']) {
+        for (var specimen in patient['specimens']) {
+          print(specimen.length);
+          if (specimen['rejected']) {
+            ordersDeliveredRejected++;
+          }
+        }
+      }
+    }
+    return ordersDeliveredRejected;
+  }
+
+  //TODO: tested specimen
+  int getOrdersDeliveredTestedResulted(List<Map<String, dynamic>>? reportsData) {
+    int ordersDeliveredTestedResulted = 0;
+    for (var reportData in reportsData!) {
+      for (var patient in reportData['patients']) {
+        for (var specimen in patient['specimens']) {
+          print(specimen.length);
+        }
+      }
+    }
+    return ordersDeliveredTestedResulted;
+  }
+
+  //!update summary data
+  void updateSummaryData(List<Map<String, dynamic>>? reportsData) {
+    summaryData['totalRequestedOrders'] = reportsData!.length;
+    summaryData['ordersWaitingPickup'] = getOrdersWaitingForPickup(reportsData);
+    summaryData['ordersEnRoute'] = getOrdersEnRoute(reportsData);
+    summaryData['ordersDeliveredAccepted'] = getOrdersDeliveredAccepted(reportsData);
+    summaryData['ordersDeliveredRejected'] = getOrdersDeliveredRejected(reportsData);
+    summaryData['ordersDeliveredTestResultSent'] = getOrdersDeliveredTestedResulted(reportsData);
+  }
+
   //!get all reports
   void getReports() async {
     setState(() {
@@ -55,6 +131,7 @@ class _ReportScreenState extends State<ReportScreen> {
         reports = reportsData;
         loadingReports = false;
       });
+      updateSummaryData(reportsData);
     }
   }
 
@@ -67,6 +144,7 @@ class _ReportScreenState extends State<ReportScreen> {
       bool isTheSame = isReportDateSameAsToday(report);
       if (isTheSame) filteredReports.add(report);
     }
+    updateSummaryData(filteredReports);
     setState(() {
       loadingReports = false;
     });
@@ -81,6 +159,7 @@ class _ReportScreenState extends State<ReportScreen> {
       bool isTheSame = isReportDateWithInThePast7Days(report);
       if (isTheSame) filteredReports.add(report);
     }
+    updateSummaryData(filteredReports);
     setState(() {
       loadingReports = false;
     });
@@ -96,6 +175,7 @@ class _ReportScreenState extends State<ReportScreen> {
       bool isTheSame = isReportDateSameAsThisMonth(report);
       if (isTheSame) filteredReports.add(report);
     }
+    updateSummaryData(filteredReports);
     setState(() {
       loadingReports = false;
     });
@@ -111,6 +191,7 @@ class _ReportScreenState extends State<ReportScreen> {
       bool isTheSame = isReportDateSameAsThisYear(report);
       if (isTheSame) filteredReports.add(report);
     }
+    updateSummaryData(filteredReports);
     setState(() {
       loadingReports = false;
     });
@@ -122,11 +203,9 @@ class _ReportScreenState extends State<ReportScreen> {
     showMaterialModalBottomSheet(
       context: context,
       duration: Duration(milliseconds: 250),
-      // isDismissible: false,
-      // enableDrag: false,
-      // expand: true,
+      isDismissible: false,
+      enableDrag: false,
       animationCurve: Curves.bounceIn,
-
       builder: (context) => Container(
         padding: const EdgeInsets.all(20.0),
         height: size.height * 0.75,
@@ -141,8 +220,8 @@ class _ReportScreenState extends State<ReportScreen> {
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime(2000, 1, 1),
+                maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
-                  // Do something
                   setState(() {
                     filterStartDate = newDateTime;
                   });
@@ -156,8 +235,8 @@ class _ReportScreenState extends State<ReportScreen> {
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime.now(),
+                maximumDate: DateTime.now(),
                 onDateTimeChanged: (DateTime newDateTime) {
-                  // Do something
                   setState(() {
                     filterEndDate = newDateTime;
                   });
@@ -166,6 +245,7 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             SizedBox(height: 20),
             MaterialButton(
+              //TODO:fix issue where custom date selected and back button pressed
               onPressed: () {
                 print('Start Date: $filterStartDate');
                 print('End Date: $filterEndDate');
@@ -179,6 +259,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     filteredReports.add(report);
                   }
                 }
+                updateSummaryData(filteredReports);
                 setState(() {
                   loadingReports = false;
                 });
@@ -188,7 +269,7 @@ class _ReportScreenState extends State<ReportScreen> {
               minWidth: double.infinity,
               height: 50.0,
               child: Text('Filter', style: TextStyle(color: Colors.white)),
-            )
+            ),
           ],
         ),
       ),
@@ -198,31 +279,25 @@ class _ReportScreenState extends State<ReportScreen> {
   void filterData(Object? choice, BuildContext context) async {
     switch (choice) {
       case "All":
-        // print('all selected');
         getReports();
         break;
       case "Today":
-        // print('today selected');
         getTodayReports();
         break;
       case "This Week":
-        // print('this week selected');
         getWeeklyReports();
         break;
       case "This Month":
-        // print('this month selected');
         getMonthlyReports(context);
         break;
       case "This Year":
-        // print('this year selected');
         getYearlyReports();
         break;
       case "Custom Date":
-        // print('custom date selected');
         getCustomDateReports(context);
         break;
       default:
-        print('something happend');
+        getReports();
     }
   }
 
@@ -247,30 +322,30 @@ class _ReportScreenState extends State<ReportScreen> {
           //BlocProvider.of<AuthBloc>(context).add(LogOutUser());
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          // decoration: BoxDecoration(color: Colors.red),
-          height: size.height,
-          width: size.width,
-          child: reports.length == 0 && !loadingReports
-              ? Container(
-                  margin: const EdgeInsets.symmetric(vertical: 50),
-                  child: Text('No Report Found', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                )
-              : Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      SizedBox(height: 20.0),
+      body: Container(
+        height: size.height,
+        width: size.width,
+        child: reports.length == 0 && !loadingReports
+            ? Container(
+                margin: const EdgeInsets.symmetric(vertical: 50),
+                child: Text('No Report Found', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+              )
+            : Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    SizedBox(height: 20.0),
 
-                      //!Filter Button
-                      DropDown(
+                    //!Filter Button
+                    Container(
+                      decoration: BoxDecoration(),
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: DropDown(
                         items: ["All", "Today", "This Week", "This Month", "This Year", "Custom Date"],
                         dropDownType: DropDownType.Button,
                         showUnderline: false,
-                        hint: Text('All'),
+                        hint: Text('All', style: TextStyle(fontSize: 20.0)),
                         icon: Container(
-                          width: 100,
                           child: Row(
                             children: [
                               FaIcon(FontAwesomeIcons.filter),
@@ -280,7 +355,6 @@ class _ReportScreenState extends State<ReportScreen> {
                           ),
                         ),
                         onChanged: (choice) {
-                          // print(choice);
                           setState(() {
                             selectedFilter = choice.toString();
                           });
@@ -288,117 +362,125 @@ class _ReportScreenState extends State<ReportScreen> {
                           filterData(choice, context);
                         },
                       ),
-                      SizedBox(height: 5.0),
-
-                      loadingReports
-                          ? Container(
-                              margin: const EdgeInsets.symmetric(vertical: 50),
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          : Expanded(
-                              child: ListView.builder(
-                                itemCount: selectedFilter != 'All' ? filteredReports.length : reports.length,
-                                itemBuilder: (context, index) {
-                                  List<Map<String, dynamic>> finalReports = selectedFilter != 'All' ? filteredReports : reports;
-                                  return Center(
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                                      width: 600,
-                                      padding: const EdgeInsets.all(20.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        boxShadow: [BoxShadow(color: Colors.grey.shade300, offset: Offset(2, 7), blurRadius: 20)],
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Text('Order', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-                                          Divider(),
-                                          //!
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Created At', style: TextStyle(fontSize: 16.0)),
-                                              Text(finalReports[index]['created_at']),
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          //!
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Sender Name', style: TextStyle(fontSize: 16.0)),
-                                              Text(finalReports[index]['sender_name']),
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          //!
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Sender Phone', style: TextStyle(fontSize: 16.0)),
-                                              Text(finalReports[index]['sender_phone']),
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          //!
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Tester Name', style: TextStyle(fontSize: 16.0)),
-                                              Text(finalReports[index]['tester_name']),
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          //!
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Receiver Courier', style: TextStyle(fontSize: 16.0)),
-                                              Text(finalReports[index]['receiver_courier']),
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          //!
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Ordered For', style: TextStyle(fontSize: 16.0)),
-                                              Text(finalReports[index]['ordered_for']),
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          //!
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Courier Name', style: TextStyle(fontSize: 16.0)),
-                                              Text(finalReports[index]['courier_name']),
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                          //!
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Courier Phone', style: TextStyle(fontSize: 16.0)),
-                                              Text(finalReports[index]['courier_phone']),
-                                            ],
-                                          ),
-                                          SizedBox(height: 10),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
+                    ),
+                    loadingReports
+                        ? Expanded(
+                            child: Container(
+                              child: Center(
+                                child: CircularProgressIndicator(),
                               ),
                             ),
-                    ],
-                  ),
+                          )
+                        : Expanded(
+                            child: ListView(
+                              // crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SizedBox(height: 10.0),
+                                //!report summary cards
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 140,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: ReportSummaryCard(title: 'Total orders', description: summaryData['totalRequestedOrders'].toString()),
+                                            ),
+                                            Expanded(
+                                              child: ReportSummaryCard(title: 'Waiting pickup', description: summaryData['ordersWaitingPickup'].toString()),
+                                            ),
+                                            Expanded(
+                                              child: ReportSummaryCard(title: 'En route', description: summaryData['ordersEnRoute'].toString()),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      // SizedBox(height: 20),
+                                      SizedBox(
+                                        height: 140,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: ReportSummaryCard(title: 'Accepted', description: summaryData['ordersDeliveredAccepted'].toString()),
+                                            ),
+                                            Expanded(
+                                              child: ReportSummaryCard(title: 'Rejected', description: summaryData['ordersDeliveredRejected'].toString()),
+                                            ),
+                                            Expanded(
+                                              child: ReportSummaryCard(title: 'Tested', description: summaryData['ordersDeliveredTestResultSent'].toString()),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+
+                                //!charts
+                                //!pie chart
+                                Container(
+                                  height: 180,
+                                  child: PieChart(
+                                    PieChartData(
+                                      sections: [
+                                        PieChartSectionData(
+                                          title: "Male",
+                                          titleStyle: TextStyle(color: Colors.white),
+                                          value: 20.0,
+                                          radius: 88,
+                                          // badgeWidget: Text('Male'),
+                                          // badgePositionPercentageOffset: 0.8,
+                                        ),
+                                        PieChartSectionData(
+                                          title: "Female",
+                                          titleStyle: TextStyle(color: Colors.white),
+                                          value: 40.0,
+                                          radius: 88,
+                                        ),
+                                      ],
+                                      // borderData: FlBorderData(border: Border.all(color: Colors.red, width: 1.0), show: true),
+                                    ),
+                                    swapAnimationDuration: Duration(milliseconds: 250),
+                                    swapAnimationCurve: Curves.bounceIn,
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+
+                                //TODO: add a data table
+                                SizedBox(
+                                  height: size.height * 0.5,
+                                  child: LazyDataTable(
+                                    tableTheme: LazyDataTableTheme(
+                                      rowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+                                      alternateCellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+                                      cellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+                                      cornerBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+                                      columnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+                                      alternateRowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+                                      alternateColumnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+                                    ),
+                                    rows: 100,
+                                    columns: 100,
+                                    tableDimensions: LazyDataTableDimensions(
+                                      cellHeight: 50,
+                                      cellWidth: 100,
+                                      topHeaderHeight: 50,
+                                      leftHeaderWidth: 75,
+                                    ),
+                                    topHeaderBuilder: (i) => Center(child: Text("Column: ${i + 1}")),
+                                    leftHeaderBuilder: (i) => Center(child: Text("Row: ${i + 1}")),
+                                    dataCellBuilder: (i, j) => Center(child: Text("Cell: $i, $j")),
+                                    topLeftCornerWidget: Center(child: Text("")),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                  ],
                 ),
-        ),
+              ),
       ),
     );
   }
@@ -412,16 +494,19 @@ class ReportSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [BoxShadow(color: Colors.grey.shade200, offset: Offset(2, 7), blurRadius: 20)],
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
         children: [
-          Text(title),
+          SizedBox(height: 5),
+          Text(title, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600)),
           Divider(),
-          Text(description),
+          SizedBox(height: 20),
+          Text(description, style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
         ],
       ),
     );

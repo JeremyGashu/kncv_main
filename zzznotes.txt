@@ -1,0 +1,106 @@
+ //TODO: fix scrolling issue
+                                // loadingReports
+                                //     ? Container(
+                                //         margin: const EdgeInsets.symmetric(vertical: 50),
+                                //         child: Center(child: CircularProgressIndicator()),
+                                //       )
+                                //     : Expanded(
+                                //         child: ListView.builder(
+                                //           itemCount: selectedFilter != 'All' ? filteredReports.length : reports.length,
+                                //           itemBuilder: (context, index) {
+                                //             List<Map<String, dynamic>> finalReports = selectedFilter != 'All' ? filteredReports : reports;
+                                //             return Center(
+                                //               child: Container(
+                                //                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                                //                 width: 600,
+                                //                 padding: const EdgeInsets.all(20.0),
+                                //                 decoration: BoxDecoration(
+                                //                   color: Colors.white,
+                                //                   boxShadow: [BoxShadow(color: Colors.grey.shade300, offset: Offset(2, 7), blurRadius: 20)],
+                                //                   borderRadius: BorderRadius.circular(10),
+                                //                 ),
+                                //                 child: Column(
+                                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                                //                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                //                   children: [
+                                //                     Text('Order', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                //                     Divider(),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Created At', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['created_at']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Sender Name', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['sender_name']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Sender Phone', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['sender_phone']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Tester Name', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['tester_name']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Receiver Courier', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['receiver_courier']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Ordered For', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['ordered_for']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Courier Name', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['courier_name']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Courier Phone', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['courier_phone']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                   ],
+                                //                 ),
+                                //               ),
+                                //             );
+                                //           },
+                                //         ),
+                                //       ),
