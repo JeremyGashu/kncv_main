@@ -9,7 +9,9 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
   try {
     QuerySnapshot<Map<String, dynamic>> ordersQuerySnapshot = await firestore.collection("orders").get();
     ordersQuerySnapshot.docs.forEach((doc) {
-      allOrders.add(doc.data());
+      Map<String, dynamic> documentData = doc.data();
+      documentData['orderId'] = doc.id;
+      allOrders.add(documentData);
     });
     // print('all orders: $allOrders');
     //!get current user
