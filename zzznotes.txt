@@ -104,3 +104,147 @@
                                 //           },
                                 //         ),
                                 //       ),
+
+
+
+                                //Lazy data table
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Text('Order Monitoring', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                ),
+                                SizedBox(height: 10),
+                                SizedBox(
+                                  height: size.height * 0.35,
+                                  child: LazyDataTable(
+                                    tableTheme: MyTableTheme(),
+                                    rows: selectedFilter == 'All' ? reports.length : filteredReports.length,
+                                    columns: 9,
+                                    tableDimensions: LazyDataTableDimensions(
+                                      cellHeight: 80,
+                                      cellWidth: 130,
+                                      topHeaderHeight: 80,
+                                      leftHeaderWidth: 130,
+                                    ),
+                                    topHeaderBuilder: (i) {
+                                      if (i == 0) return Center(child: Text("Referring Health Facility"));
+                                      if (i == 1) return Center(child: Text("Courier Name"));
+                                      if (i == 2) return Center(child: Text("Testing Health Facility"));
+                                      if (i == 3) return Center(child: Text("Region"));
+                                      if (i == 4) return Center(child: Text("Zone/Sub City"));
+                                      if (i == 5) return Center(child: Text("Woreda"));
+                                      if (i == 6) return Center(child: Text("Number of Patients"));
+                                      if (i == 7) return Center(child: Text("Order Created"));
+                                      if (i == 8) return Center(child: Text("Order Status"));
+
+                                      return Center(child: Text("Column: ${i + 1}"));
+                                    },
+                                    leftHeaderBuilder: (i) {
+                                      // List<Map<String, dynamic>> finalReports = selectedFilter == 'All' ? reports : filteredReports;
+                                      // return Center(child: Text(finalReports[i]['']));
+                                      return Center(
+                                        child: Text('row'),
+                                      );
+                                    },
+                                    dataCellBuilder: (i, j) => Center(child: Text("Cell: $i, $j")),
+                                    topLeftCornerWidget: Center(child: Text("Order No")),
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+
+                                //!Specimen Referral Report
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Text('Specimen Referral Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                ),
+                                SizedBox(height: 10),
+                                SizedBox(
+                                  height: size.height * 0.35,
+                                  child: LazyDataTable(
+                                    tableTheme: MyTableTheme(),
+                                    rows: selectedFilter == 'All' ? reports.length : filteredReports.length,
+                                    columns: 19,
+                                    tableDimensions: LazyDataTableDimensions(
+                                      cellHeight: 50,
+                                      cellWidth: 100,
+                                      topHeaderHeight: 50,
+                                      leftHeaderWidth: 75,
+                                    ),
+                                    topHeaderBuilder: (i) {
+                                      if (i == 0) return Center(child: Text("Courier Name"));
+                                      if (i == 1) return Center(child: Text("Referring Health Facility"));
+                                      if (i == 2) return Center(child: Text("Testing Health Facility"));
+                                      if (i == 3) return Center(child: Text("Order Created"));
+                                      if (i == 4) return Center(child: Text("Patient's Name"));
+                                      if (i == 5) return Center(child: Text("MRN"));
+                                      if (i == 6) return Center(child: Text("Sex"));
+                                      if (i == 7) return Center(child: Text("Age"));
+                                      if (i == 8) return Center(child: Text("Age(Months)"));
+                                      if (i == 9) return Center(child: Text("Phone"));
+                                      if (i == 10) return Center(child: Text("Region"));
+                                      if (i == 11) return Center(child: Text("Zone"));
+                                      if (i == 12) return Center(child: Text("Woreda"));
+                                      if (i == 13) return Center(child: Text("Specimen Type"));
+                                      if (i == 14) return Center(child: Text("Site of Test"));
+                                      if (i == 15) return Center(child: Text("Requested Test"));
+                                      if (i == 16) return Center(child: Text("Reason for Test"));
+                                      if (i == 17) return Center(child: Text("Registration Group"));
+                                      if (i == 18) return Center(child: Text("Delivery Status"));
+
+                                      return Center(child: Text("Column: ${i + 1}"));
+                                    },
+                                    leftHeaderBuilder: (i) {
+                                      // List<Map<String, dynamic>> finalReports = selectedFilter == 'All' ? reports : filteredReports;
+                                      // return Center(child: Text(finalReports[i]['']));
+                                      return Center(
+                                        child: Text('row'),
+                                      );
+                                    },
+                                    dataCellBuilder: (i, j) => Center(child: Text("Cell: $i, $j")),
+                                    topLeftCornerWidget: Center(child: Text("Order ID")),
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+
+                                //!Shipment Report Table
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Text('Shipment Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                ),
+                                SizedBox(height: 10),
+                                SizedBox(
+                                  height: size.height * 0.35,
+                                  child: LazyDataTable(
+                                    tableTheme: MyTableTheme(),
+                                    rows: selectedFilter == 'All' ? reports.length : filteredReports.length,
+                                    columns: 10,
+                                    tableDimensions: LazyDataTableDimensions(
+                                      cellHeight: 50,
+                                      cellWidth: 100,
+                                      topHeaderHeight: 50,
+                                      leftHeaderWidth: 75,
+                                    ),
+                                    topHeaderBuilder: (i) {
+                                      if (i == 0) return Center(child: Text("Pick up Site"));
+                                      if (i == 1) return Center(child: Text("Region"));
+                                      if (i == 2) return Center(child: Text("Zone"));
+                                      if (i == 3) return Center(child: Text("Woreda"));
+                                      if (i == 4) return Center(child: Text("Courier Name"));
+                                      if (i == 5) return Center(child: Text("Recipient Site"));
+                                      if (i == 6) return Center(child: Text("Number of Patients"));
+                                      if (i == 7) return Center(child: Text("Order Created"));
+                                      if (i == 8) return Center(child: Text("Order Accepted"));
+                                      if (i == 9) return Center(child: Text("Shipment Duration"));
+
+                                      return Center(child: Text("Column: ${i + 1}"));
+                                    },
+                                    leftHeaderBuilder: (i) {
+                                      // List<Map<String, dynamic>> finalReports = selectedFilter == 'All' ? reports : filteredReports;
+                                      // return Center(child: Text(finalReports[i]['']));
+                                      return Center(
+                                        child: Text('row'),
+                                      );
+                                    },
+                                    dataCellBuilder: (i, j) => Center(child: Text("Cell: $i, $j")),
+                                    topLeftCornerWidget: Center(child: Text("Order ID")),
+                                  ),
+                                ),

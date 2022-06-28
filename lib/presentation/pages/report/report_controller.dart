@@ -90,6 +90,12 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
           // print(permissionWoreda);
         }
         break;
+
+      case 'Federal':
+        {
+          reports.addAll(allOrders);
+        }
+        break;
       default:
         {
           //statements;

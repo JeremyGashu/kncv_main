@@ -24,16 +24,20 @@ class _ReportScreenState extends State<ReportScreen> {
   DateTime? filterStartDate = DateTime(2000, 1, 1);
   DateTime? filterEndDate = DateTime.now();
   String selectedFilter = 'All';
+  int totalSpecimens = 0;
   Map<String, dynamic> summaryData = {
     'totalRequestedOrders': null,
     'ordersWaitingPickup': null,
     'ordersEnRoute': null,
     'ordersDeliveredAccepted': null,
+    'orderDeliveredAcceptedPercentage': null,
     'ordersDeliveredRejected': null,
+    'orderDeliveredRejectedPercentage': null,
     'ordersDeliveredTestResultSent': null,
+    //!specimens
     'resultsTotalSent': null,
     'resultsTotalPositive': null,
-    'resultsTotalNegative': null
+    'resultsTotalNegative': null,
   };
 
   //
@@ -71,7 +75,7 @@ class _ReportScreenState extends State<ReportScreen> {
     for (var reportData in reportsData!) {
       for (var patient in reportData['patients']) {
         for (var specimen in patient['specimens']) {
-          print(specimen.length);
+          // print(specimen.length);
           if (!specimen['rejected']) {
             ordersDeliveredAccepted++;
           }
@@ -86,7 +90,7 @@ class _ReportScreenState extends State<ReportScreen> {
     for (var reportData in reportsData!) {
       for (var patient in reportData['patients']) {
         for (var specimen in patient['specimens']) {
-          print(specimen.length);
+          // print(specimen.length);
           if (specimen['rejected']) {
             ordersDeliveredRejected++;
           }
@@ -96,27 +100,92 @@ class _ReportScreenState extends State<ReportScreen> {
     return ordersDeliveredRejected;
   }
 
-  //TODO: tested specimen
+  int getTotalSpecimens(List<Map<String, dynamic>>? reportsData) {
+    int totalSpecimens = 0;
+    for (var reportData in reportsData!) {
+      for (var patient in reportData['patients']) {
+        for (var specimen in patient['specimens']) {
+          totalSpecimens++;
+        }
+        // totalSpecimens += patient['specimens'].length.toInt();
+      }
+    }
+    // print('totalSpecimens: $totalSpecimens');
+    return totalSpecimens;
+  }
+
   int getOrdersDeliveredTestedResulted(List<Map<String, dynamic>>? reportsData) {
     int ordersDeliveredTestedResulted = 0;
     for (var reportData in reportsData!) {
       for (var patient in reportData['patients']) {
         for (var specimen in patient['specimens']) {
-          print(specimen.length);
+          // print(specimen.length);
+          if (specimen['result'] != null) {
+            ordersDeliveredTestedResulted++;
+          }
         }
       }
     }
+    // print('orders tested resulted: $ordersDeliveredTestedResulted');
     return ordersDeliveredTestedResulted;
+  }
+
+  int getOrdersTestedPositive(List<Map<String, dynamic>>? reportsData) {
+    int ordersTestedPositive = 0;
+    for (var reportData in reportsData!) {
+      for (var patient in reportData['patients']) {
+        for (var specimen in patient['specimens']) {
+          // print(specimen.length);
+          // if (!specimen['rejected']) {
+          if (specimen['result'] != null) {
+            if (specimen['result']['mtb_result'] == 'MTB Detected') {
+              ordersTestedPositive++;
+            }
+          }
+          // }
+        }
+      }
+    }
+    return ordersTestedPositive;
+  }
+
+  int getOrdersTestedNegative(List<Map<String, dynamic>>? reportsData) {
+    int ordersTestedNegative = 0;
+    for (var reportData in reportsData!) {
+      for (var patient in reportData['patients']) {
+        for (var specimen in patient['specimens']) {
+          // print(specimen.length);
+          // if (!specimen['rejected']) {
+          if (specimen['result'] != null) {
+            if (specimen['result']['mtb_result'] == 'MTB Not Detected') {
+              ordersTestedNegative++;
+            }
+          }
+          // }
+        }
+      }
+    }
+    return ordersTestedNegative;
   }
 
   //!update summary data
   void updateSummaryData(List<Map<String, dynamic>>? reportsData) {
+    setState(() {
+      totalSpecimens = getTotalSpecimens(reportsData);
+    });
     summaryData['totalRequestedOrders'] = reportsData!.length;
     summaryData['ordersWaitingPickup'] = getOrdersWaitingForPickup(reportsData);
     summaryData['ordersEnRoute'] = getOrdersEnRoute(reportsData);
     summaryData['ordersDeliveredAccepted'] = getOrdersDeliveredAccepted(reportsData);
     summaryData['ordersDeliveredRejected'] = getOrdersDeliveredRejected(reportsData);
     summaryData['ordersDeliveredTestResultSent'] = getOrdersDeliveredTestedResulted(reportsData);
+    //
+    summaryData['resultsTotalSent'] = getOrdersDeliveredTestedResulted(reportsData);
+    summaryData['resultsTotalPositive'] = getOrdersTestedPositive(reportsData);
+    summaryData['resultsTotalNegative'] = getOrdersTestedNegative(reportsData);
+
+    //!percentage
+    // summaryData['orderDeliveredAcceptedPercentage'] = calculatePercentageValue(value, total).toString();
   }
 
   //!get all reports
@@ -247,8 +316,8 @@ class _ReportScreenState extends State<ReportScreen> {
             MaterialButton(
               //TODO:fix issue where custom date selected and back button pressed
               onPressed: () {
-                print('Start Date: $filterStartDate');
-                print('End Date: $filterEndDate');
+                // print('Start Date: $filterStartDate');
+                // print('End Date: $filterEndDate');
                 setState(() {
                   loadingReports = true;
                   filteredReports = [];
@@ -301,6 +370,14 @@ class _ReportScreenState extends State<ReportScreen> {
     }
   }
 
+  double calculatePercentageValue(double value, double total) {
+    // print('Value: $value');
+    // print('Total: $total');
+    double result = ((value / total) * 100).roundToDouble();
+    // print('Result: $result');
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -325,163 +402,265 @@ class _ReportScreenState extends State<ReportScreen> {
       body: Container(
         height: size.height,
         width: size.width,
-        child: reports.length == 0 && !loadingReports
-            ? Container(
-                margin: const EdgeInsets.symmetric(vertical: 50),
-                child: Text('No Report Found', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-              )
-            : Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    SizedBox(height: 20.0),
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SizedBox(height: 20.0),
 
-                    //!Filter Button
-                    Container(
-                      decoration: BoxDecoration(),
-                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: DropDown(
-                        items: ["All", "Today", "This Week", "This Month", "This Year", "Custom Date"],
-                        dropDownType: DropDownType.Button,
-                        showUnderline: false,
-                        hint: Text('All', style: TextStyle(fontSize: 20.0)),
-                        icon: Container(
-                          child: Row(
+              //!Filter Button
+              Container(
+                decoration: BoxDecoration(),
+                margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: DropDown(
+                  items: ["All", "Today", "This Week", "This Month", "This Year", "Custom Date"],
+                  dropDownType: DropDownType.Button,
+                  showUnderline: false,
+                  hint: Text('All', style: TextStyle(fontSize: 20.0)),
+                  icon: Container(
+                    child: Row(
+                      children: [
+                        FaIcon(FontAwesomeIcons.filter),
+                        SizedBox(width: 10),
+                        Text('Filter', style: TextStyle(fontSize: 18.0)),
+                      ],
+                    ),
+                  ),
+                  onChanged: (choice) {
+                    setState(() {
+                      selectedFilter = choice.toString();
+                    });
+                    // print('selectedFilter: $selectedFilter');
+                    filterData(choice, context);
+                  },
+                ),
+              ),
+              loadingReports
+                  ? Expanded(
+                      child: Container(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    )
+                  : (selectedFilter != 'All' && filteredReports.length == 0 && !loadingReports)
+                      ? Container(
+                          margin: const EdgeInsets.symmetric(vertical: 50),
+                          child: Center(child: Text('No Report Found', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16))),
+                        )
+                      : Expanded(
+                          child: ListView(
+                            // crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              FaIcon(FontAwesomeIcons.filter),
-                              SizedBox(width: 10),
-                              Text('Filter', style: TextStyle(fontSize: 18.0)),
+                              SizedBox(height: 10.0),
+                              //!report summary cards
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 5),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                      child: Text('Orders', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                    ),
+                                    SizedBox(
+                                      height: 140,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: ReportSummaryCard(title: 'Total orders', description: summaryData['totalRequestedOrders'].toString()),
+                                          ),
+                                          Expanded(
+                                            child: ReportSummaryCard(title: 'Waiting pickup', description: summaryData['ordersWaitingPickup'].toString()),
+                                          ),
+                                          Expanded(
+                                            child: ReportSummaryCard(title: 'En route', description: summaryData['ordersEnRoute'].toString()),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // SizedBox(height: 20),
+                                    SizedBox(height: 5),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                      child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                    ),
+                                    SizedBox(
+                                      height: 140,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: ReportSummaryCard(title: 'Total', description: totalSpecimens.toString()),
+                                          ),
+                                          Expanded(
+                                            child: ReportSummaryCard(title: 'Accepted', description: summaryData['ordersDeliveredAccepted'].toString()),
+                                          ),
+                                          Expanded(
+                                            child: ReportSummaryCard(title: 'Rejected', description: summaryData['ordersDeliveredRejected'].toString()),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                      child: Text('Test Result', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                    ),
+                                    SizedBox(
+                                      height: 140,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: ReportSummaryCard(title: 'Total Result', description: summaryData['resultsTotalSent'].toString()),
+                                          ),
+                                          Expanded(
+                                            child: ReportSummaryCard(title: 'Positive', description: summaryData['resultsTotalPositive'].toString()),
+                                          ),
+                                          Expanded(
+                                            child: ReportSummaryCard(title: 'Negative', description: summaryData['resultsTotalNegative'].toString()),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 20),
+
+                              //!charts
+                              //!pie chart
+                              SizedBox(height: 5),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                              ),
+                              SizedBox(height: 5),
+                              Container(
+                                // height: 240,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      // decoration: BoxDecoration(color: Colors.yellow),
+                                      height: size.height * 0.35,
+                                      width: size.width / 2,
+                                      margin: const EdgeInsets.all(10),
+                                      child: PieChart(
+                                        PieChartData(
+                                          sectionsSpace: 0,
+                                          sections: [
+                                            PieChartSectionData(
+                                              title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                              titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                              value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                              radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
+                                              color: Colors.teal,
+                                            ),
+                                            PieChartSectionData(
+                                              title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                              titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                              value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                              radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
+                                              color: Colors.blue,
+                                            ),
+                                          ],
+                                        ),
+                                        swapAnimationDuration: Duration(milliseconds: 250),
+                                        swapAnimationCurve: Curves.linear,
+                                      ),
+                                    ),
+                                    Container(
+                                      // decoration: BoxDecoration(color: Colors.yellow),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          ChartIndicator(indicatorColor: Colors.teal, label: 'Positive'),
+                                          SizedBox(height: 10),
+                                          ChartIndicator(indicatorColor: Colors.blue, label: 'Negative'),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // PieChart(
+                                    //   PieChartData(
+                                    //     sectionsSpace: 8,
+                                    //     sections: [
+                                    //       PieChartSectionData(
+                                    //         title: "Accepted",
+                                    //         titleStyle: TextStyle(color: Colors.black),
+                                    //         value: summaryData['ordersDeliveredAccepted'].toDouble(),
+                                    //         radius: 88,
+                                    //         color: Colors.yellow.shade400,
+                                    //       ),
+                                    //       PieChartSectionData(
+                                    //         title: "Rejected",
+                                    //         titleStyle: TextStyle(color: Colors.black),
+                                    //         value: summaryData['ordersDeliveredRejected'].toDouble(),
+                                    //         radius: 88,
+                                    //         color: Colors.red,
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    //   swapAnimationDuration: Duration(milliseconds: 250),
+                                    //   swapAnimationCurve: Curves.linear,
+                                    // ),
+                                  ],
+                                ),
+                              ),
+
+                              SizedBox(height: 20),
+
+                              //TODO: add a data table
+                              //!Order Monitoring Table
+
+                              SizedBox(height: 20),
                             ],
                           ),
                         ),
-                        onChanged: (choice) {
-                          setState(() {
-                            selectedFilter = choice.toString();
-                          });
-                          print('selectedFilter: $selectedFilter');
-                          filterData(choice, context);
-                        },
-                      ),
-                    ),
-                    loadingReports
-                        ? Expanded(
-                            child: Container(
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                          )
-                        : Expanded(
-                            child: ListView(
-                              // crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                SizedBox(height: 10.0),
-                                //!report summary cards
-                                Container(
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 140,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: ReportSummaryCard(title: 'Total orders', description: summaryData['totalRequestedOrders'].toString()),
-                                            ),
-                                            Expanded(
-                                              child: ReportSummaryCard(title: 'Waiting pickup', description: summaryData['ordersWaitingPickup'].toString()),
-                                            ),
-                                            Expanded(
-                                              child: ReportSummaryCard(title: 'En route', description: summaryData['ordersEnRoute'].toString()),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      // SizedBox(height: 20),
-                                      SizedBox(
-                                        height: 140,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: ReportSummaryCard(title: 'Accepted', description: summaryData['ordersDeliveredAccepted'].toString()),
-                                            ),
-                                            Expanded(
-                                              child: ReportSummaryCard(title: 'Rejected', description: summaryData['ordersDeliveredRejected'].toString()),
-                                            ),
-                                            Expanded(
-                                              child: ReportSummaryCard(title: 'Tested', description: summaryData['ordersDeliveredTestResultSent'].toString()),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-
-                                //!charts
-                                //!pie chart
-                                Container(
-                                  height: 180,
-                                  child: PieChart(
-                                    PieChartData(
-                                      sections: [
-                                        PieChartSectionData(
-                                          title: "Male",
-                                          titleStyle: TextStyle(color: Colors.white),
-                                          value: 20.0,
-                                          radius: 88,
-                                          // badgeWidget: Text('Male'),
-                                          // badgePositionPercentageOffset: 0.8,
-                                        ),
-                                        PieChartSectionData(
-                                          title: "Female",
-                                          titleStyle: TextStyle(color: Colors.white),
-                                          value: 40.0,
-                                          radius: 88,
-                                        ),
-                                      ],
-                                      // borderData: FlBorderData(border: Border.all(color: Colors.red, width: 1.0), show: true),
-                                    ),
-                                    swapAnimationDuration: Duration(milliseconds: 250),
-                                    swapAnimationCurve: Curves.bounceIn,
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-
-                                //TODO: add a data table
-                                SizedBox(
-                                  height: size.height * 0.5,
-                                  child: LazyDataTable(
-                                    tableTheme: LazyDataTableTheme(
-                                      rowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-                                      alternateCellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-                                      cellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-                                      cornerBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-                                      columnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-                                      alternateRowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-                                      alternateColumnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-                                    ),
-                                    rows: 100,
-                                    columns: 100,
-                                    tableDimensions: LazyDataTableDimensions(
-                                      cellHeight: 50,
-                                      cellWidth: 100,
-                                      topHeaderHeight: 50,
-                                      leftHeaderWidth: 75,
-                                    ),
-                                    topHeaderBuilder: (i) => Center(child: Text("Column: ${i + 1}")),
-                                    leftHeaderBuilder: (i) => Center(child: Text("Row: ${i + 1}")),
-                                    dataCellBuilder: (i, j) => Center(child: Text("Cell: $i, $j")),
-                                    topLeftCornerWidget: Center(child: Text("")),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                  ],
-                ),
-              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+
+  LazyDataTableTheme MyTableTheme() {
+    return LazyDataTableTheme(
+      rowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      alternateCellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      cellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      cornerBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      columnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      alternateRowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      alternateColumnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      rowHeaderColor: Colors.white,
+      columnHeaderColor: Colors.white,
+      cornerColor: Colors.white,
+      cellColor: Colors.white,
+      alternateCellColor: Colors.white,
+      alternateRowHeaderColor: Colors.white,
+      alternateColumnHeaderColor: Colors.white,
+    );
+  }
+}
+
+class ChartIndicator extends StatelessWidget {
+  const ChartIndicator({Key? key, required this.indicatorColor, required this.label}) : super(key: key);
+  final Color indicatorColor;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          height: 25,
+          width: 25,
+          decoration: BoxDecoration(color: indicatorColor, borderRadius: BorderRadius.circular(2)),
+        ),
+        SizedBox(width: 10),
+        Text(label, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600)),
+      ],
     );
   }
 }
@@ -506,7 +685,7 @@ class ReportSummaryCard extends StatelessWidget {
           Text(title, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600)),
           Divider(),
           SizedBox(height: 20),
-          Text(description, style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
+          Text(description, style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600)),
         ],
       ),
     );
