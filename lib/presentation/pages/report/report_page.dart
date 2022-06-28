@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kncv_flutter/presentation/pages/report/report_controller.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../../core/colors.dart';
+import '../../../data/models/models.dart';
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({Key? key}) : super(key: key);
@@ -16,8 +17,8 @@ class ReportScreen extends StatefulWidget {
 
 class _ReportScreenState extends State<ReportScreen> {
   bool loadingReports = true;
-  List<Map<String, dynamic>> reports = [];
-  List<Map<String, dynamic>> filteredReports = [];
+  List<Order> reports = [];
+  List<Order> filteredReports = [];
   DateTime? filterStartDate = DateTime(2000, 1, 1);
   DateTime? filterEndDate = DateTime.now();
   String selectedFilter = 'All';
@@ -43,35 +44,36 @@ class _ReportScreenState extends State<ReportScreen> {
   void initState() {
     //!get firebase user id
     getReports();
+    // print(reports[]);
     super.initState();
   }
 
-  int getOrdersWaitingForPickup(List<Map<String, dynamic>>? reportsData) {
+  int getOrdersWaitingForPickup(List<Order>? reportsData) {
     int ordersWaitingPickup = 0;
     for (var i = 0; i < reportsData!.length; i++) {
-      if (reportsData[i]['status'] == 'Waiting for Confirmation') {
+      if (reportsData[i].status == 'Waiting for Confirmation') {
         ordersWaitingPickup++;
       }
     }
     return ordersWaitingPickup;
   }
 
-  int getOrdersEnRoute(List<Map<String, dynamic>>? reportsData) {
+  int getOrdersEnRoute(List<Order>? reportsData) {
     int ordersEnRoute = 0;
     for (var i = 0; i < reportsData!.length; i++) {
-      if (reportsData[i]['status'] == 'Confirmed') {
+      if (reportsData[i].status == 'Confirmed') {
         ordersEnRoute++;
       }
     }
     return ordersEnRoute;
   }
 
-  int getOrdersDeliveredAccepted(List<Map<String, dynamic>>? reportsData) {
+  int getOrdersDeliveredAccepted(List<Order>? reportsData) {
     int ordersDeliveredAccepted = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (!specimen['rejected']) {
+      for (var patient in reportData.patients!) {
+        for (var specimen in patient.specimens!) {
+          if (!specimen.rejected) {
             ordersDeliveredAccepted++;
           }
         }
@@ -80,12 +82,12 @@ class _ReportScreenState extends State<ReportScreen> {
     return ordersDeliveredAccepted;
   }
 
-  int getOrdersDeliveredRejected(List<Map<String, dynamic>>? reportsData) {
+  int getOrdersDeliveredRejected(List<Order>? reportsData) {
     int ordersDeliveredRejected = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (specimen['rejected']) {
+      for (var patient in reportData.patients!) {
+        for (var specimen in patient.specimens!) {
+          if (specimen.rejected) {
             ordersDeliveredRejected++;
           }
         }
@@ -94,12 +96,12 @@ class _ReportScreenState extends State<ReportScreen> {
     return ordersDeliveredRejected;
   }
 
-  int getTotalSpecimens(List<Map<String, dynamic>>? reportsData) {
+  int getTotalSpecimens(List<Order>? reportsData) {
     int totalSpecimens = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
+      for (var patient in reportData.patients!) {
         // ignore: unused_local_variable
-        for (var specimen in patient['specimens']) {
+        for (var specimen in patient.specimens!) {
           totalSpecimens++;
         }
       }
@@ -107,12 +109,12 @@ class _ReportScreenState extends State<ReportScreen> {
     return totalSpecimens;
   }
 
-  int getOrdersDeliveredTestedResulted(List<Map<String, dynamic>>? reportsData) {
+  int getOrdersDeliveredTestedResulted(List<Order>? reportsData) {
     int ordersDeliveredTestedResulted = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (specimen['result'] != null) {
+      for (var patient in reportData.patients!) {
+        for (var specimen in patient.specimens!) {
+          if (specimen.testResult != null) {
             ordersDeliveredTestedResulted++;
           }
         }
@@ -121,13 +123,13 @@ class _ReportScreenState extends State<ReportScreen> {
     return ordersDeliveredTestedResulted;
   }
 
-  int getOrdersTestedPositive(List<Map<String, dynamic>>? reportsData) {
+  int getOrdersTestedPositive(List<Order>? reportsData) {
     int ordersTestedPositive = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (specimen['result'] != null) {
-            if (specimen['result']['mtb_result'] == 'MTB Detected') {
+      for (var patient in reportData.patients!) {
+        for (var specimen in patient.specimens!) {
+          if (specimen.testResult != null) {
+            if (specimen.testResult!.mtbResult == 'MTB Detected') {
               ordersTestedPositive++;
             }
           }
@@ -137,13 +139,13 @@ class _ReportScreenState extends State<ReportScreen> {
     return ordersTestedPositive;
   }
 
-  int getOrdersTestedNegative(List<Map<String, dynamic>>? reportsData) {
+  int getOrdersTestedNegative(List<Order>? reportsData) {
     int ordersTestedNegative = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (specimen['result'] != null) {
-            if (specimen['result']['mtb_result'] == 'MTB Not Detected') {
+      for (var patient in reportData.patients!) {
+        for (var specimen in patient.specimens!) {
+          if (specimen.testResult != null) {
+            if (specimen.testResult!.mtbResult == 'MTB Not Detected') {
               ordersTestedNegative++;
             }
           }
@@ -154,7 +156,7 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   //!update summary data
-  void updateSummaryData(List<Map<String, dynamic>>? reportsData) {
+  void updateSummaryData(List<Order>? reportsData) {
     setState(() {
       totalSpecimens = getTotalSpecimens(reportsData);
     });
@@ -179,13 +181,15 @@ class _ReportScreenState extends State<ReportScreen> {
       loadingReports = true;
     });
     List<Map<String, dynamic>>? reportsData = await getUserReport();
-    print('reportsData $reportsData');
+    for (Map<String, dynamic> reportData in reportsData!) {
+      reports.add(Order.fromJson(reportData));
+    }
     if (reportsData != null) {
       setState(() {
-        reports = reportsData;
+        // reports = reportsData;
         loadingReports = false;
       });
-      updateSummaryData(reportsData);
+      updateSummaryData(reports);
     }
   }
 
@@ -298,14 +302,13 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             SizedBox(height: 20),
             MaterialButton(
-              //TODO:fix issue where custom date selected and back button pressed
               onPressed: () {
                 setState(() {
                   loadingReports = true;
                   filteredReports = [];
                 });
                 for (var report in reports) {
-                  DateTime reportDate = report['order_created'].toDate();
+                  DateTime reportDate = DateTime.parse(report.created_at!);
                   if (reportDate.isBefore(filterEndDate!) && reportDate.isAfter(filterStartDate!)) {
                     filteredReports.add(report);
                   }
@@ -543,16 +546,20 @@ class _ReportScreenState extends State<ReportScreen> {
                                                       sectionsSpace: 2,
                                                       sections: [
                                                         PieChartSectionData(
-                                                          title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                          title:
+                                                              '${calculatePercentageValue(summaryData['resultsTotalPositive'] != null ? summaryData['resultsTotalPositive'].toDouble() : 0, summaryData['resultsTotalSent'] != null ? summaryData['resultsTotalSent'].toDouble() : 0)} %',
                                                           titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                          value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                          value: calculatePercentageValue(summaryData['resultsTotalPositive'] != null ? summaryData['resultsTotalPositive'].toDouble() : 0,
+                                                              summaryData['resultsTotalSent'].toDouble()),
                                                           radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
                                                           color: Colors.teal,
                                                         ),
                                                         PieChartSectionData(
-                                                          title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                          title:
+                                                              '${calculatePercentageValue(summaryData['resultsTotalNegative'] != null ? summaryData['resultsTotalNegative'].toDouble() : 0, summaryData['resultsTotalSent'] != null ? summaryData['resultsTotalSent'].toDouble() : 0)} %',
                                                           titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                          value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                          value: calculatePercentageValue(summaryData['resultsTotalNegative'] != null ? summaryData['resultsTotalNegative'].toDouble() : 0,
+                                                              summaryData['resultsTotalSent'].toDouble()),
                                                           radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
                                                           color: Colors.blue,
                                                         ),
