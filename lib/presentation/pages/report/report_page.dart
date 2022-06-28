@@ -392,205 +392,211 @@ class _ReportScreenState extends State<ReportScreen> {
         elevation: 0,
         actions: [],
       ),
-      body: Container(
-        height: size.height,
-        width: size.width,
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              SizedBox(height: 20.0),
-
-              //!Filter Button
-              Container(
-                decoration: BoxDecoration(),
-                margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: DropDown(
-                  items: ["All", "Today", "This Week", "This Month", "This Year", "Custom Date"],
-                  dropDownType: DropDownType.Button,
-                  showUnderline: false,
-                  hint: Text('All', style: TextStyle(fontSize: 20.0)),
-                  icon: Container(
-                    child: Row(
-                      children: [
-                        FaIcon(FontAwesomeIcons.filter),
-                        SizedBox(width: 10),
-                        Text('Filter', style: TextStyle(fontSize: 18.0)),
-                      ],
-                    ),
-                  ),
-                  onChanged: (choice) {
-                    setState(() {
-                      selectedFilter = choice.toString();
-                    });
-                    filterData(choice, context);
-                  },
-                ),
-              ),
-              loadingReports
-                  ? Expanded(
-                      child: Container(
-                        child: Center(
-                          child: CircularProgressIndicator(),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 900),
+          child: Container(
+            height: size.height,
+            // width: size.width,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(height: 20.0),
+                  //!Filter Button
+                  Container(
+                    decoration: BoxDecoration(),
+                    margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: DropDown(
+                      items: ["All", "Today", "This Week", "This Month", "This Year", "Custom Date"],
+                      dropDownType: DropDownType.Button,
+                      showUnderline: false,
+                      hint: Text('All', style: TextStyle(fontSize: 20.0)),
+                      icon: Container(
+                        child: Row(
+                          children: [
+                            FaIcon(FontAwesomeIcons.filter),
+                            SizedBox(width: 10),
+                            Text('Filter', style: TextStyle(fontSize: 18.0)),
+                          ],
                         ),
                       ),
-                    )
-                  : isReportDataEmpty()
-                      ? Container(
-                          margin: const EdgeInsets.symmetric(vertical: 50),
-                          child: Center(child: Text('No Report Found', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16))),
-                        )
-                      : Expanded(
-                          child: ListView(
-                            children: [
-                              SizedBox(height: 10.0),
-                              //!report summary cards
-                              Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(height: 5),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                      child: Text('Orders', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-                                    ),
-                                    SizedBox(
-                                      height: 140,
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: ReportSummaryCard(title: 'Total orders', description: summaryData['totalRequestedOrders'].toString()),
-                                          ),
-                                          Expanded(
-                                            child: ReportSummaryCard(title: 'Waiting pickup', description: summaryData['ordersWaitingPickup'].toString()),
-                                          ),
-                                          Expanded(
-                                            child: ReportSummaryCard(title: 'En route', description: summaryData['ordersEnRoute'].toString()),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                      child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-                                    ),
-                                    SizedBox(
-                                      height: 140,
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: ReportSummaryCard(title: 'Total', description: totalSpecimens.toString()),
-                                          ),
-                                          Expanded(
-                                            child: ReportSummaryCard(title: 'Accepted', description: summaryData['ordersDeliveredAccepted'].toString()),
-                                          ),
-                                          Expanded(
-                                            child: ReportSummaryCard(title: 'Rejected', description: summaryData['ordersDeliveredRejected'].toString()),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                      child: Text('Test Result', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-                                    ),
-                                    SizedBox(
-                                      height: 140,
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: ReportSummaryCard(title: 'Total Result', description: summaryData['resultsTotalSent'].toString()),
-                                          ),
-                                          Expanded(
-                                            child: ReportSummaryCard(title: 'Positive', description: summaryData['resultsTotalPositive'].toString()),
-                                          ),
-                                          Expanded(
-                                            child: ReportSummaryCard(title: 'Negative', description: summaryData['resultsTotalNegative'].toString()),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 20),
-
-                              //!charts
-                              //!pie chart
-                              SizedBox(height: 5),
-                              summaryData['resultsTotalSent'] == 0
-                                  ? SizedBox.shrink()
-                                  : Container(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                            child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-                                          ),
-                                          SizedBox(height: 5),
-                                          Container(
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: size.height * 0.35,
-                                                  width: size.width / 2,
-                                                  margin: const EdgeInsets.all(10),
-                                                  child: PieChart(
-                                                    PieChartData(
-                                                      sectionsSpace: 2,
-                                                      sections: [
-                                                        PieChartSectionData(
-                                                          title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                          titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                          value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                                          radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
-                                                          color: Colors.teal,
-                                                        ),
-                                                        PieChartSectionData(
-                                                          title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                          titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                          value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                                          radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
-                                                          color: Colors.blue,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    swapAnimationDuration: Duration(milliseconds: 250),
-                                                    swapAnimationCurve: Curves.linear,
-                                                  ),
-                                                ),
-                                                SizedBox(width: 10),
-                                                Container(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      ChartIndicator(indicatorColor: Colors.teal, label: 'Positive'),
-                                                      SizedBox(height: 10),
-                                                      ChartIndicator(indicatorColor: Colors.blue, label: 'Negative'),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                              SizedBox(height: 20),
-
-                              //TODO: add a data table
-                              //!Order Monitoring Table
-
-                              SizedBox(height: 20),
-                            ],
+                      onChanged: (choice) {
+                        setState(() {
+                          selectedFilter = choice.toString();
+                        });
+                        filterData(choice, context);
+                      },
+                    ),
+                  ),
+                  loadingReports
+                      ? Expanded(
+                          child: Container(
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
-                        ),
-            ],
+                        )
+                      : isReportDataEmpty()
+                          ? Container(
+                              margin: const EdgeInsets.symmetric(vertical: 50),
+                              child: Center(child: Text('No Report Found', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16))),
+                            )
+                          : Expanded(
+                              child: ListView(
+                                children: [
+                                  SizedBox(height: 10.0),
+                                  //!report summary cards
+                                  Container(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: 5),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                          child: Text('Orders', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                        ),
+                                        SizedBox(
+                                          height: 140,
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: ReportSummaryCard(title: 'Total orders', description: summaryData['totalRequestedOrders'].toString()),
+                                              ),
+                                              Expanded(
+                                                child: ReportSummaryCard(title: 'Waiting pickup', description: summaryData['ordersWaitingPickup'].toString()),
+                                              ),
+                                              Expanded(
+                                                child: ReportSummaryCard(title: 'En route', description: summaryData['ordersEnRoute'].toString()),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                          child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                        ),
+                                        SizedBox(
+                                          height: 140,
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: ReportSummaryCard(title: 'Total', description: totalSpecimens.toString()),
+                                              ),
+                                              Expanded(
+                                                child: ReportSummaryCard(title: 'Accepted', description: summaryData['ordersDeliveredAccepted'].toString()),
+                                              ),
+                                              Expanded(
+                                                child: ReportSummaryCard(title: 'Rejected', description: summaryData['ordersDeliveredRejected'].toString()),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                          child: Text('Test Result', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                        ),
+                                        SizedBox(
+                                          height: 140,
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: ReportSummaryCard(title: 'Total Result', description: summaryData['resultsTotalSent'].toString()),
+                                              ),
+                                              Expanded(
+                                                child: ReportSummaryCard(title: 'Positive', description: summaryData['resultsTotalPositive'].toString()),
+                                              ),
+                                              Expanded(
+                                                child: ReportSummaryCard(title: 'Negative', description: summaryData['resultsTotalNegative'].toString()),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+
+                                  //!charts
+                                  //!pie chart
+                                  SizedBox(height: 5),
+                                  summaryData['resultsTotalSent'] == 0
+                                      ? SizedBox.shrink()
+                                      : Container(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                              ),
+                                              SizedBox(height: 5),
+                                              Container(
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      height: size.width > 450 ? 300 : 200,
+                                                      width: size.width > 450 ? 300 : 200,
+                                                      // height: size.height * 0.3,
+                                                      // width: size.width < 820 ? size.width / 2 : size.width / 4,
+                                                      margin: const EdgeInsets.all(10),
+                                                      child: PieChart(
+                                                        PieChartData(
+                                                          sectionsSpace: 0,
+                                                          sections: [
+                                                            PieChartSectionData(
+                                                              title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                              titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                              value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                              radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
+                                                              color: Colors.teal,
+                                                            ),
+                                                            PieChartSectionData(
+                                                              title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                              titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                              value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                              radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
+                                                              color: Colors.blue,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        swapAnimationDuration: Duration(milliseconds: 250),
+                                                        swapAnimationCurve: Curves.linear,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Container(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          ChartIndicator(indicatorColor: Colors.teal, label: 'Positive'),
+                                                          SizedBox(height: 10),
+                                                          ChartIndicator(indicatorColor: Colors.blue, label: 'Negative'),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                  SizedBox(height: 20),
+
+                                  //TODO: add a data table
+                                  //!Order Monitoring Table
+
+                                  SizedBox(height: 20),
+                                ],
+                              ),
+                            ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
