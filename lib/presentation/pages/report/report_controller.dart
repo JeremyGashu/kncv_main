@@ -104,7 +104,7 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
         break;
     }
 
-    // print('reports: ${reports.length}');
+    print('reports: ${reports.length}');
     // setState(() {
     //   loadingReports = false;
     // });
