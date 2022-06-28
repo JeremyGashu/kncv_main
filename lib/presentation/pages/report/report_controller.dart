@@ -93,7 +93,7 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
 
       case 'Federal':
         {
-          reports.addAll(allOrders);
+          return allOrders;
         }
         break;
       default:

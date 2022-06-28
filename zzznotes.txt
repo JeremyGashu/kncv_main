@@ -248,3 +248,22 @@
                                     topLeftCornerWidget: Center(child: Text("Order ID")),
                                   ),
                                 ),
+
+                                  LazyDataTableTheme MyTableTheme() {
+    return LazyDataTableTheme(
+      rowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      alternateCellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      cellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      cornerBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      columnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      alternateRowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      alternateColumnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      rowHeaderColor: Colors.white,
+      columnHeaderColor: Colors.white,
+      cornerColor: Colors.white,
+      cellColor: Colors.white,
+      alternateCellColor: Colors.white,
+      alternateRowHeaderColor: Colors.white,
+      alternateColumnHeaderColor: Colors.white,
+    );
+  }

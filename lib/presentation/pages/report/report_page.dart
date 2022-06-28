@@ -4,11 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kncv_flutter/presentation/pages/report/report_controller.dart';
-import 'package:lazy_data_table/lazy_data_table.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../../core/colors.dart';
-
-enum Filters { All, Today, ThisWeek, ThisMonth, ThisYear, CustomDate }
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({Key? key}) : super(key: key);
@@ -59,7 +56,6 @@ class _ReportScreenState extends State<ReportScreen> {
     return ordersWaitingPickup;
   }
 
-  //TODO: specimen enroute
   int getOrdersEnRoute(List<Map<String, dynamic>>? reportsData) {
     int ordersEnRoute = 0;
     for (var i = 0; i < reportsData!.length; i++) {
@@ -75,7 +71,6 @@ class _ReportScreenState extends State<ReportScreen> {
     for (var reportData in reportsData!) {
       for (var patient in reportData['patients']) {
         for (var specimen in patient['specimens']) {
-          // print(specimen.length);
           if (!specimen['rejected']) {
             ordersDeliveredAccepted++;
           }
@@ -90,7 +85,6 @@ class _ReportScreenState extends State<ReportScreen> {
     for (var reportData in reportsData!) {
       for (var patient in reportData['patients']) {
         for (var specimen in patient['specimens']) {
-          // print(specimen.length);
           if (specimen['rejected']) {
             ordersDeliveredRejected++;
           }
@@ -104,13 +98,12 @@ class _ReportScreenState extends State<ReportScreen> {
     int totalSpecimens = 0;
     for (var reportData in reportsData!) {
       for (var patient in reportData['patients']) {
+        // ignore: unused_local_variable
         for (var specimen in patient['specimens']) {
           totalSpecimens++;
         }
-        // totalSpecimens += patient['specimens'].length.toInt();
       }
     }
-    // print('totalSpecimens: $totalSpecimens');
     return totalSpecimens;
   }
 
@@ -119,14 +112,12 @@ class _ReportScreenState extends State<ReportScreen> {
     for (var reportData in reportsData!) {
       for (var patient in reportData['patients']) {
         for (var specimen in patient['specimens']) {
-          // print(specimen.length);
           if (specimen['result'] != null) {
             ordersDeliveredTestedResulted++;
           }
         }
       }
     }
-    // print('orders tested resulted: $ordersDeliveredTestedResulted');
     return ordersDeliveredTestedResulted;
   }
 
@@ -135,14 +126,11 @@ class _ReportScreenState extends State<ReportScreen> {
     for (var reportData in reportsData!) {
       for (var patient in reportData['patients']) {
         for (var specimen in patient['specimens']) {
-          // print(specimen.length);
-          // if (!specimen['rejected']) {
           if (specimen['result'] != null) {
             if (specimen['result']['mtb_result'] == 'MTB Detected') {
               ordersTestedPositive++;
             }
           }
-          // }
         }
       }
     }
@@ -154,14 +142,11 @@ class _ReportScreenState extends State<ReportScreen> {
     for (var reportData in reportsData!) {
       for (var patient in reportData['patients']) {
         for (var specimen in patient['specimens']) {
-          // print(specimen.length);
-          // if (!specimen['rejected']) {
           if (specimen['result'] != null) {
             if (specimen['result']['mtb_result'] == 'MTB Not Detected') {
               ordersTestedNegative++;
             }
           }
-          // }
         }
       }
     }
@@ -185,7 +170,6 @@ class _ReportScreenState extends State<ReportScreen> {
     summaryData['resultsTotalNegative'] = getOrdersTestedNegative(reportsData);
 
     //!percentage
-    // summaryData['orderDeliveredAcceptedPercentage'] = calculatePercentageValue(value, total).toString();
   }
 
   //!get all reports
@@ -195,6 +179,7 @@ class _ReportScreenState extends State<ReportScreen> {
       loadingReports = true;
     });
     List<Map<String, dynamic>>? reportsData = await getUserReport();
+    print('reportsData $reportsData');
     if (reportsData != null) {
       setState(() {
         reports = reportsData;
@@ -281,7 +266,6 @@ class _ReportScreenState extends State<ReportScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // SizedBox(height: size.height * 0.1),
             Text('Start Date', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
             SizedBox(height: 10),
             Container(
@@ -316,8 +300,6 @@ class _ReportScreenState extends State<ReportScreen> {
             MaterialButton(
               //TODO:fix issue where custom date selected and back button pressed
               onPressed: () {
-                // print('Start Date: $filterStartDate');
-                // print('End Date: $filterEndDate');
                 setState(() {
                   loadingReports = true;
                   filteredReports = [];
@@ -371,11 +353,24 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   double calculatePercentageValue(double value, double total) {
-    // print('Value: $value');
-    // print('Total: $total');
     double result = ((value / total) * 100).roundToDouble();
-    // print('Result: $result');
     return result;
+  }
+
+  bool isReportDataEmpty() {
+    //!if filter is not All and filtred reports is empty
+    if (selectedFilter != 'All' && filteredReports.isEmpty && !loadingReports) {
+      return true;
+      //!if filter is not All and filtred reports is not empty
+    } else if (selectedFilter != 'All' && filteredReports.isNotEmpty && !loadingReports) {
+      return false;
+    } else if (selectedFilter == 'All' && reports.isEmpty && !loadingReports) {
+      return true;
+    } else if (selectedFilter == 'All' && reports.isNotEmpty && !loadingReports) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   @override
@@ -395,9 +390,7 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
         ),
         elevation: 0,
-        actions: [
-          //BlocProvider.of<AuthBloc>(context).add(LogOutUser());
-        ],
+        actions: [],
       ),
       body: Container(
         height: size.height,
@@ -430,7 +423,6 @@ class _ReportScreenState extends State<ReportScreen> {
                     setState(() {
                       selectedFilter = choice.toString();
                     });
-                    // print('selectedFilter: $selectedFilter');
                     filterData(choice, context);
                   },
                 ),
@@ -443,14 +435,13 @@ class _ReportScreenState extends State<ReportScreen> {
                         ),
                       ),
                     )
-                  : (selectedFilter != 'All' && filteredReports.length == 0 && !loadingReports)
+                  : isReportDataEmpty()
                       ? Container(
                           margin: const EdgeInsets.symmetric(vertical: 50),
                           child: Center(child: Text('No Report Found', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16))),
                         )
                       : Expanded(
                           child: ListView(
-                            // crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(height: 10.0),
                               //!report summary cards
@@ -479,7 +470,6 @@ class _ReportScreenState extends State<ReportScreen> {
                                         ],
                                       ),
                                     ),
-                                    // SizedBox(height: 20),
                                     SizedBox(height: 5),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -530,83 +520,66 @@ class _ReportScreenState extends State<ReportScreen> {
                               //!charts
                               //!pie chart
                               SizedBox(height: 5),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-                              ),
-                              SizedBox(height: 5),
-                              Container(
-                                // height: 240,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      // decoration: BoxDecoration(color: Colors.yellow),
-                                      height: size.height * 0.35,
-                                      width: size.width / 2,
-                                      margin: const EdgeInsets.all(10),
-                                      child: PieChart(
-                                        PieChartData(
-                                          sectionsSpace: 0,
-                                          sections: [
-                                            PieChartSectionData(
-                                              title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                              titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                              value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                              radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
-                                              color: Colors.teal,
-                                            ),
-                                            PieChartSectionData(
-                                              title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                              titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                              value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                              radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
-                                              color: Colors.blue,
-                                            ),
-                                          ],
-                                        ),
-                                        swapAnimationDuration: Duration(milliseconds: 250),
-                                        swapAnimationCurve: Curves.linear,
-                                      ),
-                                    ),
-                                    Container(
-                                      // decoration: BoxDecoration(color: Colors.yellow),
+                              summaryData['resultsTotalSent'] == 0
+                                  ? SizedBox.shrink()
+                                  : Container(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          ChartIndicator(indicatorColor: Colors.teal, label: 'Positive'),
-                                          SizedBox(height: 10),
-                                          ChartIndicator(indicatorColor: Colors.blue, label: 'Negative'),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                            child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                          ),
+                                          SizedBox(height: 5),
+                                          Container(
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  height: size.height * 0.35,
+                                                  width: size.width / 2,
+                                                  margin: const EdgeInsets.all(10),
+                                                  child: PieChart(
+                                                    PieChartData(
+                                                      sectionsSpace: 2,
+                                                      sections: [
+                                                        PieChartSectionData(
+                                                          title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                          titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                          value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                          radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
+                                                          color: Colors.teal,
+                                                        ),
+                                                        PieChartSectionData(
+                                                          title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                          titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                          value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                          radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
+                                                          color: Colors.blue,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    swapAnimationDuration: Duration(milliseconds: 250),
+                                                    swapAnimationCurve: Curves.linear,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10),
+                                                Container(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      ChartIndicator(indicatorColor: Colors.teal, label: 'Positive'),
+                                                      SizedBox(height: 10),
+                                                      ChartIndicator(indicatorColor: Colors.blue, label: 'Negative'),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
-
-                                    // PieChart(
-                                    //   PieChartData(
-                                    //     sectionsSpace: 8,
-                                    //     sections: [
-                                    //       PieChartSectionData(
-                                    //         title: "Accepted",
-                                    //         titleStyle: TextStyle(color: Colors.black),
-                                    //         value: summaryData['ordersDeliveredAccepted'].toDouble(),
-                                    //         radius: 88,
-                                    //         color: Colors.yellow.shade400,
-                                    //       ),
-                                    //       PieChartSectionData(
-                                    //         title: "Rejected",
-                                    //         titleStyle: TextStyle(color: Colors.black),
-                                    //         value: summaryData['ordersDeliveredRejected'].toDouble(),
-                                    //         radius: 88,
-                                    //         color: Colors.red,
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    //   swapAnimationDuration: Duration(milliseconds: 250),
-                                    //   swapAnimationCurve: Curves.linear,
-                                    // ),
-                                  ],
-                                ),
-                              ),
 
                               SizedBox(height: 20),
 
@@ -621,25 +594,6 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  LazyDataTableTheme MyTableTheme() {
-    return LazyDataTableTheme(
-      rowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-      alternateCellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-      cellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-      cornerBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-      columnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-      alternateRowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-      alternateColumnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
-      rowHeaderColor: Colors.white,
-      columnHeaderColor: Colors.white,
-      cornerColor: Colors.white,
-      cellColor: Colors.white,
-      alternateCellColor: Colors.white,
-      alternateRowHeaderColor: Colors.white,
-      alternateColumnHeaderColor: Colors.white,
     );
   }
 }
