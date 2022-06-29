@@ -25,85 +25,87 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
     // print('permission: $userReportPermissions');
 
     //!get order report based on permission
-    switch (userReportPermissions['type']) {
-      case 'Region':
-        {
-          // statements;
-          String permissionRegion = userReportPermissions['region'];
-          for (Map<String, dynamic> order in allOrders) {
-            Map<String, dynamic> region = order['region'];
-            // ignore: unnecessary_null_comparison
-            if (region != null) {
-              // print('permissionRegion: ${permissionRegion.replaceAll("\"", "")}  || zone name: ${region['name']}');
-              if (permissionRegion.replaceAll("\"", "") == region['name']) {
-                reports.add(order);
-              }
-            }
-            // print(region);
-          }
-          // setState(() {});
-          // print(permissionRegion);
-        }
-        break;
-
-      case 'Zone':
-        {
-          //statements;
-          String permissionZone = userReportPermissions['zone'];
-          for (Map<String, dynamic> order in allOrders) {
-            Map<String, dynamic> region = order['region'];
-            // ignore: unnecessary_null_comparison
-            if (region != null) {
-              // print(region['zones']);
-              for (Map<String, dynamic> zone in region['zones']) {
-                // print('zone: $zone');
-                // print('permissionZone: ${permissionZone.replaceAll("\"", "")}  || zone name: ${zone['name']}');
-                if (zone['name'] == permissionZone.replaceAll("\"", "")) {
+    // ignore: unnecessary_null_comparison
+    if (userReportPermissions != null) {
+      switch (userReportPermissions['type']) {
+        case 'Region':
+          {
+            // statements;
+            String permissionRegion = userReportPermissions['region'];
+            for (Map<String, dynamic> order in allOrders) {
+              Map<String, dynamic> region = order['region'];
+              // ignore: unnecessary_null_comparison
+              if (region != null) {
+                // print('permissionRegion: ${permissionRegion.replaceAll("\"", "")}  || zone name: ${region['name']}');
+                if (permissionRegion.replaceAll("\"", "") == region['name']) {
                   reports.add(order);
                 }
               }
+              // print(region);
             }
+            // setState(() {});
+            // print(permissionRegion);
           }
-          // setState(() {});
-          // print(permissionZone);
-        }
-        break;
-      case 'Woreda':
-        {
-          //statements;
-          String permissionWoreda = userReportPermissions['woreda'];
-          for (Map<String, dynamic> order in allOrders) {
-            Map<String, dynamic> region = order['region'];
-            // ignore: unnecessary_null_comparison
-            if (region != null) {
-              // print(region['zones']);
-              for (Map<String, dynamic> zone in region['zones']) {
-                // print('zone: $zone');
-                for (Map<String, dynamic> woreda in zone['woredas']) {
-                  // print('permissionWoreda: ${permissionWoreda.replaceAll("\"", "")}  || woreda name: ${woreda['name']}');
-                  if (permissionWoreda.replaceAll("\"", "") == woreda['name']) {
+          break;
+
+        case 'Zone':
+          {
+            //statements;
+            String permissionZone = userReportPermissions['zone'];
+            for (Map<String, dynamic> order in allOrders) {
+              Map<String, dynamic> region = order['region'];
+              // ignore: unnecessary_null_comparison
+              if (region != null) {
+                // print(region['zones']);
+                for (Map<String, dynamic> zone in region['zones']) {
+                  // print('zone: $zone');
+                  // print('permissionZone: ${permissionZone.replaceAll("\"", "")}  || zone name: ${zone['name']}');
+                  if (zone['name'] == permissionZone.replaceAll("\"", "")) {
                     reports.add(order);
                   }
                 }
               }
             }
+            // setState(() {});
+            // print(permissionZone);
           }
-          // setState(() {});
-          // print(permissionWoreda);
-        }
-        break;
+          break;
+        case 'Woreda':
+          {
+            //statements;
+            String permissionWoreda = userReportPermissions['woreda'];
+            for (Map<String, dynamic> order in allOrders) {
+              Map<String, dynamic> region = order['region'];
+              // ignore: unnecessary_null_comparison
+              if (region != null) {
+                // print(region['zones']);
+                for (Map<String, dynamic> zone in region['zones']) {
+                  // print('zone: $zone');
+                  for (Map<String, dynamic> woreda in zone['woredas']) {
+                    // print('permissionWoreda: ${permissionWoreda.replaceAll("\"", "")}  || woreda name: ${woreda['name']}');
+                    if (permissionWoreda.replaceAll("\"", "") == woreda['name']) {
+                      reports.add(order);
+                    }
+                  }
+                }
+              }
+            }
+            // setState(() {});
+            // print(permissionWoreda);
+          }
+          break;
 
-      case 'Federal':
-        {
-          return allOrders;
-        }
-        break;
-      default:
-        {
-          //statements;
-          print('Something wrong happened');
-        }
-        break;
+        case 'Federal':
+          {
+            return allOrders;
+          }
+          break;
+        default:
+          return [];
+          break;
+      }
+    } else {
+      return [];
     }
 
     print('reports: ${reports.length}');
