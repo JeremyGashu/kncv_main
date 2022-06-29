@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -497,7 +498,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                         SizedBox(height: 5),
                                         Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                          child: Text('Test Result', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                          child: Text('Test Results', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
                                         ),
                                         SizedBox(
                                           height: 140,
@@ -767,31 +768,104 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 }
 
+String getDateFormatted(Timestamp? time) {
+  if (time == null) {
+    return "";
+  } else {
+    return time.toDate().day.toString() + '/' + time.toDate().month.toString() + '/' + time.toDate().year.toString();
+  }
+}
+
+String getAgeInMonth(int? age) {
+  if (age == null) {
+    return "";
+  } else {
+    return (age * 12).toString();
+  }
+}
+
 List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
-  return reportsData.map((data) {
+  //!Grab the order details
+  //!inside order details grab patient details
+  List<Map<String, dynamic>> finalData = [];
+  Map<String, dynamic> patientInformation = {};
+
+  // Map<String, dynamic> patientInformation = {
+  //   'orderId': null,
+  //   'courier_name': null,
+  //   'sender_name': null,
+  //   'tester_name': null,
+  //   'order_created': null,
+  //   'patientName': null,
+  //   'mrn': null,
+  //   'sex': null,
+  //   'age': null,
+  //   'ageInMonths': null,
+  //   'phone': null,
+  //   'region': null,
+  //   'zone': null,
+  //   'woreda': null,
+  //   'specimenType': null,
+  //   'siteOfTest': null,
+  //   'requestedTest': null,
+  //   'reasonForTest': null,
+  //   'registrationGroup': null,
+  //   'deliveryStatus': null,
+  // };
+
+  //!data collector
+  for (Map<String, dynamic> reportData in reportsData) {
+    for (Map<String, dynamic> patient in reportData['patients']) {
+      for (Map<String, dynamic> specimen in patient['specimens']) {
+        patientInformation['orderId'] = reportData['orderId'] != null ? reportData['orderId'] : "";
+        patientInformation['courier_name'] = reportData['courier_name'] != null ? reportData['courier_name'] : "";
+        patientInformation['sender_name'] = reportData['sender_name'] != null ? reportData['sender_name'] : "";
+        patientInformation['tester_name'] = reportData['tester_name'] != null ? reportData['tester_name'] : "";
+        patientInformation['order_created'] = getDateFormatted(reportData['order_created']);
+        patientInformation['patientName'] = patient['name'] != null ? patient['name'] : "";
+        patientInformation['mrn'] = patient['MR'] != null ? patient['MR'] : "";
+        patientInformation['sex'] = patient['sex'] != null ? patient['sex'] : "";
+        patientInformation['age'] = patient['age'] != null ? patient['age'] : "";
+        patientInformation['ageInMonths'] = patient['age'] != null ? getAgeInMonth(int.parse(patient['age'])) : "";
+        patientInformation['phone'] = patient['phone'] != null ? patient['phone'] : "";
+        patientInformation['region'] = patient['region']['name'] != null ? patient['region']['name'] : "";
+        patientInformation['zone'] = patient['region']['zones'][0]['name'] != null ? patient['region']['zones'][0]['name'] : "";
+        patientInformation['woreda'] = patient['region']['zones'][0]['woredas'][0]['name'] != null ? patient['region']['zones'][0]['woredas'][0]['name'] : "";
+        patientInformation['specimenType'] = specimen['type'] != null ? specimen['type'] : "";
+        patientInformation['siteOfTest'] = patient['anatomic_location'] != null ? patient['anatomic_location'] : "";
+        patientInformation['requestedTest'] = specimen['examination_type'] != null ? specimen['examination_type'] : "";
+        patientInformation['reasonForTest'] = patient['reason_for_test'] != null ? patient['reason_for_test'] : "";
+        patientInformation['registrationGroup'] = patient['registration_group'] != null ? patient['registration_group'] : "";
+        patientInformation['deliveryStatus'] = reportData['status'] != null ? reportData['status'] : "";
+        finalData.add(patientInformation);
+        patientInformation = {};
+      }
+    }
+  }
+
+  return finalData.map((data) {
     return DataRow(
       cells: [
-        DataCell(Text(data['orderId'])),
+        DataCell(Text(data['orderId'].toString())),
         DataCell(Text(data['courier_name'].toString())),
         DataCell(Text(data['sender_name'].toString())),
         DataCell(Text(data['tester_name'].toString())),
-        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
-        //TODO: handle individual patients name
-        DataCell(Text(data['region']['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
-        DataCell(Text(data['patients'].length.toString())),
-        DataCell(Text(data['status'].toString())),
-        DataCell(Text('')),
-        DataCell(Text(data['sender_name'].toString())),
-        DataCell(Text(data['courier_name'].toString())),
-        DataCell(Text(data['tester_name'].toString())),
-        DataCell(Text(data['region']['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
-        DataCell(Text(data['patients'].length.toString())),
-        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
-        DataCell(Text(data['status'].toString())),
+        DataCell(Text(data['order_created'].toString())),
+        DataCell(Text(data['patientName'].toString())),
+        DataCell(Text(data['mrn'].toString())),
+        DataCell(Text(data['sex'].toString())),
+        DataCell(Text(data['age'].toString())),
+        DataCell(Text(data['ageInMonths'].toString())),
+        DataCell(Text(data['phone'].toString())),
+        DataCell(Text(data['region'].toString())),
+        DataCell(Text(data['zone'].toString())),
+        DataCell(Text(data['woreda'].toString())),
+        DataCell(Text(data['specimenType'].toString())),
+        DataCell(Text(data['siteOfTest'].toString())),
+        DataCell(Text(data['requestedTest'].toString())),
+        DataCell(Text(data['reasonForTest'].toString())),
+        DataCell(Text(data['registrationGroup'].toString())),
+        DataCell(Text(data['deliveryStatus'].toString())),
       ],
     );
   }).toList();
