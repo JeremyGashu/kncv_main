@@ -70,10 +70,12 @@ class _ReportScreenState extends State<ReportScreen> {
   int getOrdersDeliveredAccepted(List<Map<String, dynamic>>? reportsData) {
     int ordersDeliveredAccepted = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (!specimen['rejected']) {
-            ordersDeliveredAccepted++;
+      if (reportData['status'] != "Draft") {
+        for (var patient in reportData['patients']) {
+          for (var specimen in patient['specimens']) {
+            if (!specimen['rejected']) {
+              ordersDeliveredAccepted++;
+            }
           }
         }
       }
@@ -84,10 +86,12 @@ class _ReportScreenState extends State<ReportScreen> {
   int getOrdersDeliveredRejected(List<Map<String, dynamic>>? reportsData) {
     int ordersDeliveredRejected = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (specimen['rejected']) {
-            ordersDeliveredRejected++;
+      if (reportData['status'] != "Draft") {
+        for (var patient in reportData['patients']) {
+          for (var specimen in patient['specimens']) {
+            if (specimen['rejected']) {
+              ordersDeliveredRejected++;
+            }
           }
         }
       }
@@ -98,10 +102,12 @@ class _ReportScreenState extends State<ReportScreen> {
   int getTotalSpecimens(List<Map<String, dynamic>>? reportsData) {
     int totalSpecimens = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        // ignore: unused_local_variable
-        for (var specimen in patient['specimens']) {
-          totalSpecimens++;
+      if (reportData['status'] != "Draft") {
+        for (var patient in reportData['patients']) {
+          // ignore: unused_local_variable
+          for (var specimen in patient['specimens']) {
+            totalSpecimens++;
+          }
         }
       }
     }
@@ -154,12 +160,22 @@ class _ReportScreenState extends State<ReportScreen> {
     return ordersTestedNegative;
   }
 
+  int getTotalOrders(List<Map<String, dynamic>>? reportsData) {
+    int ordersTotal = 0;
+    for (var reportData in reportsData!) {
+      if (reportData['status'] != "Draft") {
+        ordersTotal++;
+      }
+    }
+    return ordersTotal;
+  }
+
   //!update summary data
   void updateSummaryData(List<Map<String, dynamic>>? reportsData) {
     setState(() {
       totalSpecimens = getTotalSpecimens(reportsData);
     });
-    summaryData['totalRequestedOrders'] = reportsData!.length;
+    summaryData['totalRequestedOrders'] = getTotalOrders(reportsData);
     summaryData['ordersWaitingPickup'] = getOrdersWaitingForPickup(reportsData);
     summaryData['ordersEnRoute'] = getOrdersEnRoute(reportsData);
     summaryData['ordersDeliveredAccepted'] = getOrdersDeliveredAccepted(reportsData);
@@ -180,7 +196,6 @@ class _ReportScreenState extends State<ReportScreen> {
       loadingReports = true;
     });
     List<Map<String, dynamic>>? reportsData = await getUserReport();
-    // print('reportsData $reportsData');
     if (reportsData != null) {
       setState(() {
         reports = reportsData;
@@ -300,7 +315,6 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             SizedBox(height: size.height * 0.02),
             MaterialButton(
-              //TODO:fix issue where custom date selected and back button pressed
               onPressed: () {
                 setState(() {
                   loadingReports = true;
@@ -396,10 +410,9 @@ class _ReportScreenState extends State<ReportScreen> {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 900),
+          constraints: BoxConstraints(maxWidth: 1200),
           child: Container(
             height: size.height,
-            // width: size.width,
             child: Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -471,6 +484,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                               Expanded(
                                                 child: ReportSummaryCard(title: 'En route', description: summaryData['ordersEnRoute'].toString()),
                                               ),
+                                              // SizedBox(width: 10),
                                             ],
                                           ),
                                         ),
@@ -492,6 +506,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                               Expanded(
                                                 child: ReportSummaryCard(title: 'Rejected', description: summaryData['ordersDeliveredRejected'].toString()),
                                               ),
+                                              // SizedBox(width: 10),
                                             ],
                                           ),
                                         ),
@@ -513,6 +528,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                               Expanded(
                                                 child: ReportSummaryCard(title: 'Negative', description: summaryData['resultsTotalNegative'].toString()),
                                               ),
+                                              // SizedBox(width: 10),
                                             ],
                                           ),
                                         ),
@@ -542,8 +558,6 @@ class _ReportScreenState extends State<ReportScreen> {
                                                           Container(
                                                             height: size.width > 500 ? 300 : 150,
                                                             width: size.width > 500 ? 300 : 150,
-                                                            // height: size.height * 0.3,
-                                                            // width: size.width < 820 ? size.width / 2 : size.width / 4,
                                                             margin: const EdgeInsets.all(10),
                                                             child: PieChart(
                                                               PieChartData(
@@ -588,8 +602,6 @@ class _ReportScreenState extends State<ReportScreen> {
                                                           Container(
                                                             height: size.width > 450 ? 300 : 200,
                                                             width: size.width > 450 ? 300 : 200,
-                                                            // height: size.height * 0.3,
-                                                            // width: size.width < 820 ? size.width / 2 : size.width / 4,
                                                             margin: const EdgeInsets.all(10),
                                                             child: PieChart(
                                                               PieChartData(
@@ -636,7 +648,6 @@ class _ReportScreenState extends State<ReportScreen> {
 
                                   SizedBox(height: 20),
 
-                                  //TODO: add a data table
                                   //!Order Monitoring Table
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -785,33 +796,8 @@ String getAgeInMonth(int? age) {
 }
 
 List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
-  //!Grab the order details
-  //!inside order details grab patient details
   List<Map<String, dynamic>> finalData = [];
   Map<String, dynamic> patientInformation = {};
-
-  // Map<String, dynamic> patientInformation = {
-  //   'orderId': null,
-  //   'courier_name': null,
-  //   'sender_name': null,
-  //   'tester_name': null,
-  //   'order_created': null,
-  //   'patientName': null,
-  //   'mrn': null,
-  //   'sex': null,
-  //   'age': null,
-  //   'ageInMonths': null,
-  //   'phone': null,
-  //   'region': null,
-  //   'zone': null,
-  //   'woreda': null,
-  //   'specimenType': null,
-  //   'siteOfTest': null,
-  //   'requestedTest': null,
-  //   'reasonForTest': null,
-  //   'registrationGroup': null,
-  //   'deliveryStatus': null,
-  // };
 
   //!data collector
   for (Map<String, dynamic> reportData in reportsData) {
@@ -955,7 +941,7 @@ class ReportSummaryCard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Container(
-      margin: EdgeInsets.only(left: 8, right: size.width > 900 ? 100 : 0, top: 10, bottom: 10),
+      margin: EdgeInsets.only(left: 8, right: size.width > 900 ? 100 : 10, top: 10, bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [BoxShadow(color: Colors.grey.shade200, offset: Offset(2, 7), blurRadius: 20)],
@@ -967,7 +953,7 @@ class ReportSummaryCard extends StatelessWidget {
           Text(title, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600)),
           Divider(),
           SizedBox(height: 20),
-          Text(description, style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600)),
+          Text(description, style: TextStyle(fontSize: size.width > 900 ? 26 : 24.0, fontWeight: FontWeight.w600)),
         ],
       ),
     );
