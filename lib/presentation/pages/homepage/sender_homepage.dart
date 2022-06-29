@@ -94,7 +94,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                   elevation: 0,
@@ -109,7 +109,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                         );
                       },
                       icon: Icon(Icons.report),
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                     kIsWeb
                         ? Container(
@@ -120,7 +120,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                 },
                                 icon: Icon(
                                   Icons.person,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 )))
                         : SizedBox(),
                     StreamBuilder(
@@ -145,7 +145,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
 
                                 child: Icon(
                                   Icons.notifications_outlined,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -170,7 +170,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                     IconButton(
                       icon: Icon(
                         Icons.logout,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                       onPressed: () {
                         showDialog(

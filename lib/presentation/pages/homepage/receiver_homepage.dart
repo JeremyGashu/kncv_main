@@ -68,7 +68,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                   elevation: 0,
@@ -83,7 +83,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                         );
                       },
                       icon: Icon(Icons.report),
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                     kIsWeb
                         ? Container(
@@ -94,7 +94,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                 },
                                 icon: Icon(
                                   Icons.person,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 )))
                         : SizedBox(),
                     StreamBuilder(
@@ -119,7 +119,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
 
                                 child: Icon(
                                   Icons.notifications_outlined,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),

@@ -66,7 +66,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                   elevation: 0,
@@ -81,7 +81,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                         );
                       },
                       icon: Icon(Icons.report),
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance.collection('notifications').snapshots(),
@@ -105,7 +105,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
 
                                 child: Icon(
                                   Icons.notifications_outlined,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -129,7 +129,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                     IconButton(
                       icon: Icon(
                         Icons.logout,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                       onPressed: () {
                         showDialog(

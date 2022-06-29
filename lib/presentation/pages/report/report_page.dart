@@ -767,6 +767,36 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 }
 
+List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
+  return reportsData.map((data) {
+    return DataRow(
+      cells: [
+        DataCell(Text(data['orderId'])),
+        DataCell(Text(data['courier_name'].toString())),
+        DataCell(Text(data['sender_name'].toString())),
+        DataCell(Text(data['tester_name'].toString())),
+        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
+        //TODO: handle individual patients name
+        DataCell(Text(data['region']['name'].toString())),
+        DataCell(Text(data['region']['zones'][0]['name'].toString())),
+        DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
+        DataCell(Text(data['patients'].length.toString())),
+        DataCell(Text(data['status'].toString())),
+        DataCell(Text('')),
+        DataCell(Text(data['sender_name'].toString())),
+        DataCell(Text(data['courier_name'].toString())),
+        DataCell(Text(data['tester_name'].toString())),
+        DataCell(Text(data['region']['name'].toString())),
+        DataCell(Text(data['region']['zones'][0]['name'].toString())),
+        DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
+        DataCell(Text(data['patients'].length.toString())),
+        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
+        DataCell(Text(data['status'].toString())),
+      ],
+    );
+  }).toList();
+}
+
 List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
   return reportsData.map((data) {
     DateTime? orderReceived;
@@ -806,36 +836,6 @@ List<DataRow> getOrderMonitoringRows(List<Map<String, dynamic>> reportsData) {
     return DataRow(
       cells: [
         DataCell(Text(data['orderId'])),
-        DataCell(Text(data['sender_name'].toString())),
-        DataCell(Text(data['courier_name'].toString())),
-        DataCell(Text(data['tester_name'].toString())),
-        DataCell(Text(data['region']['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
-        DataCell(Text(data['patients'].length.toString())),
-        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
-        DataCell(Text(data['status'].toString())),
-      ],
-    );
-  }).toList();
-}
-
-List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
-  return reportsData.map((data) {
-    return DataRow(
-      cells: [
-        DataCell(Text(data['orderId'])),
-        DataCell(Text(data['courier_name'].toString())),
-        DataCell(Text(data['sender_name'].toString())),
-        DataCell(Text(data['tester_name'].toString())),
-        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
-        //TODO: handle individual patients name
-        DataCell(Text(data['region']['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
-        DataCell(Text(data['patients'].length.toString())),
-        DataCell(Text(data['status'].toString())),
-        DataCell(Text('')),
         DataCell(Text(data['sender_name'].toString())),
         DataCell(Text(data['courier_name'].toString())),
         DataCell(Text(data['tester_name'].toString())),
