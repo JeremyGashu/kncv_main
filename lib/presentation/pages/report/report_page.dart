@@ -265,11 +265,12 @@ class _ReportScreenState extends State<ReportScreen> {
         height: size.height * 0.75,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Start Date', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-            SizedBox(height: 10),
+            SizedBox(height: size.height * 0.02),
             Container(
-              height: 200,
+              height: size.height * 0.2,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime(2000, 1, 1),
@@ -284,7 +285,7 @@ class _ReportScreenState extends State<ReportScreen> {
             Text('End Date', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
             SizedBox(height: 10),
             Container(
-              height: 200,
+              height: size.height * 0.2,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime.now(),
@@ -296,7 +297,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 },
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: size.height * 0.02),
             MaterialButton(
               //TODO:fix issue where custom date selected and back button pressed
               onPressed: () {
@@ -534,52 +535,99 @@ class _ReportScreenState extends State<ReportScreen> {
                                               ),
                                               SizedBox(height: 5),
                                               Container(
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      height: size.width > 450 ? 300 : 200,
-                                                      width: size.width > 450 ? 300 : 200,
-                                                      // height: size.height * 0.3,
-                                                      // width: size.width < 820 ? size.width / 2 : size.width / 4,
-                                                      margin: const EdgeInsets.all(10),
-                                                      child: PieChart(
-                                                        PieChartData(
-                                                          sectionsSpace: 0,
-                                                          sections: [
-                                                            PieChartSectionData(
-                                                              title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                              titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                              value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                                              radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
-                                                              color: Colors.teal,
-                                                            ),
-                                                            PieChartSectionData(
-                                                              title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                              titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                              value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                                              radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
-                                                              color: Colors.blue,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        swapAnimationDuration: Duration(milliseconds: 250),
-                                                        swapAnimationCurve: Curves.linear,
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Container(
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                child: size.width < 370
+                                                    ? Column(
                                                         children: [
-                                                          ChartIndicator(indicatorColor: Colors.teal, label: 'Positive'),
-                                                          SizedBox(height: 10),
-                                                          ChartIndicator(indicatorColor: Colors.blue, label: 'Negative'),
+                                                          Container(
+                                                            height: size.width > 500 ? 300 : 150,
+                                                            width: size.width > 500 ? 300 : 150,
+                                                            // height: size.height * 0.3,
+                                                            // width: size.width < 820 ? size.width / 2 : size.width / 4,
+                                                            margin: const EdgeInsets.all(10),
+                                                            child: PieChart(
+                                                              PieChartData(
+                                                                sectionsSpace: 0,
+                                                                sections: [
+                                                                  PieChartSectionData(
+                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                                    value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                                    radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
+                                                                    color: Colors.teal,
+                                                                  ),
+                                                                  PieChartSectionData(
+                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                                    value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                                    radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
+                                                                    color: Colors.blue,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              swapAnimationDuration: Duration(milliseconds: 250),
+                                                              swapAnimationCurve: Curves.linear,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          Container(
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                ChartIndicator(indicatorColor: Colors.teal, label: 'MTB Detected'),
+                                                                SizedBox(height: 10),
+                                                                ChartIndicator(indicatorColor: Colors.blue, label: 'MTB Not Detected'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    : Row(
+                                                        children: [
+                                                          Container(
+                                                            height: size.width > 450 ? 300 : 200,
+                                                            width: size.width > 450 ? 300 : 200,
+                                                            // height: size.height * 0.3,
+                                                            // width: size.width < 820 ? size.width / 2 : size.width / 4,
+                                                            margin: const EdgeInsets.all(10),
+                                                            child: PieChart(
+                                                              PieChartData(
+                                                                sectionsSpace: 0,
+                                                                sections: [
+                                                                  PieChartSectionData(
+                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                                    value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                                    radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
+                                                                    color: Colors.teal,
+                                                                  ),
+                                                                  PieChartSectionData(
+                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                                    value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
+                                                                    radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
+                                                                    color: Colors.blue,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              swapAnimationDuration: Duration(milliseconds: 250),
+                                                              swapAnimationCurve: Curves.linear,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          Container(
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                ChartIndicator(indicatorColor: Colors.teal, label: 'MTB Detected'),
+                                                                SizedBox(height: 10),
+                                                                ChartIndicator(indicatorColor: Colors.blue, label: 'MTB Not Detected'),
+                                                              ],
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
                                               ),
                                             ],
                                           ),
@@ -817,7 +865,7 @@ class ChartIndicator extends StatelessWidget {
           decoration: BoxDecoration(color: indicatorColor, borderRadius: BorderRadius.circular(2)),
         ),
         SizedBox(width: 10),
-        Text(label, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600)),
+        Text(label, style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600)),
       ],
     );
   }
@@ -830,8 +878,10 @@ class ReportSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      margin: EdgeInsets.only(left: 8, right: size.width > 900 ? 100 : 0, top: 10, bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [BoxShadow(color: Colors.grey.shade200, offset: Offset(2, 7), blurRadius: 20)],
