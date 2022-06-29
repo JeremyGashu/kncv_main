@@ -283,24 +283,32 @@ class _ReportScreenState extends State<ReportScreen> {
 
   void getCustomDateReports(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    setState(() {
+      filterStartDate = DateTime(2000, 1, 1);
+      filterEndDate = DateTime.now();
+    });
     //!
     showMaterialModalBottomSheet(
       context: context,
-      duration: Duration(milliseconds: 250),
+
+      duration: Duration(milliseconds: 350),
       isDismissible: false,
       enableDrag: false,
-      animationCurve: Curves.bounceIn,
+      animationCurve: Curves.linear,
+      // shape: RoundedRectangleBorder(),
       builder: (context) => Container(
         padding: const EdgeInsets.all(20.0),
         height: size.height * 0.75,
+        // width: 400,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Start Date', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
             SizedBox(height: size.height * 0.02),
             Container(
               height: size.height * 0.2,
+              width: size.width > 450 ? 400 : 300,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime(2000, 1, 1),
@@ -316,6 +324,7 @@ class _ReportScreenState extends State<ReportScreen> {
             SizedBox(height: 10),
             Container(
               height: size.height * 0.2,
+              width: size.width > 450 ? 400 : 300,
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
                 initialDateTime: DateTime.now(),
@@ -347,7 +356,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 Navigator.pop(context);
               },
               color: Colors.red,
-              minWidth: double.infinity,
+              minWidth: size.width > 450 ? 400 : 300,
               height: 50.0,
               child: Text('Filter', style: TextStyle(color: Colors.white)),
             ),
