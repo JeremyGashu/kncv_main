@@ -8,6 +8,8 @@ import 'package:kncv_flutter/presentation/pages/report/report_controller.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../../core/colors.dart';
 
+//TODO: DateTime picker ui fix on web
+
 class ReportScreen extends StatefulWidget {
   const ReportScreen({Key? key}) : super(key: key);
 
@@ -71,10 +73,12 @@ class _ReportScreenState extends State<ReportScreen> {
     int ordersDeliveredAccepted = 0;
     for (var reportData in reportsData!) {
       if (reportData['status'] != "Draft") {
-        for (var patient in reportData['patients']) {
-          for (var specimen in patient['specimens']) {
-            if (!specimen['rejected']) {
-              ordersDeliveredAccepted++;
+        if (reportData['patients'] != null) {
+          for (var patient in reportData['patients']) {
+            for (var specimen in patient['specimens']) {
+              if (!specimen['rejected']) {
+                ordersDeliveredAccepted++;
+              }
             }
           }
         }
@@ -87,10 +91,12 @@ class _ReportScreenState extends State<ReportScreen> {
     int ordersDeliveredRejected = 0;
     for (var reportData in reportsData!) {
       if (reportData['status'] != "Draft") {
-        for (var patient in reportData['patients']) {
-          for (var specimen in patient['specimens']) {
-            if (specimen['rejected']) {
-              ordersDeliveredRejected++;
+        if (reportData['patients'] != null) {
+          for (var patient in reportData['patients']) {
+            for (var specimen in patient['specimens']) {
+              if (specimen['rejected']) {
+                ordersDeliveredRejected++;
+              }
             }
           }
         }
@@ -103,10 +109,12 @@ class _ReportScreenState extends State<ReportScreen> {
     int totalSpecimens = 0;
     for (var reportData in reportsData!) {
       if (reportData['status'] != "Draft") {
-        for (var patient in reportData['patients']) {
-          // ignore: unused_local_variable
-          for (var specimen in patient['specimens']) {
-            totalSpecimens++;
+        if (reportData['patients'] != null) {
+          for (var patient in reportData['patients']) {
+            // ignore: unused_local_variable
+            for (var specimen in patient['specimens']) {
+              totalSpecimens++;
+            }
           }
         }
       }
@@ -117,10 +125,12 @@ class _ReportScreenState extends State<ReportScreen> {
   int getOrdersDeliveredTestedResulted(List<Map<String, dynamic>>? reportsData) {
     int ordersDeliveredTestedResulted = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (specimen['result'] != null) {
-            ordersDeliveredTestedResulted++;
+      if (reportData['patients'] != null) {
+        for (var patient in reportData['patients']) {
+          for (var specimen in patient['specimens']) {
+            if (specimen['result'] != null) {
+              ordersDeliveredTestedResulted++;
+            }
           }
         }
       }
@@ -131,11 +141,13 @@ class _ReportScreenState extends State<ReportScreen> {
   int getOrdersTestedPositive(List<Map<String, dynamic>>? reportsData) {
     int ordersTestedPositive = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (specimen['result'] != null) {
-            if (specimen['result']['mtb_result'] == 'MTB Detected') {
-              ordersTestedPositive++;
+      if (reportData['patients'] != null) {
+        for (var patient in reportData['patients']) {
+          for (var specimen in patient['specimens']) {
+            if (specimen['result'] != null) {
+              if (specimen['result']['mtb_result'] == 'MTB Detected') {
+                ordersTestedPositive++;
+              }
             }
           }
         }
@@ -147,11 +159,13 @@ class _ReportScreenState extends State<ReportScreen> {
   int getOrdersTestedNegative(List<Map<String, dynamic>>? reportsData) {
     int ordersTestedNegative = 0;
     for (var reportData in reportsData!) {
-      for (var patient in reportData['patients']) {
-        for (var specimen in patient['specimens']) {
-          if (specimen['result'] != null) {
-            if (specimen['result']['mtb_result'] == 'MTB Not Detected') {
-              ordersTestedNegative++;
+      if (reportData['patients'] != null) {
+        for (var patient in reportData['patients']) {
+          for (var specimen in patient['specimens']) {
+            if (specimen['result'] != null) {
+              if (specimen['result']['mtb_result'] == 'MTB Not Detected') {
+                ordersTestedNegative++;
+              }
             }
           }
         }
@@ -801,30 +815,32 @@ List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
 
   //!data collector
   for (Map<String, dynamic> reportData in reportsData) {
-    for (Map<String, dynamic> patient in reportData['patients']) {
-      for (Map<String, dynamic> specimen in patient['specimens']) {
-        patientInformation['orderId'] = reportData['orderId'] != null ? reportData['orderId'] : "";
-        patientInformation['courier_name'] = reportData['courier_name'] != null ? reportData['courier_name'] : "";
-        patientInformation['sender_name'] = reportData['sender_name'] != null ? reportData['sender_name'] : "";
-        patientInformation['tester_name'] = reportData['tester_name'] != null ? reportData['tester_name'] : "";
-        patientInformation['order_created'] = getDateFormatted(reportData['order_created']);
-        patientInformation['patientName'] = patient['name'] != null ? patient['name'] : "";
-        patientInformation['mrn'] = patient['MR'] != null ? patient['MR'] : "";
-        patientInformation['sex'] = patient['sex'] != null ? patient['sex'] : "";
-        patientInformation['age'] = patient['age'] != null ? patient['age'] : "";
-        patientInformation['ageInMonths'] = patient['age'] != null ? getAgeInMonth(int.parse(patient['age'])) : "";
-        patientInformation['phone'] = patient['phone'] != null ? patient['phone'] : "";
-        patientInformation['region'] = patient['region']['name'] != null ? patient['region']['name'] : "";
-        patientInformation['zone'] = patient['region']['zones'][0]['name'] != null ? patient['region']['zones'][0]['name'] : "";
-        patientInformation['woreda'] = patient['region']['zones'][0]['woredas'][0]['name'] != null ? patient['region']['zones'][0]['woredas'][0]['name'] : "";
-        patientInformation['specimenType'] = specimen['type'] != null ? specimen['type'] : "";
-        patientInformation['siteOfTest'] = patient['anatomic_location'] != null ? patient['anatomic_location'] : "";
-        patientInformation['requestedTest'] = specimen['examination_type'] != null ? specimen['examination_type'] : "";
-        patientInformation['reasonForTest'] = patient['reason_for_test'] != null ? patient['reason_for_test'] : "";
-        patientInformation['registrationGroup'] = patient['registration_group'] != null ? patient['registration_group'] : "";
-        patientInformation['deliveryStatus'] = reportData['status'] != null ? reportData['status'] : "";
-        finalData.add(patientInformation);
-        patientInformation = {};
+    if (reportData['patients'] != null) {
+      for (Map<String, dynamic> patient in reportData['patients']) {
+        for (Map<String, dynamic> specimen in patient['specimens']) {
+          patientInformation['orderId'] = reportData['orderId'] != null ? reportData['orderId'] : "";
+          patientInformation['courier_name'] = reportData['courier_name'] != null ? reportData['courier_name'] : "";
+          patientInformation['sender_name'] = reportData['sender_name'] != null ? reportData['sender_name'] : "";
+          patientInformation['tester_name'] = reportData['tester_name'] != null ? reportData['tester_name'] : "";
+          patientInformation['order_created'] = getDateFormatted(reportData['order_created']);
+          patientInformation['patientName'] = patient['name'] != null ? patient['name'] : "";
+          patientInformation['mrn'] = patient['MR'] != null ? patient['MR'] : "";
+          patientInformation['sex'] = patient['sex'] != null ? patient['sex'] : "";
+          patientInformation['age'] = patient['age'] != null ? patient['age'] : "";
+          patientInformation['ageInMonths'] = patient['age'] != null ? getAgeInMonth(int.parse(patient['age'])) : "";
+          patientInformation['phone'] = patient['phone'] != null ? patient['phone'] : "";
+          patientInformation['region'] = patient['region']['name'] != null ? patient['region']['name'] : "";
+          patientInformation['zone'] = patient['region']['zones'][0]['name'] != null ? patient['region']['zones'][0]['name'] : "";
+          patientInformation['woreda'] = patient['region']['zones'][0]['woredas'][0]['name'] != null ? patient['region']['zones'][0]['woredas'][0]['name'] : "";
+          patientInformation['specimenType'] = specimen['type'] != null ? specimen['type'] : "";
+          patientInformation['siteOfTest'] = patient['anatomic_location'] != null ? patient['anatomic_location'] : "";
+          patientInformation['requestedTest'] = specimen['examination_type'] != null ? specimen['examination_type'] : "";
+          patientInformation['reasonForTest'] = patient['reason_for_test'] != null ? patient['reason_for_test'] : "";
+          patientInformation['registrationGroup'] = patient['registration_group'] != null ? patient['registration_group'] : "";
+          patientInformation['deliveryStatus'] = reportData['status'] != null ? reportData['status'] : "";
+          finalData.add(patientInformation);
+          patientInformation = {};
+        }
       }
     }
   }
@@ -857,8 +873,21 @@ List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
   }).toList();
 }
 
+List<Map<String, dynamic>> getFilteredReports(List<Map<String, dynamic>> reportsData) {
+  List<Map<String, dynamic>> filteredReportsData = reportsData.where((data) {
+    if (data['status'] != 'Draft') {
+      return true;
+    } else {
+      return false;
+    }
+  }).toList();
+  return filteredReportsData;
+}
+
 List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
-  return reportsData.map((data) {
+  List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
+
+  return filteredReportsData.map((data) {
     DateTime? orderReceived;
     DateTime? orderPickedUp;
     int? shipmentDurationInMinutes;
@@ -882,7 +911,7 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
         DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
         DataCell(Text(data['courier_name'].toString())),
         DataCell(Text(data['tester_name'].toString())),
-        DataCell(Text(data['patients'].length.toString())),
+        DataCell(Text(data['patients'] != null ? data['patients'].length.toString() : '0')),
         DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
         orderReceived == null ? DataCell(Text('N/A')) : DataCell(Text(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString())),
         shipmentDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('$shipmentDurationInMinutes Minutes')),
@@ -892,7 +921,8 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
 }
 
 List<DataRow> getOrderMonitoringRows(List<Map<String, dynamic>> reportsData) {
-  return reportsData.map((data) {
+  List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
+  return filteredReportsData.map((data) {
     return DataRow(
       cells: [
         DataCell(Text(data['orderId'])),
@@ -902,7 +932,7 @@ List<DataRow> getOrderMonitoringRows(List<Map<String, dynamic>> reportsData) {
         DataCell(Text(data['region']['name'].toString())),
         DataCell(Text(data['region']['zones'][0]['name'].toString())),
         DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
-        DataCell(Text(data['patients'].length.toString())),
+        DataCell(Text(data['patients'] != null ? data['patients'].length.toString() : '0')),
         DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
         DataCell(Text(data['status'].toString())),
       ],
