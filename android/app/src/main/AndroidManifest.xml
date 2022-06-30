@@ -2,13 +2,15 @@
     package="com.example.kncv_flutter">
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.READ_SMS"/>
-    	<uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 
 
    <application
         android:label="kncv_flutter"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:showWhenLocked="true"
             android:turnScreenOn="true"
@@ -17,6 +19,7 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
+            android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
               <action android:name="FLUTTER_NOTIFICATION_CLICK" />

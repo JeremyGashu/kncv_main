@@ -10,6 +10,9 @@ import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kncv_flutter/presentation/pages/report/report_controller.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../core/colors.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsx;
 
@@ -57,7 +60,7 @@ class _ReportScreenState extends State<ReportScreen> {
   //!order monitoring
   void exportOrderMonitoringReport(List<Map<String, dynamic>> reportsData) {
     List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
-    print('filtered reports $filteredReportsData');
+    // print('filtered reports $filteredReportsData');
 
 // Create a new Excel document.
     final xlsx.Workbook workbook = new xlsx.Workbook();
@@ -212,11 +215,24 @@ class _ReportScreenState extends State<ReportScreen> {
     workbook.dispose();
   }
 
-  void downloadXlsXFile(String outPutFileName, List<int> bytes) {
+  void downloadXlsXFile(String outPutFileName, List<int> bytes) async {
     if (kIsWeb) {
       download(Stream.fromIterable(bytes), outPutFileName);
     } else {
       //TODO: do for mobile
+      // final String path = (await getApplicationSupportDirectory()).path;
+      // final String fileName = '$path/$outPutFileName';
+      // print(fileName);
+      // OpenResult openResult = await OpenFile.open(fileName);
+      // print(openResult.message);
+
+      if (await Permission.storage.request().isGranted) {
+        // Either the permission was already granted before or the user just granted it.
+        Directory appDocDir = await getApplicationDocumentsDirectory();
+        String appDocPath = appDocDir.path + "/" + outPutFileName;
+        print(appDocPath);
+        download(Stream.fromIterable(bytes), appDocPath);
+      }
     }
   }
 
