@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:download/download.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dropdown/flutter_dropdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kncv_flutter/presentation/pages/report/report_controller.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../../core/colors.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsx;
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({Key? key}) : super(key: key);
@@ -14,6 +19,8 @@ class ReportScreen extends StatefulWidget {
   @override
   State<ReportScreen> createState() => _ReportScreenState();
 }
+
+enum reportType { orderMonitoringReport, specimenReferralReport, shipmentReport }
 
 class _ReportScreenState extends State<ReportScreen> {
   bool loadingReports = true;
@@ -45,6 +52,172 @@ class _ReportScreenState extends State<ReportScreen> {
     //!get firebase user id
     getReports();
     super.initState();
+  }
+
+  //!order monitoring
+  void exportOrderMonitoringReport(List<Map<String, dynamic>> reportsData) {
+    List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
+    print('filtered reports $filteredReportsData');
+
+// Create a new Excel document.
+    final xlsx.Workbook workbook = new xlsx.Workbook();
+//Accessing worksheet via index.
+    final xlsx.Worksheet sheet = workbook.worksheets[0];
+    sheet.getRangeByName('A1').setText('Order No');
+    sheet.getRangeByName('B1').setText('Referring Health Facility');
+    sheet.getRangeByName('C1').setText('Courier Name');
+    sheet.getRangeByName('D1').setText('Testing Health Facility');
+    sheet.getRangeByName('E1').setText('Region');
+    sheet.getRangeByName('F1').setText('Zone/Sub City');
+    sheet.getRangeByName('G1').setText('Woreda');
+    sheet.getRangeByName('H1').setText('Number of Patients');
+    sheet.getRangeByName('I1').setText('Order Created');
+    sheet.getRangeByName('J1').setText('Order Status');
+
+    for (int i = 0; i < filteredReportsData.length; i++) {
+      sheet.getRangeByName('A${i + 2}').setText(filteredReportsData[i]['orderId'].toString());
+      sheet.getRangeByName('B${i + 2}').setText(filteredReportsData[i]['sender_name'].toString());
+      sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['courier_name'].toString());
+      sheet.getRangeByName('D${i + 2}').setText(filteredReportsData[i]['tester_name'].toString());
+      sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['region']['name'].toString());
+      sheet.getRangeByName('F${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['name'].toString());
+      sheet.getRangeByName('G${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['woredas'][0]['name'].toString());
+      sheet.getRangeByName('H${i + 2}').setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
+      sheet.getRangeByName('I${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
+          '/' +
+          filteredReportsData[i]['order_created'].toDate().month.toString() +
+          '/' +
+          filteredReportsData[i]['order_created'].toDate().year.toString());
+      sheet.getRangeByName('J${i + 2}').setText(filteredReportsData[i]['status'].toString());
+    }
+    final List<int> bytes = workbook.saveAsStream();
+    String date = DateTime.now().toString();
+    String outPutFileName = 'Order_Monitoring_Report_$date.xlsx';
+    downloadXlsXFile(outPutFileName, bytes);
+    workbook.dispose();
+  }
+
+  //!specimen referral
+  void exportSpecimenReferralReport(List<Map<String, dynamic>> reportsData) {
+    final xlsx.Workbook workbook = new xlsx.Workbook();
+//Accessing worksheet via index.
+    final xlsx.Worksheet sheet = workbook.worksheets[0];
+    sheet.getRangeByName('A1').setText('Order ID');
+    sheet.getRangeByName('B1').setText('Courier Name');
+    sheet.getRangeByName('C1').setText('Referring Health Facility');
+    sheet.getRangeByName('D1').setText('Testing Health Facility');
+    sheet.getRangeByName('E1').setText('Order Created');
+    sheet.getRangeByName('F1').setText('Patient\'s Name');
+    sheet.getRangeByName('G1').setText('MRN');
+    sheet.getRangeByName('H1').setText('Sex');
+    sheet.getRangeByName('I1').setText('Age');
+    sheet.getRangeByName('J1').setText('Age(Months)');
+    sheet.getRangeByName('K1').setText('Phone');
+    sheet.getRangeByName('L1').setText('Region');
+    sheet.getRangeByName('M1').setText('Zone');
+    sheet.getRangeByName('N1').setText('Woreda');
+    sheet.getRangeByName('O1').setText('Specimen Type');
+    sheet.getRangeByName('P1').setText('Site of Test');
+    sheet.getRangeByName('Q1').setText('Requested Test');
+    sheet.getRangeByName('R1').setText('Reason for Test');
+    sheet.getRangeByName('S1').setText('Registration Group');
+    sheet.getRangeByName('T1').setText('Delivery Status');
+
+    List<Map<String, dynamic>> finalData = getDataForSpecimenReferralReport(reportsData);
+    for (int i = 0; i < finalData.length; i++) {
+      sheet.getRangeByName('A${i + 2}').setText(finalData[i]['orderId'].toString());
+      sheet.getRangeByName('B${i + 2}').setText(finalData[i]['courier_name'].toString());
+      sheet.getRangeByName('C${i + 2}').setText(finalData[i]['sender_name'].toString());
+      sheet.getRangeByName('D${i + 2}').setText(finalData[i]['tester_name'].toString());
+      sheet.getRangeByName('E${i + 2}').setText(finalData[i]['order_created'].toString());
+      sheet.getRangeByName('F${i + 2}').setText(finalData[i]['patientName'].toString());
+      sheet.getRangeByName('G${i + 2}').setText(finalData[i]['mrn'].toString());
+      sheet.getRangeByName('H${i + 2}').setText(finalData[i]['sex'].toString());
+      sheet.getRangeByName('I${i + 2}').setText(finalData[i]['age'].toString());
+      sheet.getRangeByName('J${i + 2}').setText(finalData[i]['ageInMonths'].toString());
+      sheet.getRangeByName('K${i + 2}').setText(finalData[i]['phone'].toString());
+      sheet.getRangeByName('L${i + 2}').setText(finalData[i]['region'].toString());
+      sheet.getRangeByName('M${i + 2}').setText(finalData[i]['zone'].toString());
+      sheet.getRangeByName('N${i + 2}').setText(finalData[i]['woreda'].toString());
+      sheet.getRangeByName('O${i + 2}').setText(finalData[i]['specimenType'].toString());
+      sheet.getRangeByName('P${i + 2}').setText(finalData[i]['siteOfTest'].toString());
+      sheet.getRangeByName('Q${i + 2}').setText(finalData[i]['requestedTest'].toString());
+      sheet.getRangeByName('R${i + 2}').setText(finalData[i]['reasonForTest'].toString());
+      sheet.getRangeByName('S${i + 2}').setText(finalData[i]['registrationGroup'].toString());
+      sheet.getRangeByName('T${i + 2}').setText(finalData[i]['deliveryStatus'].toString());
+    }
+    final List<int> bytes = workbook.saveAsStream();
+    String date = DateTime.now().toString();
+    String outPutFileName = 'Specimen_Referral_Report_$date.xlsx';
+    downloadXlsXFile(outPutFileName, bytes);
+    workbook.dispose();
+  }
+
+  //!Shipment report
+  void exportShipmentReport(List<Map<String, dynamic>> reportsData) {
+    List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
+    print('filtered reports $filteredReportsData');
+// Create a new Excel document.
+    final xlsx.Workbook workbook = new xlsx.Workbook();
+//Accessing worksheet via index.
+    final xlsx.Worksheet sheet = workbook.worksheets[0];
+    sheet.getRangeByName('A1').setText('Order ID');
+    sheet.getRangeByName('B1').setText('Pick up Site');
+    sheet.getRangeByName('C1').setText('Region');
+    sheet.getRangeByName('D1').setText('Zone');
+    sheet.getRangeByName('E1').setText('Woreda');
+    sheet.getRangeByName('F1').setText('Courier Name');
+    sheet.getRangeByName('G1').setText('Recipient Site');
+    sheet.getRangeByName('H1').setText('Number of Patients');
+    sheet.getRangeByName('I1').setText('Order Created');
+    sheet.getRangeByName('J1').setText('Order Accepted');
+    sheet.getRangeByName('K1').setText('Shipment Duration');
+
+    for (int i = 0; i < filteredReportsData.length; i++) {
+      DateTime? orderReceived;
+      DateTime? orderPickedUp;
+      int? shipmentDurationInMinutes;
+      if (filteredReportsData[i]['order_received'] != null) {
+        orderReceived = filteredReportsData[i]['order_received'].toDate();
+      }
+      if (filteredReportsData[i]['order_pickedup'] != null) {
+        orderPickedUp = filteredReportsData[i]['order_pickedup'].toDate();
+      }
+
+      if (orderReceived != null && orderPickedUp != null) {
+        shipmentDurationInMinutes = orderReceived.difference(orderPickedUp).inMinutes;
+      }
+      sheet.getRangeByName('A${i + 2}').setText(filteredReportsData[i]['orderId'].toString());
+      sheet.getRangeByName('B${i + 2}').setText(filteredReportsData[i]['sender_name'].toString());
+      sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['region']['name'].toString());
+      sheet.getRangeByName('D${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['name'].toString());
+      sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['woredas'][0]['name'].toString());
+      sheet.getRangeByName('F${i + 2}').setText(filteredReportsData[i]['courier_name'].toString());
+      sheet.getRangeByName('G${i + 2}').setText(filteredReportsData[i]['tester_name'].toString());
+      sheet.getRangeByName('H${i + 2}').setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
+      sheet.getRangeByName('I${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
+          '/' +
+          filteredReportsData[i]['order_created'].toDate().month.toString() +
+          '/' +
+          filteredReportsData[i]['order_created'].toDate().year.toString());
+      orderReceived == null
+          ? sheet.getRangeByName('J${i + 2}').setText('N/A')
+          : sheet.getRangeByName('J${i + 2}').setText(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString());
+      shipmentDurationInMinutes == null ? sheet.getRangeByName('K${i + 2}').setText('N/A') : sheet.getRangeByName('K${i + 2}').setText('$shipmentDurationInMinutes Minutes');
+    }
+    final List<int> bytes = workbook.saveAsStream();
+    String date = DateTime.now().toString();
+    String outPutFileName = 'Shipment_Report_$date.xlsx';
+    downloadXlsXFile(outPutFileName, bytes);
+    workbook.dispose();
+  }
+
+  void downloadXlsXFile(String outPutFileName, List<int> bytes) {
+    if (kIsWeb) {
+      download(Stream.fromIterable(bytes), outPutFileName);
+    } else {
+      //TODO: do for mobile
+    }
   }
 
   int getOrdersWaitingForPickup(List<Map<String, dynamic>>? reportsData) {
@@ -410,6 +583,9 @@ class _ReportScreenState extends State<ReportScreen> {
     }
   }
 
+  reportType currentReportType = reportType.orderMonitoringReport;
+  String selectedReportType = "Order Monitoring";
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -669,124 +845,242 @@ class _ReportScreenState extends State<ReportScreen> {
 
                                   SizedBox(height: 20),
 
-                                  //!Order Monitoring Table
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                    child: Text('Order Monitoring', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-                                  ),
-                                  SizedBox(height: 20),
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: SingleChildScrollView(
-                                      child: DataTable(
-                                        border: TableBorder(
-                                          left: BorderSide(color: Colors.grey.shade400),
-                                          top: BorderSide(color: Colors.grey.shade400),
-                                          right: BorderSide(color: Colors.grey.shade400),
-                                          bottom: BorderSide(color: Colors.grey.shade400),
-                                          horizontalInside: BorderSide(color: Colors.grey.shade400),
-                                          verticalInside: BorderSide(color: Colors.grey.shade400),
-                                        ),
-                                        columns: [
-                                          DataColumn(label: Text("Order No")),
-                                          DataColumn(label: Text("Referring Health Facility")),
-                                          DataColumn(label: Text("Courier Name")),
-                                          DataColumn(label: Text("Testing Health Facility")),
-                                          DataColumn(label: Text("Region")),
-                                          DataColumn(label: Text("Zone/Sub City")),
-                                          DataColumn(label: Text("Woreda")),
-                                          DataColumn(label: Text("Number of Patients")),
-                                          DataColumn(label: Text("Order Created")),
-                                          DataColumn(label: Text("Order Status")),
-                                        ],
-                                        rows: getOrderMonitoringRows(selectedFilter == 'All' ? reports : filteredReports),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
+                                  Container(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // Padding(
+                                        //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                        //   child: Text('Reports', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                        // ),
+                                        SizedBox(height: 20),
 
-                                  //!Specimen Referral Report Table
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                    child: Text('Specimen Referral Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-                                  ),
-                                  SizedBox(height: 20),
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: SingleChildScrollView(
-                                      child: DataTable(
-                                        border: TableBorder(
-                                          left: BorderSide(color: Colors.grey.shade400),
-                                          top: BorderSide(color: Colors.grey.shade400),
-                                          right: BorderSide(color: Colors.grey.shade400),
-                                          bottom: BorderSide(color: Colors.grey.shade400),
-                                          horizontalInside: BorderSide(color: Colors.grey.shade400),
-                                          verticalInside: BorderSide(color: Colors.grey.shade400),
+                                        //
+                                        Container(
+                                          decoration: BoxDecoration(),
+                                          margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                                          child: DropDown(
+                                            items: ["Order Monitoring", "Specimen Referral", "Shipment"],
+                                            dropDownType: DropDownType.Button,
+                                            showUnderline: false,
+                                            hint: Text(selectedReportType, style: TextStyle(fontSize: 20.0)),
+                                            icon: Container(
+                                              child: Row(
+                                                children: [
+                                                  Icon(Icons.report),
+                                                  SizedBox(width: 10),
+                                                  Text('Select Report', style: TextStyle(fontSize: 18.0)),
+                                                ],
+                                              ),
+                                            ),
+                                            onChanged: (choice) {
+                                              switch (choice) {
+                                                case "Order Monitoring":
+                                                  setState(() {
+                                                    currentReportType = reportType.orderMonitoringReport;
+                                                    selectedReportType = choice.toString();
+                                                  });
+                                                  break;
+                                                case "Specimen Referral":
+                                                  setState(() {
+                                                    currentReportType = reportType.specimenReferralReport;
+                                                    selectedReportType = choice.toString();
+                                                  });
+                                                  break;
+                                                case "Shipment":
+                                                  setState(() {
+                                                    currentReportType = reportType.shipmentReport;
+                                                    selectedReportType = choice.toString();
+                                                  });
+                                                  break;
+                                                default:
+                                                  break;
+                                              }
+                                            },
+                                          ),
                                         ),
-                                        columns: [
-                                          DataColumn(label: Text("Order ID")),
-                                          DataColumn(label: Text("Courier Name")),
-                                          DataColumn(label: Text("Referring Health Facility")),
-                                          DataColumn(label: Text("Testing Health Facility")),
-                                          DataColumn(label: Text("Order Created")),
-                                          DataColumn(label: Text("Patient's Name")),
-                                          DataColumn(label: Text("MRN")),
-                                          DataColumn(label: Text("Sex")),
-                                          DataColumn(label: Text("Age")),
-                                          DataColumn(label: Text("Age(Months)")),
-                                          DataColumn(label: Text("Phone")),
-                                          DataColumn(label: Text("Region")),
-                                          DataColumn(label: Text("Zone")),
-                                          DataColumn(label: Text("Woreda")),
-                                          DataColumn(label: Text("Specimen Type")),
-                                          DataColumn(label: Text("Site of Test")),
-                                          DataColumn(label: Text("Requested Test")),
-                                          DataColumn(label: Text("Reason for Test")),
-                                          DataColumn(label: Text("Registration Group")),
-                                          DataColumn(label: Text("Delivery Status")),
-                                        ],
-                                        rows: getSpecimenReferalReport(selectedFilter == 'All' ? reports : filteredReports),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
 
-                                  //!Shipment Report Table
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                    child: Text('Shipment Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
-                                  ),
-                                  SizedBox(height: 20),
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: SingleChildScrollView(
-                                      child: DataTable(
-                                        border: TableBorder(
-                                          left: BorderSide(color: Colors.grey.shade400),
-                                          top: BorderSide(color: Colors.grey.shade400),
-                                          right: BorderSide(color: Colors.grey.shade400),
-                                          bottom: BorderSide(color: Colors.grey.shade400),
-                                          horizontalInside: BorderSide(color: Colors.grey.shade400),
-                                          verticalInside: BorderSide(color: Colors.grey.shade400),
-                                        ),
-                                        columns: [
-                                          DataColumn(label: Text("Order ID")),
-                                          DataColumn(label: Text("Pick up Site")),
-                                          DataColumn(label: Text("Region")),
-                                          DataColumn(label: Text("Zone")),
-                                          DataColumn(label: Text("Woreda")),
-                                          DataColumn(label: Text("Courier Name")),
-                                          DataColumn(label: Text("Recipient Site")),
-                                          DataColumn(label: Text("Number of Patients")),
-                                          DataColumn(label: Text("Order Created")),
-                                          DataColumn(label: Text("Order Accepted")),
-                                          DataColumn(label: Text("Shipment Duration")),
-                                        ],
-                                        rows: getShipmentReport(selectedFilter == 'All' ? reports : filteredReports),
-                                      ),
+                                        SizedBox(height: 20),
+
+                                        //!Order Monitoring Table
+                                        currentReportType != reportType.orderMonitoringReport
+                                            ? SizedBox.shrink()
+                                            : Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text('Order Monitoring', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            print('Exporting order monitoring report');
+                                                            exportOrderMonitoringReport(selectedFilter == 'All' ? reports : filteredReports);
+                                                          },
+                                                          icon: FaIcon(FontAwesomeIcons.fileExport),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 20),
+                                                  SingleChildScrollView(
+                                                    scrollDirection: Axis.horizontal,
+                                                    child: SingleChildScrollView(
+                                                      child: DataTable(
+                                                        border: TableBorder(
+                                                          left: BorderSide(color: Colors.grey.shade400),
+                                                          top: BorderSide(color: Colors.grey.shade400),
+                                                          right: BorderSide(color: Colors.grey.shade400),
+                                                          bottom: BorderSide(color: Colors.grey.shade400),
+                                                          horizontalInside: BorderSide(color: Colors.grey.shade400),
+                                                          verticalInside: BorderSide(color: Colors.grey.shade400),
+                                                        ),
+                                                        columns: [
+                                                          DataColumn(label: Text("Order No")),
+                                                          DataColumn(label: Text("Referring Health Facility")),
+                                                          DataColumn(label: Text("Courier Name")),
+                                                          DataColumn(label: Text("Testing Health Facility")),
+                                                          DataColumn(label: Text("Region")),
+                                                          DataColumn(label: Text("Zone/Sub City")),
+                                                          DataColumn(label: Text("Woreda")),
+                                                          DataColumn(label: Text("Number of Patients")),
+                                                          DataColumn(label: Text("Order Created")),
+                                                          DataColumn(label: Text("Order Status")),
+                                                        ],
+                                                        rows: getOrderMonitoringRows(selectedFilter == 'All' ? reports : filteredReports),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 40),
+                                                ],
+                                              ),
+
+                                        //!Specimen Referral Report Table
+                                        currentReportType != reportType.specimenReferralReport
+                                            ? SizedBox.shrink()
+                                            : Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text('Specimen Referral Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            print('Exporting Specimen Referring report');
+                                                            exportSpecimenReferralReport(selectedFilter == 'All' ? reports : filteredReports);
+                                                          },
+                                                          icon: FaIcon(FontAwesomeIcons.fileExport),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 20),
+                                                  SingleChildScrollView(
+                                                    scrollDirection: Axis.horizontal,
+                                                    child: SingleChildScrollView(
+                                                      child: DataTable(
+                                                        border: TableBorder(
+                                                          left: BorderSide(color: Colors.grey.shade400),
+                                                          top: BorderSide(color: Colors.grey.shade400),
+                                                          right: BorderSide(color: Colors.grey.shade400),
+                                                          bottom: BorderSide(color: Colors.grey.shade400),
+                                                          horizontalInside: BorderSide(color: Colors.grey.shade400),
+                                                          verticalInside: BorderSide(color: Colors.grey.shade400),
+                                                        ),
+                                                        columns: [
+                                                          DataColumn(label: Text("Order ID")),
+                                                          DataColumn(label: Text("Courier Name")),
+                                                          DataColumn(label: Text("Referring Health Facility")),
+                                                          DataColumn(label: Text("Testing Health Facility")),
+                                                          DataColumn(label: Text("Order Created")),
+                                                          DataColumn(label: Text("Patient's Name")),
+                                                          DataColumn(label: Text("MRN")),
+                                                          DataColumn(label: Text("Sex")),
+                                                          DataColumn(label: Text("Age")),
+                                                          DataColumn(label: Text("Age(Months)")),
+                                                          DataColumn(label: Text("Phone")),
+                                                          DataColumn(label: Text("Region")),
+                                                          DataColumn(label: Text("Zone")),
+                                                          DataColumn(label: Text("Woreda")),
+                                                          DataColumn(label: Text("Specimen Type")),
+                                                          DataColumn(label: Text("Site of Test")),
+                                                          DataColumn(label: Text("Requested Test")),
+                                                          DataColumn(label: Text("Reason for Test")),
+                                                          DataColumn(label: Text("Registration Group")),
+                                                          DataColumn(label: Text("Delivery Status")),
+                                                        ],
+                                                        rows: getSpecimenReferalReport(selectedFilter == 'All' ? reports : filteredReports),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 40),
+                                                ],
+                                              ),
+
+                                        //!Shipment Report Table
+
+                                        currentReportType != reportType.shipmentReport
+                                            ? SizedBox.shrink()
+                                            : Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text('Shipment Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            print('Exporting Specimen Referring report');
+                                                            exportShipmentReport(selectedFilter == 'All' ? reports : filteredReports);
+                                                          },
+                                                          icon: FaIcon(FontAwesomeIcons.fileExport),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 20),
+                                                  SingleChildScrollView(
+                                                    scrollDirection: Axis.horizontal,
+                                                    child: SingleChildScrollView(
+                                                      child: DataTable(
+                                                        border: TableBorder(
+                                                          left: BorderSide(color: Colors.grey.shade400),
+                                                          top: BorderSide(color: Colors.grey.shade400),
+                                                          right: BorderSide(color: Colors.grey.shade400),
+                                                          bottom: BorderSide(color: Colors.grey.shade400),
+                                                          horizontalInside: BorderSide(color: Colors.grey.shade400),
+                                                          verticalInside: BorderSide(color: Colors.grey.shade400),
+                                                        ),
+                                                        columns: [
+                                                          DataColumn(label: Text("Order ID")),
+                                                          DataColumn(label: Text("Pick up Site")),
+                                                          DataColumn(label: Text("Region")),
+                                                          DataColumn(label: Text("Zone")),
+                                                          DataColumn(label: Text("Woreda")),
+                                                          DataColumn(label: Text("Courier Name")),
+                                                          DataColumn(label: Text("Recipient Site")),
+                                                          DataColumn(label: Text("Number of Patients")),
+                                                          DataColumn(label: Text("Order Created")),
+                                                          DataColumn(label: Text("Order Accepted")),
+                                                          DataColumn(label: Text("Shipment Duration")),
+                                                        ],
+                                                        rows: getShipmentReport(selectedFilter == 'All' ? reports : filteredReports),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 40),
+                                                ],
+                                              ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(height: 20),
                                 ],
                               ),
                             ),
@@ -816,11 +1110,10 @@ String getAgeInMonth(int? age) {
   }
 }
 
-List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
+List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dynamic>> reportsData) {
   List<Map<String, dynamic>> finalData = [];
   Map<String, dynamic> patientInformation = {};
-
-  //!data collector
+//!data collector
   for (Map<String, dynamic> reportData in reportsData) {
     if (reportData['patients'] != null) {
       for (Map<String, dynamic> patient in reportData['patients']) {
@@ -851,6 +1144,11 @@ List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
       }
     }
   }
+  return finalData;
+}
+
+List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
+  List<Map<String, dynamic>> finalData = getDataForSpecimenReferralReport(reportsData);
 
   return finalData.map((data) {
     return DataRow(
