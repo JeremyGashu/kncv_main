@@ -7,7 +7,6 @@ import 'package:kncv_flutter/presentation/blocs/auth/auth_states.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/courier_homepage.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/receiver_homepage.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/sender_homepage.dart';
-import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 
 class LoginPage extends StatefulWidget {
   static const String loginPageRouteName = 'login page route name';
@@ -67,7 +66,6 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          
                           width: double.infinity,
                           child: Text(
                             'Login',
@@ -84,8 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                             controller: _usernameController,
                             autofocus: false,
                             decoration: InputDecoration(
-                                prefixIcon:
-                                    Icon(Icons.person, color: kIconColors),
+                                prefixIcon: Icon(Icons.person, color: kIconColors),
                                 labelText: 'Username',
                                 labelStyle: TextStyle(color: Colors.grey),
                                 focusedBorder: UnderlineInputBorder(
@@ -101,13 +98,10 @@ class _LoginPageState extends State<LoginPage> {
                             autofocus: false,
                             obscureText: !_passwordVisible,
                             decoration: InputDecoration(
-                              prefixIcon:
-                                  Icon(Icons.vpn_key, color: kIconColors),
+                              prefixIcon: Icon(Icons.vpn_key, color: kIconColors),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _passwordVisible
-                                      ? Icons.visibility_off
-                                      : Icons.visibility_rounded,
+                                  _passwordVisible ? Icons.visibility_off : Icons.visibility_rounded,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -159,34 +153,20 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(
                           height: 20,
                         ),
-                        BlocConsumer<AuthBloc, AuthState>(
-                            listener: (context, state) {
+                        BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
                           if (state is AuthenticatedState) {
                             print('type => ${state.type}');
                             if (state.type == 'COURIER_ADMIN') {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  CourierHomePage.courierHomePageRouteName,
-                                  (route) => false);
+                              Navigator.pushNamedAndRemoveUntil(context, CourierHomePage.courierHomePageRouteName, (route) => false);
                             } else if (state.type == 'INSTITUTIONAL_ADMIN') {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  SenderHomePage.senderHomePageRouteName,
-                                  (route) => false);
+                              Navigator.pushNamedAndRemoveUntil(context, SenderHomePage.senderHomePageRouteName, (route) => false);
                             } else if (state.type == 'TEST_CENTER_ADMIN') {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  ReceiverHomePage.receiverHomepageRouteName,
-                                  (route) => false);
+                              Navigator.pushNamedAndRemoveUntil(context, ReceiverHomePage.receiverHomepageRouteName, (route) => false);
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text('Invalid Credential!')));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Invalid Credential!')));
                             }
-                          } else if (state is UnauthenticatedState ||
-                              state is ErrorState) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Invalid Credential')));
+                          } else if (state is UnauthenticatedState || state is ErrorState) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Invalid Credential')));
                           }
                         }, builder: (context, state) {
                           return state is LoadingState
@@ -197,19 +177,13 @@ class _LoginPageState extends State<LoginPage> {
                                   constraints: BoxConstraints(maxWidth: 500),
                                   child: InkWell(
                                     onTap: () {
-                                      String email =
-                                          _usernameController.value.text;
-                                      String password =
-                                          _passwordController.value.text;
-                                      BlocProvider.of<AuthBloc>(context).add(
-                                          LoginUser(
-                                              email: '$email@kncv.com',
-                                              password: password));
+                                      String email = _usernameController.value.text;
+                                      String password = _passwordController.value.text;
+                                      BlocProvider.of<AuthBloc>(context).add(LoginUser(email: '$email@kncv.com', password: password));
                                     },
                                     borderRadius: BorderRadius.circular(37),
                                     child: Container(
-                                      constraints:
-                                          BoxConstraints(maxWidth: 500),
+                                      constraints: BoxConstraints(maxWidth: 500),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         color: kColorsOrangeDark,
@@ -220,10 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                                         child: Text(
                                           'Log In',
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                              color: Colors.white),
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                                         ),
                                       ),
                                     ),

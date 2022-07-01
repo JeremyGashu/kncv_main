@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:download/download.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -215,23 +214,38 @@ class _ReportScreenState extends State<ReportScreen> {
     workbook.dispose();
   }
 
+  Future<bool> requestPermission(Permission permission) async {
+    if (await permission.isGranted) {
+      return true;
+    } else {
+      var result = await permission.request();
+      if (result == PermissionStatus.granted) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  Future<String> getStoragePath() async {
+    final String extDirectory = (await getApplicationSupportDirectory()).path;
+    print(extDirectory);
+    return extDirectory;
+  }
+
   void downloadXlsXFile(String outPutFileName, List<int> bytes) async {
     if (kIsWeb) {
       download(Stream.fromIterable(bytes), outPutFileName);
     } else {
-      //TODO: do for mobile
-      // final String path = (await getApplicationSupportDirectory()).path;
-      // final String fileName = '$path/$outPutFileName';
-      // print(fileName);
-      // OpenResult openResult = await OpenFile.open(fileName);
-      // print(openResult.message);
-
-      if (await Permission.storage.request().isGranted) {
-        // Either the permission was already granted before or the user just granted it.
-        Directory appDocDir = await getApplicationDocumentsDirectory();
-        String appDocPath = appDocDir.path + "/" + outPutFileName;
-        print(appDocPath);
-        download(Stream.fromIterable(bytes), appDocPath);
+      //!do for mobile
+      try {
+        String storageFolderPath = await getStoragePath();
+        final String fileName = '$storageFolderPath/$outPutFileName';
+        final File file = File(fileName);
+        await file.writeAsBytes(bytes, flush: true);
+        OpenFile.open(fileName);
+      } catch (e) {
+        print(e);
       }
     }
   }

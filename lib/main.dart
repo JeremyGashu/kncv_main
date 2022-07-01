@@ -1,6 +1,5 @@
 import 'dart:isolate';
 import 'dart:ui';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -48,8 +47,7 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()..add(CheckAuth())),
-        BlocProvider<OrderBloc>(
-            create: (_) => sl<OrderBloc>()..add(LoadOrders())),
+        BlocProvider<OrderBloc>(create: (_) => sl<OrderBloc>()..add(LoadOrders())),
         BlocProvider<TesterCourierBloc>(
           create: (_) => sl<TesterCourierBloc>()..add(LoadTestersAndCouriers()),
           lazy: false,
@@ -102,11 +100,9 @@ class _SMSListenerState extends State<SMSListener> with WidgetsBindingObserver {
 
     receivePort.listen((message) {
       if (message is SmsMessage) {
-        print(
-            'I have received $message from background service i can save it to hive database');
+        print('I have received $message from background service i can save it to hive database');
         if (Hive.isBoxOpen('orders')) {
-          print(
-              'Yes the box is open you can add data into it ${Hive.box<Order>('orders').values}');
+          print('Yes the box is open you can add data into it ${Hive.box<Order>('orders').values}');
         }
 
         smsBloc.updateDataOnSms(message);

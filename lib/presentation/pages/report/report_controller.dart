@@ -99,10 +99,10 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
           {
             return allOrders;
           }
-          break;
+        // break;
         default:
           return [];
-          break;
+        // break;
       }
     } else {
       return [];
