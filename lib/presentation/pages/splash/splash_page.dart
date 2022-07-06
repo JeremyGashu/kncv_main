@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_states.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/courier_homepage.dart';
@@ -18,77 +19,104 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   @override
   void initState() {
-    var initializationSettingsAndroid =
-        new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    var initializationSettings = new InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
     initMessaging();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: BlocConsumer<AuthBloc, AuthState>(listener: (context, state) async {
-        if (state is UnauthenticatedState || state is InitialState) {
-          await Future.delayed(Duration(seconds: 2));
-          Navigator.pushNamedAndRemoveUntil(
-              context, IntroPageOne.introPageOneRouteName, (route) => false);
-        } else if (state is AuthenticatedState) {
-          print('type => ${state.type}');
-          if (state.type == 'COURIER_ADMIN') {
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) async {
+          if (state is UnauthenticatedState || state is InitialState) {
             await Future.delayed(Duration(seconds: 2));
+            Navigator.pushNamedAndRemoveUntil(context, IntroPageOne.introPageOneRouteName, (route) => false);
+          } else if (state is AuthenticatedState) {
+            print('type => ${state.type}');
+            if (state.type == 'COURIER_ADMIN') {
+              await Future.delayed(Duration(seconds: 2));
 
-            Navigator.pushNamedAndRemoveUntil(context,
-                CourierHomePage.courierHomePageRouteName, (route) => false);
-          } else if (state.type == 'INSTITUTIONAL_ADMIN') {
-            await Future.delayed(Duration(seconds: 2));
+              Navigator.pushNamedAndRemoveUntil(context, CourierHomePage.courierHomePageRouteName, (route) => false);
+            } else if (state.type == 'INSTITUTIONAL_ADMIN') {
+              await Future.delayed(Duration(seconds: 2));
 
-            Navigator.pushNamedAndRemoveUntil(context,
-                SenderHomePage.senderHomePageRouteName, (route) => false);
-          } else if (state.type == 'TEST_CENTER_ADMIN') {
-            await Future.delayed(Duration(seconds: 2));
+              Navigator.pushNamedAndRemoveUntil(context, SenderHomePage.senderHomePageRouteName, (route) => false);
+            } else if (state.type == 'TEST_CENTER_ADMIN') {
+              await Future.delayed(Duration(seconds: 2));
 
-            Navigator.pushNamedAndRemoveUntil(context,
-                ReceiverHomePage.receiverHomepageRouteName, (route) => false);
-          } else {
-            await Future.delayed(Duration(seconds: 2));
-            Navigator.pushNamedAndRemoveUntil(
-                context, LoginPage.loginPageRouteName, (route) => false);
+              Navigator.pushNamedAndRemoveUntil(context, ReceiverHomePage.receiverHomepageRouteName, (route) => false);
+            } else {
+              await Future.delayed(Duration(seconds: 2));
+              Navigator.pushNamedAndRemoveUntil(context, LoginPage.loginPageRouteName, (route) => false);
+            }
           }
-        }
-      }, builder: (context, state) {
-        return Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+        },
+        builder: (context, state) {
+          // return Center(
+          //   child: Column(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: [
+          //           Container(child: Image.asset('assets/images/hand.png')),
+          //           SizedBox(
+          //             width: 10,
+          //           ),
+          //           Container(child: Image.asset('assets/images/KNCV.png')),
+          //         ],
+          //       ),
+          //       SizedBox(
+          //         height: 15,
+          //       ),
+          //       Container(child: Image.asset('assets/images/TBtext.png')),
+          //     ],
+          //   ),
+          // );
+          return Container(
+            height: size.height,
+            width: size.width,
+            padding: const EdgeInsets.all(20.0),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(child: Image.asset('assets/images/hand.png')),
-                  SizedBox(
-                    width: 10,
+                  SizedBox(height: size.height * 0.2),
+                  SvgPicture.asset(
+                    'assets/Begize.svg',
+                    height: size.height * 0.15,
+                    // width: size.width * 0.4,
                   ),
-                  Container(child: Image.asset('assets/images/KNCV.png')),
+                  Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Powered By", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      SizedBox(width: 20),
+                      SvgPicture.asset(
+                        'assets/Knvc.svg',
+                        height: size.height * 0.04,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: size.height * 0.1),
                 ],
               ),
-              SizedBox(
-                height: 15,
-              ),
-              Container(child: Image.asset('assets/images/TBtext.png')),
-            ],
-          ),
-        );
-      }),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -109,19 +137,12 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _demoNotification(String title, String body) async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'FLUTTER_STREAMING_APP', 'STREAMING_APP',
-        importance: Importance.max,
-        playSound: true,
-        showProgress: true,
-        priority: Priority.high,
-        ticker: 'test ticker');
+    var androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('FLUTTER_STREAMING_APP', 'STREAMING_APP', importance: Importance.max, playSound: true, showProgress: true, priority: Priority.high, ticker: 'test ticker');
 
     var iOSChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
-    await flutterLocalNotificationsPlugin
-        .show(0, title, body, platformChannelSpecifics, payload: 'test');
+    var platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, title, body, platformChannelSpecifics, payload: 'test');
   }
 
   initMessaging() async {
