@@ -180,15 +180,17 @@ class _ReportScreenState extends State<ReportScreen> {
     final xlsx.Worksheet sheet = workbook.worksheets[0];
     sheet.getRangeByName('A1').setText('Order ID');
     sheet.getRangeByName('B1').setText('Pick up Site');
-    sheet.getRangeByName('C1').setText('Region');
-    sheet.getRangeByName('D1').setText('Zone');
-    sheet.getRangeByName('E1').setText('Woreda');
-    sheet.getRangeByName('F1').setText('Courier Name');
-    sheet.getRangeByName('G1').setText('Recipient Site');
-    sheet.getRangeByName('H1').setText('Number of Patients');
-    sheet.getRangeByName('I1').setText('Order Created');
-    sheet.getRangeByName('J1').setText('Order Accepted');
-    sheet.getRangeByName('K1').setText('Shipment Duration');
+    // sheet.getRangeByName('C1').setText('Region');
+    // sheet.getRangeByName('D1').setText('Zone');
+    // sheet.getRangeByName('E1').setText('Woreda');
+    sheet.getRangeByName('C1').setText('Courier Name');
+    sheet.getRangeByName('D1').setText('Recipient Site');
+    sheet.getRangeByName('E1').setText('Number of Patients');
+    sheet.getRangeByName('F1').setText('Order Created');
+    sheet.getRangeByName('G1').setText('Order Accepted');
+    sheet.getRangeByName('H1').setText('Shipment Duration');
+    sheet.getRangeByName('I1').setText('Drop off Date');
+    sheet.getRangeByName('J1').setText('Drop off Time');
 
     for (int i = 0; i < filteredReportsData.length; i++) {
       DateTime? orderReceived;
@@ -206,27 +208,31 @@ class _ReportScreenState extends State<ReportScreen> {
       }
       sheet.getRangeByName('A${i + 2}').setText(filteredReportsData[i]['orderId'].toString());
       sheet.getRangeByName('B${i + 2}').setText(filteredReportsData[i]['sender_name'].toString());
-      sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['region']['name'].toString());
-      sheet.getRangeByName('D${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['name'].toString());
-      sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['woredas'][0]['name'].toString());
-      sheet.getRangeByName('F${i + 2}').setText(filteredReportsData[i]['courier_name'].toString());
-      sheet.getRangeByName('G${i + 2}').setText(filteredReportsData[i]['tester_name'].toString());
+      // sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['region']['name'].toString());
+      // sheet.getRangeByName('D${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['name'].toString());
+      // sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['woredas'][0]['name'].toString());
+      sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['courier_name'].toString());
+      sheet.getRangeByName('D${i + 2}').setText(filteredReportsData[i]['tester_name'].toString());
       sheet
-          .getRangeByName('H${i + 2}')
+          .getRangeByName('E${i + 2}')
           .setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
-      sheet.getRangeByName('I${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
+      sheet.getRangeByName('F${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
           '/' +
           filteredReportsData[i]['order_created'].toDate().month.toString() +
           '/' +
           filteredReportsData[i]['order_created'].toDate().year.toString());
       orderReceived == null
-          ? sheet.getRangeByName('J${i + 2}').setText('N/A')
+          ? sheet.getRangeByName('G${i + 2}').setText('N/A')
           : sheet
-              .getRangeByName('J${i + 2}')
+              .getRangeByName('G${i + 2}')
               .setText(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString());
       shipmentDurationInMinutes == null
-          ? sheet.getRangeByName('K${i + 2}').setText('N/A')
-          : sheet.getRangeByName('K${i + 2}').setText('$shipmentDurationInMinutes Minutes');
+          ? sheet.getRangeByName('H${i + 2}').setText('N/A')
+          : sheet.getRangeByName('H${i + 2}').setText('$shipmentDurationInMinutes Minutes');
+      sheet
+          .getRangeByName('I${i + 2}')
+          .setText(orderReceived != null ? '${orderReceived.year} / ${orderReceived.month} / ${orderReceived.day}' : 'N/A');
+      sheet.getRangeByName('J${i + 2}').setText(orderReceived != null ? '${orderReceived.hour}:${orderReceived.minute}' : 'N/A');
     }
     final List<int> bytes = workbook.saveAsStream();
     String date = DateTime.now().toString();
@@ -1138,15 +1144,18 @@ class _ReportScreenState extends State<ReportScreen> {
                                                         columns: [
                                                           DataColumn(label: Text("Order ID")),
                                                           DataColumn(label: Text("Pick up Site")),
-                                                          DataColumn(label: Text("Region")),
-                                                          DataColumn(label: Text("Zone")),
-                                                          DataColumn(label: Text("Woreda")),
+                                                          // DataColumn(label: Text("Region")),
+                                                          // DataColumn(label: Text("Zone")),
+                                                          // DataColumn(label: Text("Woreda")),
                                                           DataColumn(label: Text("Courier Name")),
                                                           DataColumn(label: Text("Recipient Site")),
                                                           DataColumn(label: Text("Number of Patients")),
                                                           DataColumn(label: Text("Order Created")),
                                                           DataColumn(label: Text("Order Accepted")),
                                                           DataColumn(label: Text("Shipment Duration")),
+                                                          DataColumn(label: Text("Drop off Date")),
+                                                          DataColumn(label: Text("Drop off Time")),
+                                                          //shipmentReport
                                                         ],
                                                         rows: getShipmentReport(selectedFilter == 'All' ? reports : filteredReports),
                                                       ),
@@ -1349,9 +1358,9 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
       cells: [
         DataCell(Text(data['orderId'])),
         DataCell(Text(data['sender_name'].toString())),
-        DataCell(Text(data['region']['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
+        // DataCell(Text(data['region']['name'].toString())),
+        // DataCell(Text(data['region']['zones'][0]['name'].toString())),
+        // DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
         DataCell(Text(data['courier_name'].toString())),
         DataCell(Text(data['tester_name'].toString())),
         DataCell(Text(data['patients'] != null ? data['patients'].length.toString() : '0')),
@@ -1364,6 +1373,9 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
             ? DataCell(Text('N/A'))
             : DataCell(Text(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString())),
         shipmentDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('$shipmentDurationInMinutes Minutes')),
+        // shipmentReport
+        DataCell(Text(orderReceived != null ? '${orderReceived.year} / ${orderReceived.month} / ${orderReceived.day}' : 'N/A')),
+        DataCell(Text(orderReceived != null ? '${orderReceived.hour}:${orderReceived.minute}' : 'N/A')),
       ],
     );
   }).toList();
