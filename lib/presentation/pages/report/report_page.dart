@@ -87,7 +87,7 @@ class _ReportScreenState extends State<ReportScreen> {
       // sheet
       //     .getRangeByName('H${i + 2}')
       //     .setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
-        sheet
+      sheet
           .getRangeByName('H${i + 2}')
           .setText(filteredReportsData[i]['patients'] != null ? getOrderSpecimenCount(filteredReportsData[i]).toString() : '0');
       sheet.getRangeByName('I${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
@@ -129,6 +129,10 @@ class _ReportScreenState extends State<ReportScreen> {
     sheet.getRangeByName('R1').setText('Reason for Test');
     sheet.getRangeByName('S1').setText('Registration Group');
     sheet.getRangeByName('T1').setText('Delivery Status');
+    sheet.getRangeByName('U1').setText('Turn around Time');
+    sheet.getRangeByName('V1').setText('MTB Result');
+    sheet.getRangeByName('W1').setText('RR Result');
+    sheet.getRangeByName('X1').setText('Lab Registration Number');
 
     List<Map<String, dynamic>> finalData = getDataForSpecimenReferralReport(reportsData);
     for (int i = 0; i < finalData.length; i++) {
@@ -152,6 +156,12 @@ class _ReportScreenState extends State<ReportScreen> {
       sheet.getRangeByName('R${i + 2}').setText(finalData[i]['reasonForTest'].toString());
       sheet.getRangeByName('S${i + 2}').setText(finalData[i]['registrationGroup'].toString());
       sheet.getRangeByName('T${i + 2}').setText(finalData[i]['deliveryStatus'].toString());
+      sheet.getRangeByName('U${i + 2}').setText(finalData[i]['turnAroundTime'].toString());
+      sheet.getRangeByName('V${i + 2}').setText(finalData[i]['mtb_result'].toString());
+      sheet.getRangeByName('W${i + 2}').setText(finalData[i]['result_rr'].toString());
+      sheet.getRangeByName('X${i + 2}').setText(finalData[i]['lab_registration_number'].toString());
+      //TODO: add the remaining column data
+
     }
     final List<int> bytes = workbook.saveAsStream();
     String date = DateTime.now().toString();
@@ -1074,6 +1084,12 @@ class _ReportScreenState extends State<ReportScreen> {
                                                           DataColumn(label: Text("Reason for Test")),
                                                           DataColumn(label: Text("Registration Group")),
                                                           DataColumn(label: Text("Delivery Status")),
+                                                          // getDataForSpecimenReferralReport
+                                                          //TODO: add remaining columns
+                                                          DataColumn(label: Text("Turn around Time")),
+                                                          DataColumn(label: Text("MTB Result")),
+                                                          DataColumn(label: Text("RR Result")),
+                                                          DataColumn(label: Text("Lab Registration Number")),
                                                         ],
                                                         rows: getSpecimenReferalReport(selectedFilter == 'All' ? reports : filteredReports),
                                                       ),
@@ -1171,6 +1187,54 @@ String getAgeInMonth(int? age) {
   }
 }
 
+int? getOrderTurnAroundTime(Map<String, dynamic> order) {
+  int? time;
+  DateTime? orderPickedUp;
+  DateTime? orderReceived;
+  if (order['order_pickedup'] != null && order['order_received'] != null) {
+    orderReceived = order['order_received'].toDate();
+    orderPickedUp = order['order_pickedup'].toDate();
+
+    if (orderReceived != null && orderPickedUp != null) {
+      time = orderReceived.difference(orderPickedUp).inMinutes;
+    }
+  }
+  return time;
+}
+
+String getSpecimenMtbResult(Map<String, dynamic> specimen) {
+  String res = "N/A";
+  if (specimen['result'] != null) {
+    Map<String, dynamic> result = specimen['result'];
+    if (result['mtb_result'] != null) {
+      res = result['mtb_result'].toString();
+    }
+  }
+  return res;
+}
+
+String getSpecimenRrResult(Map<String, dynamic> specimen) {
+  String res = "N/A";
+  if (specimen['result'] != null) {
+    Map<String, dynamic> result = specimen['result'];
+    if (result['result_rr'] != null) {
+      res = result['result_rr'].toString();
+    }
+  }
+  return res;
+}
+
+String getSpecimenLabRegistrationNum(Map<String, dynamic> specimen) {
+  String res = "N/A";
+  if (specimen['result'] != null) {
+    Map<String, dynamic> result = specimen['result'];
+    if (result['lab_registratin_number'] != null) {
+      res = result['lab_registratin_number'].toString();
+    }
+  }
+  return res;
+}
+
 List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dynamic>> reportsData) {
   List<Map<String, dynamic>> finalData = [];
   Map<String, dynamic> patientInformation = {};
@@ -1200,6 +1264,14 @@ List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dyn
           patientInformation['reasonForTest'] = patient['reason_for_test'] != null ? patient['reason_for_test'] : "";
           patientInformation['registrationGroup'] = patient['registration_group'] != null ? patient['registration_group'] : "";
           patientInformation['deliveryStatus'] = reportData['status'] != null ? reportData['status'] : "";
+          patientInformation['turnAroundTime'] =
+              getOrderTurnAroundTime(reportData) != null ? getOrderTurnAroundTime(reportData).toString() + " Minute" : "N/A";
+          patientInformation['mtb_result'] = getSpecimenMtbResult(specimen);
+          patientInformation['result_rr'] = getSpecimenRrResult(specimen);
+          patientInformation['lab_registration_number'] = getSpecimenLabRegistrationNum(specimen);
+
+          //TODO: add remaining columns
+
           finalData.add(patientInformation);
           patientInformation = {};
         }
@@ -1235,6 +1307,10 @@ List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
         DataCell(Text(data['reasonForTest'].toString())),
         DataCell(Text(data['registrationGroup'].toString())),
         DataCell(Text(data['deliveryStatus'].toString())),
+        DataCell(Text(data['turnAroundTime'].toString())),
+        DataCell(Text(data['mtb_result'].toString())),
+        DataCell(Text(data['result_rr'].toString())),
+        DataCell(Text(data['lab_registration_number'].toString())),
       ],
     );
   }).toList();

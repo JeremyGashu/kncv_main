@@ -310,7 +310,6 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                               hint: 'Enter Your Phone',
                               inputType: TextInputType.phone,
                               controller: phoneController,
-                              isPhoneNum: true,
                             ),
 
                             _labelBuilder('Site of TB'),
@@ -730,6 +729,18 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                 .showSnackBar(SnackBar(content: Text('Please enter zone region and woreda')));
                                             return;
                                           }
+                                          if (!validatePhoneNumber(phoneController.value.text.trim())) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Please enter a valid phone number!',
+                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                                ),
+                                                backgroundColor: Colors.red.shade700,
+                                              ),
+                                            );
+                                            return;
+                                          }
                                           String mr = MRController.value.text;
                                           String name = nameController.value.text;
                                           //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
@@ -887,6 +898,33 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
     );
   }
 
+  bool validatePhoneNumber(String phoneNumber) {
+    if (phoneNumber != "") {
+      if (phoneNumber[0] == "0") {
+        if (phoneNumber.length == 10) {
+          if (phoneNumber[1] == "9") {
+            return true;
+          }
+        }
+      } else if (phoneNumber[0] == "+") {
+        if (phoneNumber.length == 13) {
+          if (phoneNumber.substring(1, 5) == "2519") {
+            return true;
+          }
+        }
+      } else if (phoneNumber[0] == "9") {
+        if (phoneNumber.length == 9) {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+    return false;
+  }
+
   Widget _labelBuilder(String label, {bool required = false}) {
     return Container(
       width: double.infinity,
@@ -920,7 +958,6 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
     int? maxValue,
     bool required = false,
     bool editable = true,
-    bool isPhoneNum = false,
   }) {
     return Column(
       children: [
@@ -953,11 +990,6 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
               if (value == null || value.isEmpty) {
                 return 'Value cannot be empty!';
               }
-              if (isPhoneNum) {
-                // if(value)
-                return 'Invalid phone number';
-              }
-              //TODO: add phone number validation
               return null;
             },
             onChanged: (_) {
