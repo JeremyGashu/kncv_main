@@ -30,6 +30,7 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
   }
 
+  //seconds
   final int splashTime = 3;
 
   @override
@@ -37,6 +38,7 @@ class _SplashPageState extends State<SplashPage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) async {
           if (state is UnauthenticatedState || state is InitialState) {
@@ -99,16 +101,19 @@ class _SplashPageState extends State<SplashPage> {
                   Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("Powered By", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text("Powered By", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                      SizedBox(width: 20),
+                      Image(image: AssetImage('assets/ephi_logo.jpg'), width: size.width * 0.2),
                       SizedBox(width: 20),
                       SvgPicture.asset(
                         'assets/Knvc.svg',
-                        height: size.height * 0.04,
+                        width: size.width * 0.2,
                       ),
                     ],
                   ),
-                  SizedBox(height: size.height * 0.1),
+                  SizedBox(height: size.height * 0.05),
                 ],
               ),
             ),

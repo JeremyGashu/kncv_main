@@ -72,7 +72,7 @@ class _ReportScreenState extends State<ReportScreen> {
     sheet.getRangeByName('E1').setText('Region');
     sheet.getRangeByName('F1').setText('Zone/Sub City');
     sheet.getRangeByName('G1').setText('Woreda');
-    sheet.getRangeByName('H1').setText('Number of Patients');
+    sheet.getRangeByName('H1').setText('Number of Sample');
     sheet.getRangeByName('I1').setText('Order Created');
     sheet.getRangeByName('J1').setText('Order Status');
 
@@ -84,9 +84,12 @@ class _ReportScreenState extends State<ReportScreen> {
       sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['region']['name'].toString());
       sheet.getRangeByName('F${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['name'].toString());
       sheet.getRangeByName('G${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['woredas'][0]['name'].toString());
-      sheet
+      // sheet
+      //     .getRangeByName('H${i + 2}')
+      //     .setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
+        sheet
           .getRangeByName('H${i + 2}')
-          .setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
+          .setText(filteredReportsData[i]['patients'] != null ? getOrderSpecimenCount(filteredReportsData[i]).toString() : '0');
       sheet.getRangeByName('I${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
           '/' +
           filteredReportsData[i]['order_created'].toDate().month.toString() +
@@ -958,7 +961,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                         ),
 
                                         SizedBox(height: 20),
-
+//TODO: change report export data
                                         //!Order Monitoring Table
                                         currentReportType != reportType.orderMonitoringReport
                                             ? SizedBox.shrink()
