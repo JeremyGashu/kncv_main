@@ -897,7 +897,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                             icon: Container(
                                               child: Row(
                                                 children: [
-                                                  Icon(Icons.report),
+                                                  Icon(Icons.bar_chart),
                                                   SizedBox(width: 10),
                                                   Text('Select Report', style: TextStyle(fontSize: 18.0)),
                                                 ],

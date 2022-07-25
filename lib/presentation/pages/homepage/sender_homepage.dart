@@ -105,7 +105,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                           ),
                         );
                       },
-                      icon: Icon(Icons.report),
+                      icon: Icon(Icons.bar_chart),
                       color: Colors.white,
                     ),
                     kIsWeb

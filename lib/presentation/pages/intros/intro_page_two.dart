@@ -10,6 +10,8 @@ class InstroPageTwo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: GestureDetector(
         onHorizontalDragUpdate: (details) {
@@ -39,161 +41,152 @@ class InstroPageTwo extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  child: Center(
-                      child: Image.asset('assets/images/phone_image.png')),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
                 ),
+                // child: Center(child: Image.asset('assets/images/phone_image.png')),
+                child: Center(child: Image.asset('assets/images/phone_image.png', height: size.height * 0.35)),
               ),
-              Flexible(
-                flex: 1,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(
-                        100,
-                      ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(
+                      100,
                     ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 25),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          // mainAxisAlignment: ,
-                          children: [
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(
-                                  0.6,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 25),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        // mainAxisAlignment: ,
+                        children: [
+                          Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(
+                                0.6,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            width: 55,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: kColorsOrangeLight,
+                              borderRadius: BorderRadius.circular(
+                                23,
                               ),
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              width: 55,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: kColorsOrangeLight,
-                                borderRadius: BorderRadius.circular(
-                                  23,
-                                ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(
+                                0.6,
                               ),
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(
-                                  0.6,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      //
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 20.0, right: 20.0),
-                        child: Container(
-                            width: double.infinity,
-                            margin: EdgeInsets.only(top: 30),
-                            child: Text(
-                              'Courier',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25,
-                              ),
-                            )),
-                      ),
-                      Container(
-                          padding: EdgeInsets.all(20),
+                    ),
+                    //
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                      child: Container(
                           width: double.infinity,
+                          margin: EdgeInsets.only(top: 30),
                           child: Text(
-                              'As a Courier the app allows to receive notification for incoming orders, confirm schedule for pick up, confirm collection and confirm delivery.',
-                              style: TextStyle(
-                                color: kTextColorLight.withOpacity(0.7),
-                                fontSize: 18,
-                              ))),
+                            'Courier',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                            ),
+                          )),
+                    ),
+                    Container(
+                        padding: EdgeInsets.all(20),
+                        width: double.infinity,
+                        child: Text(
+                            'As a Courier the app allows to receive notification for incoming orders, confirm schedule for pick up, confirm collection and confirm delivery.',
+                            style: TextStyle(
+                              color: kTextColorLight.withOpacity(0.7),
+                              fontSize: 18,
+                            ))),
 
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 30),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, LoginPage.loginPageRouteName);
-                                },
-                                child: Text(
-                                  'Skip Now',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: kTextColorLight,
-                                  ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 30),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, LoginPage.loginPageRouteName);
+                              },
+                              child: Text(
+                                'Skip Now',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: kTextColorLight,
                                 ),
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context,
-                                    InstroPageThree.introPageThreeName);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 20),
-                                child: Container(
-                                  width: 74,
-                                  height: 74,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(37),
-                                    color: kColorsOrangeDark,
-                                  ),
-                                  child: Center(
-                                    child: Container(
-                                      width: 36,
-                                      height: 36,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(37),
-                                        color: Colors.white,
-                                      ),
-                                      child: Icon(
-                                        Icons.arrow_right_alt,
-                                        color: kColorsOrangeDark,
-                                      ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, InstroPageThree.introPageThreeName);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 20),
+                              child: Container(
+                                width: 74,
+                                height: 74,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(37),
+                                  color: kColorsOrangeDark,
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    width: 36,
+                                    height: 36,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(37),
+                                      color: Colors.white,
+                                    ),
+                                    child: Icon(
+                                      Icons.arrow_right_alt,
+                                      color: kColorsOrangeDark,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],

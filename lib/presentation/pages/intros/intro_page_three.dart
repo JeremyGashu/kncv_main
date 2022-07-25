@@ -9,6 +9,8 @@ class InstroPageThree extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: GestureDetector(
         onHorizontalDragUpdate: (details) {
@@ -38,138 +40,127 @@ class InstroPageThree extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  child: Center(
-                      child: Image.asset('assets/images/phone_image.png')),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
                 ),
+                // child: Center( child: Image.asset('assets/images/phone_image.png')),
+                child: Center(child: Image.asset('assets/images/phone_image.png', height: size.height * 0.35)),
               ),
-              Flexible(
-                flex: 1,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(
-                        100,
-                      ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(
+                      100,
                     ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 25),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          // mainAxisAlignment: ,
-                          children: [
-                            Hero(
-                              tag: 'pointer_one',
-                              child: Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(
-                                    0.6,
-                                  ),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 25),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        // mainAxisAlignment: ,
+                        children: [
+                          Hero(
+                            tag: 'pointer_one',
+                            child: Container(
                               width: 10,
-                            ),
-                            Hero(
-                              tag: 'pointer_two',
-                              child: Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(
-                                    0.6,
-                                  ),
-                                  borderRadius: BorderRadius.circular(5),
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(
+                                  0.6,
                                 ),
+                                borderRadius: BorderRadius.circular(5),
                               ),
                             ),
-                            SizedBox(
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Hero(
+                            tag: 'pointer_two',
+                            child: Container(
                               width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(
+                                  0.6,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
                             ),
-                            Hero(
-                              tag: 'pointer_three',
-                              child: Container(
-                                width: 55,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: kColorsOrangeLight,
-                                  borderRadius: BorderRadius.circular(
-                                    23,
-                                  ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Hero(
+                            tag: 'pointer_three',
+                            child: Container(
+                              width: 55,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: kColorsOrangeLight,
+                                borderRadius: BorderRadius.circular(
+                                  23,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      //
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 20.0, right: 20.0),
-                        child: Container(
-                            width: double.infinity,
-                            margin: EdgeInsets.only(top: 30),
-                            child: Text(
-                              'Testing Health Facility',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25,
-                              ),
-                            )),
-                      ),
-                      Container(
-                          padding: EdgeInsets.all(20),
+                    ),
+                    //
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                      child: Container(
                           width: double.infinity,
+                          margin: EdgeInsets.only(top: 30),
                           child: Text(
-                              'As a Testing Health Facilty the app allows to confirm receipt of samples, inspect the quality of samples, and input the test result.',
-                              style: TextStyle(
-                                color: kTextColorLight.withOpacity(0.7),
-                                fontSize: 18,
-                              ))),
-
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context, LoginPage.loginPageRouteName);
-                        },
-                        borderRadius: BorderRadius.circular(37),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: kColorsOrangeDark,
-                          ),
-                          height: 62,
-                          margin: EdgeInsets.all(20),
-                          child: Center(
-                            child: Text(
-                              'Log In',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.white),
+                            'Testing Health Facility',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
                             ),
+                          )),
+                    ),
+                    Container(
+                        padding: EdgeInsets.all(20),
+                        width: double.infinity,
+                        child: Text(
+                            'As a Testing Health Facilty the app allows to confirm receipt of samples, inspect the quality of samples, and input the test result.',
+                            style: TextStyle(
+                              color: kTextColorLight.withOpacity(0.7),
+                              fontSize: 18,
+                            ))),
+
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, LoginPage.loginPageRouteName);
+                      },
+                      borderRadius: BorderRadius.circular(37),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: kColorsOrangeDark,
+                        ),
+                        height: 62,
+                        margin: EdgeInsets.all(20),
+                        child: Center(
+                          child: Text(
+                            'Log In',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],

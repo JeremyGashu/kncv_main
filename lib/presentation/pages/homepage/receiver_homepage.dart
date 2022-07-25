@@ -82,7 +82,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                           ),
                         );
                       },
-                      icon: Icon(Icons.report),
+                      icon: Icon(Icons.bar_chart),
                       color: Colors.white,
                     ),
                     kIsWeb

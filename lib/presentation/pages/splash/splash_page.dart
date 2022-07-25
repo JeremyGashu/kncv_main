@@ -25,11 +25,12 @@ class _SplashPageState extends State<SplashPage> {
     var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-
     flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
     initMessaging();
     super.initState();
   }
+
+  final int splashTime = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -39,24 +40,21 @@ class _SplashPageState extends State<SplashPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) async {
           if (state is UnauthenticatedState || state is InitialState) {
-            await Future.delayed(Duration(seconds: 2));
+            await Future.delayed(Duration(seconds: splashTime));
             Navigator.pushNamedAndRemoveUntil(context, IntroPageOne.introPageOneRouteName, (route) => false);
           } else if (state is AuthenticatedState) {
             print('type => ${state.type}');
             if (state.type == 'COURIER_ADMIN') {
-              await Future.delayed(Duration(seconds: 2));
-
+              await Future.delayed(Duration(seconds: splashTime));
               Navigator.pushNamedAndRemoveUntil(context, CourierHomePage.courierHomePageRouteName, (route) => false);
             } else if (state.type == 'INSTITUTIONAL_ADMIN') {
-              await Future.delayed(Duration(seconds: 2));
-
+              await Future.delayed(Duration(seconds: splashTime));
               Navigator.pushNamedAndRemoveUntil(context, SenderHomePage.senderHomePageRouteName, (route) => false);
             } else if (state.type == 'TEST_CENTER_ADMIN') {
-              await Future.delayed(Duration(seconds: 2));
-
+              await Future.delayed(Duration(seconds: splashTime));
               Navigator.pushNamedAndRemoveUntil(context, ReceiverHomePage.receiverHomepageRouteName, (route) => false);
             } else {
-              await Future.delayed(Duration(seconds: 2));
+              await Future.delayed(Duration(seconds: splashTime));
               Navigator.pushNamedAndRemoveUntil(context, LoginPage.loginPageRouteName, (route) => false);
             }
           }
@@ -137,8 +135,8 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _demoNotification(String title, String body) async {
-    var androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('FLUTTER_STREAMING_APP', 'STREAMING_APP', importance: Importance.max, playSound: true, showProgress: true, priority: Priority.high, ticker: 'test ticker');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails('FLUTTER_STREAMING_APP', 'STREAMING_APP',
+        importance: Importance.max, playSound: true, showProgress: true, priority: Priority.high, ticker: 'test ticker');
 
     var iOSChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);

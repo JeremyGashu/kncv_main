@@ -80,7 +80,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                           ),
                         );
                       },
-                      icon: Icon(Icons.report),
+                      icon: Icon(Icons.bar_chart),
                       color: Colors.white,
                     ),
                     StreamBuilder(
@@ -193,7 +193,8 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                               return GestureDetector(
                                                   onTap: () async {
                                                     print('${state.orders[index].orderId}');
-                                                    var load = await Navigator.pushNamed(context, OrderDetailCourier.orderDetailCourierPageRouteName, arguments: state.orders[index].orderId);
+                                                    var load = await Navigator.pushNamed(context, OrderDetailCourier.orderDetailCourierPageRouteName,
+                                                        arguments: state.orders[index].orderId);
                                                     if (load == true) {
                                                       orderBloc.add(LoadOrdersForCourier());
                                                     } else {
