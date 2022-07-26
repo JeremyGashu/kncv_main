@@ -99,20 +99,47 @@ class _SplashPageState extends State<SplashPage> {
                     // width: size.width * 0.4,
                   ),
                   Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text("Powered By", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                      SizedBox(width: 20),
-                      Image(image: AssetImage('assets/ephi_logo.jpg'), width: size.width * 0.2),
-                      SizedBox(width: 20),
-                      SvgPicture.asset(
-                        'assets/Knvc.svg',
-                        width: size.width * 0.2,
-                      ),
-                    ],
-                  ),
+                  size.width < 330
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text("Powered By", style: TextStyle(fontSize: size.width * 0.06, fontWeight: FontWeight.bold)),
+                            SizedBox(width: size.width * 0.04),
+                            Image(image: AssetImage('assets/ephi_logo.jpg'), width: size.width * 0.1),
+                            SizedBox(width: size.width * 0.04),
+                            SvgPicture.asset('assets/Knvc.svg', width: size.width * 0.1),
+                          ],
+                        )
+                      : size.width < 420
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text("Powered By", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                                SizedBox(width: 20),
+                                Image(image: AssetImage('assets/ephi_logo.jpg'), width: size.width * 0.2),
+                                SizedBox(width: 20),
+                                SvgPicture.asset(
+                                  'assets/Knvc.svg',
+                                  width: size.width * 0.2,
+                                ),
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text("Powered By", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                SizedBox(width: 20),
+                                Image(image: AssetImage('assets/ephi_logo.jpg'), width: 80),
+                                SizedBox(width: 20),
+                                SvgPicture.asset(
+                                  'assets/Knvc.svg',
+                                  width: 80,
+                                ),
+                              ],
+                            ),
                   SizedBox(height: size.height * 0.05),
                 ],
               ),

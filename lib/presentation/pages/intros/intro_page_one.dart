@@ -40,109 +40,112 @@ class IntroPageOne extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                child: Center(child: Image.asset('assets/images/phone_image.png', height: size.height * 0.35)),
-                // child: Center(child: Image.asset('assets/images/phone_image.png')),
-              ),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(
-                      100,
-                    ),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
                   ),
+                  child: Center(child: Image.asset('assets/images/phone_image.png', height: size.height * 0.35)),
+                  // child: Center(child: Image.asset('assets/images/phone_image.png')),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 25),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        // mainAxisAlignment: ,
-                        children: [
-                          Hero(
-                            tag: 'pointrt_one',
-                            child: Container(
-                              width: 55,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: kColorsOrangeLight,
-                                borderRadius: BorderRadius.circular(
-                                  23,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Hero(
-                            tag: 'pointer_two',
-                            child: Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(
-                                  0.6,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Hero(
-                            tag: 'pointer_three',
-                            child: Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(
-                                  0.6,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                          ),
-                        ],
+              ),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(
+                        100,
                       ),
                     ),
-                    //
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-                      child: Container(
-                          width: double.infinity,
-                          margin: EdgeInsets.only(top: 30),
-                          child: Text(
-                            'Referring Health Facility',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 25),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          // mainAxisAlignment: ,
+                          children: [
+                            Hero(
+                              tag: 'pointrt_one',
+                              child: Container(
+                                width: 55,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: kColorsOrangeLight,
+                                  borderRadius: BorderRadius.circular(
+                                    23,
+                                  ),
+                                ),
+                              ),
                             ),
-                          )),
-                    ),
-                    Container(
-                        padding: EdgeInsets.all(20),
-                        width: double.infinity,
-                        child: Text(
-                            'As a Referring Health Facilty this is a mobile app allows to create sample orders (i.e Sputum , Stool , Blood , Urine , etc.) , send the orders , confirm collection and view the status of samples.',
-                            style: TextStyle(
-                              color: kTextColorLight.withOpacity(0.7),
-                              fontSize: 18,
-                            ))),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Hero(
+                              tag: 'pointer_two',
+                              child: Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(
+                                    0.6,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Hero(
+                              tag: 'pointer_three',
+                              child: Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(
+                                    0.6,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      //
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                        child: Container(
+                            width: double.infinity,
+                            margin: EdgeInsets.only(top: 30),
+                            child: Text(
+                              'Referring Health Facility',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: size.width < 563 ? size.width * 0.04 : 25,
+                              ),
+                            )),
+                      ),
+                      Container(
+                          padding: EdgeInsets.all(20),
+                          width: double.infinity,
+                          child: Text(
+                              'As a Referring Health Facilty this is a mobile app allows to create sample orders (i.e Sputum , Stool , Blood , Urine , etc.) , send the orders , confirm collection and view the status of samples.',
+                              style: TextStyle(
+                                color: kTextColorLight.withOpacity(0.7),
+                                fontSize: size.width < 563 ? size.width * 0.04 : 18,
+                              ))),
 
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 30),
-                      child: Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
@@ -154,7 +157,7 @@ class IntroPageOne extends StatelessWidget {
                               child: Text(
                                 'Skip Now',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: size.width < 563 ? size.width * 0.04 : 14,
                                   fontWeight: FontWeight.bold,
                                   color: kTextColorLight,
                                 ),
@@ -168,23 +171,26 @@ class IntroPageOne extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.only(right: 20),
                               child: Container(
-                                width: 74,
-                                height: 74,
+                                width: size.width < 563 ? size.width * 0.08 : 74,
+                                height: size.width < 563 ? size.width * 0.08 : 74,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(37),
                                   color: kColorsOrangeDark,
                                 ),
                                 child: Center(
                                   child: Container(
-                                    width: 36,
-                                    height: 36,
+                                    width: size.width < 563 ? size.width * 0.04 : 36,
+                                    height: size.width < 563 ? size.width * 0.04 : 36,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(37),
                                       color: Colors.white,
                                     ),
-                                    child: Icon(
-                                      Icons.arrow_right_alt,
-                                      color: kColorsOrangeDark,
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.arrow_right_alt,
+                                        color: kColorsOrangeDark,
+                                        size: size.width < 563 ? size.width * 0.04 : 36,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -193,8 +199,9 @@ class IntroPageOne extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      SizedBox(height: size.height * 0.01)
+                    ],
+                  ),
                 ),
               ),
             ],

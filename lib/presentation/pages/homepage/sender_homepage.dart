@@ -50,6 +50,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
   String testerName = '';
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order has been Updated!')));
@@ -154,12 +155,19 @@ class _SenderHomePageState extends State<SenderHomePage> {
                           future: AuthRepository.currentUser(),
                           builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
-                              return Text(
-                                'Logged in  as: ${snapshot.data?['name'] ?? ''}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ),
-                              );
+                              return size.width < 191
+                                  ? SizedBox.shrink()
+                                  : Text(
+                                      'Logged in  as: \n${snapshot.data?['name'] ?? ''}',
+                                      style: TextStyle(
+                                        // fontSize: 12,
+                                        fontSize: size.width < 290
+                                            ? size.width * 0.03
+                                            : size.width > 320
+                                                ? 12
+                                                : size.width * 0.03,
+                                      ),
+                                    );
                             }
                             return Container();
                           }),
@@ -252,7 +260,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                             return GestureDetector(
                                                 onTap: () async {
                                                   print('${state.orders[index].orderId}');
-                                                  var load = await Navigator.pushNamed(context, OrderDetailPage.orderDetailPageRouteName, arguments: state.orders[index].orderId);
+                                                  var load = await Navigator.pushNamed(context, OrderDetailPage.orderDetailPageRouteName,
+                                                      arguments: state.orders[index].orderId);
                                                   if (load == true) {
                                                     orderBloc.add(LoadOrders());
                                                   }
