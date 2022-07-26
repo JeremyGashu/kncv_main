@@ -1214,16 +1214,19 @@ String getAgeInMonth(int? age) {
   }
 }
 
-int? getOrderTurnAroundTime(Map<String, dynamic> order) {
+int? getOrderTurnAroundTime(Map<String, dynamic> order, Map<String, dynamic> specimen) {
   int? time;
-  DateTime? orderPickedUp;
-  DateTime? orderReceived;
-  if (order['order_pickedup'] != null && order['order_received'] != null) {
-    orderReceived = order['order_received'].toDate();
-    orderPickedUp = order['order_pickedup'].toDate();
-
-    if (orderReceived != null && orderPickedUp != null) {
-      time = orderReceived.difference(orderPickedUp).inMinutes;
+  DateTime? orderPlaced;
+  DateTime? resultPlacementDate;
+  if (specimen['testResultAddedAt'] != null) {
+    print('**********************************************');
+    if (order['order_placed'] != null && specimen['testResultAddedAt'] != null) {
+      orderPlaced = order['order_placed'].toDate();
+      resultPlacementDate = DateTime.parse(specimen['testResultAddedAt']);
+      if ((orderPlaced != null && orderPlaced.runtimeType == DateTime) &&
+          (resultPlacementDate != null && resultPlacementDate.runtimeType == DateTime)) {
+        time = resultPlacementDate.difference(orderPlaced).inMinutes;
+      }
     }
   }
   return time;
@@ -1291,7 +1294,8 @@ List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dyn
           patientInformation['reasonForTest'] = patient['reason_for_test'] != null ? patient['reason_for_test'] : "";
           patientInformation['registrationGroup'] = patient['registration_group'] != null ? patient['registration_group'] : "";
           patientInformation['deliveryStatus'] = reportData['status'] != null ? reportData['status'] : "";
-          patientInformation['turnAroundTime'] = getOrderTurnAroundTime(reportData) != null ? getOrderTurnAroundTime(reportData) : "N/A";
+          patientInformation['turnAroundTime'] =
+              getOrderTurnAroundTime(reportData, specimen) != null ? getOrderTurnAroundTime(reportData, specimen) : "N/A";
           patientInformation['mtb_result'] = getSpecimenMtbResult(specimen);
           patientInformation['result_rr'] = getSpecimenRrResult(specimen);
           patientInformation['lab_registration_number'] = getSpecimenLabRegistrationNum(specimen);
