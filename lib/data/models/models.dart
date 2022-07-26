@@ -341,7 +341,17 @@ class Patient {
 
 @HiveType(typeId: 3)
 class Specimen {
-  Specimen({this.type, this.id, this.examinationType, this.assessed = false, this.rejected = false, this.reason, this.testResult, this.testResultAddedAt});
+  Specimen(
+      {this.type,
+      this.id,
+      this.examinationType,
+      this.assessed = false,
+      this.rejected = false,
+      this.reason,
+      this.testResult,
+      this.testResultAddedAt,
+      this.specimenCondition,
+      this.transportMode});
 
   @HiveField(0)
   String? type;
@@ -359,21 +369,26 @@ class Specimen {
   TestResult? testResult;
   @HiveField(7)
   DateTime? testResultAddedAt;
+  @HiveField(8)
+  String? specimenCondition;
+  @HiveField(9)
+  String? transportMode;
 
   factory Specimen.fromJson(Map<String, dynamic> json) {
     // Timestamp? timestamp = json['testResultAddedAt'];
     // DateTime? dateTime = timestamp?.toDate();
 
     return Specimen(
-      type: json["type"],
-      id: json["id"],
-      examinationType: json['examination_type'],
-      reason: json['reason'],
-      testResult: json["result"] != null ? TestResult.fromJson(json['result']) : null,
-      assessed: json['assessed'] ?? false,
-      rejected: json['rejected'] ?? false,
-      testResultAddedAt: json["testResultAddedAt"] == null ? null : DateTime.parse(json["testResultAddedAt"]),
-    );
+        type: json["type"],
+        id: json["id"],
+        examinationType: json['examination_type'],
+        reason: json['reason'],
+        testResult: json["result"] != null ? TestResult.fromJson(json['result']) : null,
+        assessed: json['assessed'] ?? false,
+        rejected: json['rejected'] ?? false,
+        testResultAddedAt: json["testResultAddedAt"] == null ? null : DateTime.parse(json["testResultAddedAt"]),
+        specimenCondition: json["specimenCondition"],
+        transportMode: json["transportMode"]);
   }
 
   Map<String, dynamic> toJson() => {
@@ -385,6 +400,8 @@ class Specimen {
         'result': testResult?.toJson(),
         'reason': reason,
         'testResultAddedAt': testResultAddedAt?.toIso8601String(),
+        'specimenCondition': specimenCondition,
+        'transportMode': transportMode
       };
 }
 

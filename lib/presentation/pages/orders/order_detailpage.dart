@@ -41,8 +41,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<SMSBloc, smsState.SMSState>(listener: (ctx, state) {
       if (state is smsState.UpdatedDatabase) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order has been Updated!')));
         ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
       }
     }, builder: (context, snapshot) {
@@ -50,15 +49,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           bloc: ordersBloc,
           listener: (ctx, state) async {
             if (state is DeletedOrder) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text('Order deleted!')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order deleted!')));
               await Future.delayed(Duration(seconds: 1));
 
-              Navigator.pushReplacementNamed(
-                  context, SenderHomePage.senderHomePageRouteName);
+              Navigator.pushReplacementNamed(context, SenderHomePage.senderHomePageRouteName);
             } else if (state is ErrorState) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
               // Navigator.pop(context, true);
             } else if (state is DeletedPatient) {
@@ -77,10 +73,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 orderId: widget.orderId,
                 senderContent:
                     'You have added new order for courier ${state.order.courier_name ?? ""} and testing center ${state.order.tester_name}.',
-                testerContent:
-                    'New order is ready from ${state.order.sender_name} & will be transported by ${state.order.courier_name}.',
-                courierContent:
-                    'New order is created for you to accept it from ${state.order.sender_name} to ${state.order.tester_name}.',
+                testerContent: 'New order is ready from ${state.order.sender_name} & will be transported by ${state.order.courier_name}.',
+                courierContent: 'New order is created for you to accept it from ${state.order.sender_name} to ${state.order.tester_name}.',
                 content: 'New order from ${state.order.sender} is ready.!',
                 courierAction: NotificationAction.NavigateToOrderDetalCourier,
                 testerAction: NotificationAction.NavigateToOrderDetalTester,
@@ -88,16 +82,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 payload: {'orderId': widget.orderId},
               );
             } else if (state is ApprovedArrivalCourier) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Courier collected Order!')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Courier collected Order!')));
               addNotification(
                 orderId: widget.orderId,
-                courierContent:
-                    'Order collected from ${state.order.sender_name} to be transported to ${state.order.tester_name}.',
-                senderContent:
-                    'You have approved departure of specimen from you to ${state.order.tester_name}.',
-                testerContent:
-                    'Specimen collected from ${state.order.sender_name} by courier ${state.order.courier_name}.',
+                courierContent: 'Order collected from ${state.order.sender_name} to be transported to ${state.order.tester_name}.',
+                senderContent: 'You have approved departure of specimen from you to ${state.order.tester_name}.',
+                testerContent: 'Specimen collected from ${state.order.sender_name} by courier ${state.order.courier_name}.',
                 content: 'New order from ${state.order.sender} is ready.!',
                 courierAction: NotificationAction.NavigateToOrderDetalCourier,
                 testerAction: NotificationAction.NavigateToOrderDetalTester,
@@ -107,8 +97,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               await Future.delayed(Duration(seconds: 1));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             } else if (state is EditedOrder) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text('Changed order info!')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Changed order info!')));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             }
           },
@@ -155,13 +144,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                   color: Colors.black,
                                 ),
                                 onPressed: () {
-                                  if (state.order.status !=
-                                          'Waiting for Confirmation' &&
-                                      state.order.status != 'Draft') {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Cant delete this order! It is already accepted!')));
+                                  if (state.order.status != 'Waiting for Confirmation' && state.order.status != 'Draft') {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(content: Text('Cant delete this order! It is already accepted!')));
                                     return;
                                   }
                                   showDialog(
@@ -169,8 +154,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                       builder: (ctx) {
                                         return AlertDialog(
                                           title: Text('Delete Order'),
-                                          content: Text(
-                                              'Are you sure you want to delete this order?'),
+                                          content: Text('Are you sure you want to delete this order?'),
                                           actions: [
                                             TextButton(
                                                 onPressed: () {
@@ -209,125 +193,79 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           child: Stack(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 100, left: 10, top: 10, right: 10),
+                                padding: const EdgeInsets.only(bottom: 100, left: 10, top: 10, right: 10),
                                 child: CustomScrollView(
                                   slivers: [
                                     state.order.status == 'Draft'
                                         ? SliverToBoxAdapter(
                                             child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
+                                            mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
                                               IconButton(
                                                   tooltip: 'Edit',
                                                   // backgroundColor: kColorsOrangeLight,
                                                   // elevation: 0,
                                                   onPressed: () async {
-                                                    // print('here');
-                                                    var create =
-                                                        await showModalBottomSheet(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            isScrollControlled:
-                                                                true,
-                                                            context: context,
-                                                            builder: (ctx) {
-                                                              return Container(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        top: 30,
-                                                                        left:
-                                                                            20,
-                                                                        right:
-                                                                            20,
-                                                                        bottom:
-                                                                            20),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .only(
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                      30,
-                                                                    ),
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                      30,
+                                                    print('here');
+                                                    var create = await showModalBottomSheet(
+                                                        backgroundColor: Colors.transparent,
+                                                        isScrollControlled: true,
+                                                        context: context,
+                                                        builder: (ctx) {
+                                                          return Container(
+                                                            padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
+                                                            decoration: BoxDecoration(
+                                                              color: Colors.white,
+                                                              borderRadius: BorderRadius.only(
+                                                                topLeft: Radius.circular(
+                                                                  30,
+                                                                ),
+                                                                topRight: Radius.circular(
+                                                                  30,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            child: Column(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Container(
+                                                                  width: double.infinity,
+                                                                  child: Text(
+                                                                    'Create An Order',
+                                                                    textAlign: TextAlign.center,
+                                                                    style: TextStyle(
+                                                                      fontSize: 32,
+                                                                      fontWeight: FontWeight.bold,
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Container(
-                                                                      width: double
-                                                                          .infinity,
-                                                                      child:
-                                                                          Text(
-                                                                        'Create An Order',
-                                                                        textAlign:
-                                                                            TextAlign.center,
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              32,
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height:
-                                                                          30,
-                                                                    ),
-                                                                    SelectorPage(
-                                                                      buttonText:
-                                                                          'Edit Order',
-                                                                    ),
-                                                                  ],
+                                                                SizedBox(
+                                                                  height: 30,
                                                                 ),
-                                                              );
-                                                            });
+                                                                SelectorPage(
+                                                                  buttonText: 'Edit Order',
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        });
 
-                                                    // print('create');
+                                                    print('create');
                                                     if (create == true) {
-                                                      Tester? tester = BlocProvider
-                                                              .of<TesterCourierBloc>(
-                                                                  context)
-                                                          .tester;
-                                                      Courier? courier =
-                                                          BlocProvider.of<
-                                                                      TesterCourierBloc>(
-                                                                  context)
-                                                              .courier;
-                                                      String? date = BlocProvider
-                                                              .of<TesterCourierBloc>(
-                                                                  context)
-                                                          .date;
-                                                      // print(tester?.name);
-                                                      // print(courier?.name);
-                                                      // print(date);
+                                                      Tester? tester = BlocProvider.of<TesterCourierBloc>(context).tester;
+                                                      Courier? courier = BlocProvider.of<TesterCourierBloc>(context).courier;
+                                                      String? date = BlocProvider.of<TesterCourierBloc>(context).date;
+                                                      print(tester?.name);
+                                                      print(courier?.name);
+                                                      print(date);
                                                       ordersBloc.add(
                                                         EditOrder(
-                                                          courier_id:
-                                                              courier!.id,
+                                                          courier_id: courier!.id,
                                                           tester_id: tester!.id,
-                                                          courier_name:
-                                                              courier.name,
-                                                          tester_name:
-                                                              tester.name,
-                                                          orderId:
-                                                              widget.orderId,
+                                                          courier_name: courier.name,
+                                                          tester_name: tester.name,
+                                                          orderId: widget.orderId,
                                                         ),
                                                       );
                                                     }
@@ -361,15 +299,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                             ),
                                             title: Text(
                                               '${state.order.sender_name ?? ""}',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                             ),
                                             trailing: Text(
                                               'Referring Health Facilty',
-                                              style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 14),
+                                              style: TextStyle(color: Colors.green, fontSize: 14),
                                             ),
                                           ),
 
@@ -387,15 +321,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                             ),
                                             title: Text(
                                               '${state.order.courier_name ?? ""}',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                             ),
                                             trailing: Text(
                                               'Courier',
-                                              style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 14),
+                                              style: TextStyle(color: Colors.green, fontSize: 14),
                                             ),
                                           ),
                                           //test center
@@ -412,15 +342,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                             ),
                                             title: Text(
                                               '${state.order.tester_name ?? ""}',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                             ),
                                             trailing: Text(
                                               'Testing Health Facility',
-                                              style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 14),
+                                              style: TextStyle(color: Colors.green, fontSize: 14),
                                             ),
                                           ),
                                         ],
@@ -433,26 +359,22 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
                                     SliverToBoxAdapter(
                                       child: Container(
-                                          margin:
-                                              EdgeInsets.symmetric(vertical: 5),
+                                          margin: EdgeInsets.symmetric(vertical: 5),
                                           width: double.infinity,
                                           child: Text(
                                             'Order ID = ${state.order.orderId}',
-                                            style:
-                                                TextStyle(color: Colors.grey),
+                                            style: TextStyle(color: Colors.grey),
                                             textAlign: TextAlign.left,
                                           )),
                                     ),
 
                                     SliverToBoxAdapter(
                                       child: Container(
-                                          margin:
-                                              EdgeInsets.symmetric(vertical: 5),
+                                          margin: EdgeInsets.symmetric(vertical: 5),
                                           width: double.infinity,
                                           child: Text(
                                             'Current Status = ${state.order.status}',
-                                            style:
-                                                TextStyle(color: Colors.grey),
+                                            style: TextStyle(color: Colors.grey),
                                             textAlign: TextAlign.left,
                                           )),
                                     ),
@@ -460,21 +382,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                     state.order.status == 'Draft'
                                         ? SliverToBoxAdapter(
                                             child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
+                                            mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
                                               FloatingActionButton(
                                                   tooltip: 'Add Patient',
-                                                  backgroundColor:
-                                                      kColorsOrangeLight,
+                                                  backgroundColor: kColorsOrangeLight,
                                                   elevation: 0,
                                                   onPressed: () async {
-                                                    if (state.order.patients!
-                                                            .length >=
-                                                        4) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
+                                                    if (state.order.patients!.length >= 4) {
+                                                      ScaffoldMessenger.of(context).showSnackBar(
                                                         SnackBar(
                                                           content: Text(
                                                             'Maximum sample quantity is reached!',
@@ -484,18 +400,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
                                                       return;
                                                     }
-                                                    var added = await Navigator
-                                                        .pushNamed(
-                                                            context,
-                                                            PatientInfoPage
-                                                                .patientInfoPageRouteName,
-                                                            arguments:
-                                                                widget.orderId);
+                                                    var added = await Navigator.pushNamed(context, PatientInfoPage.patientInfoPageRouteName,
+                                                        arguments: widget.orderId);
                                                     if (added == true) {
-                                                      ordersBloc.add(
-                                                          LoadSingleOrder(
-                                                              orderId: widget
-                                                                  .orderId));
+                                                      ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
                                                     }
                                                   },
                                                   child: Icon(Icons.add)),
@@ -516,39 +424,24 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                           //   )
                                           ListView.builder(
                                               shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount:
-                                                  state.order.patients!.length,
+                                              physics: NeverScrollableScrollPhysics(),
+                                              itemCount: state.order.patients!.length,
                                               itemBuilder: (ctx, index) {
                                                 return GestureDetector(
                                                   onTap: () {
-                                                    Navigator.pushNamed(
-                                                        context,
-                                                        EditPatientInfoPage
-                                                            .editPatientInfoRouteName,
-                                                        arguments: {
-                                                          'patient': state.order
-                                                              .patients![index],
-                                                          'orderId':
-                                                              widget.orderId,
-                                                          'index': index,
-                                                          'canEdit': state.order
-                                                                  .status ==
-                                                              'Draft',
-                                                        });
+                                                    Navigator.pushNamed(context, EditPatientInfoPage.editPatientInfoRouteName, arguments: {
+                                                      'patient': state.order.patients![index],
+                                                      'orderId': widget.orderId,
+                                                      'index': index,
+                                                      'canEdit': state.order.status == 'Draft',
+                                                    });
                                                   },
                                                   child: buildPatients(
                                                     context,
-                                                    state
-                                                        .order.patients![index],
+                                                    state.order.patients![index],
                                                     widget.orderId,
                                                     index,
-                                                    deletable: state
-                                                                .order.status ==
-                                                            'Waiting for Confirmation' ||
-                                                        state.order.status ==
-                                                            'Draft',
+                                                    deletable: state.order.status == 'Waiting for Confirmation' || state.order.status == 'Draft',
                                                     order: state.order,
                                                   ),
                                                 );
@@ -570,26 +463,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                         color: kPageBackground,
                                         child: InkWell(
                                           onTap: () async {
-                                            if (state.order.patients!.length ==
-                                                0) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                      content: Text(
-                                                          'Please add patients first!')));
+                                            if (state.order.patients!.length == 0) {
+                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please add patients first!')));
                                               return;
                                             }
 
-                                            // debugPrint('${Order.fromJsonSMS(state.order.toJsonSMS()).orderId}');
+                                            debugPrint('${Order.fromJsonSMS(state.order.toJsonSMS()).orderId}');
 
-                                            ordersBloc.add(
-                                                PlaceOrder(order: state.order));
+                                            ordersBloc.add(PlaceOrder(order: state.order));
                                           },
-                                          borderRadius:
-                                              BorderRadius.circular(37),
+                                          borderRadius: BorderRadius.circular(37),
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                              borderRadius: BorderRadius.circular(10),
                                               color: kColorsOrangeDark,
                                             ),
                                             height: 62,
@@ -597,10 +483,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                             child: Center(
                                               child: Text(
                                                 'Place Order',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
-                                                    color: Colors.white),
+                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                                               ),
                                             ),
                                           ),
@@ -752,38 +635,28 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 builder: (ctx) {
                                                   return AlertDialog(
                                                     title: Text('Confirm'),
-                                                    content: Text(
-                                                        'Are you sure you want to confirm order departure?'),
+                                                    content: Text('Are you sure you want to confirm order departure?'),
                                                     actions: [
                                                       TextButton(
                                                           onPressed: () {
-                                                            ordersBloc.add(
-                                                                ApproveArrivalCourier(
-                                                                    state.order,
-                                                                    state.order
-                                                                            .courier_name ??
-                                                                        ''));
+                                                            ordersBloc.add(ApproveArrivalCourier(state.order, state.order.courier_name ?? ''));
 
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                           child: Text('Yes')),
                                                       TextButton(
                                                           onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
+                                                            Navigator.pop(context);
                                                           },
                                                           child: Text('No'))
                                                     ],
                                                   );
                                                 });
                                           },
-                                          borderRadius:
-                                              BorderRadius.circular(37),
+                                          borderRadius: BorderRadius.circular(37),
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                              borderRadius: BorderRadius.circular(10),
                                               color: kColorsOrangeDark,
                                             ),
                                             height: 62,
@@ -791,10 +664,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                             child: Center(
                                               child: Text(
                                                 'Approve Courier Arrival',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
-                                                    color: Colors.white),
+                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                                               ),
                                             ),
                                           ),
@@ -815,9 +685,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     });
   }
 
-  Container buildPatients(
-      BuildContext context, Patient patient, String orderId, int index,
-      {bool deletable = true, required Order order}) {
+  Container buildPatients(BuildContext context, Patient patient, String orderId, int index, {bool deletable = true, required Order order}) {
     String message = '';
     int counter = 0;
     patient.specimens?.forEach((specimen) {
@@ -869,8 +737,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 Row(
                   children: [
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(
                           20,
@@ -916,9 +783,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   GestureDetector(
                     onTap: () {
                       if (!deletable) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content:
-                                Text('Cannot delete this order anymore!')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cannot delete this order anymore!')));
                         return;
                       }
 
@@ -933,8 +798,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                               actions: [
                                 TextButton(
                                     onPressed: () {
-                                      ordersBloc.add(DeletePatient(
-                                          orderId: orderId, index: index));
+                                      ordersBloc.add(DeletePatient(orderId: orderId, index: index));
                                       Navigator.pop(context);
                                     },
                                     child: Text('Yes')),
@@ -947,8 +811,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             );
                           });
 
-                      // print(orderId);
-                      // print('${patient.toJson()}');
+                      print(orderId);
+                      print('${patient.toJson()}');
                     },
                     child: Container(
                       width: 36,
@@ -971,9 +835,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // print(index);
-                      // print(patient);
-                      // print(orderId);
+                      print(index);
+                      print(patient);
+                      print(orderId);
                       // if (!deletable) {
                       //             ScaffoldMessenger.of(context).showSnackBar(
                       //                 SnackBar(
@@ -982,14 +846,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       //                         return;
                       //           }
 
-                      Navigator.pushNamed(
-                          context, EditPatientInfoPage.editPatientInfoRouteName,
-                          arguments: {
-                            'patient': order.patients![index],
-                            'orderId': widget.orderId,
-                            'index': index,
-                            'canEdit': order.status == 'Draft',
-                          });
+                      Navigator.pushNamed(context, EditPatientInfoPage.editPatientInfoRouteName, arguments: {
+                        'patient': order.patients![index],
+                        'orderId': widget.orderId,
+                        'index': index,
+                        'canEdit': order.status == 'Draft',
+                      });
                     },
                     child: Container(
                       width: 36,

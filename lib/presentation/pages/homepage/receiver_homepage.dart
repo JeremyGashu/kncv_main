@@ -137,7 +137,9 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                               return size.width < 191
                                   ? SizedBox.shrink()
                                   : Text(
-                                      'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
+                                      // 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
+                                      snapshot.data!['user'].email != null ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}' : '',
+
                                       style: TextStyle(
                                         // fontSize: 12,
                                         fontSize: size.width < 290
