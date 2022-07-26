@@ -47,7 +47,7 @@ Future sendCustomSMS({BuildContext? context, required String to, required String
     }
 
     await Telephony.instance.sendSms(
-      to: '0941998907',
+      to: '0931057901',
       message: jsonEncode(
         {
           'action': SEND_NOTIFICATION_SMS,
@@ -124,7 +124,7 @@ Future sendSmsViaListenerToEndUser({BuildContext? context, required String to, r
   bool? granted = await Telephony.instance.requestSmsPermissions;
   if (granted == true) {
     await Telephony.instance.sendSms(
-      to: '0941998907',
+      to: '0931057901',
       message: jsonEncode(
         {
           'action': SEND_SMS_TO_LISTENER,

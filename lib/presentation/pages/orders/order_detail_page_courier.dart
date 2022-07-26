@@ -565,7 +565,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       if (!(await isConnectedToTheInternet())) {
                                                         await sendSMS(
                                                           context: context,
-                                                          to: '0941998907',
+                                                          to: '0931057901',
                                                           payload: {
                                                             'oid': state.order.orderId,
                                                           },
