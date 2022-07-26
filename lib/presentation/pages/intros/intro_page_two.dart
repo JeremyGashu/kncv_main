@@ -168,16 +168,16 @@ class InstroPageTwo extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.only(right: 20),
                               child: Container(
-                                width: size.width < 563 ? size.width * 0.08 : 74,
-                                height: size.width < 563 ? size.width * 0.08 : 74,
+                                width: size.width < 563 ? 65 : 74,
+                                height: size.width < 563 ? 65 : 74,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(37),
                                   color: kColorsOrangeDark,
                                 ),
                                 child: Center(
                                   child: Container(
-                                    width: size.width < 563 ? size.width * 0.04 : 36,
-                                    height: size.width < 563 ? size.width * 0.04 : 36,
+                                    width: size.width < 563 ? 30 : 36,
+                                    height: size.width < 563 ? 30 : 36,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(37),
                                       color: Colors.white,
@@ -186,7 +186,7 @@ class InstroPageTwo extends StatelessWidget {
                                       child: Icon(
                                         Icons.arrow_right_alt,
                                         color: kColorsOrangeDark,
-                                        size: size.width < 563 ? size.width * 0.04 : 36,
+                                        size: size.width < 563 ? 30 : 36,
                                       ),
                                     ),
                                   ),

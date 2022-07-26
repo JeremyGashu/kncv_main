@@ -139,8 +139,7 @@ class InstroPageThree extends StatelessWidget {
                       Container(
                           padding: EdgeInsets.all(20),
                           width: double.infinity,
-                          child: Text(
-                              'As a Testing Health Facilty the app allows to confirm receipt of samples, inspect the quality of samples, and input the test result.',
+                          child: Text('As a Testing Health Facilty the app allows to confirm receipt of samples, inspect the quality of samples, and input the test result.',
                               style: TextStyle(
                                 color: kTextColorLight.withOpacity(0.7),
                                 // fontSize: 18,
@@ -158,7 +157,7 @@ class InstroPageThree extends StatelessWidget {
                             color: kColorsOrangeDark,
                           ),
                           // height: 62,
-                          height: size.width < 563 ? 40 : 62,
+                          height: size.width < 563 ? 55 : 62,
                           margin: EdgeInsets.all(20),
                           child: Center(
                             child: Text(
