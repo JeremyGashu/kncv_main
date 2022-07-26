@@ -156,7 +156,7 @@ class _ReportScreenState extends State<ReportScreen> {
       sheet.getRangeByName('R${i + 2}').setText(finalData[i]['reasonForTest'].toString());
       sheet.getRangeByName('S${i + 2}').setText(finalData[i]['registrationGroup'].toString());
       sheet.getRangeByName('T${i + 2}').setText(finalData[i]['deliveryStatus'].toString());
-      sheet.getRangeByName('U${i + 2}').setText(finalData[i]['turnAroundTime'].toString());
+      sheet.getRangeByName('U${i + 2}').setText(finalData[i]['turnAroundTime'] == "N/A" ? "N/A" : durationToString(finalData[i]['turnAroundTime']));
       sheet.getRangeByName('V${i + 2}').setText(finalData[i]['mtb_result'].toString());
       sheet.getRangeByName('W${i + 2}').setText(finalData[i]['result_rr'].toString());
       sheet.getRangeByName('X${i + 2}').setText(finalData[i]['lab_registration_number'].toString());
@@ -189,23 +189,34 @@ class _ReportScreenState extends State<ReportScreen> {
     sheet.getRangeByName('F1').setText('Order Created');
     sheet.getRangeByName('G1').setText('Order Accepted');
     sheet.getRangeByName('H1').setText('Shipment Duration');
-    sheet.getRangeByName('I1').setText('Drop off Date');
-    sheet.getRangeByName('J1').setText('Drop off Time');
+    sheet.getRangeByName('I1').setText('Pick up Duration');
+    sheet.getRangeByName('J1').setText('Drop off Date');
+    sheet.getRangeByName('K1').setText('Drop off Time');
 
     for (int i = 0; i < filteredReportsData.length; i++) {
       DateTime? orderReceived;
       DateTime? orderPickedUp;
+      DateTime? orderPlaced;
       int? shipmentDurationInMinutes;
+      int? pickupDurationInMinutes;
       if (filteredReportsData[i]['order_received'] != null) {
         orderReceived = filteredReportsData[i]['order_received'].toDate();
       }
       if (filteredReportsData[i]['order_pickedup'] != null) {
         orderPickedUp = filteredReportsData[i]['order_pickedup'].toDate();
       }
+      if (filteredReportsData[i]['order_placed'] != null) {
+        orderPlaced = filteredReportsData[i]['order_placed'].toDate();
+      }
 
       if (orderReceived != null && orderPickedUp != null) {
         shipmentDurationInMinutes = orderReceived.difference(orderPickedUp).inMinutes;
       }
+
+      if (orderPlaced != null && orderPickedUp != null) {
+        pickupDurationInMinutes = orderPickedUp.difference(orderPlaced).inMinutes;
+      }
+
       sheet.getRangeByName('A${i + 2}').setText(filteredReportsData[i]['orderId'].toString());
       sheet.getRangeByName('B${i + 2}').setText(filteredReportsData[i]['sender_name'].toString());
       // sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['region']['name'].toString());
@@ -228,9 +239,13 @@ class _ReportScreenState extends State<ReportScreen> {
               .setText(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString());
       shipmentDurationInMinutes == null
           ? sheet.getRangeByName('H${i + 2}').setText('N/A')
-          : sheet.getRangeByName('H${i + 2}').setText('$shipmentDurationInMinutes Minutes');
+          : sheet.getRangeByName('H${i + 2}').setText('${durationToString(shipmentDurationInMinutes)}');
+
+      pickupDurationInMinutes == null
+          ? sheet.getRangeByName('I${i + 2}').setText('N/A')
+          : sheet.getRangeByName('I${i + 2}').setText('${durationToString(pickupDurationInMinutes)}');
       sheet
-          .getRangeByName('I${i + 2}')
+          .getRangeByName('J${i + 2}')
           .setText(orderReceived != null ? '${orderReceived.year} / ${orderReceived.month} / ${orderReceived.day}' : 'N/A');
       sheet.getRangeByName('J${i + 2}').setText(orderReceived != null ? '${orderReceived.hour}:${orderReceived.minute}' : 'N/A');
     }
@@ -1153,6 +1168,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                                           DataColumn(label: Text("Order Created")),
                                                           DataColumn(label: Text("Order Accepted")),
                                                           DataColumn(label: Text("Shipment Duration")),
+                                                          DataColumn(label: Text("Pick up Duration")),
                                                           DataColumn(label: Text("Drop off Date")),
                                                           DataColumn(label: Text("Drop off Time")),
                                                           //shipmentReport
@@ -1273,8 +1289,7 @@ List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dyn
           patientInformation['reasonForTest'] = patient['reason_for_test'] != null ? patient['reason_for_test'] : "";
           patientInformation['registrationGroup'] = patient['registration_group'] != null ? patient['registration_group'] : "";
           patientInformation['deliveryStatus'] = reportData['status'] != null ? reportData['status'] : "";
-          patientInformation['turnAroundTime'] =
-              getOrderTurnAroundTime(reportData) != null ? getOrderTurnAroundTime(reportData).toString() + " Minute" : "N/A";
+          patientInformation['turnAroundTime'] = getOrderTurnAroundTime(reportData) != null ? getOrderTurnAroundTime(reportData) : "N/A";
           patientInformation['mtb_result'] = getSpecimenMtbResult(specimen);
           patientInformation['result_rr'] = getSpecimenRrResult(specimen);
           patientInformation['lab_registration_number'] = getSpecimenLabRegistrationNum(specimen);
@@ -1316,7 +1331,7 @@ List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
         DataCell(Text(data['reasonForTest'].toString())),
         DataCell(Text(data['registrationGroup'].toString())),
         DataCell(Text(data['deliveryStatus'].toString())),
-        DataCell(Text(data['turnAroundTime'].toString())),
+        DataCell(Text(data['turnAroundTime'] == "N/A" ? "N/A" : durationToString((data['turnAroundTime'])))),
         DataCell(Text(data['mtb_result'].toString())),
         DataCell(Text(data['result_rr'].toString())),
         DataCell(Text(data['lab_registration_number'].toString())),
@@ -1342,16 +1357,25 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
   return filteredReportsData.map((data) {
     DateTime? orderReceived;
     DateTime? orderPickedUp;
+    DateTime? orderPlaced;
     int? shipmentDurationInMinutes;
+    int? pickupDurationInMinutes;
     if (data['order_received'] != null) {
       orderReceived = data['order_received'].toDate();
     }
     if (data['order_pickedup'] != null) {
       orderPickedUp = data['order_pickedup'].toDate();
     }
+    if (data['order_placed'] != null) {
+      orderPlaced = data['order_placed'].toDate();
+    }
 
     if (orderReceived != null && orderPickedUp != null) {
       shipmentDurationInMinutes = orderReceived.difference(orderPickedUp).inMinutes;
+    }
+
+    if (orderPlaced != null && orderPickedUp != null) {
+      pickupDurationInMinutes = orderPickedUp.difference(orderPlaced).inMinutes;
     }
 
     return DataRow(
@@ -1372,13 +1396,21 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
         orderReceived == null
             ? DataCell(Text('N/A'))
             : DataCell(Text(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString())),
-        shipmentDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('$shipmentDurationInMinutes Minutes')),
+        shipmentDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('${durationToString(shipmentDurationInMinutes)}')),
+        //!add pick up duration
+        pickupDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('${durationToString(pickupDurationInMinutes)}')),
         // shipmentReport
         DataCell(Text(orderReceived != null ? '${orderReceived.year} / ${orderReceived.month} / ${orderReceived.day}' : 'N/A')),
         DataCell(Text(orderReceived != null ? '${orderReceived.hour}:${orderReceived.minute}' : 'N/A')),
       ],
     );
   }).toList();
+}
+
+String durationToString(int minutes) {
+  var d = Duration(minutes: minutes);
+  List<String> parts = d.toString().split(':');
+  return '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}';
 }
 
 int getOrderSpecimenCount(Map<String, dynamic> order) {
