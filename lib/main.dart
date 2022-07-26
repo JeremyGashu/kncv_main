@@ -66,15 +66,13 @@ void main() async {
           ? MaterialApp(
               debugShowCheckedModeBanner: false,
               onGenerateRoute: AppRouter.onGenerateRoute,
-              // initialRoute: SplashPage.splashPageRouteName,
-              initialRoute: IntroPageOne.introPageOneRouteName,
+              initialRoute: SplashPage.splashPageRouteName,
             )
           : SMSListener(
               child: MaterialApp(
                 debugShowCheckedModeBanner: false,
                 onGenerateRoute: AppRouter.onGenerateRoute,
-                // initialRoute: SplashPage.splashPageRouteName,
-                initialRoute: IntroPageOne.introPageOneRouteName,
+                initialRoute: SplashPage.splashPageRouteName,
               ),
             ),
     ),

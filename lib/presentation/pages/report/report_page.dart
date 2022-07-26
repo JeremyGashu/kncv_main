@@ -129,7 +129,7 @@ class _ReportScreenState extends State<ReportScreen> {
     sheet.getRangeByName('R1').setText('Reason for Test');
     sheet.getRangeByName('S1').setText('Registration Group');
     sheet.getRangeByName('T1').setText('Delivery Status');
-    sheet.getRangeByName('U1').setText('Turn around Time');
+    sheet.getRangeByName('U1').setText('Turn around Time (H:M)');
     sheet.getRangeByName('V1').setText('MTB Result');
     sheet.getRangeByName('W1').setText('RR Result');
     sheet.getRangeByName('X1').setText('Lab Registration Number');
@@ -188,8 +188,8 @@ class _ReportScreenState extends State<ReportScreen> {
     sheet.getRangeByName('E1').setText('Number of Patients');
     sheet.getRangeByName('F1').setText('Order Created');
     sheet.getRangeByName('G1').setText('Order Accepted');
-    sheet.getRangeByName('H1').setText('Shipment Duration');
-    sheet.getRangeByName('I1').setText('Pick up Duration');
+    sheet.getRangeByName('H1').setText('Shipment Duration (H:M)');
+    sheet.getRangeByName('I1').setText('Pick up Duration (H:M)');
     sheet.getRangeByName('J1').setText('Drop off Date');
     sheet.getRangeByName('K1').setText('Drop off Time');
 
@@ -1109,7 +1109,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                                           DataColumn(label: Text("Delivery Status")),
                                                           // getDataForSpecimenReferralReport
                                                           //TODO: add remaining columns
-                                                          DataColumn(label: Text("Turn around Time")),
+                                                          DataColumn(label: Text("Turn around Time (H:M)")),
                                                           DataColumn(label: Text("MTB Result")),
                                                           DataColumn(label: Text("RR Result")),
                                                           DataColumn(label: Text("Lab Registration Number")),
@@ -1169,8 +1169,8 @@ class _ReportScreenState extends State<ReportScreen> {
                                                           DataColumn(label: Text("Number of Patients")),
                                                           DataColumn(label: Text("Order Created")),
                                                           DataColumn(label: Text("Order Accepted")),
-                                                          DataColumn(label: Text("Shipment Duration")),
-                                                          DataColumn(label: Text("Pick up Duration")),
+                                                          DataColumn(label: Text("Shipment Duration (H:M)")),
+                                                          DataColumn(label: Text("Pick up Duration (H:M)")),
                                                           DataColumn(label: Text("Drop off Date")),
                                                           DataColumn(label: Text("Drop off Time")),
                                                           //shipmentReport
