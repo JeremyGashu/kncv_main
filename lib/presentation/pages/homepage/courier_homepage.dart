@@ -21,6 +21,7 @@ import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_courier.dart';
 
 import '../../../service_locator.dart';
+import '../../../utils/string_utils.dart';
 import '../report/report_page.dart';
 
 class CourierHomePage extends StatefulWidget {
@@ -120,7 +121,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                               return size.width < 191
                                   ? SizedBox.shrink()
                                   : Text(
-                                      'Logged in  as: \n${snapshot.data?['name'] ?? ''}',
+                                      'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
                                       style: TextStyle(
                                         // fontSize: 12,
                                         fontSize: size.width < 290

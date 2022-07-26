@@ -26,6 +26,7 @@ import 'package:kncv_flutter/presentation/pages/report/report_page.dart';
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_courier_selector.dart';
 import '../../../service_locator.dart';
+import '../../../utils/string_utils.dart';
 import '../notificatins.dart';
 import 'widgets/item_cart.dart';
 
@@ -155,10 +156,12 @@ class _SenderHomePageState extends State<SenderHomePage> {
                           future: AuthRepository.currentUser(),
                           builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
+                              print('snapshot data:');
+                              print(snapshot.data);
                               return size.width < 191
                                   ? SizedBox.shrink()
                                   : Text(
-                                      'Logged in  as: \n${snapshot.data?['name'] ?? ''}',
+                                      'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
                                       style: TextStyle(
                                         // fontSize: 12,
                                         fontSize: size.width < 290
