@@ -7,8 +7,7 @@ class AuthRepository {
 
   AuthRepository(this.auth, this.database);
   Future loginUser({required String email, required String password}) async {
-    UserCredential user =
-        await auth.signInWithEmailAndPassword(email: email, password: password);
+    UserCredential user = await auth.signInWithEmailAndPassword(email: email, password: password);
     if (user.user != null) {
       return user.user;
     }
@@ -20,12 +19,9 @@ class AuthRepository {
     String? uid = user?.uid;
     String? type;
     String? name;
-    // print('uid => $uid');
+    print('uid => $uid');
     if (uid != null) {
-      var userData = await FirebaseFirestore.instance
-          .collection('users')
-          .where('user_id', isEqualTo: uid)
-          .get();
+      var userData = await FirebaseFirestore.instance.collection('users').where('user_id', isEqualTo: uid).get();
       if (userData.docs.isNotEmpty) {
         type = userData.docs[0].data()['type'];
         name = userData.docs[0].data()['name'];

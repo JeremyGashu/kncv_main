@@ -62,8 +62,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
               addNotification(
                 orderId: widget.orderId,
                 courierContent: 'You have accepted order from ${state.order.sender_name} to ${state.order.tester_name}.',
-                senderContent:
-                    'Courier coming to collect order to ${state.order.tester_name}. Will reach at your place on ${state.date} at ${state.time}.',
+                senderContent: 'Courier coming to collect order to ${state.order.tester_name}. Will reach at your place on ${state.date} at ${state.time}.',
                 testerContent: 'Courier going to collect order from ${state.order.sender_name}.',
                 content: 'One order got accepted by courier!',
                 courierAction: NotificationAction.NavigateToOrderDetalCourier,
@@ -492,12 +491,11 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             color: kPageBackground,
                                             child: InkWell(
                                               onTap: () async {
-                                                // print('Notifying Arrival');
+                                                print('Notifying Arrival');
 
                                                 bool success = await OrderBloc.approveArrivalFromCourier(state.order);
                                                 if (success) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(SnackBar(content: Text('Notified Arrivel to Test Center!')));
+                                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Notified Arrivel to Test Center!')));
                                                   await Future.delayed(Duration(seconds: 1));
 
                                                   ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
@@ -506,8 +504,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                     notifiyingArrival = false;
                                                   });
                                                 } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(SnackBar(content: Text('Error Notifiying Test Center!')));
+                                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error Notifiying Test Center!')));
 
                                                   setState(() {
                                                     notifiyingArrival = false;
@@ -543,7 +540,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                   ? ValueListenableBuilder(
                                       valueListenable: Hive.box('notified_orders').listenable(),
                                       builder: (BuildContext context, Box box, _) {
-                                        // debugPrint('${box.values.contains(state.order.orderId)}');
+                                        debugPrint('${box.values.contains(state.order.orderId)}');
                                         return !box.values.contains(state.order.orderId)
                                             ? Positioned(
                                                 bottom: 0,
@@ -559,11 +556,11 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       });
 
                                                       Box notified_box = Hive.box('notified_orders');
-                                                      // debugPrint('Before ${notified_box.values.length}');
+                                                      debugPrint('Before ${notified_box.values.length}');
 
                                                       await notified_box.add(state.order.orderId);
 
-                                                      // debugPrint('After ${notified_box.values.length}');
+                                                      debugPrint('After ${notified_box.values.length}');
 
                                                       if (!(await isConnectedToTheInternet())) {
                                                         await sendSMS(
@@ -582,10 +579,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       }
                                                       bool success = await addNotification(
                                                         orderId: widget.orderId,
-                                                        courierContent:
-                                                            'You have notified arrival at ${state.order.sender_name} to transport specimen to ${state.order.tester_name}.',
-                                                        senderContent:
-                                                            'Courier ${state.order.courier_name} is at your place to collect specimen to ${state.order.tester_name}.',
+                                                        courierContent: 'You have notified arrival at ${state.order.sender_name} to transport specimen to ${state.order.tester_name}.',
+                                                        senderContent: 'Courier ${state.order.courier_name} is at your place to collect specimen to ${state.order.tester_name}.',
                                                         testerContent: 'Courier is at ${state.order.sender_name} to bring specimen to you.',
                                                         content: 'Courier Reached at health facility to collect order!',
                                                         courierAction: NotificationAction.NavigateToOrderDetalCourier,
@@ -599,8 +594,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       });
 
                                                       if (success) {
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(SnackBar(content: Text('Sent notification to health facility!')));
+                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sent notification to health facility!')));
                                                       }
                                                     },
                                                     borderRadius: BorderRadius.circular(37),

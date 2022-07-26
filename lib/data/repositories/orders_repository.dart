@@ -81,7 +81,7 @@ class OrderRepository {
     var usersData = await database.collection('users').where('user_id', isEqualTo: id).get();
     if (usersData.docs.length > 0) {
       Map<String, dynamic> userData = usersData.docs[0].data()['test_center'];
-      // print('test center => ${userData}');
+      print('test center => ${userData}');
       return userData;
     }
 
@@ -127,7 +127,7 @@ class OrderRepository {
       String? sender_name;
       String? sender_phone;
       var userData = await usersCollection.where('user_id', isEqualTo: sender_id).get();
-      // debugPrint('Sender data from user id  ======== ${userData.docs.length}');
+      debugPrint('Sender data from user id  ======== ${userData.docs.length}');
 
       if (userData.docs.length > 0) {
         sender_name = userData.docs[0].data()['institution']['name'];
@@ -208,12 +208,7 @@ class OrderRepository {
     }
   }
 
-  Future<bool> editShipmentInfo(
-      {required String courier_id,
-      required String tester_id,
-      required String courier_name,
-      required String tester_name,
-      required String orderId}) async {
+  Future<bool> editShipmentInfo({required String courier_id, required String tester_id, required String courier_name, required String tester_name, required String orderId}) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -702,7 +697,7 @@ class OrderRepository {
         await orderRef.update({'status': 'Waiting for Confirmation', 'order_placed': DateTime.now()});
 
         order.status = 'Waiting for Confirmation';
-        // debugPrint('please sms ${order.orderId}');
+        debugPrint('please sms ${order.orderId}');
         //RESPONSE ORDER_PLACED
         await sendSmsViaListenerToEndUser(
           to: order.courier_phone ?? '',
@@ -720,14 +715,9 @@ class OrderRepository {
           action: ORDER_PLACED,
         );
 
-        sendCustomSMS(
-            to: order.courier_phone ?? '',
-            body: 'New order is plaed for you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
+        sendCustomSMS(to: order.courier_phone ?? '', body: 'New order is plaed for you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
 
-        sendCustomSMS(
-            to: order.tester_phone ?? '',
-            body:
-                'New order is being transported to you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
+        sendCustomSMS(to: order.tester_phone ?? '', body: 'New order is being transported to you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
 
         return true;
       } else {
@@ -931,8 +921,7 @@ class OrderRepository {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Received') {
-      await orderRef
-          .update({'status': 'Accepted', 'sputumCondition': sputumCondition, 'stoolCondition': stoolCondition, 'order_accepted': DateTime.now()});
+      await orderRef.update({'status': 'Accepted', 'sputumCondition': sputumCondition, 'stoolCondition': stoolCondition, 'order_accepted': DateTime.now()});
       return true;
     } else {
       return false;

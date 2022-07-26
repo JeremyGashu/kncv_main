@@ -45,9 +45,8 @@ class _SelectorPageState extends State<SelectorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TesterCourierBloc, TesterCourierStates>(
-        listener: (ctx, state) {
-      // print(state);
+    return BlocConsumer<TesterCourierBloc, TesterCourierStates>(listener: (ctx, state) {
+      print(state);
     }, builder: (context, state) {
       if (state is LoadedState) {
         return Column(
@@ -65,7 +64,7 @@ class _SelectorPageState extends State<SelectorPage> {
                       int year = t.year;
 
                       String d = '$day-$month-$year';
-                      // print(d);
+                      print(d);
                       setState(() {
                         date = d;
                         BlocProvider.of<TesterCourierBloc>(context).date = date;
@@ -90,9 +89,7 @@ class _SelectorPageState extends State<SelectorPage> {
                       padding: EdgeInsets.only(left: 20),
                       child: Text(
                         date ?? 'Please Select Date',
-                        style: TextStyle(
-                            color: Colors.black87.withOpacity(0.8),
-                            fontSize: 15),
+                        style: TextStyle(color: Colors.black87.withOpacity(0.8), fontSize: 15),
                       ),
                     ),
                   ),
@@ -126,8 +123,7 @@ class _SelectorPageState extends State<SelectorPage> {
                         FocusScope.of(context).requestFocus(FocusNode());
                         setState(() {
                           courier = val;
-                          BlocProvider.of<TesterCourierBloc>(context).courier =
-                              val;
+                          BlocProvider.of<TesterCourierBloc>(context).courier = val;
                         });
                       },
                       value: courier,
@@ -172,8 +168,7 @@ class _SelectorPageState extends State<SelectorPage> {
                         FocusScope.of(context).requestFocus(FocusNode());
                         setState(() {
                           tester = val;
-                          BlocProvider.of<TesterCourierBloc>(context).tester =
-                              tester;
+                          BlocProvider.of<TesterCourierBloc>(context).tester = tester;
                         });
                       },
                       value: tester,
@@ -194,11 +189,8 @@ class _SelectorPageState extends State<SelectorPage> {
             ),
             InkWell(
               onTap: () {
-                // print('Popping');
-                if (BlocProvider.of<TesterCourierBloc>(context).tester !=
-                        null &&
-                    BlocProvider.of<TesterCourierBloc>(context).courier !=
-                        null) {
+                print('Popping');
+                if (BlocProvider.of<TesterCourierBloc>(context).tester != null && BlocProvider.of<TesterCourierBloc>(context).courier != null) {
                   Navigator.pop(context, true);
                 }
               },
@@ -213,10 +205,7 @@ class _SelectorPageState extends State<SelectorPage> {
                 child: Center(
                   child: Text(
                     widget.buttonText ?? 'Create Order',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.white),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                   ),
                 ),
               ),

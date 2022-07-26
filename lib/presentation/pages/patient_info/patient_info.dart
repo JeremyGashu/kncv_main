@@ -359,14 +359,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: registrationGroup,
                                 hint: Text('Registration Group'),
-                                items: <String>[
-                                  'New',
-                                  'Relapse',
-                                  'After Default',
-                                  'After failure of 1st treatment',
-                                  'After failure of re treatment',
-                                  'Other'
-                                ].map((String value) {
+                                items: <String>['New', 'Relapse', 'After Default', 'After failure of 1st treatment', 'After failure of re treatment', 'Other'].map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -428,14 +421,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: reasonForTest,
                                 hint: Text('Reason for Test'),
-                                items: <String>[
-                                  'Diagnostic',
-                                  'Presumptive TB',
-                                  'Presumptive RR-TB',
-                                  'Presumptive MDR-TB',
-                                  'At X months during treatment',
-                                  'At X months after treatment'
-                                ].map((String value) {
+                                items: <String>['Diagnostic', 'Presumptive TB', 'Presumptive RR-TB', 'Presumptive MDR-TB', 'At X months during treatment', 'At X months after treatment']
+                                    .map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -480,13 +467,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: requestedTests,
                                 hint: Text('Requested Tests'),
-                                items: <String>[
-                                  'Microscopy',
-                                  'Xpert MTB/RIF test',
-                                  'Culture',
-                                  'Drug Susceptibility Testing (DST)',
-                                  'Line probe assay'
-                                ].map((String value) {
+                                items: <String>['Microscopy', 'Xpert MTB/RIF test', 'Culture', 'Drug Susceptibility Testing (DST)', 'Line probe assay'].map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -568,8 +549,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                 SizedBox(
                                                   height: 30,
                                                 ),
-                                                _buildInputField(
-                                                    label: 'Specimen ID', hint: "Please enter specimen ID", controller: specimenIdController),
+                                                _buildInputField(label: 'Specimen ID', hint: "Please enter specimen ID", controller: specimenIdController),
                                                 _labelBuilder('Specimen Type'),
                                                 Container(
                                                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -632,18 +612,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                 ),
                                                 GestureDetector(
                                                     onTap: () {
-                                                      // print(specimenType);
-                                                      // print(specimenIdController.value.text);
+                                                      print(specimenType);
+                                                      print(specimenIdController.value.text);
                                                       if (specimenIdController.value.text == '' || specimenType == null || examinationType == null) {
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(SnackBar(content: Text('Please enter complete information')));
+                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter complete information')));
                                                         Navigator.pop(context);
                                                         return;
                                                       }
 
                                                       if (specimenExists(specimens, specimenIdController.value.text, specimenType!)) {
-                                                        ScaffoldMessenger.of(context).showSnackBar(
-                                                            SnackBar(content: Text('This specimen is already added please try editing fields.')));
+                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('This specimen is already added please try editing fields.')));
                                                         Navigator.pop(context);
                                                         return;
                                                       }
@@ -725,8 +703,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                       onTap: () {
                                         if (_form.currentState!.validate()) {
                                           if (selectedRegion == null || selectedZone == null || selectedWoreda == null) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(content: Text('Please enter zone region and woreda')));
+                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter zone region and woreda')));
                                             return;
                                           }
                                           if (!validatePhoneNumber(phoneController.value.text.trim())) {
@@ -755,8 +732,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                           String doctorInCharge = doctorInChargeController.value.text;
                                           String patientRemark = patientRemarkController.value.text;
 
-                                          String? regGroup =
-                                              registrationGroup == 'Other' ? registrationGroupController.value.text : registrationGroup;
+                                          String? regGroup = registrationGroup == 'Other' ? registrationGroupController.value.text : registrationGroup;
                                           regGroup = regGroup ?? 'Other';
 
                                           String? reason = reasonForTest == 'At X months during treatment'

@@ -19,7 +19,7 @@ class TesterCourierBloc extends Bloc<TesterCourierEvent, TesterCourierStates> {
     if (event is LoadTestersAndCouriers) {
       yield LoadingState();
       var data = await testerCourierRepository.loadTestersAndCouriers();
-      // print('testers and couriers => ${data}');
+      print('testers and couriers => ${data}');
       yield LoadedState(data: data);
     }
   }

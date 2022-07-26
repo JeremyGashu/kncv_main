@@ -155,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         BlocConsumer<AuthBloc, AuthState>(listener: (context, state) {
                           if (state is AuthenticatedState) {
-                            // print('type => ${state.type}');
+                            print('type => ${state.type}');
                             if (state.type == 'COURIER_ADMIN') {
                               Navigator.pushNamedAndRemoveUntil(context, CourierHomePage.courierHomePageRouteName, (route) => false);
                             } else if (state.type == 'INSTITUTIONAL_ADMIN') {

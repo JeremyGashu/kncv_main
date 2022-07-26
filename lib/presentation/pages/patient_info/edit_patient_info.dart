@@ -54,14 +54,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
     'Other',
   ];
   var registrationGroupChoices = ['New', 'Relapse', 'After Default', 'After failure of 1st treatment', 'After failure of re treatment', 'Other'];
-  var reasonForTestChoices = [
-    'Diagnostic',
-    'Presumptive TB',
-    'Presumptive RR-TB',
-    'Presumptive MDR-TB',
-    'At X months during treatment',
-    'At X months after treatment'
-  ];
+  var reasonForTestChoices = ['Diagnostic', 'Presumptive TB', 'Presumptive RR-TB', 'Presumptive MDR-TB', 'At X months during treatment', 'At X months after treatment'];
   String? childhood = 'Yes';
   String? tb;
   String? pneumonia;
@@ -120,7 +113,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
   @override
   initState() {
-    // print('ptient => ${widget.patient.siteOfTB}');
+    print('ptient => ${widget.patient.siteOfTB}');
     childhood = widget.patient.childhood;
     tb = widget.patient.tb;
     pneumonia = widget.patient.pneumonia;
@@ -151,9 +144,9 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
       });
     }
 
-    // print(selectedRegion?.toJson());
-    // print(selectedZone?.toJson());
-    // print(selectedWoreda?.toJson());
+    print(selectedRegion?.toJson());
+    print(selectedZone?.toJson());
+    print(selectedWoreda?.toJson());
 
     MRController.text = widget.patient.mr ?? '';
     nameController.text = widget.patient.name ?? '';
@@ -256,11 +249,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               controller: MRController,
                               editable: !(widget.patient.status == 'Tested') && widget.canEdit,
                             ),
-                            _buildInputField(
-                                label: 'Name',
-                                editable: !(widget.patient.status == 'Tested') && widget.canEdit,
-                                hint: 'Enter Patient\'s Name',
-                                controller: nameController),
+                            _buildInputField(label: 'Name', editable: !(widget.patient.status == 'Tested') && widget.canEdit, hint: 'Enter Patient\'s Name', controller: nameController),
                             _buildInputField(
                               label: 'Age In Years',
                               hint: 'Please enter age in years',
@@ -427,11 +416,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             //         widget.canEdit,
                             //     hint: 'Enter Your Address',
                             //     controller: addressController),
-                            _buildInputField(
-                                label: 'Phone',
-                                editable: !(widget.patient.status == 'Tested') && widget.canEdit,
-                                hint: 'Enter Patient\'s Phone',
-                                controller: phoneController),
+                            _buildInputField(label: 'Phone', editable: !(widget.patient.status == 'Tested') && widget.canEdit, hint: 'Enter Patient\'s Phone', controller: phoneController),
 
                             _tobLabelBuilder('Observation'),
 
@@ -484,14 +469,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: registrationGroup,
                                 hint: Text('Registration Group'),
-                                items: <String>[
-                                  'New',
-                                  'Relapse',
-                                  'After Default',
-                                  'After failure of 1st treatment',
-                                  'After failure of re treatment',
-                                  'Other'
-                                ].map((String value) {
+                                items: <String>['New', 'Relapse', 'After Default', 'After failure of 1st treatment', 'After failure of re treatment', 'Other'].map((String value) {
                                   return DropdownMenuItem<String>(
                                     enabled: !widget.patient.resultAvaiable && widget.canEdit,
                                     value: value,
@@ -555,14 +533,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: reasonForTest,
                                 hint: Text('Reason for Test'),
-                                items: <String>[
-                                  'Diagnostic',
-                                  'Presumptive TB',
-                                  'Presumptive RR-TB',
-                                  'Presumptive MDR-TB',
-                                  'At X months during treatment',
-                                  'At X months after treatment'
-                                ].map((String value) {
+                                items: <String>['Diagnostic', 'Presumptive TB', 'Presumptive RR-TB', 'Presumptive MDR-TB', 'At X months during treatment', 'At X months after treatment']
+                                    .map((String value) {
                                   return DropdownMenuItem<String>(
                                     enabled: !widget.patient.resultAvaiable && widget.canEdit,
                                     value: value,
@@ -608,13 +580,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: requestedTests,
                                 hint: Text('Requested Tests'),
-                                items: <String>[
-                                  'Microscopy',
-                                  'Xpert MTB/RIF test',
-                                  'Culture',
-                                  'Drug Susceptibility Testing (DST)',
-                                  'Line probe assay'
-                                ].map((String value) {
+                                items: <String>['Microscopy', 'Xpert MTB/RIF test', 'Culture', 'Drug Susceptibility Testing (DST)', 'Line probe assay'].map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -697,10 +663,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                             SizedBox(
                                                               height: 30,
                                                             ),
-                                                            _buildInputField(
-                                                                label: 'Specimen ID',
-                                                                hint: "Please enter specimen ID",
-                                                                controller: specimenIdController),
+                                                            _buildInputField(label: 'Specimen ID', hint: "Please enter specimen ID", controller: specimenIdController),
                                                             _labelBuilder('Specimen Type'),
                                                             Container(
                                                               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -713,8 +676,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                   child: DropdownButton<String>(
                                                                 value: specimenType,
                                                                 hint: Text('Specimen Type'),
-                                                                items: <String>['Stool', 'Sputum', 'Urine', 'Blood', 'Swab', 'Other']
-                                                                    .map((String value) {
+                                                                items: <String>['Stool', 'Sputum', 'Urine', 'Blood', 'Swab', 'Other'].map((String value) {
                                                                   return DropdownMenuItem<String>(
                                                                     enabled: !widget.patient.resultAvaiable && widget.canEdit,
                                                                     value: value,
@@ -766,31 +728,26 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                             !widget.patient.resultAvaiable
                                                                 ? GestureDetector(
                                                                     onTap: () {
-                                                                      // print(specimenType);
-                                                                      // print(specimenIdController.value.text);
+                                                                      print(specimenType);
+                                                                      print(specimenIdController.value.text);
                                                                       if (specimenIdController.value.text == '' || specimenType == null) {
-                                                                        ScaffoldMessenger.of(context).showSnackBar(
-                                                                            SnackBar(content: Text('Please enter complete information')));
+                                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter complete information')));
                                                                         Navigator.pop(context);
                                                                         return;
                                                                       }
 
                                                                       if (specimenExists(specimens, specimenIdController.value.text, specimenType!)) {
-                                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                                            content:
-                                                                                Text('This specimen is already added please try editing fields.')));
+                                                                        ScaffoldMessenger.of(context)
+                                                                            .showSnackBar(SnackBar(content: Text('This specimen is already added please try editing fields.')));
                                                                         Navigator.pop(context);
                                                                         return;
                                                                       }
 
-                                                                      Specimen specimen = Specimen(
-                                                                          id: specimenIdController.value.text,
-                                                                          type: specimenType,
-                                                                          examinationType: examinationType);
+                                                                      Specimen specimen = Specimen(id: specimenIdController.value.text, type: specimenType, examinationType: examinationType);
                                                                       setState(() {
                                                                         specimens = [...specimens, specimen];
                                                                       });
-                                                                      // print(specimens.length);
+                                                                      print(specimens.length);
                                                                       specimenIdController.text = '';
                                                                       specimenType = null;
                                                                       // ScaffoldMessenger.of(context)
@@ -810,8 +767,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                         child: Center(
                                                                           child: Text(
                                                                             'Add Specimen',
-                                                                            style: TextStyle(
-                                                                                fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                                                                           ),
                                                                         )))
                                                                 : Container(),
@@ -874,8 +830,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                         if (!widget.canEdit) {}
                                                         if (_form.currentState != null && _form.currentState!.validate()) {
                                                           if (selectedRegion == null || selectedZone == null || selectedWoreda == null) {
-                                                            ScaffoldMessenger.of(context)
-                                                                .showSnackBar(SnackBar(content: Text('Please enter zone region and woreda')));
+                                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter zone region and woreda')));
                                                             return;
                                                           }
                                                           if (!validatePhoneNumber(phoneController.value.text.trim())) {
@@ -905,9 +860,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                           String doctorInCharge = doctorInChargeController.value.text;
                                                           String patientRemark = patientRemarkController.value.text;
 
-                                                          String? regGroup = registrationGroup == 'Other'
-                                                              ? registrationGroupController.value.text
-                                                              : registrationGroup;
+                                                          String? regGroup = registrationGroup == 'Other' ? registrationGroupController.value.text : registrationGroup;
                                                           regGroup = regGroup ?? 'Other';
 
                                                           String? reason = reasonForTest == 'At X months during treatment'
@@ -940,8 +893,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                             previousDrugUse: previousTBDrugUse,
                                                           );
 
-                                                          orderBloc
-                                                              .add(EditPtientInfo(orderId: widget.orderId, patient: patient, index: widget.index));
+                                                          orderBloc.add(EditPtientInfo(orderId: widget.orderId, patient: patient, index: widget.index));
                                                         }
                                                       },
                                                       borderRadius: BorderRadius.circular(37),
@@ -1165,16 +1117,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                         e.rejected ? Text('Rejected : ${e.rejected}') : Container(),
                         e.rejected ? Text('Reason : ${e.reason}') : Container(),
 
-                        (state is LoadedSingleOrder && state.order.status == 'Received') &&
-                                (!e.rejected) &&
-                                widget.canAddResult &&
-                                (e.testResult == null)
+                        (state is LoadedSingleOrder && state.order.status == 'Received') && (!e.rejected) && widget.canAddResult && (e.testResult == null)
                             ? Align(
                                 alignment: AlignmentDirectional.centerEnd,
                                 child: IconButton(
                                     color: Colors.green,
                                     onPressed: () async {
-                                      // debugPrint(e.id);
+                                      debugPrint(e.id);
                                       var success = await Navigator.pushNamed(context, AddTestResultPage.addTestResultPageRouteName, arguments: {
                                         'orderId': widget.orderId,
                                         'patient': widget.patient,
@@ -1201,7 +1150,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 child: IconButton(
                                   color: Colors.green,
                                   onPressed: () async {
-                                    // debugPrint(e.id);
+                                    debugPrint(e.id);
                                     var success = await Navigator.pushNamed(context, AddTestResultPage.addTestResultPageRouteName, arguments: {
                                       'orderId': widget.orderId,
                                       'patient': widget.patient,
@@ -1244,16 +1193,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         sendingFeedback = true;
                                       });
 
-                                      bool success = await OrderRepository.editSpecimenFeedback(
-                                          index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
+                                      bool success = await OrderRepository.editSpecimenFeedback(index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
 
                                       if (success) {
                                         addNotification(
                                           orderId: state.order.orderId!,
-                                          testerContent:
-                                              'You Accepted Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent:
-                                              '${state.order.patients![widget.index].name}\'s Sputum Specimen have accepted by ${state.order.tester_name}.',
+                                          testerContent: 'You Accepted Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent: '${state.order.patients![widget.index].name}\'s Sputum Specimen have accepted by ${state.order.tester_name}.',
                                           content: 'One specimen got accepted by courier!',
                                           courier: false,
                                           testerAction: NotificationAction.NavigateToOrderDetalTester,
@@ -1266,10 +1212,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       if ('Mucoid Purulent' != sputumCondition) {
                                         addNotification(
                                           orderId: state.order.orderId!,
-                                          testerContent:
-                                              'You Rejected Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent:
-                                              '${state.order.patients![widget.index].name}\'s Sputum Specimen have been rejected by ${state.order.tester_name}.',
+                                          testerContent: 'You Rejected Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent: '${state.order.patients![widget.index].name}\'s Sputum Specimen have been rejected by ${state.order.tester_name}.',
                                           content: 'One specimen got rejected by tester!',
                                           courier: false,
                                           testerAction: NotificationAction.NavigateToOrderDetalTester,
@@ -1293,16 +1237,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         sendingFeedback = true;
                                       });
 
-                                      bool success = await OrderRepository.editSpecimenFeedback(
-                                          index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
+                                      bool success = await OrderRepository.editSpecimenFeedback(index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
 
                                       if (success) {
                                         addNotification(
                                           orderId: state.order.orderId!,
-                                          testerContent:
-                                              'You Accepted Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent:
-                                              '${state.order.patients![widget.index].name}\'s Stool Specimen is accepted by ${state.order.tester_name}.',
+                                          testerContent: 'You Accepted Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent: '${state.order.patients![widget.index].name}\'s Stool Specimen is accepted by ${state.order.tester_name}.',
                                           content: 'One specimen got accepted by tester!',
                                           courier: false,
                                           testerAction: NotificationAction.NavigateToOrderDetalTester,
@@ -1317,10 +1258,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       if ('Formed' != stoolCondition) {
                                         addNotification(
                                           orderId: state.order.orderId!,
-                                          testerContent:
-                                              'You Rejected Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent:
-                                              '${state.order.patients![widget.index].name}\'s Stool Specimen have been rejected by ${state.order.tester_name}.',
+                                          testerContent: 'You Rejected Stool specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent: '${state.order.patients![widget.index].name}\'s Stool Specimen have been rejected by ${state.order.tester_name}.',
                                           content: 'One specimen got rejected by tester!',
                                           courier: false,
                                           courierAction: NotificationAction.NavigateToOrderDetalCourier,
@@ -1348,16 +1287,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         sendingFeedback = true;
                                       });
 
-                                      bool success = await OrderRepository.editSpecimenFeedback(
-                                          index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
+                                      bool success = await OrderRepository.editSpecimenFeedback(index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
 
                                       if (success) {
                                         addNotification(
                                           orderId: state.order.orderId!,
-                                          testerContent:
-                                              'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent:
-                                              '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
+                                          testerContent: 'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent: '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
                                           content: 'One specimen got accepted by courier!',
                                           courier: false,
                                           testerAction: NotificationAction.NavigateToOrderDetalTester,
@@ -1386,16 +1322,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         sendingFeedback = true;
                                       });
 
-                                      bool success = await OrderRepository.editSpecimenFeedback(
-                                          index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
+                                      bool success = await OrderRepository.editSpecimenFeedback(index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
 
                                       if (success) {
                                         addNotification(
                                           orderId: state.order.orderId!,
-                                          testerContent:
-                                              'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent:
-                                              '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
+                                          testerContent: 'You Accepted Urine specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                          senderContent: '${state.order.patients![widget.index].name}\'s Urine Specimen is accepted by ${state.order.tester_name}.',
                                           content: 'One specimen got accepted by courier!',
                                           courier: false,
                                           testerAction: NotificationAction.NavigateToOrderDetalTester,

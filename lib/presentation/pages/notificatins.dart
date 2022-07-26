@@ -26,8 +26,7 @@ class NotificationsPage extends StatelessWidget {
             builder: (context, snapshot) {
               List<NotificationModel> notifications = [];
               if (snapshot.hasData) {
-                notifications =
-                    getNotificationsFromQuerySnapshot(snapshot.data);
+                notifications = getNotificationsFromQuerySnapshot(snapshot.data);
               }
               return Align(
                 alignment: Alignment.center,
@@ -39,21 +38,13 @@ class NotificationsPage extends StatelessWidget {
                         onTap: () {
                           switch (e.action) {
                             case NotificationAction.NavigateToOrderDetalCourier:
-                              Navigator.pushNamed(
-                                  context,
-                                  OrderDetailCourier
-                                      .orderDetailCourierPageRouteName,
-                                  arguments: e.payload?['orderId']);
+                              Navigator.pushNamed(context, OrderDetailCourier.orderDetailCourierPageRouteName, arguments: e.payload?['orderId']);
                               break;
                             case NotificationAction.NavigateToOrderDetalSender:
-                              Navigator.pushNamed(context,
-                                  OrderDetailTester.orderDetailTesterPageRouteName,
-                                  arguments: e.payload?['orderId']);
+                              Navigator.pushNamed(context, OrderDetailTester.orderDetailTesterPageRouteName, arguments: e.payload?['orderId']);
                               break;
                             case NotificationAction.NavigateToOrderDetalTester:
-                              Navigator.pushNamed(context,
-                                  OrderDetailTester.orderDetailTesterPageRouteName,
-                                  arguments: e.payload?['orderId']);
+                              Navigator.pushNamed(context, OrderDetailTester.orderDetailTesterPageRouteName, arguments: e.payload?['orderId']);
                               break;
                             default:
                               return;
@@ -71,23 +62,14 @@ class NotificationsPage extends StatelessWidget {
   }
 }
 
-List<NotificationModel> getNotificationsFromQuerySnapshot(
-    QuerySnapshot? snapshot) {
+List<NotificationModel> getNotificationsFromQuerySnapshot(QuerySnapshot? snapshot) {
   List<NotificationModel> notifications = [];
-  notifications = snapshot!.docs
-      .map((e) => NotificationModel.fromJson(
-          {...e.data() as Map<String, dynamic>, 'id': e.id}))
-      .toList();
+  notifications = snapshot!.docs.map((e) => NotificationModel.fromJson({...e.data() as Map<String, dynamic>, 'id': e.id})).toList();
   return notifications;
 }
 
 Stream<QuerySnapshot<Map<String, dynamic>>> getNotificationSnapshot() {
-  return FirebaseFirestore.instance
-      .collection('notifications')
-      .where('user_id', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-      .orderBy('seen')
-      .orderBy('date', descending: true)
-      .snapshots();
+  return FirebaseFirestore.instance.collection('notifications').where('user_id', isEqualTo: FirebaseAuth.instance.currentUser?.uid).orderBy('seen').orderBy('date', descending: true).snapshots();
 }
 
 Widget notificationCard(NotificationModel notificationModel) {
@@ -95,9 +77,7 @@ Widget notificationCard(NotificationModel notificationModel) {
     padding: EdgeInsets.only(top: 30, bottom: 30, left: 20, right: 20),
     margin: EdgeInsets.only(bottom: 10),
     decoration: BoxDecoration(
-      color: notificationModel.seen
-          ? Colors.white
-          : Colors.orange.withOpacity(0.1),
+      color: notificationModel.seen ? Colors.white : Colors.orange.withOpacity(0.1),
       borderRadius: BorderRadius.circular(10),
     ),
     child: Row(
@@ -124,11 +104,8 @@ Widget notificationCard(NotificationModel notificationModel) {
         !notificationModel.seen
             ? GestureDetector(
                 onTap: () {
-                  FirebaseFirestore.instance
-                      .collection('notifications')
-                      .doc(notificationModel.id)
-                      .update({'seen': true});
-                  // print(notificationModel.id);
+                  FirebaseFirestore.instance.collection('notifications').doc(notificationModel.id).update({'seen': true});
+                  print(notificationModel.id);
                 },
                 child: Container(
                     width: 30,
@@ -174,10 +151,8 @@ Future<bool> addNotification(
     bool tester = true}) async {
   try {
     var database = FirebaseFirestore.instance;
-    var ordersCollection =
-        await database.collection('orders').doc(orderId).get();
-    Order order =
-        Order.fromJson(ordersCollection.data() as Map<String, dynamic>);
+    var ordersCollection = await database.collection('orders').doc(orderId).get();
+    Order order = Order.fromJson(ordersCollection.data() as Map<String, dynamic>);
     List<String?> sendList = [];
     var dateTime = DateTime.now();
     int month = dateTime.month;
@@ -188,35 +163,18 @@ Future<bool> addNotification(
     int minutes = dateTime.minute;
     if (sender) {
       NotificationModel newNotification = NotificationModel(
-          content: senderContent ?? content,
-          seen: false,
-          userId: order.senderId,
-          timestamp: '$day-$month-$year at $hour:$minutes',
-          date: DateTime.now(),
-          action: senderAction,
-          payload: payload);
+          content: senderContent ?? content, seen: false, userId: order.senderId, timestamp: '$day-$month-$year at $hour:$minutes', date: DateTime.now(), action: senderAction, payload: payload);
 
-      await FirebaseFirestore.instance
-          .collection('notifications')
-          .add(newNotification.toJson());
+      await FirebaseFirestore.instance.collection('notifications').add(newNotification.toJson());
     }
     if (courier) {
       NotificationModel newNotification = NotificationModel(
-          content: courierContent ?? content,
-          seen: false,
-          userId: order.courierId,
-          timestamp: '$day-$month-$year at $hour:$minutes',
-          date: DateTime.now(),
-          action: courierAction,
-          payload: payload);
+          content: courierContent ?? content, seen: false, userId: order.courierId, timestamp: '$day-$month-$year at $hour:$minutes', date: DateTime.now(), action: courierAction, payload: payload);
 
-      await FirebaseFirestore.instance
-          .collection('notifications')
-          .add(newNotification.toJson());
+      await FirebaseFirestore.instance.collection('notifications').add(newNotification.toJson());
     }
     if (tester) {
-      var testers =
-          await getTestCenterAdminsFromTestCenterId(order.testCenterId);
+      var testers = await getTestCenterAdminsFromTestCenterId(order.testCenterId);
       testers.forEach((element) {
         sendList.add(element);
       });
@@ -224,17 +182,9 @@ Future<bool> addNotification(
 
     sendList.forEach((element) async {
       NotificationModel newNotification = NotificationModel(
-          content: testerContent ?? content,
-          seen: false,
-          userId: element,
-          timestamp: '$day-$month-$year at $hour:$minutes',
-          date: DateTime.now(),
-          action: testerAction,
-          payload: payload);
+          content: testerContent ?? content, seen: false, userId: element, timestamp: '$day-$month-$year at $hour:$minutes', date: DateTime.now(), action: testerAction, payload: payload);
 
-      await FirebaseFirestore.instance
-          .collection('notifications')
-          .add(newNotification.toJson());
+      await FirebaseFirestore.instance.collection('notifications').add(newNotification.toJson());
     });
 
     return true;
@@ -246,12 +196,7 @@ Future<bool> addNotification(
 
 Future<List<String?>> getTestCenterAdminsFromTestCenterId(String? id) async {
   List<String?> testCenterAdmins = [];
-  var testCenters = await FirebaseFirestore.instance
-      .collection('users')
-      .where('test_center_id', isEqualTo: id)
-      .where('type', isEqualTo: 'TEST_CENTER_ADMIN')
-      .get();
-  testCenterAdmins =
-      testCenters.docs.map((e) => e.data()['user_id'] as String).toList();
+  var testCenters = await FirebaseFirestore.instance.collection('users').where('test_center_id', isEqualTo: id).where('type', isEqualTo: 'TEST_CENTER_ADMIN').get();
+  testCenterAdmins = testCenters.docs.map((e) => e.data()['user_id'] as String).toList();
   return testCenterAdmins;
 }

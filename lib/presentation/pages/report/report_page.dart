@@ -59,7 +59,7 @@ class _ReportScreenState extends State<ReportScreen> {
   //!order monitoring
   void exportOrderMonitoringReport(List<Map<String, dynamic>> reportsData) {
     List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
-    // print('filtered reports $filteredReportsData');
+    print('filtered reports $filteredReportsData');
 
 // Create a new Excel document.
     final xlsx.Workbook workbook = new xlsx.Workbook();
@@ -87,9 +87,7 @@ class _ReportScreenState extends State<ReportScreen> {
       // sheet
       //     .getRangeByName('H${i + 2}')
       //     .setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
-      sheet
-          .getRangeByName('H${i + 2}')
-          .setText(filteredReportsData[i]['patients'] != null ? getOrderSpecimenCount(filteredReportsData[i]).toString() : '0');
+      sheet.getRangeByName('H${i + 2}').setText(filteredReportsData[i]['patients'] != null ? getOrderSpecimenCount(filteredReportsData[i]).toString() : '0');
       sheet.getRangeByName('I${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
           '/' +
           filteredReportsData[i]['order_created'].toDate().month.toString() +
@@ -173,7 +171,7 @@ class _ReportScreenState extends State<ReportScreen> {
   //!Shipment report
   void exportShipmentReport(List<Map<String, dynamic>> reportsData) {
     List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
-    // print('filtered reports $filteredReportsData');
+    print('filtered reports $filteredReportsData');
 // Create a new Excel document.
     final xlsx.Workbook workbook = new xlsx.Workbook();
 //Accessing worksheet via index.
@@ -224,9 +222,7 @@ class _ReportScreenState extends State<ReportScreen> {
       // sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['woredas'][0]['name'].toString());
       sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['courier_name'].toString());
       sheet.getRangeByName('D${i + 2}').setText(filteredReportsData[i]['tester_name'].toString());
-      sheet
-          .getRangeByName('E${i + 2}')
-          .setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
+      sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
       sheet.getRangeByName('F${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
           '/' +
           filteredReportsData[i]['order_created'].toDate().month.toString() +
@@ -234,16 +230,10 @@ class _ReportScreenState extends State<ReportScreen> {
           filteredReportsData[i]['order_created'].toDate().year.toString());
       orderReceived == null
           ? sheet.getRangeByName('G${i + 2}').setText('N/A')
-          : sheet
-              .getRangeByName('G${i + 2}')
-              .setText(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString());
-      shipmentDurationInMinutes == null
-          ? sheet.getRangeByName('H${i + 2}').setText('N/A')
-          : sheet.getRangeByName('H${i + 2}').setText('${durationToString(shipmentDurationInMinutes)}');
+          : sheet.getRangeByName('G${i + 2}').setText(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString());
+      shipmentDurationInMinutes == null ? sheet.getRangeByName('H${i + 2}').setText('N/A') : sheet.getRangeByName('H${i + 2}').setText('${durationToString(shipmentDurationInMinutes)}');
 
-      pickupDurationInMinutes == null
-          ? sheet.getRangeByName('I${i + 2}').setText('N/A')
-          : sheet.getRangeByName('I${i + 2}').setText('${durationToString(pickupDurationInMinutes)}');
+      pickupDurationInMinutes == null ? sheet.getRangeByName('I${i + 2}').setText('N/A') : sheet.getRangeByName('I${i + 2}').setText('${durationToString(pickupDurationInMinutes)}');
       sheet.getRangeByName('J${i + 2}').setText(orderReceived != null ? '${orderReceived.year}/${orderReceived.month}/${orderReceived.day}' : 'N/A');
       sheet.getRangeByName('K${i + 2}').setText(orderReceived != null
           ? orderReceived.minute < 10
@@ -273,7 +263,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Future<String> getStoragePath() async {
     final String extDirectory = (await getApplicationSupportDirectory()).path;
-    // print(extDirectory);
+    print(extDirectory);
     return extDirectory;
   }
 
@@ -747,12 +737,10 @@ class _ReportScreenState extends State<ReportScreen> {
                                           child: Row(
                                             children: [
                                               Expanded(
-                                                child: ReportSummaryCard(
-                                                    title: 'Total orders', description: summaryData['totalRequestedOrders'].toString()),
+                                                child: ReportSummaryCard(title: 'Total orders', description: summaryData['totalRequestedOrders'].toString()),
                                               ),
                                               Expanded(
-                                                child: ReportSummaryCard(
-                                                    title: 'Waiting pickup', description: summaryData['ordersWaitingPickup'].toString()),
+                                                child: ReportSummaryCard(title: 'Waiting pickup', description: summaryData['ordersWaitingPickup'].toString()),
                                               ),
                                               Expanded(
                                                 child: ReportSummaryCard(title: 'En route', description: summaryData['ordersEnRoute'].toString()),
@@ -774,12 +762,10 @@ class _ReportScreenState extends State<ReportScreen> {
                                                 child: ReportSummaryCard(title: 'Total', description: totalSpecimens.toString()),
                                               ),
                                               Expanded(
-                                                child: ReportSummaryCard(
-                                                    title: 'Accepted', description: summaryData['ordersDeliveredAccepted'].toString()),
+                                                child: ReportSummaryCard(title: 'Accepted', description: summaryData['ordersDeliveredAccepted'].toString()),
                                               ),
                                               Expanded(
-                                                child: ReportSummaryCard(
-                                                    title: 'Rejected', description: summaryData['ordersDeliveredRejected'].toString()),
+                                                child: ReportSummaryCard(title: 'Rejected', description: summaryData['ordersDeliveredRejected'].toString()),
                                               ),
                                               // SizedBox(width: 10),
                                             ],
@@ -795,16 +781,13 @@ class _ReportScreenState extends State<ReportScreen> {
                                           child: Row(
                                             children: [
                                               Expanded(
-                                                child:
-                                                    ReportSummaryCard(title: 'Total Result', description: summaryData['resultsTotalSent'].toString()),
+                                                child: ReportSummaryCard(title: 'Total Result', description: summaryData['resultsTotalSent'].toString()),
                                               ),
                                               Expanded(
-                                                child:
-                                                    ReportSummaryCard(title: 'Positive', description: summaryData['resultsTotalPositive'].toString()),
+                                                child: ReportSummaryCard(title: 'Positive', description: summaryData['resultsTotalPositive'].toString()),
                                               ),
                                               Expanded(
-                                                child:
-                                                    ReportSummaryCard(title: 'Negative', description: summaryData['resultsTotalNegative'].toString()),
+                                                child: ReportSummaryCard(title: 'Negative', description: summaryData['resultsTotalNegative'].toString()),
                                               ),
                                               // SizedBox(width: 10),
                                             ],
@@ -842,22 +825,16 @@ class _ReportScreenState extends State<ReportScreen> {
                                                                 sectionsSpace: 0,
                                                                 sections: [
                                                                   PieChartSectionData(
-                                                                    title:
-                                                                        '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                                    titleStyle:
-                                                                        TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                                    value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(),
-                                                                        summaryData['resultsTotalSent'].toDouble()),
+                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                                    value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
                                                                     radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
                                                                     color: Colors.teal,
                                                                   ),
                                                                   PieChartSectionData(
-                                                                    title:
-                                                                        '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                                    titleStyle:
-                                                                        TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                                    value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(),
-                                                                        summaryData['resultsTotalSent'].toDouble()),
+                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                                    value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
                                                                     radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
                                                                     color: Colors.blue,
                                                                   ),
@@ -892,22 +869,16 @@ class _ReportScreenState extends State<ReportScreen> {
                                                                 sectionsSpace: 0,
                                                                 sections: [
                                                                   PieChartSectionData(
-                                                                    title:
-                                                                        '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                                    titleStyle:
-                                                                        TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                                    value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(),
-                                                                        summaryData['resultsTotalSent'].toDouble()),
+                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                                    value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
                                                                     radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
                                                                     color: Colors.teal,
                                                                   ),
                                                                   PieChartSectionData(
-                                                                    title:
-                                                                        '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                                    titleStyle:
-                                                                        TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                                    value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(),
-                                                                        summaryData['resultsTotalSent'].toDouble()),
+                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                                    value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
                                                                     radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
                                                                     color: Colors.blue,
                                                                   ),
@@ -1009,7 +980,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                                         Text('Order Monitoring', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
                                                         IconButton(
                                                           onPressed: () {
-                                                            // print('Exporting order monitoring report');
+                                                            print('Exporting order monitoring report');
                                                             exportOrderMonitoringReport(selectedFilter == 'All' ? reports : filteredReports);
                                                           },
                                                           icon: FaIcon(FontAwesomeIcons.fileExport),
@@ -1061,11 +1032,10 @@ class _ReportScreenState extends State<ReportScreen> {
                                                     child: Row(
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        Text('Specimen Referral Report',
-                                                            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                                        Text('Specimen Referral Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
                                                         IconButton(
                                                           onPressed: () {
-                                                            // print('Exporting Specimen Referring report');
+                                                            print('Exporting Specimen Referring report');
                                                             exportSpecimenReferralReport(selectedFilter == 'All' ? reports : filteredReports);
                                                           },
                                                           icon: FaIcon(FontAwesomeIcons.fileExport),
@@ -1137,7 +1107,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                                         Text('Shipment Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
                                                         IconButton(
                                                           onPressed: () {
-                                                            // print('Exporting Specimen Referring report');
+                                                            print('Exporting Specimen Referring report');
                                                             exportShipmentReport(selectedFilter == 'All' ? reports : filteredReports);
                                                           },
                                                           icon: FaIcon(FontAwesomeIcons.fileExport),
@@ -1219,12 +1189,11 @@ int? getOrderTurnAroundTime(Map<String, dynamic> order, Map<String, dynamic> spe
   DateTime? orderPlaced;
   DateTime? resultPlacementDate;
   if (specimen['testResultAddedAt'] != null) {
-    // print('**********************************************');
+    print('**********************************************');
     if (order['order_placed'] != null && specimen['testResultAddedAt'] != null) {
       orderPlaced = order['order_placed'].toDate();
       resultPlacementDate = DateTime.parse(specimen['testResultAddedAt']);
-      if ((orderPlaced != null && orderPlaced.runtimeType == DateTime) &&
-          (resultPlacementDate != null && resultPlacementDate.runtimeType == DateTime)) {
+      if ((orderPlaced != null && orderPlaced.runtimeType == DateTime) && (resultPlacementDate != null && resultPlacementDate.runtimeType == DateTime)) {
         time = resultPlacementDate.difference(orderPlaced).inMinutes;
       }
     }
@@ -1286,16 +1255,14 @@ List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dyn
           patientInformation['phone'] = patient['phone'] != null ? patient['phone'] : "";
           patientInformation['region'] = patient['region']['name'] != null ? patient['region']['name'] : "";
           patientInformation['zone'] = patient['region']['zones'][0]['name'] != null ? patient['region']['zones'][0]['name'] : "";
-          patientInformation['woreda'] =
-              patient['region']['zones'][0]['woredas'][0]['name'] != null ? patient['region']['zones'][0]['woredas'][0]['name'] : "";
+          patientInformation['woreda'] = patient['region']['zones'][0]['woredas'][0]['name'] != null ? patient['region']['zones'][0]['woredas'][0]['name'] : "";
           patientInformation['specimenType'] = specimen['type'] != null ? specimen['type'] : "";
           patientInformation['siteOfTest'] = patient['anatomic_location'] != null ? patient['anatomic_location'] : "";
           patientInformation['requestedTest'] = specimen['examination_type'] != null ? specimen['examination_type'] : "";
           patientInformation['reasonForTest'] = patient['reason_for_test'] != null ? patient['reason_for_test'] : "";
           patientInformation['registrationGroup'] = patient['registration_group'] != null ? patient['registration_group'] : "";
           patientInformation['deliveryStatus'] = reportData['status'] != null ? reportData['status'] : "";
-          patientInformation['turnAroundTime'] =
-              getOrderTurnAroundTime(reportData, specimen) != null ? getOrderTurnAroundTime(reportData, specimen) : "N/A";
+          patientInformation['turnAroundTime'] = getOrderTurnAroundTime(reportData, specimen) != null ? getOrderTurnAroundTime(reportData, specimen) : "N/A";
           patientInformation['mtb_result'] = getSpecimenMtbResult(specimen);
           patientInformation['result_rr'] = getSpecimenRrResult(specimen);
           patientInformation['lab_registration_number'] = getSpecimenLabRegistrationNum(specimen);
@@ -1394,14 +1361,8 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
         DataCell(Text(data['courier_name'].toString())),
         DataCell(Text(data['tester_name'].toString())),
         DataCell(Text(data['patients'] != null ? data['patients'].length.toString() : '0')),
-        DataCell(Text(data['order_created'].toDate().day.toString() +
-            '/' +
-            data['order_created'].toDate().month.toString() +
-            '/' +
-            data['order_created'].toDate().year.toString())),
-        orderReceived == null
-            ? DataCell(Text('N/A'))
-            : DataCell(Text(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString())),
+        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
+        orderReceived == null ? DataCell(Text('N/A')) : DataCell(Text(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString())),
         shipmentDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('${durationToString(shipmentDurationInMinutes)}')),
         //!add pick up duration
         pickupDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('${durationToString(pickupDurationInMinutes)}')),
@@ -1427,7 +1388,7 @@ int getOrderSpecimenCount(Map<String, dynamic> order) {
   int count = 0;
   for (int i = 0; i < order['patients'].length; i++) {
     Map<String, dynamic> patient = order['patients'][i];
-    // print('specimen count: ${patient['specimens'].length}');
+    print('specimen count: ${patient['specimens'].length}');
     count += int.parse(patient['specimens'].length.toString());
   }
   return count;
@@ -1449,11 +1410,7 @@ List<DataRow> getOrderMonitoringRows(List<Map<String, dynamic>> reportsData) {
         // DataCell(Text(data['patients'] != null ? data['patients'].length.toString() : '0')),
         DataCell(Text(data['patients'] != null ? getOrderSpecimenCount(data).toString() : '0')),
 
-        DataCell(Text(data['order_created'].toDate().day.toString() +
-            '/' +
-            data['order_created'].toDate().month.toString() +
-            '/' +
-            data['order_created'].toDate().year.toString())),
+        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
         DataCell(Text(data['status'].toString())),
       ],
     );

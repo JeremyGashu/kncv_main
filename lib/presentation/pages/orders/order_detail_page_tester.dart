@@ -51,7 +51,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
           bloc: ordersBloc,
           listener: (ctx, state) async {
             if (state is LoadedSingleOrder) {
-              // print(state.order.status);
+              print(state.order.status);
             } else if (state is CourierApprovedArrivalTester) {
               addNotification(
                 orderId: widget.orderId,
@@ -404,8 +404,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   sendingFeedback = true;
                                 });
 
-                                bool success =
-                                    await OrderRepository.editSpecimenFeedback(index: index, order: order, patient: order.patients![index]);
+                                bool success = await OrderRepository.editSpecimenFeedback(index: index, order: order, patient: order.patients![index]);
 
                                 if (success) {
                                   addNotification(
@@ -451,8 +450,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   sendingFeedback = true;
                                 });
 
-                                bool success =
-                                    await OrderRepository.editSpecimenFeedback(index: index, order: order, patient: order.patients![index]);
+                                bool success = await OrderRepository.editSpecimenFeedback(index: index, order: order, patient: order.patients![index]);
 
                                 if (success) {
                                   addNotification(
@@ -501,8 +499,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   sendingFeedback = true;
                                 });
 
-                                bool success =
-                                    await OrderRepository.editSpecimenFeedback(index: index, order: order, patient: order.patients![index]);
+                                bool success = await OrderRepository.editSpecimenFeedback(index: index, order: order, patient: order.patients![index]);
 
                                 if (success) {
                                   addNotification(
@@ -537,8 +534,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   sendingFeedback = true;
                                 });
 
-                                bool success =
-                                    await OrderRepository.editSpecimenFeedback(index: index, order: order, patient: order.patients![index]);
+                                bool success = await OrderRepository.editSpecimenFeedback(index: index, order: order, patient: order.patients![index]);
 
                                 if (success) {
                                   addNotification(
@@ -933,9 +929,9 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
           GestureDetector(
             onTap: () {
               if (stoolCondition != null && sputumCondition != null && inColdChain != null) {
-                // print(stoolCondition);
-                // print(sputumCondition);
-                // print(inColdChain);
+                print(stoolCondition);
+                print(sputumCondition);
+                print(inColdChain);
                 // ordersBloc.add(event)
                 Navigator.pop(context, true);
               }

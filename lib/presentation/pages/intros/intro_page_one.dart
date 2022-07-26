@@ -16,7 +16,7 @@ class IntroPageOne extends StatelessWidget {
           // Note: Sensitivity is integer used when you don't want to mess up vertical drag
           int sensitivity = 20;
           if (details.delta.dx > sensitivity) {
-            // print('left');
+            print('left');
           } else if (details.delta.dx < -sensitivity) {
             Navigator.pushNamed(context, InstroPageTwo.introPageTwoName);
           }

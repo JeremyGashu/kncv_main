@@ -13,7 +13,7 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
       documentData['orderId'] = doc.id;
       allOrders.add(documentData);
     });
-    // print('all orders: $allOrders');
+    print('all orders: $allOrders');
     //!get current user
     final User? user = auth.currentUser;
     final userId = user!.uid;
@@ -22,7 +22,7 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await firestore.collection("users").where('user_id', isEqualTo: userId).get();
     final userData = querySnapshot.docs[0].data();
     Map<String, dynamic> userReportPermissions = userData['permission'];
-    // print('permission: $userReportPermissions');
+    print('permission: $userReportPermissions');
 
     //!get order report based on permission
     // ignore: unnecessary_null_comparison
@@ -36,15 +36,15 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
               Map<String, dynamic> region = order['region'];
               // ignore: unnecessary_null_comparison
               if (region != null) {
-                // print('permissionRegion: ${permissionRegion.replaceAll("\"", "")}  || zone name: ${region['name']}');
+                print('permissionRegion: ${permissionRegion.replaceAll("\"", "")}  || zone name: ${region['name']}');
                 if (permissionRegion.replaceAll("\"", "") == region['name']) {
                   reports.add(order);
                 }
               }
-              // print(region);
+              print(region);
             }
             // setState(() {});
-            // print(permissionRegion);
+            print(permissionRegion);
           }
           break;
 
@@ -56,10 +56,10 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
               Map<String, dynamic> region = order['region'];
               // ignore: unnecessary_null_comparison
               if (region != null) {
-                // print(region['zones']);
+                print(region['zones']);
                 for (Map<String, dynamic> zone in region['zones']) {
-                  // print('zone: $zone');
-                  // print('permissionZone: ${permissionZone.replaceAll("\"", "")}  || zone name: ${zone['name']}');
+                  print('zone: $zone');
+                  print('permissionZone: ${permissionZone.replaceAll("\"", "")}  || zone name: ${zone['name']}');
                   if (zone['name'] == permissionZone.replaceAll("\"", "")) {
                     reports.add(order);
                   }
@@ -67,7 +67,7 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
               }
             }
             // setState(() {});
-            // print(permissionZone);
+            print(permissionZone);
           }
           break;
         case 'Woreda':
@@ -78,11 +78,11 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
               Map<String, dynamic> region = order['region'];
               // ignore: unnecessary_null_comparison
               if (region != null) {
-                // print(region['zones']);
+                print(region['zones']);
                 for (Map<String, dynamic> zone in region['zones']) {
-                  // print('zone: $zone');
+                  print('zone: $zone');
                   for (Map<String, dynamic> woreda in zone['woredas']) {
-                    // print('permissionWoreda: ${permissionWoreda.replaceAll("\"", "")}  || woreda name: ${woreda['name']}');
+                    print('permissionWoreda: ${permissionWoreda.replaceAll("\"", "")}  || woreda name: ${woreda['name']}');
                     if (permissionWoreda.replaceAll("\"", "") == woreda['name']) {
                       reports.add(order);
                     }
@@ -91,7 +91,7 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
               }
             }
             // setState(() {});
-            // print(permissionWoreda);
+            print(permissionWoreda);
           }
           break;
 
@@ -122,9 +122,9 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
 bool isReportDateSameAsToday(report) {
   final todaysDate = DateTime.now();
   DateTime reportDate = report['order_created'].toDate();
-  // print("Today Year: ${todaysDate.year}  || Report Year: ${reportDate.year}");
-  // print("Today Month: ${todaysDate.month}  || Report Month: ${reportDate.month}");
-  // print("Today Day: ${todaysDate.day}  || Report Day: ${reportDate.day}");
+  print("Today Year: ${todaysDate.year}  || Report Year: ${reportDate.year}");
+  print("Today Month: ${todaysDate.month}  || Report Month: ${reportDate.month}");
+  print("Today Day: ${todaysDate.day}  || Report Day: ${reportDate.day}");
   if (reportDate.year == todaysDate.year) {
     if (reportDate.month == todaysDate.month) {
       if (reportDate.day == todaysDate.day) {

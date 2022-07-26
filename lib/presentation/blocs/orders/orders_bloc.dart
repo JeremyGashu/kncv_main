@@ -174,7 +174,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         List<Order> orders = await orderRepository.loadOrdersForCourier();
         yield LoadedOrdersForCourier(orders: orders);
       } catch (e) {
-        // debugPrint('Error loading order =>${e.toString()}');
+        debugPrint('Error loading order =>${e.toString()}');
         // throw Exception(e);
         yield ErrorState(message: 'Error Loading Orders!');
       }
@@ -184,7 +184,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         List<Order> orders = await orderRepository.loadOrdersForTestCenters();
         yield LoadedOrdersForTester(orders: orders);
       } catch (e) {
-        // debugPrint('Error loading order =>${e.toString()}');
+        debugPrint('Error loading order =>${e.toString()}');
 
         yield ErrorState(message: 'Error Loading Orders!');
       }
@@ -199,7 +199,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         }
       } catch (e) {
         // throw Exception(e);
-        // debugPrint('Error loading order =>${e.toString()}');
+        debugPrint('Error loading order =>${e.toString()}');
 
         yield ErrorState(message: 'Error Loading Order!');
       }
@@ -255,7 +255,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         }
       } catch (e) {
         throw Exception(e);
-        // debugPrint('$e');
+        debugPrint('$e');
         // yield ErrorState(message: 'Error editing test result');
       }
     } else if (event is PlaceOrder) {
