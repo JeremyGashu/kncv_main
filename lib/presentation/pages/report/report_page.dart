@@ -244,10 +244,12 @@ class _ReportScreenState extends State<ReportScreen> {
       pickupDurationInMinutes == null
           ? sheet.getRangeByName('I${i + 2}').setText('N/A')
           : sheet.getRangeByName('I${i + 2}').setText('${durationToString(pickupDurationInMinutes)}');
-      sheet
-          .getRangeByName('J${i + 2}')
-          .setText(orderReceived != null ? '${orderReceived.year} / ${orderReceived.month} / ${orderReceived.day}' : 'N/A');
-      sheet.getRangeByName('J${i + 2}').setText(orderReceived != null ? '${orderReceived.hour}:${orderReceived.minute}' : 'N/A');
+      sheet.getRangeByName('J${i + 2}').setText(orderReceived != null ? '${orderReceived.year}/${orderReceived.month}/${orderReceived.day}' : 'N/A');
+      sheet.getRangeByName('K${i + 2}').setText(orderReceived != null
+          ? orderReceived.minute < 10
+              ? '${orderReceived.hour}:0${orderReceived.minute}'
+              : '${orderReceived.hour}:${orderReceived.minute}'
+          : 'N/A');
     }
     final List<int> bytes = workbook.saveAsStream();
     String date = DateTime.now().toString();
@@ -1400,8 +1402,12 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
         //!add pick up duration
         pickupDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('${durationToString(pickupDurationInMinutes)}')),
         // shipmentReport
-        DataCell(Text(orderReceived != null ? '${orderReceived.year} / ${orderReceived.month} / ${orderReceived.day}' : 'N/A')),
-        DataCell(Text(orderReceived != null ? '${orderReceived.hour}:${orderReceived.minute}' : 'N/A')),
+        DataCell(Text(orderReceived != null ? '${orderReceived.year}/${orderReceived.month}/${orderReceived.day}' : 'N/A')),
+        DataCell(Text(orderReceived != null
+            ? orderReceived.minute < 10
+                ? '${orderReceived.hour}:0${orderReceived.minute}'
+                : '${orderReceived.hour}:${orderReceived.minute}'
+            : 'N/A')),
       ],
     );
   }).toList();

@@ -733,7 +733,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
                                                 content: Text(
-                                                  'Please enter a valid phone number!',
+                                                  'Please enter a valid phone number: start with 09!',
                                                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                                 ),
                                                 backgroundColor: Colors.red.shade700,
@@ -751,7 +751,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                           String? woreda = selectedWoreda?.code;
 
                                           String address = addressController.value.text;
-                                          String phone = phoneController.value.text;
+                                          String phone = phoneController.value.text.trim();
                                           String doctorInCharge = doctorInChargeController.value.text;
                                           String patientRemark = patientRemarkController.value.text;
 
@@ -906,17 +906,19 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
             return true;
           }
         }
-      } else if (phoneNumber[0] == "+") {
-        if (phoneNumber.length == 13) {
-          if (phoneNumber.substring(1, 5) == "2519") {
-            return true;
-          }
-        }
-      } else if (phoneNumber[0] == "9") {
-        if (phoneNumber.length == 9) {
-          return true;
-        }
-      } else {
+      }
+      // else if (phoneNumber[0] == "+") {
+      //   if (phoneNumber.length == 13) {
+      //     if (phoneNumber.substring(1, 5) == "2519") {
+      //       return true;
+      //     }
+      //   }
+      // } else if (phoneNumber[0] == "9") {
+      //   if (phoneNumber.length == 9) {
+      //     return true;
+      //   }
+      // }
+      else {
         return false;
       }
     } else {
