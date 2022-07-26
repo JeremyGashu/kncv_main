@@ -21,7 +21,7 @@ import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_c
 class AppRouter {
   static Route? onGenerateRoute(RouteSettings settings) {
     dynamic args = settings.arguments;
-    print(args);
+    // print(args);
     switch (settings.name) {
       case IntroPageOne.introPageOneRouteName:
         return PageRouteBuilder(

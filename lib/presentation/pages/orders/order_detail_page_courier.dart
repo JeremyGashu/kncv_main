@@ -492,7 +492,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             color: kPageBackground,
                                             child: InkWell(
                                               onTap: () async {
-                                                print('Notifying Arrival');
+                                                // print('Notifying Arrival');
 
                                                 bool success = await OrderBloc.approveArrivalFromCourier(state.order);
                                                 if (success) {
@@ -543,7 +543,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                   ? ValueListenableBuilder(
                                       valueListenable: Hive.box('notified_orders').listenable(),
                                       builder: (BuildContext context, Box box, _) {
-                                        debugPrint('${box.values.contains(state.order.orderId)}');
+                                        // debugPrint('${box.values.contains(state.order.orderId)}');
                                         return !box.values.contains(state.order.orderId)
                                             ? Positioned(
                                                 bottom: 0,
@@ -559,11 +559,11 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                       });
 
                                                       Box notified_box = Hive.box('notified_orders');
-                                                      debugPrint('Before ${notified_box.values.length}');
+                                                      // debugPrint('Before ${notified_box.values.length}');
 
                                                       await notified_box.add(state.order.orderId);
 
-                                                      debugPrint('After ${notified_box.values.length}');
+                                                      // debugPrint('After ${notified_box.values.length}');
 
                                                       if (!(await isConnectedToTheInternet())) {
                                                         await sendSMS(

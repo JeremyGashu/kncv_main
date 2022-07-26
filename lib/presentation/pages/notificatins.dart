@@ -128,7 +128,7 @@ Widget notificationCard(NotificationModel notificationModel) {
                       .collection('notifications')
                       .doc(notificationModel.id)
                       .update({'seen': true});
-                  print(notificationModel.id);
+                  // print(notificationModel.id);
                 },
                 child: Container(
                     width: 30,

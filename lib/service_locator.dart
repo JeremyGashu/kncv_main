@@ -53,22 +53,22 @@ Future<void> serviceLocatorInit() async {
   ///test centers
   ///regions
   await Hive.openBox<Order>('orders');
-  debugPrint('Opened order box!');
+  // debugPrint('Opened order box!');
 
   await Hive.openBox<Courier>('couriers');
-  debugPrint('Opened courier box!');
+  // debugPrint('Opened courier box!');
 
   await Hive.openBox<Tester>('test_centers');
-  debugPrint('Opened test center box!');
+  // debugPrint('Opened test center box!');
 
   await Hive.openBox<Region>('regions');
-  debugPrint('Opened region box!');
+  // debugPrint('Opened region box!');
 
   await Hive.openBox('notified_orders');
-  debugPrint('Opened ordered id boxes!');
+  // debugPrint('Opened ordered id boxes!');
 
   SharedPreferences preferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => preferences);
 
-  print('Initialized all elements');
+  // print('Initialized all elements');
 }

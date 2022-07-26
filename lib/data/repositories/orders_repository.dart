@@ -81,7 +81,7 @@ class OrderRepository {
     var usersData = await database.collection('users').where('user_id', isEqualTo: id).get();
     if (usersData.docs.length > 0) {
       Map<String, dynamic> userData = usersData.docs[0].data()['test_center'];
-      print('test center => ${userData}');
+      // print('test center => ${userData}');
       return userData;
     }
 
@@ -127,7 +127,7 @@ class OrderRepository {
       String? sender_name;
       String? sender_phone;
       var userData = await usersCollection.where('user_id', isEqualTo: sender_id).get();
-      debugPrint('Sender data from user id  ======== ${userData.docs.length}');
+      // debugPrint('Sender data from user id  ======== ${userData.docs.length}');
 
       if (userData.docs.length > 0) {
         sender_name = userData.docs[0].data()['institution']['name'];
@@ -702,7 +702,7 @@ class OrderRepository {
         await orderRef.update({'status': 'Waiting for Confirmation', 'order_placed': DateTime.now()});
 
         order.status = 'Waiting for Confirmation';
-        debugPrint('please sms ${order.orderId}');
+        // debugPrint('please sms ${order.orderId}');
         //RESPONSE ORDER_PLACED
         await sendSmsViaListenerToEndUser(
           to: order.courier_phone ?? '',

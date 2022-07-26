@@ -173,7 +173,7 @@ class _ReportScreenState extends State<ReportScreen> {
   //!Shipment report
   void exportShipmentReport(List<Map<String, dynamic>> reportsData) {
     List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
-    print('filtered reports $filteredReportsData');
+    // print('filtered reports $filteredReportsData');
 // Create a new Excel document.
     final xlsx.Workbook workbook = new xlsx.Workbook();
 //Accessing worksheet via index.
@@ -273,7 +273,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Future<String> getStoragePath() async {
     final String extDirectory = (await getApplicationSupportDirectory()).path;
-    print(extDirectory);
+    // print(extDirectory);
     return extDirectory;
   }
 
@@ -1009,7 +1009,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                                         Text('Order Monitoring', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
                                                         IconButton(
                                                           onPressed: () {
-                                                            print('Exporting order monitoring report');
+                                                            // print('Exporting order monitoring report');
                                                             exportOrderMonitoringReport(selectedFilter == 'All' ? reports : filteredReports);
                                                           },
                                                           icon: FaIcon(FontAwesomeIcons.fileExport),
@@ -1065,7 +1065,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                                             style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
                                                         IconButton(
                                                           onPressed: () {
-                                                            print('Exporting Specimen Referring report');
+                                                            // print('Exporting Specimen Referring report');
                                                             exportSpecimenReferralReport(selectedFilter == 'All' ? reports : filteredReports);
                                                           },
                                                           icon: FaIcon(FontAwesomeIcons.fileExport),
@@ -1137,7 +1137,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                                         Text('Shipment Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
                                                         IconButton(
                                                           onPressed: () {
-                                                            print('Exporting Specimen Referring report');
+                                                            // print('Exporting Specimen Referring report');
                                                             exportShipmentReport(selectedFilter == 'All' ? reports : filteredReports);
                                                           },
                                                           icon: FaIcon(FontAwesomeIcons.fileExport),
@@ -1219,7 +1219,7 @@ int? getOrderTurnAroundTime(Map<String, dynamic> order, Map<String, dynamic> spe
   DateTime? orderPlaced;
   DateTime? resultPlacementDate;
   if (specimen['testResultAddedAt'] != null) {
-    print('**********************************************');
+    // print('**********************************************');
     if (order['order_placed'] != null && specimen['testResultAddedAt'] != null) {
       orderPlaced = order['order_placed'].toDate();
       resultPlacementDate = DateTime.parse(specimen['testResultAddedAt']);

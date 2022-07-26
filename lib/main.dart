@@ -101,9 +101,9 @@ class _SMSListenerState extends State<SMSListener> with WidgetsBindingObserver {
 
     receivePort.listen((message) {
       if (message is SmsMessage) {
-        print('I have received $message from background service i can save it to hive database');
+        // print('I have received $message from background service i can save it to hive database');
         if (Hive.isBoxOpen('orders')) {
-          print('Yes the box is open you can add data into it ${Hive.box<Order>('orders').values}');
+          // print('Yes the box is open you can add data into it ${Hive.box<Order>('orders').values}');
         }
 
         smsBloc.updateDataOnSms(message);

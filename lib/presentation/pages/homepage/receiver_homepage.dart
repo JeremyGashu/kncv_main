@@ -216,7 +216,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                           itemBuilder: (context, index) {
                                             return GestureDetector(
                                                 onTap: () async {
-                                                  print('${state.orders[index].orderId}');
+                                                  // print('${state.orders[index].orderId}');
                                                   var load = await Navigator.pushNamed(context, OrderDetailTester.orderDetailTesterPageRouteName,
                                                       arguments: state.orders[index].orderId);
                                                   if (load == true) {

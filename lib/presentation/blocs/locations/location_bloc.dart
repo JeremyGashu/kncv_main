@@ -15,7 +15,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationStates> {
     if (event is LoadLocations) {
       yield LoadingLocationsState();
       var data = await locationRepository.loadRegions();
-      print('testers and couriers => ${data}');
+      // print('testers and couriers => ${data}');
       yield LoadedLocationsState(regions: data);
     }
   }

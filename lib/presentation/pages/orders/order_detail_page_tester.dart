@@ -53,7 +53,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
           bloc: ordersBloc,
           listener: (ctx, state) async {
             if (state is LoadedSingleOrder) {
-              print(state.order.status);
+              // print(state.order.status);
             } else if (state is CourierApprovedArrivalTester) {
               addNotification(
                 orderId: widget.orderId,
@@ -1077,9 +1077,9 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
               if (stoolCondition != null &&
                   sputumCondition != null &&
                   inColdChain != null) {
-                print(stoolCondition);
-                print(sputumCondition);
-                print(inColdChain);
+                // print(stoolCondition);
+                // print(sputumCondition);
+                // print(inColdChain);
                 // ordersBloc.add(event)
                 Navigator.pop(context, true);
               }

@@ -120,7 +120,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
   @override
   initState() {
-    print('ptient => ${widget.patient.siteOfTB}');
+    // print('ptient => ${widget.patient.siteOfTB}');
     childhood = widget.patient.childhood;
     tb = widget.patient.tb;
     pneumonia = widget.patient.pneumonia;
@@ -151,9 +151,9 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
       });
     }
 
-    print(selectedRegion?.toJson());
-    print(selectedZone?.toJson());
-    print(selectedWoreda?.toJson());
+    // print(selectedRegion?.toJson());
+    // print(selectedZone?.toJson());
+    // print(selectedWoreda?.toJson());
 
     MRController.text = widget.patient.mr ?? '';
     nameController.text = widget.patient.name ?? '';
@@ -766,8 +766,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                             !widget.patient.resultAvaiable
                                                                 ? GestureDetector(
                                                                     onTap: () {
-                                                                      print(specimenType);
-                                                                      print(specimenIdController.value.text);
+                                                                      // print(specimenType);
+                                                                      // print(specimenIdController.value.text);
                                                                       if (specimenIdController.value.text == '' || specimenType == null) {
                                                                         ScaffoldMessenger.of(context).showSnackBar(
                                                                             SnackBar(content: Text('Please enter complete information')));
@@ -790,7 +790,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                       setState(() {
                                                                         specimens = [...specimens, specimen];
                                                                       });
-                                                                      print(specimens.length);
+                                                                      // print(specimens.length);
                                                                       specimenIdController.text = '';
                                                                       specimenType = null;
                                                                       // ScaffoldMessenger.of(context)
@@ -1174,7 +1174,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 child: IconButton(
                                     color: Colors.green,
                                     onPressed: () async {
-                                      debugPrint(e.id);
+                                      // debugPrint(e.id);
                                       var success = await Navigator.pushNamed(context, AddTestResultPage.addTestResultPageRouteName, arguments: {
                                         'orderId': widget.orderId,
                                         'patient': widget.patient,
@@ -1201,7 +1201,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                 child: IconButton(
                                   color: Colors.green,
                                   onPressed: () async {
-                                    debugPrint(e.id);
+                                    // debugPrint(e.id);
                                     var success = await Navigator.pushNamed(context, AddTestResultPage.addTestResultPageRouteName, arguments: {
                                       'orderId': widget.orderId,
                                       'patient': widget.patient,

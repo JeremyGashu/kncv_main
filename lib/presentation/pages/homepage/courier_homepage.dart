@@ -201,7 +201,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                             itemBuilder: (context, index) {
                                               return GestureDetector(
                                                   onTap: () async {
-                                                    print('${state.orders[index].orderId}');
+                                                    // print('${state.orders[index].orderId}');
                                                     var load = await Navigator.pushNamed(context, OrderDetailCourier.orderDetailCourierPageRouteName,
                                                         arguments: state.orders[index].orderId);
                                                     if (load == true) {

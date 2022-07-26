@@ -66,7 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           yield UnauthenticatedState();
         }
       } catch (e) {
-        print(e.toString());
+        // print(e.toString());
         yield ErrorState(message: 'Incorrect username and password');
       }
     }

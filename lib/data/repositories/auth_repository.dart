@@ -20,7 +20,7 @@ class AuthRepository {
     String? uid = user?.uid;
     String? type;
     String? name;
-    print('uid => $uid');
+    // print('uid => $uid');
     if (uid != null) {
       var userData = await FirebaseFirestore.instance
           .collection('users')
