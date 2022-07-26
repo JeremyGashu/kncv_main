@@ -46,7 +46,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       await ordersBox.addAll(orders);
 
       await sendSMS(
-        to: '0931057901',
+        to: '0941998907',
         payload: {
           'oid': order.orderId,
         },

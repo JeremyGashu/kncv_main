@@ -19,8 +19,7 @@ import 'package:kncv_flutter/service_locator.dart';
 
 class OrderDetailCourier extends StatefulWidget {
   final String orderId;
-  static const String orderDetailCourierPageRouteName =
-      'order detail courier page route name';
+  static const String orderDetailCourierPageRouteName = 'order detail courier page route name';
 
   const OrderDetailCourier({Key? key, required this.orderId}) : super(key: key);
 
@@ -48,8 +47,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
   Widget build(BuildContext context) {
     return BlocConsumer<SMSBloc, smsState.SMSState>(listener: (ctx, state) {
       if (state is smsState.UpdatedDatabase) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order has been Updated!')));
         ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
       }
     }, builder: (context, snapshot) {
@@ -57,19 +55,16 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
           bloc: ordersBloc,
           listener: (ctx, state) async {
             if (state is ErrorState) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
               await Future.delayed(Duration(seconds: 1));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             } else if (state is AcceptedOrderCourier) {
               addNotification(
                 orderId: widget.orderId,
-                courierContent:
-                    'You have accepted order from ${state.order.sender_name} to ${state.order.tester_name}.',
+                courierContent: 'You have accepted order from ${state.order.sender_name} to ${state.order.tester_name}.',
                 senderContent:
                     'Courier coming to collect order to ${state.order.tester_name}. Will reach at your place on ${state.date} at ${state.time}.',
-                testerContent:
-                    'Courier going to collect order from ${state.order.sender_name}.',
+                testerContent: 'Courier going to collect order from ${state.order.sender_name}.',
                 content: 'One order got accepted by courier!',
                 courierAction: NotificationAction.NavigateToOrderDetalCourier,
                 testerAction: NotificationAction.NavigateToOrderDetalTester,
@@ -118,8 +113,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                           child: Stack(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 100, left: 10, top: 10, right: 10),
+                                padding: const EdgeInsets.only(bottom: 100, left: 10, top: 10, right: 10),
                                 child: CustomScrollView(
                                   slivers: [
                                     SliverToBoxAdapter(
@@ -144,15 +138,11 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             ),
                                             title: Text(
                                               '${state.order.sender_name ?? ""}',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                             ),
                                             trailing: Text(
                                               'Referring Health Facilty',
-                                              style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 14),
+                                              style: TextStyle(color: Colors.green, fontSize: 14),
                                             ),
                                           ),
 
@@ -170,15 +160,11 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             ),
                                             title: Text(
                                               '${state.order.courier_name ?? ""}',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                             ),
                                             trailing: Text(
                                               'Courier',
-                                              style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 14),
+                                              style: TextStyle(color: Colors.green, fontSize: 14),
                                             ),
                                           ),
                                           //test center
@@ -195,15 +181,11 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             ),
                                             title: Text(
                                               '${state.order.tester_name ?? ""}',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                             ),
                                             trailing: Text(
                                               'Testing Health Center',
-                                              style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 14),
+                                              style: TextStyle(color: Colors.green, fontSize: 14),
                                             ),
                                           ),
                                         ],
@@ -216,26 +198,22 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
 
                                     SliverToBoxAdapter(
                                       child: Container(
-                                          margin:
-                                              EdgeInsets.symmetric(vertical: 5),
+                                          margin: EdgeInsets.symmetric(vertical: 5),
                                           width: double.infinity,
                                           child: Text(
                                             'Order ID = ${state.order.orderId}',
-                                            style:
-                                                TextStyle(color: Colors.grey),
+                                            style: TextStyle(color: Colors.grey),
                                             textAlign: TextAlign.left,
                                           )),
                                     ),
 
                                     SliverToBoxAdapter(
                                       child: Container(
-                                          margin:
-                                              EdgeInsets.symmetric(vertical: 5),
+                                          margin: EdgeInsets.symmetric(vertical: 5),
                                           width: double.infinity,
                                           child: Text(
                                             'Current Status = ${state.order.status}',
-                                            style:
-                                                TextStyle(color: Colors.grey),
+                                            style: TextStyle(color: Colors.grey),
                                             textAlign: TextAlign.left,
                                           )),
                                     ),
@@ -244,10 +222,8 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                       child: state.order.patients!.length > 0
                                           ? ListView.builder(
                                               shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount:
-                                                  state.order.patients!.length,
+                                              physics: NeverScrollableScrollPhysics(),
+                                              itemCount: state.order.patients!.length,
                                               itemBuilder: (ctx, index) {
                                                 return GestureDetector(
                                                   onTap: () {
@@ -255,30 +231,20 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                         context: context,
                                                         builder: (ctx) {
                                                           return Container(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    10),
-                                                            width:
-                                                                double.infinity,
+                                                            padding: EdgeInsets.all(10),
+                                                            width: double.infinity,
                                                             height: 300,
                                                             child: Dialog(
                                                               child: Column(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
+                                                                mainAxisSize: MainAxisSize.min,
                                                                 children: [
                                                                   Container(
                                                                     // width: double
                                                                     //     .infinity,
                                                                     // height: 300,
                                                                     child: Wrap(
-                                                                      children: state
-                                                                          .order
-                                                                          .patients![
-                                                                              index]
-                                                                          .specimens!
-                                                                          .map((e) =>
-                                                                              Container(
+                                                                      children: state.order.patients![index].specimens!
+                                                                          .map((e) => Container(
                                                                                 width: 120,
                                                                                 height: 80,
                                                                                 margin: EdgeInsets.all(10),
@@ -308,13 +274,10 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                                     height: 10,
                                                                   ),
                                                                   TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            ctx);
+                                                                      onPressed: () {
+                                                                        Navigator.pop(ctx);
                                                                       },
-                                                                      child: Text(
-                                                                          'OK')),
+                                                                      child: Text('OK')),
                                                                 ],
                                                               ),
                                                             ),
@@ -323,8 +286,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                   },
                                                   child: buildPatients(
                                                     context,
-                                                    state
-                                                        .order.patients![index],
+                                                    state.order.patients![index],
                                                     widget.orderId,
                                                     index,
                                                     false,
@@ -348,252 +310,161 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                         color: kPageBackground,
                                         child: InkWell(
                                           onTap: () async {
-                                            bool success =
-                                                await showModalBottomSheet(
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    isScrollControlled: true,
-                                                    context: context,
-                                                    builder: (ctx) {
-                                                      return StatefulBuilder(
-                                                          builder: (ctx, ss) {
-                                                        return SingleChildScrollView(
-                                                          child: Container(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                              bottom: MediaQuery.of(
-                                                                          context)
-                                                                      .viewInsets
-                                                                      .bottom +
-                                                                  20,
-                                                              top: 30,
-                                                              left: 20,
-                                                              right: 20,
-                                                            ),
-                                                            // padding: EdgeInsets.only(
+                                            bool success = await showModalBottomSheet(
+                                                backgroundColor: Colors.transparent,
+                                                isScrollControlled: true,
+                                                context: context,
+                                                builder: (ctx) {
+                                                  return StatefulBuilder(builder: (ctx, ss) {
+                                                    return SingleChildScrollView(
+                                                      child: Container(
+                                                        padding: EdgeInsets.only(
+                                                          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                                                          top: 30,
+                                                          left: 20,
+                                                          right: 20,
+                                                        ),
+                                                        // padding: EdgeInsets.only(
 
-                                                            //     bottom: 20),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                  30,
-                                                                ),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                  30,
+                                                        //     bottom: 20),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.only(
+                                                            topLeft: Radius.circular(
+                                                              30,
+                                                            ),
+                                                            topRight: Radius.circular(
+                                                              30,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Container(
+                                                              width: double.infinity,
+                                                              child: Text(
+                                                                'Accept Order',
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(
+                                                                  fontSize: 32,
+                                                                  fontWeight: FontWeight.bold,
                                                                 ),
                                                               ),
                                                             ),
-                                                            child: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Container(
-                                                                  width: double
-                                                                      .infinity,
+                                                            SizedBox(
+                                                              height: 30,
+                                                            ),
+                                                            GestureDetector(
+                                                                onTap: () {
+                                                                  DatePicker.showDatePicker(
+                                                                    context,
+                                                                    minTime: DateTime.now(),
+                                                                    onConfirm: (t) {
+                                                                      int day = t.day;
+                                                                      int month = t.month;
+                                                                      int year = t.year;
+                                                                      ss(() {});
+                                                                      setState(() {
+                                                                        date = '$day-$month-$year';
+                                                                      });
+                                                                    },
+                                                                  );
+                                                                },
+                                                                child: Container(
+                                                                  width: double.infinity,
+                                                                  height: 54,
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.grey.withOpacity(0.3),
+                                                                    borderRadius: BorderRadius.circular(5),
+                                                                  ),
+                                                                  child: Center(
+                                                                    child: Container(
+                                                                      width: double.infinity,
+                                                                      padding: EdgeInsets.only(left: 20),
+                                                                      child: Text(
+                                                                        date ?? 'Please Select Date',
+                                                                        style: TextStyle(color: Colors.black87.withOpacity(0.8), fontSize: 15),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                )),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            GestureDetector(
+                                                                onTap: () {
+                                                                  DatePicker.showTimePicker(
+                                                                    context,
+                                                                    currentTime: DateTime.now(),
+                                                                    onConfirm: (t) {
+                                                                      int hour = t.hour;
+                                                                      int minutes = t.minute;
+                                                                      ss(() {});
+                                                                      setState(() {
+                                                                        time = '$hour:$minutes';
+                                                                      });
+                                                                    },
+                                                                  );
+                                                                },
+                                                                child: Container(
+                                                                  width: double.infinity,
+                                                                  height: 54,
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.grey.withOpacity(0.3),
+                                                                    borderRadius: BorderRadius.circular(5),
+                                                                  ),
+                                                                  child: Center(
+                                                                    child: Container(
+                                                                      width: double.infinity,
+                                                                      padding: EdgeInsets.only(left: 20),
+                                                                      child: Text(
+                                                                        time ?? 'Please Select Time',
+                                                                        style: TextStyle(color: Colors.black87.withOpacity(0.8), fontSize: 15),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                )),
+                                                            SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                if (date != null && time != null) {
+                                                                  Navigator.pop(ctx, true);
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                  color: kColorsOrangeDark,
+                                                                ),
+                                                                height: 62,
+                                                                // margin: EdgeInsets.all(20),
+                                                                child: Center(
                                                                   child: Text(
                                                                     'Accept Order',
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          32,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                    ),
+                                                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                                                                   ),
                                                                 ),
-                                                                SizedBox(
-                                                                  height: 30,
-                                                                ),
-                                                                GestureDetector(
-                                                                    onTap: () {
-                                                                      DatePicker
-                                                                          .showDatePicker(
-                                                                        context,
-                                                                        minTime:
-                                                                            DateTime.now(),
-                                                                        onConfirm:
-                                                                            (t) {
-                                                                          int day =
-                                                                              t.day;
-                                                                          int month =
-                                                                              t.month;
-                                                                          int year =
-                                                                              t.year;
-                                                                          ss(() {});
-                                                                          setState(
-                                                                              () {
-                                                                            date =
-                                                                                '$day-$month-$year';
-                                                                          });
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      width: double
-                                                                          .infinity,
-                                                                      height:
-                                                                          54,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Colors
-                                                                            .grey
-                                                                            .withOpacity(0.3),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5),
-                                                                      ),
-                                                                      child:
-                                                                          Center(
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              double.infinity,
-                                                                          padding:
-                                                                              EdgeInsets.only(left: 20),
-                                                                          child:
-                                                                              Text(
-                                                                            date ??
-                                                                                'Please Select Date',
-                                                                            style:
-                                                                                TextStyle(color: Colors.black87.withOpacity(0.8), fontSize: 15),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    )),
-                                                                SizedBox(
-                                                                  height: 10,
-                                                                ),
-                                                                GestureDetector(
-                                                                    onTap: () {
-                                                                      DatePicker
-                                                                          .showTimePicker(
-                                                                        context,
-                                                                        currentTime:
-                                                                            DateTime.now(),
-                                                                        onConfirm:
-                                                                            (t) {
-                                                                          int hour =
-                                                                              t.hour;
-                                                                          int minutes =
-                                                                              t.minute;
-                                                                          ss(() {});
-                                                                          setState(
-                                                                              () {
-                                                                            time =
-                                                                                '$hour:$minutes';
-                                                                          });
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      width: double
-                                                                          .infinity,
-                                                                      height:
-                                                                          54,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Colors
-                                                                            .grey
-                                                                            .withOpacity(0.3),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5),
-                                                                      ),
-                                                                      child:
-                                                                          Center(
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              double.infinity,
-                                                                          padding:
-                                                                              EdgeInsets.only(left: 20),
-                                                                          child:
-                                                                              Text(
-                                                                            time ??
-                                                                                'Please Select Time',
-                                                                            style:
-                                                                                TextStyle(color: Colors.black87.withOpacity(0.8), fontSize: 15),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    )),
-                                                                SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    if (date !=
-                                                                            null &&
-                                                                        time !=
-                                                                            null) {
-                                                                      Navigator.pop(
-                                                                          ctx,
-                                                                          true);
-                                                                    }
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10),
-                                                                      color:
-                                                                          kColorsOrangeDark,
-                                                                    ),
-                                                                    height: 62,
-                                                                    // margin: EdgeInsets.all(20),
-                                                                    child:
-                                                                        Center(
-                                                                      child:
-                                                                          Text(
-                                                                        'Accept Order',
-                                                                        style: TextStyle(
-                                                                            fontWeight: FontWeight
-                                                                                .bold,
-                                                                            fontSize:
-                                                                                20,
-                                                                            color:
-                                                                                Colors.white),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                        );
-                                                      });
-                                                    });
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  });
+                                                });
 
                                             if (success == true) {
-                                              ordersBloc.add(AcceptOrderCourier(
-                                                  state.order,
-                                                  time ?? '',
-                                                  date ?? ''));
+                                              ordersBloc.add(AcceptOrderCourier(state.order, time ?? '', date ?? ''));
                                             }
                                           },
-                                          borderRadius:
-                                              BorderRadius.circular(37),
+                                          borderRadius: BorderRadius.circular(37),
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                              borderRadius: BorderRadius.circular(10),
                                               color: kColorsOrangeDark,
                                             ),
                                             height: 62,
@@ -601,10 +472,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                             child: Center(
                                               child: Text(
                                                 'Accept Order',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
-                                                    color: Colors.white),
+                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                                               ),
                                             ),
                                           ),
@@ -612,8 +480,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                       ),
                                     )
                                   : Container(),
-                              state.order.status == 'Picked Up' &&
-                                      !state.order.notified_arrival
+                              state.order.status == 'Picked Up' && !state.order.notified_arrival
                                   ? Positioned(
                                       bottom: 0,
                                       left: 10,
@@ -627,42 +494,30 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                               onTap: () async {
                                                 print('Notifying Arrival');
 
-                                                bool success = await OrderBloc
-                                                    .approveArrivalFromCourier(
-                                                        state.order);
+                                                bool success = await OrderBloc.approveArrivalFromCourier(state.order);
                                                 if (success) {
                                                   ScaffoldMessenger.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                          content: Text(
-                                                              'Notified Arrivel to Test Center!')));
-                                                  await Future.delayed(
-                                                      Duration(seconds: 1));
+                                                      .showSnackBar(SnackBar(content: Text('Notified Arrivel to Test Center!')));
+                                                  await Future.delayed(Duration(seconds: 1));
 
-                                                  ordersBloc.add(
-                                                      LoadSingleOrder(
-                                                          orderId:
-                                                              widget.orderId));
+                                                  ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
 
                                                   setState(() {
                                                     notifiyingArrival = false;
                                                   });
                                                 } else {
                                                   ScaffoldMessenger.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                          content: Text(
-                                                              'Error Notifiying Test Center!')));
+                                                      .showSnackBar(SnackBar(content: Text('Error Notifiying Test Center!')));
 
                                                   setState(() {
                                                     notifiyingArrival = false;
                                                   });
                                                 }
                                               },
-                                              borderRadius:
-                                                  BorderRadius.circular(37),
+                                              borderRadius: BorderRadius.circular(37),
                                               child: Container(
                                                 decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
+                                                  borderRadius: BorderRadius.circular(10),
                                                   color: kColorsOrangeDark,
                                                 ),
                                                 height: 62,
@@ -671,8 +526,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                   child: Text(
                                                     'Notify Arrival',
                                                     style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      fontWeight: FontWeight.bold,
                                                       fontSize: 20,
                                                       color: Colors.white,
                                                     ),
@@ -687,15 +541,10 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                   : Container(),
                               state.order.status == 'Confirmed'
                                   ? ValueListenableBuilder(
-                                      valueListenable:
-                                          Hive.box('notified_orders')
-                                              .listenable(),
-                                      builder:
-                                          (BuildContext context, Box box, _) {
-                                        debugPrint(
-                                            '${box.values.contains(state.order.orderId)}');
-                                        return !box.values
-                                                .contains(state.order.orderId)
+                                      valueListenable: Hive.box('notified_orders').listenable(),
+                                      builder: (BuildContext context, Box box, _) {
+                                        debugPrint('${box.values.contains(state.order.orderId)}');
+                                        return !box.values.contains(state.order.orderId)
                                             ? Positioned(
                                                 bottom: 0,
                                                 left: 10,
@@ -709,98 +558,63 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                         notifyingArrival = true;
                                                       });
 
-                                                      Box notified_box =
-                                                          Hive.box(
-                                                              'notified_orders');
-                                                      debugPrint(
-                                                          'Before ${notified_box.values.length}');
+                                                      Box notified_box = Hive.box('notified_orders');
+                                                      debugPrint('Before ${notified_box.values.length}');
 
-                                                      await notified_box.add(
-                                                          state.order.orderId);
+                                                      await notified_box.add(state.order.orderId);
 
-                                                      debugPrint(
-                                                          'After ${notified_box.values.length}');
+                                                      debugPrint('After ${notified_box.values.length}');
 
                                                       if (!(await isConnectedToTheInternet())) {
                                                         await sendSMS(
                                                           context: context,
-                                                          to: '0931057901',
+                                                          to: '0941998907',
                                                           payload: {
-                                                            'oid': state
-                                                                .order.orderId,
+                                                            'oid': state.order.orderId,
                                                           },
-                                                          action:
-                                                              COURIER_NOTIFY_ARRIVAL_SENDER,
+                                                          action: COURIER_NOTIFY_ARRIVAL_SENDER,
                                                         );
                                                         setState(() {
-                                                          notifiyingArrival =
-                                                              false;
+                                                          notifiyingArrival = false;
                                                         });
 
                                                         return;
                                                       }
-                                                      bool success =
-                                                          await addNotification(
+                                                      bool success = await addNotification(
                                                         orderId: widget.orderId,
                                                         courierContent:
                                                             'You have notified arrival at ${state.order.sender_name} to transport specimen to ${state.order.tester_name}.',
                                                         senderContent:
                                                             'Courier ${state.order.courier_name} is at your place to collect specimen to ${state.order.tester_name}.',
-                                                        testerContent:
-                                                            'Courier is at ${state.order.sender_name} to bring specimen to you.',
-                                                        content:
-                                                            'Courier Reached at health facility to collect order!',
-                                                        courierAction:
-                                                            NotificationAction
-                                                                .NavigateToOrderDetalCourier,
-                                                        testerAction:
-                                                            NotificationAction
-                                                                .NavigateToOrderDetalTester,
-                                                        senderAction:
-                                                            NotificationAction
-                                                                .NavigateToOrderDetalSender,
-                                                        payload: {
-                                                          'orderId':
-                                                              widget.orderId
-                                                        },
+                                                        testerContent: 'Courier is at ${state.order.sender_name} to bring specimen to you.',
+                                                        content: 'Courier Reached at health facility to collect order!',
+                                                        courierAction: NotificationAction.NavigateToOrderDetalCourier,
+                                                        testerAction: NotificationAction.NavigateToOrderDetalTester,
+                                                        senderAction: NotificationAction.NavigateToOrderDetalSender,
+                                                        payload: {'orderId': widget.orderId},
                                                       );
 
                                                       setState(() {
-                                                        notifiyingArrival =
-                                                            false;
+                                                        notifiyingArrival = false;
                                                       });
 
                                                       if (success) {
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(SnackBar(
-                                                                content: Text(
-                                                                    'Sent notification to health facility!')));
+                                                        ScaffoldMessenger.of(context)
+                                                            .showSnackBar(SnackBar(content: Text('Sent notification to health facility!')));
                                                       }
                                                     },
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            37),
+                                                    borderRadius: BorderRadius.circular(37),
                                                     child: Container(
                                                       decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        color:
-                                                            kColorsOrangeDark,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        color: kColorsOrangeDark,
                                                       ),
                                                       height: 62,
                                                       // margin: EdgeInsets.all(20),
                                                       child: Center(
                                                         child: Text(
                                                           'Notify Arrival At Health Facility',
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 20,
-                                                              color:
-                                                                  Colors.white),
+                                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
                                                         ),
                                                       ),
                                                     ),
@@ -823,9 +637,7 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
     });
   }
 
-  Container buildPatients(
-      BuildContext context, Patient patient, String orderId, int index,
-      [bool isFromCourier = false]) {
+  Container buildPatients(BuildContext context, Patient patient, String orderId, int index, [bool isFromCourier = false]) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
