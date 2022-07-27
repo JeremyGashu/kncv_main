@@ -396,8 +396,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                               if (create == true && order.patients![index].specimens![i].type == 'Sputum') {
                                 order.patients![index].specimens![i].assessed = true;
                                 order.patients![index].specimens![i].rejected = 'Mucoid Purulent' != sputumCondition;
-                                // order.patients![index].specimens![i].specimenCondition = sputumCondition ?? '';
-                                // order.patients![index].specimens![i].transportMode = inColdChain ?? '';
+                                order.patients![index].specimens![i].specimenCondition = sputumCondition ?? '';
+                                order.patients![index].specimens![i].transportMode = inColdChain ?? '';
                                 order.patients![index].specimens![i].reason = 'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
 
                                 setState(() {
@@ -442,8 +442,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                               } else if (create == true && order.patients![index].specimens![i].type == 'Stool') {
                                 order.patients![index].specimens![i].assessed = true;
                                 order.patients![index].specimens![i].rejected = 'Formed' != stoolCondition;
-                                // order.patients![index].specimens![i].specimenCondition = stoolCondition ?? '';
-                                // order.patients![index].specimens![i].transportMode = inColdChain ?? '';
+                                order.patients![index].specimens![i].specimenCondition = stoolCondition ?? '';
+                                order.patients![index].specimens![i].transportMode = inColdChain ?? '';
                                 order.patients![index].specimens![i].reason = 'Stool Specimen is in $stoolCondition type. Not in Formed State!';
 
                                 setState(() {

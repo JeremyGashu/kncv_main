@@ -350,8 +350,8 @@ class Specimen {
       this.reason,
       this.testResult,
       this.testResultAddedAt,
-      // this.specimenCondition,
-      // this.transportMode,
+      this.specimenCondition,
+      this.transportMode,
       });
 
   @HiveField(0)
@@ -370,10 +370,10 @@ class Specimen {
   TestResult? testResult;
   @HiveField(7)
   DateTime? testResultAddedAt;
-  // @HiveField(8)
-  // String? specimenCondition;
-  // @HiveField(9)
-  // String? transportMode;
+  @HiveField(8)
+  String? specimenCondition;
+  @HiveField(9)
+  String? transportMode;
 
   factory Specimen.fromJson(Map<String, dynamic> json) {
     // Timestamp? timestamp = json['testResultAddedAt'];
@@ -388,8 +388,8 @@ class Specimen {
         assessed: json['assessed'] ?? false,
         rejected: json['rejected'] ?? false,
         testResultAddedAt: json["testResultAddedAt"] == null ? null : DateTime.parse(json["testResultAddedAt"]),
-        // specimenCondition: json["specimenCondition"],
-        // transportMode: json["transportMode"]
+        specimenCondition: json["specimenCondition"],
+        transportMode: json["transportMode"]
         );
   }
 
@@ -402,8 +402,8 @@ class Specimen {
         'result': testResult?.toJson(),
         'reason': reason,
         'testResultAddedAt': testResultAddedAt?.toIso8601String(),
-        // 'specimenCondition': specimenCondition,
-        // 'transportMode': transportMode
+        'specimenCondition': specimenCondition,
+        'transportMode': transportMode
       };
 }
 

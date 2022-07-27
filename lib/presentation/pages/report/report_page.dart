@@ -131,6 +131,8 @@ class _ReportScreenState extends State<ReportScreen> {
     sheet.getRangeByName('V1').setText('MTB Result');
     sheet.getRangeByName('W1').setText('RR Result');
     sheet.getRangeByName('X1').setText('Lab Registration Number');
+    sheet.getRangeByName('Y1').setText('Specimen Condition');
+    sheet.getRangeByName('Z1').setText('Transport Mode');
 
     List<Map<String, dynamic>> finalData = getDataForSpecimenReferralReport(reportsData);
     for (int i = 0; i < finalData.length; i++) {
@@ -158,6 +160,11 @@ class _ReportScreenState extends State<ReportScreen> {
       sheet.getRangeByName('V${i + 2}').setText(finalData[i]['mtb_result'].toString());
       sheet.getRangeByName('W${i + 2}').setText(finalData[i]['result_rr'].toString());
       sheet.getRangeByName('X${i + 2}').setText(finalData[i]['lab_registration_number'].toString());
+      //!
+      /
+      sheet.getRangeByName('Y${i + 2}').setText(finalData[i]['lab_registration_number'].toString());
+      sheet.getRangeByName('Z${i + 2}').setText(finalData[i]['lab_registration_number'].toString());
+
       //TODO: add the remaining column data
 
     }
