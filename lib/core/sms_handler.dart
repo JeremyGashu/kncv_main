@@ -128,34 +128,38 @@ Future sendSmsViaListenerToEndUser({BuildContext? context, required String to, r
     return true;
   }
 
-  bool? granted = await Telephony.instance.requestSmsPermissions;
-  if (granted == true) {
-    await Telephony.instance.sendSms(
-      to: '0941998907',
-      message: jsonEncode(
-        {
-          'action': SEND_SMS_TO_LISTENER,
-          'payload': payload,
-          'notify_action': action,
-          'to': to,
-        },
-      ),
-      isMultipart: true,
-      statusListener: (SendStatus status) {
-        if (context != null) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sending SMS...!')));
-          if (status == SendStatus.SENT) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('SMS is Sent!')));
-          } else if (status == SendStatus.DELIVERED) {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('SMS is Delivered!')));
+  try {
+    bool? granted = await Telephony.instance.requestSmsPermissions;
+    if (granted == true) {
+      await Telephony.instance.sendSms(
+        to: '0941998907',
+        message: jsonEncode(
+          {
+            'action': SEND_SMS_TO_LISTENER,
+            'payload': payload,
+            'notify_action': action,
+            'to': to,
+          },
+        ),
+        isMultipart: true,
+        statusListener: (SendStatus status) {
+          if (context != null) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sending SMS...!')));
+            if (status == SendStatus.SENT) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('SMS is Sent!')));
+            } else if (status == SendStatus.DELIVERED) {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('SMS is Delivered!')));
+            }
           }
-        }
-      },
-    );
-  } else {
-    if (context != null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please grant permissin to send SMS!')));
+        },
+      );
+    } else {
+      if (context != null) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please grant permissin to send SMS!')));
+      }
     }
+  } catch (e) {
+    print(e);
   }
 }

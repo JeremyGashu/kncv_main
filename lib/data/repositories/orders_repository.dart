@@ -750,63 +750,86 @@ class OrderRepository {
   }
 
   Future<bool> acceptOrder(String? orderId, String? time, String? date) async {
-    bool internetAvailable = await isConnectedToTheInternet();
-    Box<Order> ordersBox = Hive.box<Order>('orders');
+    try {
+      bool internetAvailable = await isConnectedToTheInternet();
+      Box<Order> ordersBox = Hive.box<Order>('orders');
+      print('1');
 
-    if (internetAvailable) {
-      var orderRef = database.collection('orders').doc(orderId);
-      var order = await orderRef.get();
-      if (order.exists && order.data()!['status'] == 'Waiting for Confirmation') {
-        await orderRef.update({'status': 'Confirmed', 'will_reach_at': '$date-$time', 'order_confirmed': DateTime.now()});
+      if (internetAvailable) {
+        print('2');
 
-        Order o = Order.fromJson(order.data()!);
+        // Waiting for Confirmation
+        var orderRef = database.collection('orders').doc(orderId);
+        var order = await orderRef.get();
+        print('3');
 
-        //RESPONSE ORDER_ACCEPTED
-        await sendSmsViaListenerToEndUser(
-          to: o.sender_phone ?? '',
-          payload: {'oid': orderId, 'response': true},
-          action: ORDER_ACCEPTED,
-        );
+        if (order.exists && order.data()!['status'] == 'Waiting for Confirmation') {
+          print('4');
 
-        //RESPONSE ORDER_ACCEPTED
-        await sendSmsViaListenerToEndUser(
-          to: o.tester_phone ?? '',
-          payload: {'oid': orderId, 'response': true},
-          action: ORDER_ACCEPTED,
-        );
+          await orderRef.update({'status': 'Confirmed', 'will_reach_at': '$date-$time', 'order_confirmed': DateTime.now()});
 
-        sendCustomSMS(to: o.sender_phone ?? '', body: 'One order got accepted. The selected courier\'s will notify you when they get at your place.');
+          print('5');
 
-        return true;
+          Order o = Order.fromJson(order.data()!);
+
+          print('5.5');
+
+          //RESPONSE ORDER_ACCEPTED
+          await sendSmsViaListenerToEndUser(
+            to: o.sender_phone ?? '',
+            payload: {'oid': orderId, 'response': true},
+            action: ORDER_ACCEPTED,
+          );
+
+          print('6');
+
+          //RESPONSE ORDER_ACCEPTED
+          await sendSmsViaListenerToEndUser(
+            to: o.tester_phone ?? '',
+            payload: {'oid': orderId, 'response': true},
+            action: ORDER_ACCEPTED,
+          );
+
+          print('7');
+
+          sendCustomSMS(to: o.sender_phone ?? '', body: 'One order got accepted. The selected courier\'s will notify you when they get at your place.');
+
+          print('8');
+
+          return true;
+        } else {
+          return false;
+        }
       } else {
+        List<Order> orders = await ordersBox.values.toList();
+        Order order = orders.firstWhere((element) => element.orderId == orderId);
+        if (order.status == 'Waiting for Confirmation') {
+          orders.removeWhere((element) => element.orderId == orderId);
+          order.status = 'Confirmed';
+          orders.add(order);
+          await ordersBox.clear();
+          await ordersBox.addAll(orders);
+          await sendSMS(
+              to: '0941998907',
+              payload: {
+                'oid': orderId,
+                'date': date ?? '',
+                'time': time ?? '',
+              },
+              action: COURIER_ACCEPT_ORDER);
+
+          return true;
+        }
         return false;
       }
-    } else {
-      List<Order> orders = await ordersBox.values.toList();
-      Order order = orders.firstWhere((element) => element.orderId == orderId);
-      if (order.status == 'Waiting for Confirmation') {
-        orders.removeWhere((element) => element.orderId == orderId);
-        order.status = 'Confirmed';
-        orders.add(order);
-        await ordersBox.clear();
-        await ordersBox.addAll(orders);
-        await sendSMS(
-            to: '0941998907',
-            payload: {
-              'oid': orderId,
-              'date': date ?? '',
-              'time': time ?? '',
-            },
-            action: COURIER_ACCEPT_ORDER);
 
-        return true;
-      }
-      return false;
-    }
-
-    /*
+      /*
 
     */
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   Future<bool> approveArrival(String? orderId, String receiver) async {

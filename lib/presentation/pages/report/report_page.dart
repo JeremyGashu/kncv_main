@@ -160,13 +160,8 @@ class _ReportScreenState extends State<ReportScreen> {
       sheet.getRangeByName('V${i + 2}').setText(finalData[i]['mtb_result'].toString());
       sheet.getRangeByName('W${i + 2}').setText(finalData[i]['result_rr'].toString());
       sheet.getRangeByName('X${i + 2}').setText(finalData[i]['lab_registration_number'].toString());
-      //!
-      /
-      sheet.getRangeByName('Y${i + 2}').setText(finalData[i]['lab_registration_number'].toString());
-      sheet.getRangeByName('Z${i + 2}').setText(finalData[i]['lab_registration_number'].toString());
-
-      //TODO: add the remaining column data
-
+      sheet.getRangeByName('Y${i + 2}').setText(finalData[i]['specimenCondition'].toString());
+      sheet.getRangeByName('Z${i + 2}').setText(finalData[i]['transportMode'].toString());
     }
     final List<int> bytes = workbook.saveAsStream();
     String date = DateTime.now().toString();
@@ -1090,6 +1085,8 @@ class _ReportScreenState extends State<ReportScreen> {
                                                           DataColumn(label: Text("MTB Result")),
                                                           DataColumn(label: Text("RR Result")),
                                                           DataColumn(label: Text("Lab Registration Number")),
+                                                          DataColumn(label: Text("Specimen Condition")),
+                                                          DataColumn(label: Text("Transport Mode")),
                                                         ],
                                                         rows: getSpecimenReferalReport(selectedFilter == 'All' ? reports : filteredReports),
                                                       ),
@@ -1273,8 +1270,8 @@ List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dyn
           patientInformation['mtb_result'] = getSpecimenMtbResult(specimen);
           patientInformation['result_rr'] = getSpecimenRrResult(specimen);
           patientInformation['lab_registration_number'] = getSpecimenLabRegistrationNum(specimen);
-
-          //TODO: add remaining columns
+          patientInformation['specimenCondition'] = specimen['specimenCondition'] != null ? specimen['specimenCondition'] : 'N/A';
+          patientInformation['transportMode'] = specimen['transportMode'] != null ? specimen['transportMode'] : 'N/A';
 
           finalData.add(patientInformation);
           patientInformation = {};
@@ -1315,6 +1312,8 @@ List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
         DataCell(Text(data['mtb_result'].toString())),
         DataCell(Text(data['result_rr'].toString())),
         DataCell(Text(data['lab_registration_number'].toString())),
+        DataCell(Text(data['specimenCondition'].toString())),
+        DataCell(Text(data['transportMode'].toString())),
       ],
     );
   }).toList();
