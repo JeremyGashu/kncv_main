@@ -12,7 +12,7 @@ class LocationsRepository {
     Box<Region> regionBox = Hive.box<Region>('regions');
     bool internetIsAvailable = await isConnectedToTheInternet();
     if (internetIsAvailable) {
-      debugPrint('Regions from internet');
+      // debugPrint('Regions from internet');
       var regionsCollection = await database.collection('regions');
       var collectionsData = await regionsCollection.get();
       List<Region> regions = collectionsData.docs.map((e) {
@@ -23,7 +23,7 @@ class LocationsRepository {
 
       return regions;
     } else {
-      debugPrint('Regions from Cache');
+      // debugPrint('Regions from Cache');
 
       return regionBox.values.toList();
     }

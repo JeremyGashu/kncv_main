@@ -81,7 +81,7 @@ class OrderRepository {
     var usersData = await database.collection('users').where('user_id', isEqualTo: id).get();
     if (usersData.docs.length > 0) {
       Map<String, dynamic> userData = usersData.docs[0].data()['test_center'];
-      print('test center => ${userData}');
+      // print('test center => ${userData}');
       return userData;
     }
 
@@ -127,7 +127,7 @@ class OrderRepository {
       String? sender_name;
       String? sender_phone;
       var userData = await usersCollection.where('user_id', isEqualTo: sender_id).get();
-      debugPrint('Sender data from user id  ======== ${userData.docs.length}');
+      // debugPrint('Sender data from user id  ======== ${userData.docs.length}');
 
       if (userData.docs.length > 0) {
         sender_name = userData.docs[0].data()['institution']['name'];
@@ -695,10 +695,10 @@ class OrderRepository {
       var orderRef = database.collection('orders').doc(order.orderId);
       if (order.status == 'Draft') {
         await orderRef.update({'status': 'Waiting for Confirmation', 'order_placed': DateTime.now()});
-        print('************************order placed***************');
+        // print('************************order placed***************');
 
         order.status = 'Waiting for Confirmation';
-        debugPrint('please sms ${order.orderId}');
+        // debugPrint('please sms ${order.orderId}');
         try {
           //RESPONSE ORDER_PLACED
           await sendSmsViaListenerToEndUser(
@@ -753,26 +753,16 @@ class OrderRepository {
     try {
       bool internetAvailable = await isConnectedToTheInternet();
       Box<Order> ordersBox = Hive.box<Order>('orders');
-      print('1');
 
       if (internetAvailable) {
-        print('2');
-
         // Waiting for Confirmation
         var orderRef = database.collection('orders').doc(orderId);
         var order = await orderRef.get();
-        print('3');
 
         if (order.exists && order.data()!['status'] == 'Waiting for Confirmation') {
-          print('4');
-
           await orderRef.update({'status': 'Confirmed', 'will_reach_at': '$date-$time', 'order_confirmed': DateTime.now()});
 
-          print('5');
-
           Order o = Order.fromJson(order.data()!);
-
-          print('5.5');
 
           //RESPONSE ORDER_ACCEPTED
           await sendSmsViaListenerToEndUser(
@@ -781,8 +771,6 @@ class OrderRepository {
             action: ORDER_ACCEPTED,
           );
 
-          print('6');
-
           //RESPONSE ORDER_ACCEPTED
           await sendSmsViaListenerToEndUser(
             to: o.tester_phone ?? '',
@@ -790,11 +778,7 @@ class OrderRepository {
             action: ORDER_ACCEPTED,
           );
 
-          print('7');
-
           sendCustomSMS(to: o.sender_phone ?? '', body: 'One order got accepted. The selected courier\'s will notify you when they get at your place.');
-
-          print('8');
 
           return true;
         } else {

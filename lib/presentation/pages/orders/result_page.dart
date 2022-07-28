@@ -39,7 +39,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
 
   @override
   void initState() {
-    debugPrint('Selected specimen ${widget.specimen.id}');
+    // debugPrint('Selected specimen ${widget.specimen.id}');
 
     var d = DateTime.now();
     int month = d.month;
@@ -157,7 +157,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                             onPressed: () {
                                               setState(() {
                                                 editingResult = !editingResult;
-                                                print('plrase');
+                                                // print('plrase');
                                               });
                                             },
                                             icon: Icon(
@@ -289,7 +289,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                             onPressed: () {
                                               setState(() {
                                                 editingResult = !editingResult;
-                                                print('plrase');
+                                                // print('plrase');
                                               });
                                             },
                                             icon: Icon(
@@ -415,7 +415,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                         resultRR = null;
                                         quantity = null;
                                       }
-                                      print(val == 'MTB Not Detected');
+                                      // print(val == 'MTB Not Detected');
                                       mtbResult = val;
                                     });
                                   },
@@ -528,7 +528,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                 //     quantityController.value.text;
                                                 String registrationNumber = resitrationNumberController.value.text;
 
-                                                print('$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
+                                                // print('$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
                                                 TestResult result = TestResult(
                                                   labRegistratinNumber: registrationNumber,
                                                   resultDate: date,
@@ -584,7 +584,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                               onTap: () async {
                                                 String registrationNumber = resitrationNumberController.value.text;
 
-                                                print('$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
+                                                // print('$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
                                                 TestResult result = TestResult(
                                                   labRegistratinNumber: registrationNumber,
                                                   resultDate: date,

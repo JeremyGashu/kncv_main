@@ -21,7 +21,7 @@ backgrounMessageHandler(SmsMessage message) async {
   // print('After saving ${preferences.getStringList('messages')}');
 
   //send from background isolate
-  print('I have send $message from background isolate');
+  // print('I have send $message from background isolate');
   IsolateNameServer.lookupPortByName('main_port')?.send(message);
 }
 
@@ -35,21 +35,21 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
     SMSEvent event,
   ) async* {
     if (event is InitSMSListening) {
-      debugPrint('============Listening to SMS============');
+      // debugPrint('============Listening to SMS============');
       try {
         bool? permissionsGranted = await Telephony.instance.requestSmsPermissions;
         print('SMS Persmission => $permissionsGranted');
 
-        print('Saved messages ${await preferences.getString('messages')}');
+        // print('Saved messages ${await preferences.getString('messages')}');
 
         Telephony.instance.listenIncomingSms(
             onNewMessage: (SmsMessage message) {
-              debugPrint('Received message => ${message.body}');
+              // debugPrint('Received message => ${message.body}');
               updateDataOnSms(message);
             },
             onBackgroundMessage: backgrounMessageHandler);
 
-        print('Listening to SMS Entry');
+        // print('Listening to SMS Entry');
       } catch (e) {}
     } else if (event is UpdatingDatabaseEvent) {
       yield UpdatingDatabase();
@@ -75,12 +75,12 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
     add(UpdatingDatabaseEvent());
     try {
       var body = jsonDecode(message.body ?? "{\"action\" : \"-1\"}");
-      debugPrint('');
+      // debugPrint('');
       if (body['action'] == ORDER_PLACED) {
-        debugPrint('Create order ${body}');
+        // debugPrint('Create order ${body}');
         bool internetAvailable = await isConnectedToTheInternet();
         if (!internetAvailable) {
-          print('Listening to SMS Entry');
+          // print('Listening to SMS Entry');
           Order? order = Order.fromJsonSMS(body['payload']['o']);
           order.status = 'Waiting for Confirmation';
 
@@ -94,7 +94,7 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
       } else if (body['action'] == ORDER_ACCEPTED) {
         bool internetAvailable = await isConnectedToTheInternet();
         if (!internetAvailable) {
-          print('Listening to SMS Entry');
+          // print('Listening to SMS Entry');
           List<Order> orders = await ordersBox.values.toList();
           Order order = orders.firstWhere((element) => element.orderId == body['payload']['oid']);
           orders.removeWhere((element) => element.orderId == order.orderId);
@@ -107,7 +107,7 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
       } else if (body['action'] == SENDER_APPROVED_COURIER_DEPARTURE) {
         bool internetAvailable = await isConnectedToTheInternet();
         if (!internetAvailable) {
-          print('Listening to SMS Entry');
+          // print('Listening to SMS Entry');
           List<Order> orders = await ordersBox.values.toList();
           Order order = orders.firstWhere((element) => element.orderId == body['payload']['oid']);
           orders.removeWhere((element) => element.orderId == order.orderId);
@@ -120,7 +120,7 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
       } else if (body['action'] == TESTER_APPROVED_COURIER_ARRIVAL) {
         bool internetAvailable = await isConnectedToTheInternet();
         if (!internetAvailable) {
-          print('Listening to SMS Entry');
+          // print('Listening to SMS Entry');
           List<Order> orders = await ordersBox.values.toList();
           Order order = orders.firstWhere((element) => element.orderId == body['payload']['oid']);
           orders.removeWhere((element) => element.orderId == order.orderId);
@@ -131,7 +131,7 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
           add(UpdatedDatabaseEvent());
         }
       } else if (body['action'] == SPECIMEN_EDITED) {
-        print('Listening to SMS Entry');
+        // print('Listening to SMS Entry');
         List<Order> orders = await ordersBox.values.toList();
         Order order = orders.firstWhere((element) => element.orderId == body['payload']['oid']);
         orders.removeWhere((element) => element.orderId == order.orderId);

@@ -72,7 +72,7 @@ Future sendCustomSMS({BuildContext? context, required String to, required String
         },
       );
     } catch (e) {
-      print(e);
+      // print(e);
       if (context != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please grant permissin to send SMS!')));
       }
@@ -160,6 +160,6 @@ Future sendSmsViaListenerToEndUser({BuildContext? context, required String to, r
       }
     }
   } catch (e) {
-    print(e);
+    // print(e);
   }
 }

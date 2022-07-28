@@ -132,7 +132,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                           future: AuthRepository.currentUser(),
                           builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
-                              print('snapshot data:');
+                              // print('snapshot data:');
                               // print(snapshot.data['']);
                               return size.width < 191
                                   ? SizedBox.shrink()
@@ -218,7 +218,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                           itemBuilder: (context, index) {
                                             return GestureDetector(
                                                 onTap: () async {
-                                                  print('${state.orders[index].orderId}');
+                                                  // print('${state.orders[index].orderId}');
                                                   var load = await Navigator.pushNamed(context, OrderDetailTester.orderDetailTesterPageRouteName, arguments: state.orders[index].orderId);
                                                   if (load == true) {
                                                     orderBloc.add(LoadOrdersForTester());
@@ -245,8 +245,8 @@ int getUnseenNotificationsCount(QuerySnapshot? snapshot) {
 
   snapshot?.docs.forEach((e) {
     Map? d = e.data() as Map;
-    print('current user ${currentUser == d['user_id']}');
-    print('current user ${currentUser == d['user_id']}');
+    // print('current user ${currentUser == d['user_id']}');
+    // print('current user ${currentUser == d['user_id']}');
     if ((currentUser == d['user_id']) && (d['seen'] == false)) {
       counter++;
     }

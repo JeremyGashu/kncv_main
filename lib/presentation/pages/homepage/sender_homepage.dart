@@ -74,7 +74,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
               // ScaffoldMessenger.of(context)
               //     .showSnackBar(SnackBar(content: Text('Creating order...')));
             } else if (state is LaodedState) {
-              print(state.orders);
+              // print(state.orders);
             }
           },
           builder: (context, state) {
@@ -156,8 +156,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
                           future: AuthRepository.currentUser(),
                           builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
-                              print('snapshot data:');
-                              print(snapshot.data);
+                              // print('snapshot data:');
+                              // print(snapshot.data);
                               return size.width < 191
                                   ? SizedBox.shrink()
                                   : Text(
@@ -264,7 +264,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                           itemBuilder: (context, index) {
                                             return GestureDetector(
                                                 onTap: () async {
-                                                  print('${state.orders[index].orderId}');
+                                                  // print('${state.orders[index].orderId}');
                                                   var load = await Navigator.pushNamed(context, OrderDetailPage.orderDetailPageRouteName, arguments: state.orders[index].orderId);
                                                   if (load == true) {
                                                     orderBloc.add(LoadOrders());
@@ -371,8 +371,8 @@ int getUnseenNotificationsCount(QuerySnapshot? snapshot) {
 
   snapshot?.docs.forEach((e) {
     Map? d = e.data() as Map;
-    print('current user ${currentUser == d['user_id']}');
-    print('current user ${currentUser == d['user_id']}');
+    // print('current user ${currentUser == d['user_id']}');
+    // print('current user ${currentUser == d['user_id']}');
     if ((currentUser == d['user_id']) && (d['seen'] == false)) {
       counter++;
     }

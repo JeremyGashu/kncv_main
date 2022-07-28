@@ -612,8 +612,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                 ),
                                                 GestureDetector(
                                                     onTap: () {
-                                                      print(specimenType);
-                                                      print(specimenIdController.value.text);
+                                                      // print(specimenType);
+                                                      // print(specimenIdController.value.text);
                                                       if (specimenIdController.value.text == '' || specimenType == null || examinationType == null) {
                                                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter complete information')));
                                                         Navigator.pop(context);

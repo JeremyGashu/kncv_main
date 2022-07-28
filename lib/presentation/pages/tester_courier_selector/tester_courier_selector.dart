@@ -46,7 +46,7 @@ class _SelectorPageState extends State<SelectorPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TesterCourierBloc, TesterCourierStates>(listener: (ctx, state) {
-      print(state);
+      // print(state);
     }, builder: (context, state) {
       if (state is LoadedState) {
         return Column(
@@ -64,7 +64,7 @@ class _SelectorPageState extends State<SelectorPage> {
                       int year = t.year;
 
                       String d = '$day-$month-$year';
-                      print(d);
+                      // print(d);
                       setState(() {
                         date = d;
                         BlocProvider.of<TesterCourierBloc>(context).date = date;
@@ -189,7 +189,7 @@ class _SelectorPageState extends State<SelectorPage> {
             ),
             InkWell(
               onTap: () {
-                print('Popping');
+                // print('Popping');
                 if (BlocProvider.of<TesterCourierBloc>(context).tester != null && BlocProvider.of<TesterCourierBloc>(context).courier != null) {
                   Navigator.pop(context, true);
                 }

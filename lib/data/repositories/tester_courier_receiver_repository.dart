@@ -18,7 +18,7 @@ class TesterCourierRepository {
 
     bool internetAvailable = await isConnectedToTheInternet();
     if (internetAvailable) {
-      debugPrint('Courier and Test Centers From Internet');
+      // debugPrint('Courier and Test Centers From Internet');
 
       var usersCollection = await database.collection('users');
 
@@ -41,7 +41,7 @@ class TesterCourierRepository {
       }
       return data;
     } else {
-      debugPrint('Couriers and Test Centers From Cache');
+      // debugPrint('Couriers and Test Centers From Cache');
       List<Tester> testers = testerBox.values.toList();
       List<Courier> couriers = couriersBox.values.toList();
       data['couriers'] = couriers;

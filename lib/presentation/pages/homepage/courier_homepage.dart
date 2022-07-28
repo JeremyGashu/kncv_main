@@ -201,7 +201,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                             itemBuilder: (context, index) {
                                               return GestureDetector(
                                                   onTap: () async {
-                                                    print('${state.orders[index].orderId}');
+                                                    // print('${state.orders[index].orderId}');
                                                     var load = await Navigator.pushNamed(context, OrderDetailCourier.orderDetailCourierPageRouteName, arguments: state.orders[index].orderId);
                                                     if (load == true) {
                                                       orderBloc.add(LoadOrdersForCourier());
@@ -229,8 +229,8 @@ int getUnseenNotificationsCount(QuerySnapshot? snapshot) {
 
   snapshot?.docs.forEach((e) {
     Map? d = e.data() as Map;
-    print('current user ${currentUser == d['user_id']}');
-    print('current user ${currentUser == d['user_id']}');
+    // print('current user ${currentUser == d['user_id']}');
+    // print('current user ${currentUser == d['user_id']}');
     if ((currentUser == d['user_id']) && (d['seen'] == false)) {
       counter++;
     }

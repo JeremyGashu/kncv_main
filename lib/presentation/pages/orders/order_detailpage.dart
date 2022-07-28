@@ -206,7 +206,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                   // backgroundColor: kColorsOrangeLight,
                                                   // elevation: 0,
                                                   onPressed: () async {
-                                                    print('here');
+                                                    // print('here');
                                                     var create = await showModalBottomSheet(
                                                         backgroundColor: Colors.transparent,
                                                         isScrollControlled: true,
@@ -251,14 +251,14 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                           );
                                                         });
 
-                                                    print('create');
+                                                    // print('create');
                                                     if (create == true) {
                                                       Tester? tester = BlocProvider.of<TesterCourierBloc>(context).tester;
                                                       Courier? courier = BlocProvider.of<TesterCourierBloc>(context).courier;
                                                       String? date = BlocProvider.of<TesterCourierBloc>(context).date;
-                                                      print(tester?.name);
-                                                      print(courier?.name);
-                                                      print(date);
+                                                      // print(tester?.name);
+                                                      // print(courier?.name);
+                                                      // print(date);
                                                       ordersBloc.add(
                                                         EditOrder(
                                                           courier_id: courier!.id,
@@ -468,7 +468,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                               return;
                                             }
 
-                                            debugPrint('${Order.fromJsonSMS(state.order.toJsonSMS()).orderId}');
+                                            // debugPrint('${Order.fromJsonSMS(state.order.toJsonSMS()).orderId}');
 
                                             ordersBloc.add(PlaceOrder(order: state.order));
                                           },
@@ -811,8 +811,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                             );
                           });
 
-                      print(orderId);
-                      print('${patient.toJson()}');
+                      // print(orderId);
+                      // print('${patient.toJson()}');
                     },
                     child: Container(
                       width: 36,
@@ -835,9 +835,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      print(index);
-                      print(patient);
-                      print(orderId);
+                      // print(index);
+                      // print(patient);
+                      // print(orderId);
                       // if (!deletable) {
                       //             ScaffoldMessenger.of(context).showSnackBar(
                       //                 SnackBar(

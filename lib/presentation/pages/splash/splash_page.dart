@@ -45,7 +45,7 @@ class _SplashPageState extends State<SplashPage> {
             await Future.delayed(Duration(seconds: splashTime));
             Navigator.pushNamedAndRemoveUntil(context, IntroPageOne.introPageOneRouteName, (route) => false);
           } else if (state is AuthenticatedState) {
-            print('type => ${state.type}');
+            // print('type => ${state.type}');
             if (state.type == 'COURIER_ADMIN') {
               await Future.delayed(Duration(seconds: splashTime));
               Navigator.pushNamedAndRemoveUntil(context, CourierHomePage.courierHomePageRouteName, (route) => false);
@@ -188,14 +188,14 @@ class _SplashPageState extends State<SplashPage> {
       sound: true,
     );
     String? token = await messaging.getToken();
-    print("USER TOKEN:" + token!);
+    // print("USER TOKEN:" + token!);
 
     FirebaseMessaging.onMessage.listen((message) {
       //todo => use flutter local notification to show notification in the background
-      print('NOTIFICATION RECEIVED');
+      // print('NOTIFICATION RECEIVED');
       showNotification(message.notification?.title, message.notification?.body);
-      print('TITLE => ${message.notification?.title}');
-      print('TITLE => ${message.notification?.body}');
+      // print('TITLE => ${message.notification?.title}');
+      // print('TITLE => ${message.notification?.body}');
     });
   }
 }

@@ -105,7 +105,7 @@ Widget notificationCard(NotificationModel notificationModel) {
             ? GestureDetector(
                 onTap: () {
                   FirebaseFirestore.instance.collection('notifications').doc(notificationModel.id).update({'seen': true});
-                  print(notificationModel.id);
+                  // print(notificationModel.id);
                 },
                 child: Container(
                     width: 30,
