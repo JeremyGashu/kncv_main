@@ -1197,7 +1197,7 @@ int? getOrderTurnAroundTime(Map<String, dynamic> order, Map<String, dynamic> spe
     if (order['order_placed'] != null && specimen['testResultAddedAt'] != null) {
       orderPlaced = order['order_placed'].toDate();
       resultPlacementDate = DateTime.parse(specimen['testResultAddedAt']);
-      if ((orderPlaced != null && orderPlaced.runtimeType == DateTime) && (resultPlacementDate != null && resultPlacementDate.runtimeType == DateTime)) {
+      if ((orderPlaced != null && orderPlaced.runtimeType == DateTime) && (resultPlacementDate.runtimeType == DateTime)) {
         time = resultPlacementDate.difference(orderPlaced).inMinutes;
       }
     }

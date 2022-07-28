@@ -15,7 +15,6 @@ import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_event.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_event.dart';
-import 'package:kncv_flutter/presentation/pages/intros/intro_page_one.dart';
 import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
 import 'package:kncv_flutter/service_locator.dart';
 import 'package:kncv_flutter/simple_bloc_observer.dart';

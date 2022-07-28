@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kncv_flutter/core/hear_beat.dart';
 import 'package:kncv_flutter/core/message_codes.dart';
@@ -348,14 +347,54 @@ class OrderRepository {
   }
 
   static Future<bool> editSpecimenFeedback({required Order order, required Patient patient, required int index}) async {
-    bool internetAvailable = await isConnectedToTheInternet();
-    Box<Order> ordersBox = Hive.box<Order>('orders');
+    try {
+      bool internetAvailable = await isConnectedToTheInternet();
+      Box<Order> ordersBox = Hive.box<Order>('orders');
 
-    if (internetAvailable) {
-      var orderRef = await FirebaseFirestore.instance.collection('orders').doc(order.orderId);
-      var or = await orderRef.get();
-      if (or.exists) {
-        List patientsList = or.data()?['patients'];
+      if (internetAvailable) {
+        var orderRef = await FirebaseFirestore.instance.collection('orders').doc(order.orderId);
+        var or = await orderRef.get();
+        if (or.exists) {
+          List patientsList = or.data()?['patients'];
+          bool finishedAssessingPatient = true;
+          patient.specimens?.forEach((specimen) {
+            if (!specimen.assessed) {
+              finishedAssessingPatient = false;
+            }
+          });
+
+          if (finishedAssessingPatient) {
+            patient.status = 'Inspected';
+          }
+
+          patientsList[index] = patient.toJson();
+
+          bool assessed = allSpecimensAssessed(order);
+          await orderRef.update({
+            'patients': patientsList,
+            'status': assessed ? 'Received' : 'Delivered',
+          });
+
+          //RESPONSE SPECIMEN_EDITED
+          await sendSmsViaListenerToEndUser(
+            to: order.sender_phone ?? '',
+            payload: {
+              'oid': order.orderId,
+              'p': patient.toJsonSMS(),
+              'i': index,
+            },
+            action: SPECIMEN_EDITED,
+          );
+
+          return true;
+        }
+        return false;
+      } else {
+        List<Order> orders = await ordersBox.values.toList();
+        Order order = orders.firstWhere((order) => order.orderId == order.orderId);
+        orders.removeWhere((order) => order.orderId == order.orderId);
+
+        List<Patient>? patientsList = order.patients;
         bool finishedAssessingPatient = true;
         patient.specimens?.forEach((specimen) {
           if (!specimen.assessed) {
@@ -367,68 +406,33 @@ class OrderRepository {
           patient.status = 'Inspected';
         }
 
-        patientsList[index] = patient.toJson();
+        patientsList?[index] = patient;
 
         bool assessed = allSpecimensAssessed(order);
-        await orderRef.update({
-          'patients': patientsList,
-          'status': assessed ? 'Received' : 'Delivered',
-        });
 
-        //RESPONSE SPECIMEN_EDITED
-        await sendSmsViaListenerToEndUser(
-          to: order.sender_phone ?? '',
+        order.status = assessed ? 'Received' : 'Delivered';
+        order.patients = patientsList;
+
+        order.patients?[index] = patient;
+        orders.add(order);
+        await ordersBox.clear();
+        await ordersBox.addAll(orders);
+
+        await sendSMS(
+          to: '0941998907',
           payload: {
             'oid': order.orderId,
             'p': patient.toJsonSMS(),
             'i': index,
           },
-          action: SPECIMEN_EDITED,
+          action: EDIT_SPECIMEN_FEEDBACK,
         );
 
         return true;
       }
+    } catch (e) {
+      print(e);
       return false;
-    } else {
-      List<Order> orders = await ordersBox.values.toList();
-      Order order = orders.firstWhere((order) => order.orderId == order.orderId);
-      orders.removeWhere((order) => order.orderId == order.orderId);
-
-      List<Patient>? patientsList = order.patients;
-      bool finishedAssessingPatient = true;
-      patient.specimens?.forEach((specimen) {
-        if (!specimen.assessed) {
-          finishedAssessingPatient = false;
-        }
-      });
-
-      if (finishedAssessingPatient) {
-        patient.status = 'Inspected';
-      }
-
-      patientsList?[index] = patient;
-
-      bool assessed = allSpecimensAssessed(order);
-
-      order.status = assessed ? 'Received' : 'Delivered';
-      order.patients = patientsList;
-
-      order.patients?[index] = patient;
-      orders.add(order);
-      await ordersBox.clear();
-      await ordersBox.addAll(orders);
-
-      await sendSMS(
-        to: '0941998907',
-        payload: {
-          'oid': order.orderId,
-          'p': patient.toJsonSMS(),
-          'i': index,
-        },
-        action: EDIT_SPECIMEN_FEEDBACK,
-      );
-
-      return true;
     }
   }
 

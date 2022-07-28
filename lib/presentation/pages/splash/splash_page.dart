@@ -187,7 +187,7 @@ class _SplashPageState extends State<SplashPage> {
       provisional: false,
       sound: true,
     );
-    String? token = await messaging.getToken();
+    // String? token = await messaging.getToken();
     // print("USER TOKEN:" + token!);
 
     FirebaseMessaging.onMessage.listen((message) {

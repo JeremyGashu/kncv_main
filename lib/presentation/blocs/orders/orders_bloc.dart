@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kncv_flutter/core/hear_beat.dart';
@@ -22,12 +21,16 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
-      var orderRef = await FirebaseFirestore.instance.collection('orders').doc(order.orderId);
+      var orderRef = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(order.orderId);
       await orderRef.update({'notified_arrival': true});
       return await addNotification(
         orderId: order.orderId!,
-        courierContent: 'You notified the order arrival to ${order.tester_name} from ${order.sender_name}.',
-        testerContent: 'Courier arrived from ${order.sender_name} at your test center to deliver specimens.',
+        courierContent:
+            'You notified the order arrival to ${order.tester_name} from ${order.sender_name}.',
+        testerContent:
+            'Courier arrived from ${order.sender_name} at your test center to deliver specimens.',
         content: 'One order got accepted by courier!',
         sender: false,
         courierAction: NotificationAction.NavigateToOrderDetalCourier,
@@ -36,7 +39,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       );
     } else {
       List<Order> orders = await ordersBox.values.toList();
-      Order order = orders.firstWhere((order) => order.orderId == order.orderId);
+      Order order =
+          orders.firstWhere((order) => order.orderId == order.orderId);
       orders.removeWhere((order) => order.orderId == order.orderId);
 
       order.notified_arrival = true;
@@ -103,7 +107,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is ApproveArrivalCourier) {
       yield ApprovingArrivalCourier();
       try {
-        bool success = await orderRepository.approveArrival(event.order.orderId, event.receiver);
+        bool success = await orderRepository.approveArrival(
+            event.order.orderId, event.receiver);
         if (success) {
           yield ApprovedArrivalCourier(event.order);
         } else {
@@ -148,7 +153,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is DeleteOrders) {
       yield DeletingOrder();
       try {
-        var status = await orderRepository.deleteOrder(orderId: event.order.orderId ?? 'null');
+        var status = await orderRepository.deleteOrder(
+            orderId: event.order.orderId ?? 'null');
         if (status['success']) {
           yield DeletedOrder(event.order);
         } else {
@@ -160,7 +166,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is DeletePatient) {
       yield DeletingOrder();
       try {
-        bool success = await orderRepository.deletePatientInfo(orderId: event.orderId, index: event.index);
+        bool success = await orderRepository.deletePatientInfo(
+            orderId: event.orderId, index: event.index);
         if (success) {
           yield DeletedPatient();
         } else {
@@ -192,7 +199,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is LoadSingleOrder) {
       yield LoadingState();
       try {
-        Order? order = await orderRepository.loadSingleOrder(orderId: event.orderId);
+        Order? order =
+            await orderRepository.loadSingleOrder(orderId: event.orderId);
         if (order != null) {
           yield LoadedSingleOrder(order);
         } else {
@@ -207,7 +215,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is AddPatientToOrder) {
       yield AddingPatient();
       try {
-        await orderRepository.addPatient(orderId: event.orderId, patient: event.patient);
+        await orderRepository.addPatient(
+            orderId: event.orderId, patient: event.patient);
         yield AddedPatient();
       } catch (e) {
         print(e);
@@ -230,7 +239,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is EditPtientInfo) {
       yield EditingPatientState();
       try {
-        bool edited = await orderRepository.editPatientInfo(orderId: event.orderId, index: event.index, patient: event.patient);
+        bool edited = await orderRepository.editPatientInfo(
+            orderId: event.orderId, index: event.index, patient: event.patient);
         if (edited) {
           yield EditedPatientState();
         }
@@ -240,7 +250,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is AddTestResult) {
       yield AddingTestResult();
       try {
-        bool edited = await orderRepository.addTestResult(orderId: event.orderId, index: event.index, patient: event.patient);
+        bool edited = await orderRepository.addTestResult(
+            orderId: event.orderId, index: event.index, patient: event.patient);
         if (edited) {
           yield AddedTestResult(event.patient);
         }
@@ -251,7 +262,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
     } else if (event is EditTestResult) {
       yield EditingTestResult();
       try {
-        bool edited = await orderRepository.editTestResult(orderId: event.orderId, index: event.index, patient: event.patient);
+        bool edited = await orderRepository.editTestResult(
+            orderId: event.orderId, index: event.index, patient: event.patient);
         if (edited) {
           yield EditedTestResult(event.patient);
         }

@@ -1188,46 +1188,51 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       e.assessed = true;
                                       e.rejected = 'Mucoid Purulent' != sputumCondition;
                                       e.reason = 'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
+                                      // e.specimenCondition = sputumCondition ?? '';
 
                                       setState(() {
                                         sendingFeedback = true;
                                       });
 
-                                      bool success = await OrderRepository.editSpecimenFeedback(index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
+                                      try {
+                                        bool success = await OrderRepository.editSpecimenFeedback(index: widget.index, order: state.order, patient: state.order.patients![widget.index]);
 
-                                      if (success) {
-                                        addNotification(
-                                          orderId: state.order.orderId!,
-                                          testerContent: 'You Accepted Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent: '${state.order.patients![widget.index].name}\'s Sputum Specimen have accepted by ${state.order.tester_name}.',
-                                          content: 'One specimen got accepted by courier!',
-                                          courier: false,
-                                          testerAction: NotificationAction.NavigateToOrderDetalTester,
-                                          senderAction: NotificationAction.NavigateToOrderDetalSender,
-                                          payload: {'orderId': widget.orderId},
-                                        );
-                                        orderBloc.add(LoadSingleOrder(orderId: widget.orderId));
+                                        if (success) {
+                                          addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent: 'You Accepted Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent: '${state.order.patients![widget.index].name}\'s Sputum Specimen have accepted by ${state.order.tester_name}.',
+                                            content: 'One specimen got accepted by courier!',
+                                            courier: false,
+                                            testerAction: NotificationAction.NavigateToOrderDetalTester,
+                                            senderAction: NotificationAction.NavigateToOrderDetalSender,
+                                            payload: {'orderId': widget.orderId},
+                                          );
+                                          orderBloc.add(LoadSingleOrder(orderId: widget.orderId));
+                                        }
+
+                                        if ('Mucoid Purulent' != sputumCondition) {
+                                          addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent: 'You Rejected Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent: '${state.order.patients![widget.index].name}\'s Sputum Specimen have been rejected by ${state.order.tester_name}.',
+                                            content: 'One specimen got rejected by tester!',
+                                            courier: false,
+                                            testerAction: NotificationAction.NavigateToOrderDetalTester,
+                                            senderAction: NotificationAction.NavigateToOrderDetalSender,
+                                            payload: {'orderId': widget.orderId},
+                                          );
+                                        }
+
+                                        setState(() {
+                                          inColdChain = null;
+                                          stoolCondition = null;
+                                          sputumCondition = null;
+                                          sendingFeedback = false;
+                                        });
+                                      } catch (e) {
+                                        print(e);
                                       }
-
-                                      if ('Mucoid Purulent' != sputumCondition) {
-                                        addNotification(
-                                          orderId: state.order.orderId!,
-                                          testerContent: 'You Rejected Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent: '${state.order.patients![widget.index].name}\'s Sputum Specimen have been rejected by ${state.order.tester_name}.',
-                                          content: 'One specimen got rejected by tester!',
-                                          courier: false,
-                                          testerAction: NotificationAction.NavigateToOrderDetalTester,
-                                          senderAction: NotificationAction.NavigateToOrderDetalSender,
-                                          payload: {'orderId': widget.orderId},
-                                        );
-                                      }
-
-                                      setState(() {
-                                        inColdChain = null;
-                                        stoolCondition = null;
-                                        sputumCondition = null;
-                                        sendingFeedback = false;
-                                      });
                                     } else if (create == true && e.type == 'Stool') {
                                       e.assessed = true;
                                       e.rejected = 'Formed' != stoolCondition;
