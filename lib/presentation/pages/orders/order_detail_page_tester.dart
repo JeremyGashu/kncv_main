@@ -398,7 +398,15 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   order.patients![index].specimens![i].assessed = true;
                                   order.patients![index].specimens![i].rejected = 'Mucoid Purulent' != sputumCondition;
                                   order.patients![index].specimens![i].specimenCondition = sputumCondition ?? '';
-                                  order.patients![index].specimens![i].transportMode = inColdChain ?? '';
+                                  if (inColdChain != null) {
+                                    if (inColdChain == 'Yes, end to end') {
+                                      order.patients![index].specimens![i].transportMode = 'End to end in cold chain';
+                                    } else if (inColdChain == 'Yes, partly') {
+                                      order.patients![index].specimens![i].transportMode = 'Partly in cold chain';
+                                    } else {
+                                      order.patients![index].specimens![i].transportMode = 'Not at all in cold chain';
+                                    }
+                                  }
                                   order.patients![index].specimens![i].reason = 'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
 
                                   setState(() {
@@ -444,7 +452,15 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   order.patients![index].specimens![i].assessed = true;
                                   order.patients![index].specimens![i].rejected = 'Formed' != stoolCondition;
                                   order.patients![index].specimens![i].specimenCondition = stoolCondition ?? '';
-                                  order.patients![index].specimens![i].transportMode = inColdChain ?? '';
+                                  if (inColdChain != null) {
+                                    if (inColdChain == 'Yes, end to end') {
+                                      order.patients![index].specimens![i].transportMode = 'End to end in cold chain';
+                                    } else if (inColdChain == 'Yes, partly') {
+                                      order.patients![index].specimens![i].transportMode = 'Partly in cold chain';
+                                    } else {
+                                      order.patients![index].specimens![i].transportMode = 'Not at all in cold chain';
+                                    }
+                                  }
                                   order.patients![index].specimens![i].reason = 'Stool Specimen is in $stoolCondition type. Not in Formed State!';
 
                                   setState(() {
@@ -492,8 +508,16 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   });
                                 } else if (create == true && order.patients![index].specimens![i].type == 'Urine') {
                                   order.patients![index].specimens![i].assessed = true;
-
                                   order.patients![index].specimens![i].rejected = false;
+                                  if (inColdChain != null) {
+                                    if (inColdChain == 'Yes, end to end') {
+                                      order.patients![index].specimens![i].transportMode = 'End to end in cold chain';
+                                    } else if (inColdChain == 'Yes, partly') {
+                                      order.patients![index].specimens![i].transportMode = 'Partly in cold chain';
+                                    } else {
+                                      order.patients![index].specimens![i].transportMode = 'Not at all in cold chain';
+                                    }
+                                  }
                                   order.patients![index].specimens![i].reason = '';
 
                                   setState(() {
@@ -527,8 +551,16 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   });
                                 } else if (create == true) {
                                   order.patients![index].specimens![i].assessed = true;
-
                                   order.patients![index].specimens![i].rejected = false;
+                                  if (inColdChain != null) {
+                                    if (inColdChain == 'Yes, end to end') {
+                                      order.patients![index].specimens![i].transportMode = 'End to end in cold chain';
+                                    } else if (inColdChain == 'Yes, partly') {
+                                      order.patients![index].specimens![i].transportMode = 'Partly in cold chain';
+                                    } else {
+                                      order.patients![index].specimens![i].transportMode = 'Not at all in cold chain';
+                                    }
+                                  }
                                   order.patients![index].specimens![i].reason = '';
 
                                   setState(() {
