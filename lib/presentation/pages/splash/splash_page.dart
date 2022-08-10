@@ -19,13 +19,17 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   @override
   void initState() {
-    var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
+    var initializationSettings = new InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
     initMessaging();
     super.initState();
   }
@@ -43,21 +47,26 @@ class _SplashPageState extends State<SplashPage> {
         listener: (context, state) async {
           if (state is UnauthenticatedState || state is InitialState) {
             await Future.delayed(Duration(seconds: splashTime));
-            Navigator.pushNamedAndRemoveUntil(context, IntroPageOne.introPageOneRouteName, (route) => false);
+            Navigator.pushNamedAndRemoveUntil(
+                context, IntroPageOne.introPageOneRouteName, (route) => false);
           } else if (state is AuthenticatedState) {
             // print('type => ${state.type}');
             if (state.type == 'COURIER_ADMIN') {
               await Future.delayed(Duration(seconds: splashTime));
-              Navigator.pushNamedAndRemoveUntil(context, CourierHomePage.courierHomePageRouteName, (route) => false);
+              Navigator.pushNamedAndRemoveUntil(context,
+                  CourierHomePage.courierHomePageRouteName, (route) => false);
             } else if (state.type == 'INSTITUTIONAL_ADMIN') {
               await Future.delayed(Duration(seconds: splashTime));
-              Navigator.pushNamedAndRemoveUntil(context, SenderHomePage.senderHomePageRouteName, (route) => false);
+              Navigator.pushNamedAndRemoveUntil(context,
+                  SenderHomePage.senderHomePageRouteName, (route) => false);
             } else if (state.type == 'TEST_CENTER_ADMIN') {
               await Future.delayed(Duration(seconds: splashTime));
-              Navigator.pushNamedAndRemoveUntil(context, ReceiverHomePage.receiverHomepageRouteName, (route) => false);
+              Navigator.pushNamedAndRemoveUntil(context,
+                  ReceiverHomePage.receiverHomepageRouteName, (route) => false);
             } else {
               await Future.delayed(Duration(seconds: splashTime));
-              Navigator.pushNamedAndRemoveUntil(context, LoginPage.loginPageRouteName, (route) => false);
+              Navigator.pushNamedAndRemoveUntil(
+                  context, LoginPage.loginPageRouteName, (route) => false);
             }
           }
         },
@@ -98,17 +107,39 @@ class _SplashPageState extends State<SplashPage> {
                     height: size.height * 0.15,
                     // width: size.width * 0.4,
                   ),
+                  SizedBox(height: 15,),
+                  Text(
+                    'E-Specimen referral system Ethiopia',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   Spacer(),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image(
+                          image: AssetImage('assets/ephi_logo.jpg'),
+                          width: size.width * 0.25),
+                    ],
+                  ),
+                  SizedBox(height: 15,),
                   size.width < 330
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text("Powered By", style: TextStyle(fontSize: size.width * 0.06, fontWeight: FontWeight.bold)),
+                            Text("Powered By",
+                                style: TextStyle(
+                                    fontSize: size.width * 0.06,
+                                    fontWeight: FontWeight.bold)),
                             SizedBox(width: size.width * 0.04),
-                            Image(image: AssetImage('assets/ephi_logo.jpg'), width: size.width * 0.1),
                             SizedBox(width: size.width * 0.04),
-                            SvgPicture.asset('assets/Knvc.svg', width: size.width * 0.1),
+                            SvgPicture.asset('assets/Knvc.svg',
+                                width: size.width * 0.1),
                           ],
                         )
                       : size.width < 420
@@ -116,9 +147,14 @@ class _SplashPageState extends State<SplashPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("Powered By", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                                SizedBox(width: 20),
-                                Image(image: AssetImage('assets/ephi_logo.jpg'), width: size.width * 0.2),
+                                Text("Powered By",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold)),
+                                // SizedBox(width: 20),
+                                // Image(
+                                //     image: AssetImage('assets/ephi_logo.jpg'),
+                                //     width: size.width * 0.2),
                                 SizedBox(width: 20),
                                 SvgPicture.asset(
                                   'assets/Knvc.svg',
@@ -130,9 +166,14 @@ class _SplashPageState extends State<SplashPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("Powered By", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text("Powered By",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
                                 SizedBox(width: 20),
-                                Image(image: AssetImage('assets/ephi_logo.jpg'), width: 80),
+                                Image(
+                                    image: AssetImage('assets/ephi_logo.jpg'),
+                                    width: 80),
                                 SizedBox(width: 20),
                                 SvgPicture.asset(
                                   'assets/Knvc.svg',
@@ -167,12 +208,19 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _demoNotification(String title, String body) async {
-    var androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('FLUTTER_STREAMING_APP', 'STREAMING_APP', importance: Importance.max, playSound: true, showProgress: true, priority: Priority.high, ticker: 'test ticker');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'FLUTTER_STREAMING_APP', 'STREAMING_APP',
+        importance: Importance.max,
+        playSound: true,
+        showProgress: true,
+        priority: Priority.high,
+        ticker: 'test ticker');
 
     var iOSChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(0, title, body, platformChannelSpecifics, payload: 'test');
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
+    await flutterLocalNotificationsPlugin
+        .show(0, title, body, platformChannelSpecifics, payload: 'test');
   }
 
   initMessaging() async {

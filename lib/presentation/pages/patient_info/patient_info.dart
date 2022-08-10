@@ -50,7 +50,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   final TextEditingController ageYearsController = TextEditingController();
 
   final TextEditingController siteOfTBController = TextEditingController();
-  final TextEditingController registrationGroupController = TextEditingController();
+  final TextEditingController registrationGroupController =
+      TextEditingController();
 
   final TextEditingController xMonthsAfterController = TextEditingController();
   final TextEditingController xMonthsDuringController = TextEditingController();
@@ -61,7 +62,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController patientRemarkController = TextEditingController();
-  final TextEditingController doctorInChargeController = TextEditingController();
+  final TextEditingController doctorInChargeController =
+      TextEditingController();
   final TextEditingController examPurposeController = TextEditingController();
 
   final TextEditingController specimenIdController = TextEditingController();
@@ -99,7 +101,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
               bloc: orderBloc,
               listener: (ctx, state) async {
                 if (state is AddedPatient) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added Patient!')));
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('Added Patient!')));
                   await Future.delayed(Duration(seconds: 1));
                   Navigator.pop(
                     context,
@@ -107,13 +110,15 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                   );
                 }
                 if (state is ErrorState) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${state.message}')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${state.message}')));
                 }
               },
               builder: (context, state) {
                 return SafeArea(
                   child: Container(
-                    padding: EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
+                    padding: EdgeInsets.only(
+                        bottom: 15, left: 25, top: 10, right: 25),
                     child: SingleChildScrollView(
                       child: Form(
                         key: _form,
@@ -126,7 +131,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                               child: Text(
                                 'Add Patient',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
+                                style: TextStyle(
+                                    fontSize: 32, fontWeight: FontWeight.w500),
                               ),
                             ),
                             _tobLabelBuilder('Basic Info'),
@@ -136,14 +142,19 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                               controller: MRController,
                               required: true,
                             ),
-                            _buildInputField(label: 'Name', hint: 'Enter Patient\'s Name', controller: nameController, required: true),
+                            _buildInputField(
+                                label: 'Name',
+                                hint: 'Enter Patient\'s Name',
+                                controller: nameController,
+                                required: true),
                             _labelBuilder('Sex'),
                             GestureDetector(
                               onTap: () {
                                 // FocusScope.of(context).requestFocus(new FocusNode());
                               },
                               child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   color: Colors.grey.withOpacity(0.2),
@@ -153,14 +164,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                     child: DropdownButton<String>(
                                   value: sex,
                                   hint: Text('Sex'),
-                                  items: <String>['Male', 'Female'].map((String value) {
+                                  items: <String>['Male', 'Female']
+                                      .map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(value),
                                     );
                                   }).toList(),
                                   onChanged: (val) {
-                                    FocusScope.of(context).requestFocus(FocusNode());
+                                    FocusScope.of(context)
+                                        .requestFocus(FocusNode());
                                     setState(() {
                                       sex = val;
                                     });
@@ -171,7 +184,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
 
                             _buildInputField(
                                 label: 'Age in Years',
-                                inputType: TextInputType.numberWithOptions(signed: false, decimal: false),
+                                inputType: TextInputType.numberWithOptions(
+                                    signed: false, decimal: false),
                                 maxCharacters: 2,
                                 hint: 'Age (Years)...',
                                 controller: ageYearsController,
@@ -180,7 +194,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                             ageYearsController.value.text == '0'
                                 ? _buildInputField(
                                     label: 'Age in Months',
-                                    inputType: TextInputType.numberWithOptions(signed: false, decimal: false),
+                                    inputType: TextInputType.numberWithOptions(
+                                        signed: false, decimal: false),
                                     maxCharacters: 2,
                                     maxValue: 12,
                                     hint: 'Age (Months)...',
@@ -188,7 +203,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                     required: true)
                                 : SizedBox(),
 
-                            BlocBuilder<LocationBloc, LocationStates>(builder: (ctx, s) {
+                            BlocBuilder<LocationBloc, LocationStates>(
+                                builder: (ctx, s) {
                               if (s is LoadingLocationsState) {
                                 return CircularProgressIndicator();
                               } else if (s is LoadedLocationsState) {
@@ -197,7 +213,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                     //regions
                                     _labelBuilder('Region', required: true),
                                     Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                         color: Colors.grey.withOpacity(0.2),
@@ -214,7 +231,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                           );
                                         }).toList(),
                                         onChanged: (val) {
-                                          FocusScope.of(context).requestFocus(FocusNode());
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
                                           setState(() {
                                             selectedRegion = val;
                                             selectedZone = null;
@@ -227,7 +245,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                     //zones
                                     _labelBuilder('Zone', required: true),
                                     Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                         color: Colors.grey.withOpacity(0.2),
@@ -237,14 +256,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                           child: DropdownButton<Zone>(
                                         value: selectedZone,
                                         hint: Text('Zones'),
-                                        items: selectedRegion?.zones.map((Zone value) {
+                                        items: selectedRegion?.zones
+                                            .map((Zone value) {
                                           return DropdownMenuItem<Zone>(
                                             value: value,
                                             child: Text(value.name),
                                           );
                                         }).toList(),
                                         onChanged: (val) {
-                                          FocusScope.of(context).requestFocus(FocusNode());
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
                                           setState(() {
                                             selectedZone = val;
                                             selectedWoreda = null;
@@ -256,7 +277,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                     //woredas
                                     _labelBuilder('Woreda', required: true),
                                     Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                         color: Colors.grey.withOpacity(0.2),
@@ -266,14 +288,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                           child: DropdownButton<Woreda>(
                                         value: selectedWoreda,
                                         hint: Text('Woredas'),
-                                        items: selectedZone?.woredas.map((Woreda value) {
+                                        items: selectedZone?.woredas
+                                            .map((Woreda value) {
                                           return DropdownMenuItem<Woreda>(
                                             value: value,
                                             child: Text(value.name),
                                           );
                                         }).toList(),
                                         onChanged: (val) {
-                                          FocusScope.of(context).requestFocus(FocusNode());
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
                                           setState(() {
                                             selectedWoreda = val;
                                           });
@@ -307,14 +331,15 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                             // ),
                             _buildInputField(
                               label: 'Phone',
-                              hint: 'Enter Your Phone',
+                              hint: 'Enter Phone number',
                               inputType: TextInputType.phone,
                               controller: phoneController,
                             ),
 
                             _labelBuilder('Site of TB'),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: Colors.grey.withOpacity(0.2),
@@ -324,14 +349,19 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: siteOfTB,
                                 hint: Text('Site of TB'),
-                                items: <String>['Pulmonary', 'Extra-pulmonary', 'Other'].map((String value) {
+                                items: <String>[
+                                  'Pulmonary',
+                                  'Extra-pulmonary',
+                                  'Other'
+                                ].map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
                                   );
                                 }).toList(),
                                 onChanged: (val) {
-                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
                                   setState(() {
                                     siteOfTB = val;
                                   });
@@ -343,13 +373,15 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 ? TextField(
                                     controller: siteOfTBController,
                                     autofocus: false,
-                                    decoration: InputDecoration(hintText: 'Enter site of TB...'),
+                                    decoration: InputDecoration(
+                                        hintText: 'Enter site of TB...'),
                                   )
                                 : SizedBox(),
 
                             _labelBuilder('Registration Group'),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: Colors.grey.withOpacity(0.2),
@@ -359,14 +391,22 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: registrationGroup,
                                 hint: Text('Registration Group'),
-                                items: <String>['New', 'Relapse', 'After Default', 'After failure of 1st treatment', 'After failure of re treatment', 'Other'].map((String value) {
+                                items: <String>[
+                                  'New',
+                                  'Relapse',
+                                  'After Default',
+                                  'After failure of 1st treatment',
+                                  'After failure of re treatment',
+                                  'Other'
+                                ].map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
                                   );
                                 }).toList(),
                                 onChanged: (val) {
-                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
                                   setState(() {
                                     registrationGroup = val;
                                   });
@@ -378,13 +418,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 ? TextField(
                                     controller: registrationGroupController,
                                     autofocus: false,
-                                    decoration: InputDecoration(hintText: 'Enter registration group...'),
+                                    decoration: InputDecoration(
+                                        hintText:
+                                            'Enter registration group...'),
                                   )
                                 : SizedBox(),
 
                             _labelBuilder('Previous TB Drug use'),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: Colors.grey.withOpacity(0.2),
@@ -394,14 +437,20 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: previousTBDrugUse,
                                 hint: Text('Previous TB Drug use'),
-                                items: <String>['New', 'First Line', 'Second Line', 'MDR TB Contact'].map((String value) {
+                                items: <String>[
+                                  'New',
+                                  'First Line',
+                                  'Second Line',
+                                  'MDR TB Contact'
+                                ].map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
                                   );
                                 }).toList(),
                                 onChanged: (val) {
-                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
                                   setState(() {
                                     previousTBDrugUse = val;
                                   });
@@ -411,7 +460,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
 
                             _labelBuilder('Reason for Test'),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: Colors.grey.withOpacity(0.2),
@@ -421,15 +471,22 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: reasonForTest,
                                 hint: Text('Reason for Test'),
-                                items: <String>['Diagnostic', 'Presumptive TB', 'Presumptive RR-TB', 'Presumptive MDR-TB', 'At X months during treatment', 'At X months after treatment']
-                                    .map((String value) {
+                                items: <String>[
+                                  'Diagnostic',
+                                  'Presumptive TB',
+                                  'Presumptive RR-TB',
+                                  'Presumptive MDR-TB',
+                                  'At X months during treatment',
+                                  'At X months after treatment'
+                                ].map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
                                   );
                                 }).toList(),
                                 onChanged: (val) {
-                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
                                   setState(() {
                                     reasonForTest = val;
                                   });
@@ -441,8 +498,12 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 ? TextField(
                                     controller: xMonthsDuringController,
                                     autofocus: false,
-                                    keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
-                                    decoration: InputDecoration(hintText: 'X Months during treatment...'),
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: false, signed: false),
+                                    decoration: InputDecoration(
+                                        hintText:
+                                            'X Months during treatment...'),
                                   )
                                 : SizedBox(),
 
@@ -450,14 +511,19 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 ? TextField(
                                     controller: xMonthsAfterController,
                                     autofocus: false,
-                                    keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
-                                    decoration: InputDecoration(hintText: 'X Months after treatment...'),
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: false, signed: false),
+                                    decoration: InputDecoration(
+                                        hintText:
+                                            'X Months after treatment...'),
                                   )
                                 : SizedBox(),
 
                             _labelBuilder('Requested Tests'),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: Colors.grey.withOpacity(0.2),
@@ -467,14 +533,21 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   child: DropdownButton<String>(
                                 value: requestedTests,
                                 hint: Text('Requested Tests'),
-                                items: <String>['Microscopy', 'Xpert MTB/RIF test', 'Culture', 'Drug Susceptibility Testing (DST)', 'Line probe assay'].map((String value) {
+                                items: <String>[
+                                  'Microscopy',
+                                  'Xpert MTB/RIF test',
+                                  'Culture',
+                                  'Drug Susceptibility Testing (DST)',
+                                  'Line probe assay'
+                                ].map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
                                   );
                                 }).toList(),
                                 onChanged: (val) {
-                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
                                   setState(() {
                                     requestedTests = val;
                                   });
@@ -511,14 +584,18 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                     isScrollControlled: true,
                                     context: context,
                                     builder: (ctx) {
-                                      return StatefulBuilder(builder: (ctx, ss) {
+                                      return StatefulBuilder(
+                                          builder: (ctx, ss) {
                                         return SingleChildScrollView(
                                           child: Container(
                                             padding: EdgeInsets.only(
                                               top: 30,
                                               left: 20,
                                               right: 20,
-                                              bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+                                              bottom: MediaQuery.of(ctx)
+                                                      .viewInsets
+                                                      .bottom +
+                                                  20,
                                             ),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
@@ -533,7 +610,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                             ),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Container(
                                                   width: double.infinity,
@@ -542,34 +620,57 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontSize: 32,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
                                                   height: 30,
                                                 ),
-                                                _buildInputField(label: 'Specimen ID', hint: "Please enter specimen ID", controller: specimenIdController),
+                                                _buildInputField(
+                                                    label: 'Specimen ID',
+                                                    hint:
+                                                        "Please enter specimen ID",
+                                                    controller:
+                                                        specimenIdController),
                                                 _labelBuilder('Specimen Type'),
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
                                                   width: double.infinity,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.grey.withOpacity(0.2),
-                                                    borderRadius: BorderRadius.circular(7),
+                                                    color: Colors.grey
+                                                        .withOpacity(0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            7),
                                                   ),
-                                                  child: DropdownButtonHideUnderline(
-                                                      child: DropdownButton<String>(
+                                                  child:
+                                                      DropdownButtonHideUnderline(
+                                                          child: DropdownButton<
+                                                              String>(
                                                     value: specimenType,
                                                     hint: Text('Specimen Type'),
-                                                    items: <String>['Stool', 'Sputum', 'Urine', 'Blood', 'Swab', 'Other'].map((String value) {
-                                                      return DropdownMenuItem<String>(
+                                                    items: <String>[
+                                                      'Stool',
+                                                      'Sputum',
+                                                      'Urine',
+                                                      'Blood',
+                                                      'Swab',
+                                                      'Other'
+                                                    ].map((String value) {
+                                                      return DropdownMenuItem<
+                                                          String>(
                                                         value: value,
                                                         child: Text(value),
                                                       );
                                                     }).toList(),
                                                     onChanged: (val) {
-                                                      FocusScope.of(context).requestFocus(FocusNode());
+                                                      FocusScope.of(context)
+                                                          .requestFocus(
+                                                              FocusNode());
                                                       ss(() => 1 == 1);
 
                                                       setState(() {
@@ -579,26 +680,41 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     },
                                                   )),
                                                 ),
-                                                _labelBuilder('Examination Type'),
+                                                _labelBuilder(
+                                                    'Examination Type'),
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
                                                   width: double.infinity,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.grey.withOpacity(0.2),
-                                                    borderRadius: BorderRadius.circular(7),
+                                                    color: Colors.grey
+                                                        .withOpacity(0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            7),
                                                   ),
-                                                  child: DropdownButtonHideUnderline(
-                                                      child: DropdownButton<String>(
+                                                  child:
+                                                      DropdownButtonHideUnderline(
+                                                          child: DropdownButton<
+                                                              String>(
                                                     value: examinationType,
-                                                    hint: Text('Examination Type'),
-                                                    items: (examinationTypesList[specimenType] ?? []).map((String value) {
-                                                      return DropdownMenuItem<String>(
+                                                    hint: Text(
+                                                        'Examination Type'),
+                                                    items: (examinationTypesList[
+                                                                specimenType] ??
+                                                            [])
+                                                        .map((String value) {
+                                                      return DropdownMenuItem<
+                                                          String>(
                                                         value: value,
                                                         child: Text(value),
                                                       );
                                                     }).toList(),
                                                     onChanged: (val) {
-                                                      FocusScope.of(context).requestFocus(FocusNode());
+                                                      FocusScope.of(context)
+                                                          .requestFocus(
+                                                              FocusNode());
                                                       ss(() => 1 == 1);
 
                                                       setState(() {
@@ -614,43 +730,78 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     onTap: () {
                                                       // print(specimenType);
                                                       // print(specimenIdController.value.text);
-                                                      if (specimenIdController.value.text == '' || specimenType == null || examinationType == null) {
-                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter complete information')));
+                                                      if (specimenIdController
+                                                                  .value.text ==
+                                                              '' ||
+                                                          specimenType ==
+                                                              null ||
+                                                          examinationType ==
+                                                              null) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(SnackBar(
+                                                                content: Text(
+                                                                    'Please enter complete information')));
                                                         Navigator.pop(context);
                                                         return;
                                                       }
 
-                                                      if (specimenExists(specimens, specimenIdController.value.text, specimenType!)) {
-                                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('This specimen is already added please try editing fields.')));
+                                                      if (specimenExists(
+                                                          specimens,
+                                                          specimenIdController
+                                                              .value.text,
+                                                          specimenType!)) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(SnackBar(
+                                                                content: Text(
+                                                                    'This specimen is already added please try editing fields.')));
                                                         Navigator.pop(context);
                                                         return;
                                                       }
 
-                                                      Specimen specimen = Specimen(
-                                                        id: specimenIdController.value.text,
+                                                      Specimen specimen =
+                                                          Specimen(
+                                                        id: specimenIdController
+                                                            .value.text,
                                                         type: specimenType,
-                                                        examinationType: examinationType,
+                                                        examinationType:
+                                                            examinationType,
                                                       );
                                                       setState(() {
-                                                        specimens = [...specimens, specimen];
+                                                        specimens = [
+                                                          ...specimens,
+                                                          specimen
+                                                        ];
                                                       });
-                                                      specimenIdController.text = '';
+                                                      specimenIdController
+                                                          .text = '';
                                                       specimenType = null;
                                                       examinationType = null;
                                                       Navigator.pop(context);
                                                       return;
                                                     },
                                                     child: Container(
-                                                        decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(10),
-                                                          color: kColorsOrangeDark,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color:
+                                                              kColorsOrangeDark,
                                                         ),
                                                         height: 62,
                                                         // margin: EdgeInsets.all(20),
                                                         child: Center(
                                                           child: Text(
                                                             'Add Specimen',
-                                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 20,
+                                                                color: Colors
+                                                                    .white),
                                                           ),
                                                         ))),
                                               ],
@@ -702,49 +853,79 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                   : InkWell(
                                       onTap: () {
                                         if (_form.currentState!.validate()) {
-                                          if (selectedRegion == null || selectedZone == null || selectedWoreda == null) {
-                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter zone region and woreda')));
+                                          if (selectedRegion == null ||
+                                              selectedZone == null ||
+                                              selectedWoreda == null) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        'Please enter zone region and woreda')));
                                             return;
                                           }
-                                          if (!validatePhoneNumber(phoneController.value.text.trim())) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
+                                          if (!validatePhoneNumber(
+                                              phoneController.value.text
+                                                  .trim())) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
                                               SnackBar(
                                                 content: Text(
                                                   'Please enter a valid phone number: start with 09!',
-                                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
-                                                backgroundColor: Colors.red.shade700,
+                                                backgroundColor:
+                                                    Colors.red.shade700,
                                               ),
                                             );
                                             return;
                                           }
                                           String mr = MRController.value.text;
-                                          String name = nameController.value.text;
+                                          String name =
+                                              nameController.value.text;
                                           //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
-                                          String age = ageYearsController.value.text;
-                                          String ageMonths = ageMonthsController.value.text;
+                                          String age =
+                                              ageYearsController.value.text;
+                                          String ageMonths =
+                                              ageMonthsController.value.text;
 
                                           String? zone = selectedZone?.code;
                                           String? woreda = selectedWoreda?.code;
 
-                                          String address = addressController.value.text;
-                                          String phone = phoneController.value.text.trim();
-                                          String doctorInCharge = doctorInChargeController.value.text;
-                                          String patientRemark = patientRemarkController.value.text;
+                                          String address =
+                                              addressController.value.text;
+                                          String phone =
+                                              phoneController.value.text.trim();
+                                          String doctorInCharge =
+                                              doctorInChargeController
+                                                  .value.text;
+                                          String patientRemark =
+                                              patientRemarkController
+                                                  .value.text;
 
-                                          String? regGroup = registrationGroup == 'Other' ? registrationGroupController.value.text : registrationGroup;
+                                          String? regGroup =
+                                              registrationGroup == 'Other'
+                                                  ? registrationGroupController
+                                                      .value.text
+                                                  : registrationGroup;
                                           regGroup = regGroup ?? 'Other';
 
-                                          String? reason = reasonForTest == 'At X months during treatment'
+                                          String? reason = reasonForTest ==
+                                                  'At X months during treatment'
                                               ? 'At ${xMonthsDuringController.value.text} months during treatment'
-                                              : reasonForTest == 'At X months after treatment'
+                                              : reasonForTest ==
+                                                      'At X months after treatment'
                                                   ? 'At ${xMonthsAfterController.value.text} month after treatment'
                                                   : reasonForTest;
-                                          String? site = siteOfTB == 'Other' ? siteOfTBController.value.text : siteOfTB;
+                                          String? site = siteOfTB == 'Other'
+                                              ? siteOfTBController.value.text
+                                              : siteOfTB;
 
                                           Patient patient = Patient(
                                             age: age,
-                                            ageMonths: age == '0' ? '0' : ageMonths,
+                                            ageMonths:
+                                                age == '0' ? '0' : ageMonths,
                                             siteOfTB: site,
                                             doctorInCharge: doctorInCharge,
                                             phone: phone,
@@ -765,13 +946,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                             previousDrugUse: previousTBDrugUse,
                                           );
 
-                                          orderBloc.add(AddPatientToOrder(orderId: widget.orderId, patient: patient));
+                                          orderBloc.add(AddPatientToOrder(
+                                              orderId: widget.orderId,
+                                              patient: patient));
                                         }
                                       },
                                       borderRadius: BorderRadius.circular(37),
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                           color: kColorsOrangeDark,
                                         ),
                                         height: 62,
@@ -779,7 +963,10 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                         child: Center(
                                           child: Text(
                                             'Add Patient',
-                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                                color: Colors.white),
                                           ),
                                         ),
                                       ),
@@ -814,7 +1001,9 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                       width: double.infinity,
                       padding: EdgeInsets.all(20),
                       margin: EdgeInsets.all(5),
-                      decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
+                      decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10)),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -855,7 +1044,9 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                     width: double.infinity,
                     padding: EdgeInsets.all(20),
                     margin: EdgeInsets.all(5),
-                    decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
+                    decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(10)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -962,6 +1153,14 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
               if (!required) {
                 return null;
               }
+              if (TextInputType.phone == inputType) {
+                bool isValidPhoneNumber(String? value) => RegExp(
+                        r'(^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$)')
+                    .hasMatch(value ?? '');
+                if (isValidPhoneNumber(value)) {
+                  return 'Please enter valid phone number.';
+                }
+              }
               if (maxValue != null && num.parse(value ?? '') > maxValue) {
                 return 'Value cannot exceed ${maxValue}';
               }
@@ -977,7 +1176,10 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
             style: TextStyle(color: Colors.black),
             keyboardType: inputType,
             maxLength: maxCharacters,
-            decoration: InputDecoration(hintText: hint, border: InputBorder.none, contentPadding: EdgeInsets.only(left: 10, top: 2, bottom: 3)),
+            decoration: InputDecoration(
+                hintText: hint,
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(left: 10, top: 2, bottom: 3)),
           ),
         ),
       ],
@@ -1026,7 +1228,10 @@ Widget buildRemarkField({
           },
           controller: controller,
           style: TextStyle(color: Colors.black),
-          decoration: InputDecoration(hintText: hint, border: InputBorder.none, contentPadding: EdgeInsets.only(left: 10, top: 2, bottom: 3)),
+          decoration: InputDecoration(
+              hintText: hint,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(left: 10, top: 2, bottom: 3)),
         ),
       ),
     ],

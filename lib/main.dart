@@ -47,7 +47,8 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()..add(CheckAuth())),
-        BlocProvider<OrderBloc>(create: (_) => sl<OrderBloc>()..add(LoadOrders())),
+        BlocProvider<OrderBloc>(
+            create: (_) => sl<OrderBloc>()..add(LoadOrders())),
         BlocProvider<TesterCourierBloc>(
           create: (_) => sl<TesterCourierBloc>()..add(LoadTestersAndCouriers()),
           lazy: false,

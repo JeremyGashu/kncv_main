@@ -447,6 +447,7 @@ class _ReportScreenState extends State<ReportScreen> {
       loadingReports = true;
     });
     List<Map<String, dynamic>>? reportsData = await getUserReport();
+    print('Reports Loaded ===> $reportsData');
     if (reportsData != null) {
       setState(() {
         reports = reportsData;

@@ -21,9 +21,14 @@ class OrderRepository {
     if (internetAvailable) {
       var ordersCollection = await database.collection('orders');
       String? currentUserId = auth.currentUser?.uid;
-      var orders = await ordersCollection.where('sender_id', isEqualTo: currentUserId).get();
+      var orders = await ordersCollection
+          .where('sender_id', isEqualTo: currentUserId)
+          .orderBy('order_created', descending: true)
+          .get();
 
-      List<Order> os = orders.docs.map((e) => Order.fromJson({...e.data(), 'id': e.id})).toList();
+      List<Order> os = orders.docs
+          .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
+          .toList();
 
       await ordersBox.clear();
       await ordersBox.addAll(os);
@@ -42,8 +47,13 @@ class OrderRepository {
     if (internetAvailable) {
       var ordersCollection = await database.collection('orders');
       String? currentUserId = auth.currentUser?.uid;
-      var orders = await ordersCollection.where('courier_id', isEqualTo: currentUserId).get();
-      List<Order> os = orders.docs.map((e) => Order.fromJson({...e.data(), 'id': e.id})).toList();
+      var orders = await ordersCollection
+          .where('courier_id', isEqualTo: currentUserId)
+          .orderBy('order_created', descending: true)
+          .get();
+      List<Order> os = orders.docs
+          .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
+          .toList();
       await ordersBox.clear();
       await ordersBox.addAll(os);
       return os;
@@ -61,10 +71,16 @@ class OrderRepository {
     if (internetAvailable) {
       var ordersCollection = await database.collection('orders');
       String? currentUserId = auth.currentUser?.uid;
-      Map<String, dynamic>? testCenter = await getTestCenterByAdminUID(currentUserId ?? '');
+      Map<String, dynamic>? testCenter =
+          await getTestCenterByAdminUID(currentUserId ?? '');
 
-      var orders = await ordersCollection.where('tester_id', isEqualTo: testCenter?['key']).get();
-      List<Order> os = orders.docs.map((e) => Order.fromJson({...e.data(), 'id': e.id})).toList();
+      var orders = await ordersCollection
+          .where('tester_id', isEqualTo: testCenter?['key'])
+          .orderBy('order_created', descending: true)
+          .get();
+      List<Order> os = orders.docs
+          .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
+          .toList();
       await ordersBox.clear();
       await ordersBox.addAll(os);
       return os;
@@ -77,7 +93,10 @@ class OrderRepository {
   // @params{}
   Future<Map<String, dynamic>?> getTestCenterByAdminUID(String id) async {
     //no need to check since it is called when internet is available
-    var usersData = await database.collection('users').where('user_id', isEqualTo: id).get();
+    var usersData = await database
+        .collection('users')
+        .where('user_id', isEqualTo: id)
+        .get();
     if (usersData.docs.length > 0) {
       Map<String, dynamic> userData = usersData.docs[0].data()['test_center'];
       // print('test center => ${userData}');
@@ -121,21 +140,37 @@ class OrderRepository {
       int month = DateTime.now().month;
       int day = DateTime.now().day;
       int year = DateTime.now().year;
-      List<String> months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      List<String> months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
       var usersCollection = database.collection('users');
       String? sender_name;
       String? sender_phone;
-      var userData = await usersCollection.where('user_id', isEqualTo: sender_id).get();
+      var userData =
+          await usersCollection.where('user_id', isEqualTo: sender_id).get();
       // debugPrint('Sender data from user id  ======== ${userData.docs.length}');
 
       if (userData.docs.length > 0) {
         sender_name = userData.docs[0].data()['institution']['name'];
         sender_phone = userData.docs[0].data()['phone_number'];
       }
-      var orders = await ordersCollection.where('sender_id', isEqualTo: sender_id).get();
+      var orders =
+          await ordersCollection.where('sender_id', isEqualTo: sender_id).get();
       int length = orders.docs.length;
 
-      String id = '${getInitials(sender_name ?? "") ?? ""}-${DateTime.now().toIso8601String().replaceAll('T', '_')}';
+      String id =
+          '${getInitials(sender_name ?? "") ?? ""}-${DateTime.now().toIso8601String().replaceAll('T', '_')}';
       id = id.substring(0, id.lastIndexOf('.'));
       id = '${id.substring(0, id.lastIndexOf(':'))}_${length + 1}';
 
@@ -162,7 +197,20 @@ class OrderRepository {
       int month = DateTime.now().month;
       int day = DateTime.now().day;
       int year = DateTime.now().year;
-      List<String> months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      List<String> months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ];
 
       String id = '${DateTime.now().toIso8601String().replaceAll('T', '_')}';
 
@@ -207,7 +255,12 @@ class OrderRepository {
     }
   }
 
-  Future<bool> editShipmentInfo({required String courier_id, required String tester_id, required String courier_name, required String tester_name, required String orderId}) async {
+  Future<bool> editShipmentInfo(
+      {required String courier_id,
+      required String tester_id,
+      required String courier_name,
+      required String tester_name,
+      required String orderId}) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -309,7 +362,10 @@ class OrderRepository {
 
   //editing patient info
   //params {order_id : string, patient : Patient and  index of the patient int}
-  Future<bool> editPatientInfo({required String orderId, required Patient patient, required int index}) async {
+  Future<bool> editPatientInfo(
+      {required String orderId,
+      required Patient patient,
+      required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -346,14 +402,21 @@ class OrderRepository {
     }
   }
 
-  static Future<bool> editSpecimenFeedback({required Order order, required Patient patient, required int index}) async {
+  static Future<bool> editSpecimenFeedback(
+      {required Order order,
+      required Patient patient,
+      required int index}) async {
     try {
       bool internetAvailable = await isConnectedToTheInternet();
       Box<Order> ordersBox = Hive.box<Order>('orders');
 
       if (internetAvailable) {
-        var orderRef = await FirebaseFirestore.instance.collection('orders').doc(order.orderId);
+        var orderRef = await FirebaseFirestore.instance
+            .collection('orders')
+            .doc(order.orderId);
         var or = await orderRef.get();
+        print('To be edited ===> ${or.data()}');
+        print('Edited patient ===> ${patient.toJson()}');
         if (or.exists) {
           List patientsList = or.data()?['patients'];
           bool finishedAssessingPatient = true;
@@ -391,7 +454,8 @@ class OrderRepository {
         return false;
       } else {
         List<Order> orders = await ordersBox.values.toList();
-        Order order = orders.firstWhere((order) => order.orderId == order.orderId);
+        Order order =
+            orders.firstWhere((order) => order.orderId == order.orderId);
         orders.removeWhere((order) => order.orderId == order.orderId);
 
         List<Patient>? patientsList = order.patients;
@@ -459,7 +523,10 @@ class OrderRepository {
 
   //editing patient info
   //params {order_id : string, patient : Patient and  index of the patient int}
-  Future<bool> addTestResult({required String? orderId, required Patient patient, required int index}) async {
+  Future<bool> addTestResult(
+      {required String? orderId,
+      required Patient patient,
+      required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -469,7 +536,8 @@ class OrderRepository {
       if (order.exists) {
         List patientsList = order.data()?['patients'];
         patientsList[index] = patient.toJson();
-        await orderRef.update({'patients': patientsList, 'test_result_added': DateTime.now()});
+        await orderRef.update(
+            {'patients': patientsList, 'test_result_added': DateTime.now()});
 
         Order o = Order.fromJson(order.data()!);
 
@@ -484,14 +552,17 @@ class OrderRepository {
           action: SPECIMEN_EDITED,
         );
 
-        sendCustomSMS(to: o.sender_phone ?? '', body: 'Test Result has been added to patient ${patient.name}.');
+        sendCustomSMS(
+            to: o.sender_phone ?? '',
+            body: 'Test Result has been added to patient ${patient.name}.');
 
         return true;
       }
       return false;
     } else {
       List<Order> orders = await ordersBox.values.toList();
-      Order order = orders.firstWhere((order) => order.orderId == order.orderId);
+      Order order =
+          orders.firstWhere((order) => order.orderId == order.orderId);
       orders.removeWhere((order) => order.orderId == order.orderId);
       order.patients?[index] = patient;
 
@@ -514,7 +585,10 @@ class OrderRepository {
 
   //editing patient info
   //params {order_id : string, patient : Patient and  index of the patient int}
-  Future<bool> editTestResult({required String? orderId, required Patient patient, required int index}) async {
+  Future<bool> editTestResult(
+      {required String? orderId,
+      required Patient patient,
+      required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
@@ -523,7 +597,8 @@ class OrderRepository {
       if (order.exists) {
         List patientsList = order.data()?['patients'];
         patientsList[index] = patient.toJson();
-        await orderRef.update({'patients': patientsList, 'updated_test_result': DateTime.now()});
+        await orderRef.update(
+            {'patients': patientsList, 'updated_test_result': DateTime.now()});
 
         Order o = Order.fromJson(order.data()!);
 
@@ -537,14 +612,17 @@ class OrderRepository {
           action: SPECIMEN_EDITED,
         );
 
-        sendCustomSMS(to: o.sender_phone ?? '', body: 'Test Result has been edited to patient ${patient.name}.');
+        sendCustomSMS(
+            to: o.sender_phone ?? '',
+            body: 'Test Result has been edited to patient ${patient.name}.');
 
         return true;
       }
       return false;
     } else {
       List<Order> orders = await ordersBox.values.toList();
-      Order order = orders.firstWhere((order) => order.orderId == order.orderId);
+      Order order =
+          orders.firstWhere((order) => order.orderId == order.orderId);
       orders.removeWhere((order) => order.orderId == order.orderId);
       order.patients?[index] = patient;
 
@@ -565,7 +643,8 @@ class OrderRepository {
     }
   }
 
-  Future<bool> deletePatientInfo({required String orderId, required int index}) async {
+  Future<bool> deletePatientInfo(
+      {required String orderId, required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -614,7 +693,8 @@ class OrderRepository {
       var order = await orderRef.get();
 
       if (order.exists) {
-        if (order.data()!['status'] == 'Draft' || order.data()!['status'] == 'Waiting for Confirmation') {
+        if (order.data()!['status'] == 'Draft' ||
+            order.data()!['status'] == 'Waiting for Confirmation') {
           await orderRef.delete();
           return {'success': true};
         } else {
@@ -625,7 +705,8 @@ class OrderRepository {
     } else {
       List<Order> orders = await ordersBox.values.toList();
       Order order = orders.firstWhere((element) => element.orderId == orderId);
-      if (order.status == 'Draft' || order.status == 'Waiting for Confirmation') {
+      if (order.status == 'Draft' ||
+          order.status == 'Waiting for Confirmation') {
         orders.removeWhere((element) => element.orderId == orderId);
 
         await ordersBox.clear();
@@ -685,7 +766,11 @@ class OrderRepository {
 
   Future<Map<String, dynamic>?> getInstitutionDataFromUserId() async {
     String? currentUserId = auth.currentUser?.uid;
-    var user = await database.collection('users').where('user_id', isEqualTo: currentUserId).limit(1).get();
+    var user = await database
+        .collection('users')
+        .where('user_id', isEqualTo: currentUserId)
+        .limit(1)
+        .get();
     if (user.docs.length > 0) {
       return user.docs[0].data();
     }
@@ -698,7 +783,10 @@ class OrderRepository {
     if (internetAvailable) {
       var orderRef = database.collection('orders').doc(order.orderId);
       if (order.status == 'Draft') {
-        await orderRef.update({'status': 'Waiting for Confirmation', 'order_placed': DateTime.now()});
+        await orderRef.update({
+          'status': 'Waiting for Confirmation',
+          'order_placed': DateTime.now()
+        });
         // print('************************order placed***************');
 
         order.status = 'Waiting for Confirmation';
@@ -723,9 +811,15 @@ class OrderRepository {
           print(e);
         }
 
-        sendCustomSMS(to: order.courier_phone ?? '', body: 'New order is plaed for you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
+        sendCustomSMS(
+            to: order.courier_phone ?? '',
+            body:
+                'New order is plaed for you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
 
-        sendCustomSMS(to: order.tester_phone ?? '', body: 'New order is being transported to you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
+        sendCustomSMS(
+            to: order.tester_phone ?? '',
+            body:
+                'New order is being transported to you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
 
         return true;
       } else {
@@ -733,7 +827,8 @@ class OrderRepository {
       }
     } else {
       List<Order> orders = await ordersBox.values.toList();
-      Order or = orders.firstWhere((element) => element.orderId == order.orderId);
+      Order or =
+          orders.firstWhere((element) => element.orderId == order.orderId);
       if (or.status == 'Draft' || or.status == 'Waiting for Confirmation') {
         orders.removeWhere((element) => element.orderId == or.orderId);
         or.status = 'Waiting for Confirmation';
@@ -763,8 +858,13 @@ class OrderRepository {
         var orderRef = database.collection('orders').doc(orderId);
         var order = await orderRef.get();
 
-        if (order.exists && order.data()!['status'] == 'Waiting for Confirmation') {
-          await orderRef.update({'status': 'Confirmed', 'will_reach_at': '$date-$time', 'order_confirmed': DateTime.now()});
+        if (order.exists &&
+            order.data()!['status'] == 'Waiting for Confirmation') {
+          await orderRef.update({
+            'status': 'Confirmed',
+            'will_reach_at': '$date-$time',
+            'order_confirmed': DateTime.now()
+          });
 
           Order o = Order.fromJson(order.data()!);
 
@@ -782,7 +882,10 @@ class OrderRepository {
             action: ORDER_ACCEPTED,
           );
 
-          sendCustomSMS(to: o.sender_phone ?? '', body: 'One order got accepted. The selected courier\'s will notify you when they get at your place.');
+          sendCustomSMS(
+              to: o.sender_phone ?? '',
+              body:
+                  'One order got accepted. The selected courier\'s will notify you when they get at your place.');
 
           return true;
         } else {
@@ -790,7 +893,8 @@ class OrderRepository {
         }
       } else {
         List<Order> orders = await ordersBox.values.toList();
-        Order order = orders.firstWhere((element) => element.orderId == orderId);
+        Order order =
+            orders.firstWhere((element) => element.orderId == orderId);
         if (order.status == 'Waiting for Confirmation') {
           orders.removeWhere((element) => element.orderId == orderId);
           order.status = 'Confirmed';
@@ -849,7 +953,10 @@ class OrderRepository {
           action: SENDER_APPROVED_COURIER_DEPARTURE,
         );
 
-        sendCustomSMS(to: o.tester_phone ?? '', body: 'One order is picked up. It will be deliverd by ${o.courier_name}');
+        sendCustomSMS(
+            to: o.tester_phone ?? '',
+            body:
+                'One order is picked up. It will be deliverd by ${o.courier_name}');
 
         return true;
       } else {
@@ -865,13 +972,17 @@ class OrderRepository {
         await ordersBox.clear();
         await ordersBox.addAll(orders);
 
-        await sendSMS(to: '0941998907', payload: {'oid': orderId, 'cn': receiver}, action: SENDER_APPROVE_COURIER_ARRIVAL);
+        await sendSMS(
+            to: '0941998907',
+            payload: {'oid': orderId, 'cn': receiver},
+            action: SENDER_APPROVE_COURIER_ARRIVAL);
       }
       return true;
     }
   }
 
-  Future<bool> courierApproveArrivalTester(String? orderId, String receiver, String phone) async {
+  Future<bool> courierApproveArrivalTester(
+      String? orderId, String receiver, String phone) async {
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
@@ -902,7 +1013,9 @@ class OrderRepository {
           action: TESTER_APPROVED_COURIER_ARRIVAL,
         );
 
-        sendCustomSMS(to: o.sender_phone ?? '', body: 'The order sent to ${o.tester_name} has been accepted!');
+        sendCustomSMS(
+            to: o.sender_phone ?? '',
+            body: 'The order sent to ${o.tester_name} has been accepted!');
 
         return true;
       } else {
@@ -932,11 +1045,20 @@ class OrderRepository {
     }
   }
 
-  Future<bool> approveArrivalTester({required String? orderId, String? coldChainStatus, String? sputumCondition, String? stoolCondition}) async {
+  Future<bool> approveArrivalTester(
+      {required String? orderId,
+      String? coldChainStatus,
+      String? sputumCondition,
+      String? stoolCondition}) async {
     var orderRef = database.collection('orders').doc(orderId);
     var order = await orderRef.get();
     if (order.exists && order.data()!['status'] == 'Received') {
-      await orderRef.update({'status': 'Accepted', 'sputumCondition': sputumCondition, 'stoolCondition': stoolCondition, 'order_accepted': DateTime.now()});
+      await orderRef.update({
+        'status': 'Accepted',
+        'sputumCondition': sputumCondition,
+        'stoolCondition': stoolCondition,
+        'order_accepted': DateTime.now()
+      });
       return true;
     } else {
       return false;

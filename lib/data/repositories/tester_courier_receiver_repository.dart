@@ -25,9 +25,9 @@ class TesterCourierRepository {
       List filteredUser = userData.docs.map((e) => e.data()).toList();
       if (filteredUser.length > 0) {
         Map user = filteredUser[0];
-        var testCenterData = await database.collection('test_centers').where('region', isEqualTo: user["institution.region"]).get();
+        var testCenterData = await database.collection('test_centers').where('zone', isEqualTo: user["institution.zone"]).get();
 
-        var couriersData = await database.collection('users').where('type', isEqualTo: 'COURIER_ADMIN').where('region', isEqualTo: user['institution.region']).get();
+        var couriersData = await database.collection('users').where('type', isEqualTo: 'COURIER_ADMIN').where('zone', isEqualTo: user['institution.zone']).get();
         List<Tester> testers = testCenterData.docs.map((e) => Tester.fromJson({...e.data(), 'id': e.id})).toList();
         data['testers'] = testers;
         await testerBox.clear();
