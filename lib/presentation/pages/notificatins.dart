@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
+import 'package:kncv_flutter/data/repositories/push_notification.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_tester.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 
@@ -225,6 +226,9 @@ Future<bool> addNotification(
       await FirebaseFirestore.instance
           .collection('notifications')
           .add(newNotification.toJson());
+
+      sendPushMessage(senderContent ?? content, 'Order Update!',
+          await getUserTokenFromUID(order.senderId));
     }
     if (courier) {
       NotificationModel newNotification = NotificationModel(
@@ -239,6 +243,9 @@ Future<bool> addNotification(
       await FirebaseFirestore.instance
           .collection('notifications')
           .add(newNotification.toJson());
+
+      sendPushMessage(testerContent ?? content, 'Order Update!',
+          await getUserTokenFromUID(order.courierId));
     }
     if (tester) {
       var testers =
@@ -250,17 +257,23 @@ Future<bool> addNotification(
 
     sendList.forEach((element) async {
       NotificationModel newNotification = NotificationModel(
-          content: testerContent ?? content,
-          seen: false,
-          userId: element,
-          timestamp: '$day-$month-$year at $hour:$minutes',
-          date: DateTime.now(),
-          action: testerAction,
-          payload: payload);
+        content: testerContent ?? content,
+        seen: false,
+        userId: element,
+        timestamp: '$day-$month-$year at $hour:$minutes',
+        date: DateTime.now(),
+        action: testerAction,
+        payload: payload,
+      );
 
       await FirebaseFirestore.instance
           .collection('notifications')
           .add(newNotification.toJson());
+    });
+
+    sendList.forEach((element) async {
+      sendPushMessage(testerContent ?? content, 'Order Update!',
+          await getUserTokenFromUID(element));
     });
 
     return true;
@@ -280,4 +293,11 @@ Future<List<String?>> getTestCenterAdminsFromTestCenterId(String? id) async {
   testCenterAdmins =
       testCenters.docs.map((e) => e.data()['user_id'] as String).toList();
   return testCenterAdmins;
+}
+
+Future<String> getUserTokenFromUID(String? uid) async {
+  DocumentSnapshot user =
+      await FirebaseFirestore.instance.collection('tokens').doc(uid).get();
+  Map? userData = user.data() as Map?;
+  return userData?['deviceToken'];
 }

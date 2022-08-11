@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AuthRepository {
   final FirebaseAuth auth;
@@ -7,7 +8,16 @@ class AuthRepository {
 
   AuthRepository(this.auth, this.database);
   Future loginUser({required String email, required String password}) async {
-    UserCredential user = await auth.signInWithEmailAndPassword(email: email, password: password);
+    UserCredential user =
+        await auth.signInWithEmailAndPassword(email: email, password: password);
+
+    FirebaseMessaging.instance.getToken().then((token) {
+      FirebaseFirestore.instance
+          .collection('tokens')
+          .doc(user.user!.uid)
+          .set({'deviceToken': token});
+    });
+
     if (user.user != null) {
       return user.user;
     }
@@ -21,7 +31,10 @@ class AuthRepository {
     String? name;
     // print('uid => $uid');
     if (uid != null) {
-      var userData = await FirebaseFirestore.instance.collection('users').where('user_id', isEqualTo: uid).get();
+      var userData = await FirebaseFirestore.instance
+          .collection('users')
+          .where('user_id', isEqualTo: uid)
+          .get();
       if (userData.docs.isNotEmpty) {
         type = userData.docs[0].data()['type'];
         name = userData.docs[0].data()['name'];
