@@ -40,41 +40,46 @@ class NotificationsPage extends StatelessWidget {
                         onTap: () {
                           switch (e.action) {
                             case NotificationAction.NavigateToOrderDetalCourier:
-                              FirebaseFirestore.instance
-                                  .collection('notifications')
-                                  .doc(e.id)
-                                  .update({'seen': true}).then((value) => {
-                                        Navigator.pushNamed(
-                                            context,
-                                            OrderDetailCourier
-                                                .orderDetailCourierPageRouteName,
-                                            arguments: e.payload?['orderId'])
+                              Navigator.pushNamed(
+                                      context,
+                                      OrderDetailCourier
+                                          .orderDetailCourierPageRouteName,
+                                      arguments: e.payload?['orderId'])
+                                  .then((value) => {
+                                        FirebaseFirestore.instance
+                                            .collection('notifications')
+                                            .doc(e.id)
+                                            .update({'seen': true}).then(
+                                                (value) => {})
                                       });
 
                               break;
                             case NotificationAction.NavigateToOrderDetalSender:
-                              FirebaseFirestore.instance
-                                  .collection('notifications')
-                                  .doc(e.id)
-                                  .update({'seen': true}).then((value) => {
-                                        Navigator.pushNamed(
-                                            context,
-                                            OrderDetailPage
-                                                .orderDetailPageRouteName,
-                                            arguments: e.payload?['orderId'])
+                              Navigator.pushNamed(context,
+                                      OrderDetailPage.orderDetailPageRouteName,
+                                      arguments: e.payload?['orderId'])
+                                  .then((value) => {
+                                        FirebaseFirestore.instance
+                                            .collection('notifications')
+                                            .doc(e.id)
+                                            .update({'seen': true}).then(
+                                                (value) => {})
                                       });
+
                               break;
                             case NotificationAction.NavigateToOrderDetalTester:
-                              FirebaseFirestore.instance
-                                  .collection('notifications')
-                                  .doc(e.id)
-                                  .update({'seen': true}).then((value) => {
-                                        Navigator.pushNamed(
-                                            context,
-                                            OrderDetailTester
-                                                .orderDetailTesterPageRouteName,
-                                            arguments: e.payload?['orderId'])
+                              Navigator.pushNamed(
+                                      context,
+                                      OrderDetailTester
+                                          .orderDetailTesterPageRouteName,
+                                      arguments: e.payload?['orderId'])
+                                  .then((value) => {
+                                        FirebaseFirestore.instance
+                                            .collection('notifications')
+                                            .doc(e.id)
+                                            .update({'seen': true})
                                       });
+
                               break;
                             default:
                               return;

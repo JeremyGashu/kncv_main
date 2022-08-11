@@ -2,6 +2,7 @@ import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
@@ -45,7 +46,8 @@ class _CourierHomePageState extends State<CourierHomePage> {
     final size = MediaQuery.of(context).size;
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
         orderBloc.add(LoadOrdersForCourier());
       }
     }, builder: (context, snapshot) {
@@ -73,6 +75,19 @@ class _CourierHomePageState extends State<CourierHomePage> {
                   ),
                   elevation: 0,
                   actions: [
+                    kIsWeb
+                        ? IconButton(
+                            onPressed: () {
+                              orderBloc.add(LoadOrdersForCourier());
+                              sl<TesterCourierBloc>()
+                                ..add(LoadTestersAndCouriers());
+                            },
+                            icon: Icon(
+                              Icons.refresh,
+                            ),
+                            color: Colors.white,
+                          )
+                        : SizedBox(),
                     IconButton(
                       onPressed: () {
                         Navigator.push(
@@ -86,18 +101,23 @@ class _CourierHomePageState extends State<CourierHomePage> {
                       color: Colors.white,
                     ),
                     StreamBuilder(
-                        stream: FirebaseFirestore.instance.collection('notifications').snapshots(),
-                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        stream: FirebaseFirestore.instance
+                            .collection('notifications')
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           int counter = 0;
                           if (snapshot.hasData) {
-                            counter = getUnseenNotificationsCount(snapshot.data);
+                            counter =
+                                getUnseenNotificationsCount(snapshot.data);
                           }
 
                           return Container(
                             padding: EdgeInsets.only(top: 10, right: 10),
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(context, NotificationsPage.notificationsRouteName);
+                                Navigator.pushNamed(context,
+                                    NotificationsPage.notificationsRouteName);
                               },
                               child: Badge(
                                 badgeContent: Text('${counter}'),
@@ -116,12 +136,15 @@ class _CourierHomePageState extends State<CourierHomePage> {
                     Center(
                       child: FutureBuilder(
                           future: AuthRepository.currentUser(),
-                          builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          builder: (context,
+                              AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
                               return size.width < 191
                                   ? SizedBox.shrink()
                                   : Text(
-                                      snapshot.data!['user'].email != null ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}' : '',
+                                      snapshot.data!['user'].email != null
+                                          ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}'
+                                          : '',
                                       style: TextStyle(
                                         // fontSize: 12,
                                         fontSize: size.width < 290
@@ -146,12 +169,17 @@ class _CourierHomePageState extends State<CourierHomePage> {
                             builder: (builder) {
                               return AlertDialog(
                                 title: Text('Log Out'),
-                                content: Text('Are you sure you want to Log Out?'),
+                                content:
+                                    Text('Are you sure you want to Log Out?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pushNamedAndRemoveUntil(context, LoginPage.loginPageRouteName, (route) => false);
-                                      BlocProvider.of<AuthBloc>(context).add(LogOutUser());
+                                      Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          LoginPage.loginPageRouteName,
+                                          (route) => false);
+                                      BlocProvider.of<AuthBloc>(context)
+                                          .add(LogOutUser());
                                     },
                                     child: Text('Yes'),
                                   ),
@@ -194,7 +222,8 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                 : Align(
                                     alignment: Alignment.center,
                                     child: Container(
-                                      constraints: BoxConstraints(maxWidth: 700),
+                                      constraints:
+                                          BoxConstraints(maxWidth: 700),
                                       child: Center(
                                         child: ListView.builder(
                                             itemCount: state.orders.length,
@@ -202,14 +231,24 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                               return GestureDetector(
                                                   onTap: () async {
                                                     // print('${state.orders[index].orderId}');
-                                                    var load = await Navigator.pushNamed(context, OrderDetailCourier.orderDetailCourierPageRouteName, arguments: state.orders[index].orderId);
+                                                    var load = await Navigator
+                                                        .pushNamed(
+                                                            context,
+                                                            OrderDetailCourier
+                                                                .orderDetailCourierPageRouteName,
+                                                            arguments: state
+                                                                .orders[index]
+                                                                .orderId);
                                                     if (load == true) {
-                                                      orderBloc.add(LoadOrdersForCourier());
+                                                      orderBloc.add(
+                                                          LoadOrdersForCourier());
                                                     } else {
-                                                      orderBloc.add(LoadOrdersForCourier());
+                                                      orderBloc.add(
+                                                          LoadOrdersForCourier());
                                                     }
                                                   },
-                                                  child: orderCard(state.orders[index]));
+                                                  child: orderCard(
+                                                      state.orders[index]));
                                             }),
                                       ),
                                     ),

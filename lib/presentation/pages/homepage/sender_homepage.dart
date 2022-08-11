@@ -54,7 +54,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
     final size = MediaQuery.of(context).size;
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
         orderBloc.add(LoadOrders());
       }
     }, builder: (context, snapshot) {
@@ -66,7 +67,9 @@ class _SenderHomePageState extends State<SenderHomePage> {
               //     .showSnackBar(SnackBar(content: Text('Created order!')));
               orderBloc.add(LoadOrders());
               await Future.delayed(Duration(milliseconds: 500));
-              var success = await Navigator.pushNamed(context, PatientInfoPage.patientInfoPageRouteName, arguments: state.orderId);
+              var success = await Navigator.pushNamed(
+                  context, PatientInfoPage.patientInfoPageRouteName,
+                  arguments: state.orderId);
               if (success == true) {
                 orderBloc.add(LoadOrders());
               }
@@ -98,6 +101,19 @@ class _SenderHomePageState extends State<SenderHomePage> {
                   ),
                   elevation: 0,
                   actions: [
+                    kIsWeb
+                        ? IconButton(
+                            onPressed: () {
+                              orderBloc.add(LoadOrders());
+                              sl<TesterCourierBloc>()
+                                ..add(LoadTestersAndCouriers());
+                            },
+                            icon: Icon(
+                              Icons.refresh,
+                            ),
+                            color: Colors.white,
+                          )
+                        : SizedBox(),
                     IconButton(
                       onPressed: () {
                         Navigator.push(
@@ -115,7 +131,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
                             margin: EdgeInsets.only(top: 7),
                             child: IconButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, ResetPasswordPage.resetPasswordPageName);
+                                  Navigator.pushNamed(context,
+                                      ResetPasswordPage.resetPasswordPageName);
                                 },
                                 icon: Icon(
                                   Icons.person,
@@ -123,18 +140,23 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                 )))
                         : SizedBox(),
                     StreamBuilder(
-                        stream: FirebaseFirestore.instance.collection('notifications').snapshots(),
-                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        stream: FirebaseFirestore.instance
+                            .collection('notifications')
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           int counter = 0;
                           if (snapshot.hasData) {
-                            counter = getUnseenNotificationsCount(snapshot.data);
+                            counter =
+                                getUnseenNotificationsCount(snapshot.data);
                           }
 
                           return Container(
                             padding: EdgeInsets.only(top: 10, right: 10),
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(context, NotificationsPage.notificationsRouteName);
+                                Navigator.pushNamed(context,
+                                    NotificationsPage.notificationsRouteName);
                               },
                               child: Badge(
                                 badgeContent: Text('${counter}'),
@@ -154,7 +176,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
                     Center(
                       child: FutureBuilder(
                           future: AuthRepository.currentUser(),
-                          builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          builder: (context,
+                              AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
                               // print('snapshot data:');
                               // print(snapshot.data);
@@ -162,7 +185,9 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                   ? SizedBox.shrink()
                                   : Text(
                                       // 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
-                                      snapshot.data!['user'].email != null ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}' : '',
+                                      snapshot.data!['user'].email != null
+                                          ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}'
+                                          : '',
 
                                       style: TextStyle(
                                         // fontSize: 12,
@@ -188,12 +213,17 @@ class _SenderHomePageState extends State<SenderHomePage> {
                             builder: (builder) {
                               return AlertDialog(
                                 title: Text('Log Out'),
-                                content: Text('Are you sure you want to Log Out?'),
+                                content:
+                                    Text('Are you sure you want to Log Out?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pushNamedAndRemoveUntil(context, LoginPage.loginPageRouteName, (route) => false);
-                                      BlocProvider.of<AuthBloc>(context).add(LogOutUser());
+                                      Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          LoginPage.loginPageRouteName,
+                                          (route) => false);
+                                      BlocProvider.of<AuthBloc>(context)
+                                          .add(LogOutUser());
                                     },
                                     child: Text('Yes'),
                                   ),
@@ -258,32 +288,60 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                 : Align(
                                     alignment: Alignment.center,
                                     child: Container(
-                                      constraints: BoxConstraints(maxWidth: 700),
+                                      constraints:
+                                          BoxConstraints(maxWidth: 700),
                                       child: ListView.builder(
                                           itemCount: state.orders.length,
                                           itemBuilder: (context, index) {
                                             return GestureDetector(
                                                 onTap: () async {
                                                   // print('${state.orders[index].orderId}');
-                                                  var load = await Navigator.pushNamed(context, OrderDetailPage.orderDetailPageRouteName, arguments: state.orders[index].orderId);
+                                                  var load =
+                                                      await Navigator.pushNamed(
+                                                          context,
+                                                          OrderDetailPage
+                                                              .orderDetailPageRouteName,
+                                                          arguments: state
+                                                              .orders[index]
+                                                              .orderId);
                                                   if (load == true) {
                                                     orderBloc.add(LoadOrders());
                                                   }
                                                 },
                                                 child: Dismissible(
-                                                    background: Container(width: 20, height: 20, child: Center(child: CircularProgressIndicator())),
+                                                    background: Container(
+                                                        width: 20,
+                                                        height: 20,
+                                                        child: Center(
+                                                            child:
+                                                                CircularProgressIndicator())),
                                                     onDismissed: (_) {
-                                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order Deleted')));
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(SnackBar(
+                                                              content: Text(
+                                                                  'Order Deleted')));
 
-                                                      orderBloc.add(LoadOrders());
+                                                      orderBloc
+                                                          .add(LoadOrders());
                                                     },
                                                     confirmDismiss: (_) async {
-                                                      OrderRepository r = sl<OrderRepository>();
-                                                      var status = await r.deleteOrder(orderId: state.orders[index].orderId!);
+                                                      OrderRepository r =
+                                                          sl<OrderRepository>();
+                                                      var status =
+                                                          await r.deleteOrder(
+                                                              orderId: state
+                                                                  .orders[index]
+                                                                  .orderId!);
                                                       return status['success'];
                                                     },
-                                                    key: Key(state.orders[index].orderId ?? Random().nextDouble().toString()),
-                                                    child: orderCard(state.orders[index])));
+                                                    key: Key(state.orders[index]
+                                                            .orderId ??
+                                                        Random()
+                                                            .nextDouble()
+                                                            .toString()),
+                                                    child: orderCard(
+                                                        state.orders[index])));
                                           }),
                                     ),
                                   ),
@@ -302,7 +360,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
                         context: context,
                         builder: (ctx) {
                           return Container(
-                            padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
+                            padding: EdgeInsets.only(
+                                top: 30, left: 20, right: 20, bottom: 20),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.only(
@@ -338,9 +397,12 @@ class _SenderHomePageState extends State<SenderHomePage> {
                           );
                         });
                     if (create == true) {
-                      Tester? tester = BlocProvider.of<TesterCourierBloc>(context).tester;
-                      Courier? courier = BlocProvider.of<TesterCourierBloc>(context).courier;
-                      String? date = BlocProvider.of<TesterCourierBloc>(context).date;
+                      Tester? tester =
+                          BlocProvider.of<TesterCourierBloc>(context).tester;
+                      Courier? courier =
+                          BlocProvider.of<TesterCourierBloc>(context).courier;
+                      String? date =
+                          BlocProvider.of<TesterCourierBloc>(context).date;
                       orderBloc.add(
                         AddOrder(
                           courier_id: courier!.id,

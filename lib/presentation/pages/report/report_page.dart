@@ -22,7 +22,11 @@ class ReportScreen extends StatefulWidget {
   State<ReportScreen> createState() => _ReportScreenState();
 }
 
-enum reportType { orderMonitoringReport, specimenReferralReport, shipmentReport }
+enum reportType {
+  orderMonitoringReport,
+  specimenReferralReport,
+  shipmentReport
+}
 
 class _ReportScreenState extends State<ReportScreen> {
   bool loadingReports = true;
@@ -58,7 +62,8 @@ class _ReportScreenState extends State<ReportScreen> {
 
   //!order monitoring
   void exportOrderMonitoringReport(List<Map<String, dynamic>> reportsData) {
-    List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
+    List<Map<String, dynamic>> filteredReportsData =
+        getFilteredReports(reportsData);
     // print('filtered reports $filteredReportsData');
 
 // Create a new Excel document.
@@ -77,23 +82,45 @@ class _ReportScreenState extends State<ReportScreen> {
     sheet.getRangeByName('J1').setText('Order Status');
 
     for (int i = 0; i < filteredReportsData.length; i++) {
-      sheet.getRangeByName('A${i + 2}').setText(filteredReportsData[i]['orderId'].toString());
-      sheet.getRangeByName('B${i + 2}').setText(filteredReportsData[i]['sender_name'].toString());
-      sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['courier_name'].toString());
-      sheet.getRangeByName('D${i + 2}').setText(filteredReportsData[i]['tester_name'].toString());
-      sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['region']['name'].toString());
-      sheet.getRangeByName('F${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['name'].toString());
-      sheet.getRangeByName('G${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['woredas'][0]['name'].toString());
+      sheet
+          .getRangeByName('A${i + 2}')
+          .setText(filteredReportsData[i]['orderId'].toString());
+      sheet
+          .getRangeByName('B${i + 2}')
+          .setText(filteredReportsData[i]['sender_name'].toString());
+      sheet
+          .getRangeByName('C${i + 2}')
+          .setText(filteredReportsData[i]['courier_name'].toString());
+      sheet
+          .getRangeByName('D${i + 2}')
+          .setText(filteredReportsData[i]['tester_name'].toString());
+      sheet
+          .getRangeByName('E${i + 2}')
+          .setText(filteredReportsData[i]['region']['name'].toString());
+      sheet.getRangeByName('F${i + 2}').setText(
+          filteredReportsData[i]['region']['zones'][0]['name'].toString());
+      sheet.getRangeByName('G${i + 2}').setText(filteredReportsData[i]['region']
+              ['zones'][0]['woredas'][0]['name']
+          .toString());
       // sheet
       //     .getRangeByName('H${i + 2}')
       //     .setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
-      sheet.getRangeByName('H${i + 2}').setText(filteredReportsData[i]['patients'] != null ? getOrderSpecimenCount(filteredReportsData[i]).toString() : '0');
-      sheet.getRangeByName('I${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
+      sheet.getRangeByName('H${i + 2}').setText(
+          filteredReportsData[i]['patients'] != null
+              ? getOrderSpecimenCount(filteredReportsData[i]).toString()
+              : '0');
+      sheet.getRangeByName('I${i + 2}').setText(filteredReportsData[i]
+                  ['order_created']
+              .toDate()
+              .day
+              .toString() +
           '/' +
           filteredReportsData[i]['order_created'].toDate().month.toString() +
           '/' +
           filteredReportsData[i]['order_created'].toDate().year.toString());
-      sheet.getRangeByName('J${i + 2}').setText(filteredReportsData[i]['status'].toString());
+      sheet
+          .getRangeByName('J${i + 2}')
+          .setText(filteredReportsData[i]['status'].toString());
     }
     final List<int> bytes = workbook.saveAsStream();
     String date = DateTime.now().toString();
@@ -134,34 +161,82 @@ class _ReportScreenState extends State<ReportScreen> {
     sheet.getRangeByName('Y1').setText('Specimen Condition');
     sheet.getRangeByName('Z1').setText('Transport Mode');
 
-    List<Map<String, dynamic>> finalData = getDataForSpecimenReferralReport(reportsData);
+    List<Map<String, dynamic>> finalData =
+        getDataForSpecimenReferralReport(reportsData);
     for (int i = 0; i < finalData.length; i++) {
-      sheet.getRangeByName('A${i + 2}').setText(finalData[i]['orderId'].toString());
-      sheet.getRangeByName('B${i + 2}').setText(finalData[i]['courier_name'].toString());
-      sheet.getRangeByName('C${i + 2}').setText(finalData[i]['sender_name'].toString());
-      sheet.getRangeByName('D${i + 2}').setText(finalData[i]['tester_name'].toString());
-      sheet.getRangeByName('E${i + 2}').setText(finalData[i]['order_created'].toString());
-      sheet.getRangeByName('F${i + 2}').setText(finalData[i]['patientName'].toString());
+      sheet
+          .getRangeByName('A${i + 2}')
+          .setText(finalData[i]['orderId'].toString());
+      sheet
+          .getRangeByName('B${i + 2}')
+          .setText(finalData[i]['courier_name'].toString());
+      sheet
+          .getRangeByName('C${i + 2}')
+          .setText(finalData[i]['sender_name'].toString());
+      sheet
+          .getRangeByName('D${i + 2}')
+          .setText(finalData[i]['tester_name'].toString());
+      sheet
+          .getRangeByName('E${i + 2}')
+          .setText(finalData[i]['order_created'].toString());
+      sheet
+          .getRangeByName('F${i + 2}')
+          .setText(finalData[i]['patientName'].toString());
       sheet.getRangeByName('G${i + 2}').setText(finalData[i]['mrn'].toString());
       sheet.getRangeByName('H${i + 2}').setText(finalData[i]['sex'].toString());
       sheet.getRangeByName('I${i + 2}').setText(finalData[i]['age'].toString());
-      sheet.getRangeByName('J${i + 2}').setText(finalData[i]['ageInMonths'].toString());
-      sheet.getRangeByName('K${i + 2}').setText(finalData[i]['phone'].toString());
-      sheet.getRangeByName('L${i + 2}').setText(finalData[i]['region'].toString());
-      sheet.getRangeByName('M${i + 2}').setText(finalData[i]['zone'].toString());
-      sheet.getRangeByName('N${i + 2}').setText(finalData[i]['woreda'].toString());
-      sheet.getRangeByName('O${i + 2}').setText(finalData[i]['specimenType'].toString());
-      sheet.getRangeByName('P${i + 2}').setText(finalData[i]['siteOfTest'].toString());
-      sheet.getRangeByName('Q${i + 2}').setText(finalData[i]['requestedTest'].toString());
-      sheet.getRangeByName('R${i + 2}').setText(finalData[i]['reasonForTest'].toString());
-      sheet.getRangeByName('S${i + 2}').setText(finalData[i]['registrationGroup'].toString());
-      sheet.getRangeByName('T${i + 2}').setText(finalData[i]['deliveryStatus'].toString());
-      sheet.getRangeByName('U${i + 2}').setText(finalData[i]['turnAroundTime'] == "N/A" ? "N/A" : durationToString(finalData[i]['turnAroundTime']));
-      sheet.getRangeByName('V${i + 2}').setText(finalData[i]['mtb_result'].toString());
-      sheet.getRangeByName('W${i + 2}').setText(finalData[i]['result_rr'].toString());
-      sheet.getRangeByName('X${i + 2}').setText(finalData[i]['lab_registration_number'].toString());
-      sheet.getRangeByName('Y${i + 2}').setText(finalData[i]['specimenCondition'].toString());
-      sheet.getRangeByName('Z${i + 2}').setText(finalData[i]['transportMode'].toString());
+      sheet
+          .getRangeByName('J${i + 2}')
+          .setText(finalData[i]['ageInMonths'].toString());
+      sheet
+          .getRangeByName('K${i + 2}')
+          .setText(finalData[i]['phone'].toString());
+      sheet
+          .getRangeByName('L${i + 2}')
+          .setText(finalData[i]['region'].toString());
+      sheet
+          .getRangeByName('M${i + 2}')
+          .setText(finalData[i]['zone'].toString());
+      sheet
+          .getRangeByName('N${i + 2}')
+          .setText(finalData[i]['woreda'].toString());
+      sheet
+          .getRangeByName('O${i + 2}')
+          .setText(finalData[i]['specimenType'].toString());
+      sheet
+          .getRangeByName('P${i + 2}')
+          .setText(finalData[i]['siteOfTest'].toString());
+      sheet
+          .getRangeByName('Q${i + 2}')
+          .setText(finalData[i]['requestedTest'].toString());
+      sheet
+          .getRangeByName('R${i + 2}')
+          .setText(finalData[i]['reasonForTest'].toString());
+      sheet
+          .getRangeByName('S${i + 2}')
+          .setText(finalData[i]['registrationGroup'].toString());
+      sheet
+          .getRangeByName('T${i + 2}')
+          .setText(finalData[i]['deliveryStatus'].toString());
+      sheet.getRangeByName('U${i + 2}').setText(
+          finalData[i]['turnAroundTime'] == "N/A"
+              ? "N/A"
+              : durationToString(finalData[i]['turnAroundTime']));
+      sheet
+          .getRangeByName('V${i + 2}')
+          .setText(finalData[i]['mtb_result'].toString());
+      sheet
+          .getRangeByName('W${i + 2}')
+          .setText(finalData[i]['result_rr'].toString());
+      sheet
+          .getRangeByName('X${i + 2}')
+          .setText(finalData[i]['lab_registration_number'].toString());
+      sheet
+          .getRangeByName('Y${i + 2}')
+          .setText(finalData[i]['specimenCondition'].toString());
+      sheet
+          .getRangeByName('Z${i + 2}')
+          .setText(finalData[i]['transportMode'].toString());
     }
     final List<int> bytes = workbook.saveAsStream();
     String date = DateTime.now().toString();
@@ -172,7 +247,8 @@ class _ReportScreenState extends State<ReportScreen> {
 
   //!Shipment report
   void exportShipmentReport(List<Map<String, dynamic>> reportsData) {
-    List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
+    List<Map<String, dynamic>> filteredReportsData =
+        getFilteredReports(reportsData);
     // print('filtered reports $filteredReportsData');
 // Create a new Excel document.
     final xlsx.Workbook workbook = new xlsx.Workbook();
@@ -210,33 +286,65 @@ class _ReportScreenState extends State<ReportScreen> {
       }
 
       if (orderReceived != null && orderPickedUp != null) {
-        shipmentDurationInMinutes = orderReceived.difference(orderPickedUp).inMinutes;
+        shipmentDurationInMinutes =
+            orderReceived.difference(orderPickedUp).inMinutes;
       }
 
       if (orderPlaced != null && orderPickedUp != null) {
-        pickupDurationInMinutes = orderPickedUp.difference(orderPlaced).inMinutes;
+        pickupDurationInMinutes =
+            orderPickedUp.difference(orderPlaced).inMinutes;
       }
 
-      sheet.getRangeByName('A${i + 2}').setText(filteredReportsData[i]['orderId'].toString());
-      sheet.getRangeByName('B${i + 2}').setText(filteredReportsData[i]['sender_name'].toString());
+      sheet
+          .getRangeByName('A${i + 2}')
+          .setText(filteredReportsData[i]['orderId'].toString());
+      sheet
+          .getRangeByName('B${i + 2}')
+          .setText(filteredReportsData[i]['sender_name'].toString());
       // sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['region']['name'].toString());
       // sheet.getRangeByName('D${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['name'].toString());
       // sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['region']['zones'][0]['woredas'][0]['name'].toString());
-      sheet.getRangeByName('C${i + 2}').setText(filteredReportsData[i]['courier_name'].toString());
-      sheet.getRangeByName('D${i + 2}').setText(filteredReportsData[i]['tester_name'].toString());
-      sheet.getRangeByName('E${i + 2}').setText(filteredReportsData[i]['patients'] != null ? filteredReportsData[i]['patients'].length.toString() : '0');
-      sheet.getRangeByName('F${i + 2}').setText(filteredReportsData[i]['order_created'].toDate().day.toString() +
+      sheet
+          .getRangeByName('C${i + 2}')
+          .setText(filteredReportsData[i]['courier_name'].toString());
+      sheet
+          .getRangeByName('D${i + 2}')
+          .setText(filteredReportsData[i]['tester_name'].toString());
+      sheet.getRangeByName('E${i + 2}').setText(
+          filteredReportsData[i]['patients'] != null
+              ? filteredReportsData[i]['patients'].length.toString()
+              : '0');
+      sheet.getRangeByName('F${i + 2}').setText(filteredReportsData[i]
+                  ['order_created']
+              .toDate()
+              .day
+              .toString() +
           '/' +
           filteredReportsData[i]['order_created'].toDate().month.toString() +
           '/' +
           filteredReportsData[i]['order_created'].toDate().year.toString());
       orderReceived == null
           ? sheet.getRangeByName('G${i + 2}').setText('N/A')
-          : sheet.getRangeByName('G${i + 2}').setText(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString());
-      shipmentDurationInMinutes == null ? sheet.getRangeByName('H${i + 2}').setText('N/A') : sheet.getRangeByName('H${i + 2}').setText('${durationToString(shipmentDurationInMinutes)}');
+          : sheet.getRangeByName('G${i + 2}').setText(
+              orderReceived.day.toString() +
+                  '/' +
+                  orderReceived.month.toString() +
+                  '/' +
+                  orderReceived.year.toString());
+      shipmentDurationInMinutes == null
+          ? sheet.getRangeByName('H${i + 2}').setText('N/A')
+          : sheet
+              .getRangeByName('H${i + 2}')
+              .setText('${durationToString(shipmentDurationInMinutes)}');
 
-      pickupDurationInMinutes == null ? sheet.getRangeByName('I${i + 2}').setText('N/A') : sheet.getRangeByName('I${i + 2}').setText('${durationToString(pickupDurationInMinutes)}');
-      sheet.getRangeByName('J${i + 2}').setText(orderReceived != null ? '${orderReceived.year}/${orderReceived.month}/${orderReceived.day}' : 'N/A');
+      pickupDurationInMinutes == null
+          ? sheet.getRangeByName('I${i + 2}').setText('N/A')
+          : sheet
+              .getRangeByName('I${i + 2}')
+              .setText('${durationToString(pickupDurationInMinutes)}');
+      sheet.getRangeByName('J${i + 2}').setText(orderReceived != null
+          ? '${orderReceived.year}/${orderReceived.month}/${orderReceived.day}'
+          : 'N/A');
       sheet.getRangeByName('K${i + 2}').setText(orderReceived != null
           ? orderReceived.minute < 10
               ? '${orderReceived.hour}:0${orderReceived.minute}'
@@ -359,7 +467,8 @@ class _ReportScreenState extends State<ReportScreen> {
     return totalSpecimens;
   }
 
-  int getOrdersDeliveredTestedResulted(List<Map<String, dynamic>>? reportsData) {
+  int getOrdersDeliveredTestedResulted(
+      List<Map<String, dynamic>>? reportsData) {
     int ordersDeliveredTestedResulted = 0;
     for (var reportData in reportsData!) {
       if (reportData['patients'] != null) {
@@ -429,11 +538,15 @@ class _ReportScreenState extends State<ReportScreen> {
     summaryData['totalRequestedOrders'] = getTotalOrders(reportsData);
     summaryData['ordersWaitingPickup'] = getOrdersWaitingForPickup(reportsData);
     summaryData['ordersEnRoute'] = getOrdersEnRoute(reportsData);
-    summaryData['ordersDeliveredAccepted'] = getOrdersDeliveredAccepted(reportsData);
-    summaryData['ordersDeliveredRejected'] = getOrdersDeliveredRejected(reportsData);
-    summaryData['ordersDeliveredTestResultSent'] = getOrdersDeliveredTestedResulted(reportsData);
+    summaryData['ordersDeliveredAccepted'] =
+        getOrdersDeliveredAccepted(reportsData);
+    summaryData['ordersDeliveredRejected'] =
+        getOrdersDeliveredRejected(reportsData);
+    summaryData['ordersDeliveredTestResultSent'] =
+        getOrdersDeliveredTestedResulted(reportsData);
     //
-    summaryData['resultsTotalSent'] = getOrdersDeliveredTestedResulted(reportsData);
+    summaryData['resultsTotalSent'] =
+        getOrdersDeliveredTestedResulted(reportsData);
     summaryData['resultsTotalPositive'] = getOrdersTestedPositive(reportsData);
     summaryData['resultsTotalNegative'] = getOrdersTestedNegative(reportsData);
 
@@ -542,7 +655,8 @@ class _ReportScreenState extends State<ReportScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Start Date', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+            Text('Start Date',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
             SizedBox(height: size.height * 0.02),
             Container(
               height: size.height * 0.2,
@@ -558,7 +672,8 @@ class _ReportScreenState extends State<ReportScreen> {
                 },
               ),
             ),
-            Text('End Date', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+            Text('End Date',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
             SizedBox(height: 10),
             Container(
               height: size.height * 0.2,
@@ -583,7 +698,8 @@ class _ReportScreenState extends State<ReportScreen> {
                 });
                 for (var report in reports) {
                   DateTime reportDate = report['order_created'].toDate();
-                  if (reportDate.isBefore(filterEndDate!) && reportDate.isAfter(filterStartDate!)) {
+                  if (reportDate.isBefore(filterEndDate!) &&
+                      reportDate.isAfter(filterStartDate!)) {
                     filteredReports.add(report);
                   }
                 }
@@ -639,11 +755,15 @@ class _ReportScreenState extends State<ReportScreen> {
     if (selectedFilter != 'All' && filteredReports.isEmpty && !loadingReports) {
       return true;
       //!if filter is not All and filtred reports is not empty
-    } else if (selectedFilter != 'All' && filteredReports.isNotEmpty && !loadingReports) {
+    } else if (selectedFilter != 'All' &&
+        filteredReports.isNotEmpty &&
+        !loadingReports) {
       return false;
     } else if (selectedFilter == 'All' && reports.isEmpty && !loadingReports) {
       return true;
-    } else if (selectedFilter == 'All' && reports.isNotEmpty && !loadingReports) {
+    } else if (selectedFilter == 'All' &&
+        reports.isNotEmpty &&
+        !loadingReports) {
       return false;
     } else {
       return true;
@@ -687,7 +807,14 @@ class _ReportScreenState extends State<ReportScreen> {
                     decoration: BoxDecoration(),
                     margin: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: DropDown(
-                      items: ["All", "Today", "This Week", "This Month", "This Year", "Custom Date"],
+                      items: [
+                        "All",
+                        "Today",
+                        "This Week",
+                        "This Month",
+                        "This Year",
+                        "Custom Date"
+                      ],
                       dropDownType: DropDownType.Button,
                       showUnderline: false,
                       hint: Text('All', style: TextStyle(fontSize: 20.0)),
@@ -719,7 +846,11 @@ class _ReportScreenState extends State<ReportScreen> {
                       : isReportDataEmpty()
                           ? Container(
                               margin: const EdgeInsets.symmetric(vertical: 50),
-                              child: Center(child: Text('No Report Found', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16))),
+                              child: Center(
+                                  child: Text('No Report Found',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16))),
                             )
                           : Expanded(
                               child: ListView(
@@ -728,25 +859,42 @@ class _ReportScreenState extends State<ReportScreen> {
                                   //!report summary cards
                                   Container(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         SizedBox(height: 5),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                          child: Text('Orders', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                          child: Text('Orders',
+                                              style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.w600)),
                                         ),
                                         SizedBox(
                                           height: 140,
                                           child: Row(
                                             children: [
                                               Expanded(
-                                                child: ReportSummaryCard(title: 'Total orders', description: summaryData['totalRequestedOrders'].toString()),
+                                                child: ReportSummaryCard(
+                                                    title: 'Total orders',
+                                                    description: summaryData[
+                                                            'totalRequestedOrders']
+                                                        .toString()),
                                               ),
                                               Expanded(
-                                                child: ReportSummaryCard(title: 'Waiting pickup', description: summaryData['ordersWaitingPickup'].toString()),
+                                                child: ReportSummaryCard(
+                                                    title: 'Waiting pickup',
+                                                    description: summaryData[
+                                                            'ordersWaitingPickup']
+                                                        .toString()),
                                               ),
                                               Expanded(
-                                                child: ReportSummaryCard(title: 'En route', description: summaryData['ordersEnRoute'].toString()),
+                                                child: ReportSummaryCard(
+                                                    title: 'En route',
+                                                    description: summaryData[
+                                                            'ordersEnRoute']
+                                                        .toString()),
                                               ),
                                               // SizedBox(width: 10),
                                             ],
@@ -754,21 +902,36 @@ class _ReportScreenState extends State<ReportScreen> {
                                         ),
                                         SizedBox(height: 5),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                          child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                          child: Text('Specimens',
+                                              style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.w600)),
                                         ),
                                         SizedBox(
                                           height: 140,
                                           child: Row(
                                             children: [
                                               Expanded(
-                                                child: ReportSummaryCard(title: 'Total', description: totalSpecimens.toString()),
+                                                child: ReportSummaryCard(
+                                                    title: 'Total',
+                                                    description: totalSpecimens
+                                                        .toString()),
                                               ),
                                               Expanded(
-                                                child: ReportSummaryCard(title: 'Accepted', description: summaryData['ordersDeliveredAccepted'].toString()),
+                                                child: ReportSummaryCard(
+                                                    title: 'Accepted',
+                                                    description: summaryData[
+                                                            'ordersDeliveredAccepted']
+                                                        .toString()),
                                               ),
                                               Expanded(
-                                                child: ReportSummaryCard(title: 'Rejected', description: summaryData['ordersDeliveredRejected'].toString()),
+                                                child: ReportSummaryCard(
+                                                    title: 'Rejected',
+                                                    description: summaryData[
+                                                            'ordersDeliveredRejected']
+                                                        .toString()),
                                               ),
                                               // SizedBox(width: 10),
                                             ],
@@ -776,21 +939,37 @@ class _ReportScreenState extends State<ReportScreen> {
                                         ),
                                         SizedBox(height: 5),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                          child: Text('Test Results', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                          child: Text('Test Results',
+                                              style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.w600)),
                                         ),
                                         SizedBox(
                                           height: 140,
                                           child: Row(
                                             children: [
                                               Expanded(
-                                                child: ReportSummaryCard(title: 'Total Result', description: summaryData['resultsTotalSent'].toString()),
+                                                child: ReportSummaryCard(
+                                                    title: 'Total Result',
+                                                    description: summaryData[
+                                                            'resultsTotalSent']
+                                                        .toString()),
                                               ),
                                               Expanded(
-                                                child: ReportSummaryCard(title: 'Positive', description: summaryData['resultsTotalPositive'].toString()),
+                                                child: ReportSummaryCard(
+                                                    title: 'Positive',
+                                                    description: summaryData[
+                                                            'resultsTotalPositive']
+                                                        .toString()),
                                               ),
                                               Expanded(
-                                                child: ReportSummaryCard(title: 'Negative', description: summaryData['resultsTotalNegative'].toString()),
+                                                child: ReportSummaryCard(
+                                                    title: 'Negative',
+                                                    description: summaryData[
+                                                            'resultsTotalNegative']
+                                                        .toString()),
                                               ),
                                               // SizedBox(width: 10),
                                             ],
@@ -808,11 +987,18 @@ class _ReportScreenState extends State<ReportScreen> {
                                       ? SizedBox.shrink()
                                       : Container(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                                child: Text('Specimens', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10.0),
+                                                child: Text('Specimens',
+                                                    style: TextStyle(
+                                                        fontSize: 18.0,
+                                                        fontWeight:
+                                                            FontWeight.w600)),
                                               ),
                                               SizedBox(height: 5),
                                               Container(
@@ -820,42 +1006,106 @@ class _ReportScreenState extends State<ReportScreen> {
                                                     ? Column(
                                                         children: [
                                                           Container(
-                                                            height: size.width > 500 ? 300 : 150,
-                                                            width: size.width > 500 ? 300 : 150,
-                                                            margin: const EdgeInsets.all(10),
+                                                            height:
+                                                                size.width > 500
+                                                                    ? 300
+                                                                    : 150,
+                                                            width:
+                                                                size.width > 500
+                                                                    ? 300
+                                                                    : 150,
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .all(10),
                                                             child: PieChart(
                                                               PieChartData(
-                                                                sectionsSpace: 0,
+                                                                sectionsSpace:
+                                                                    0,
                                                                 sections: [
                                                                   PieChartSectionData(
-                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                                    value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                                                    radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
-                                                                    color: Colors.teal,
+                                                                    title:
+                                                                        '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            16.0,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                    value: calculatePercentageValue(
+                                                                        summaryData['resultsTotalPositive']
+                                                                            .toDouble(),
+                                                                        summaryData['resultsTotalSent']
+                                                                            .toDouble()),
+                                                                    radius: size.width >
+                                                                            size
+                                                                                .height
+                                                                        ? size.height *
+                                                                            0.2
+                                                                        : size.width *
+                                                                            0.225,
+                                                                    color: Colors
+                                                                        .teal,
                                                                   ),
                                                                   PieChartSectionData(
-                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                                    value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                                                    radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
-                                                                    color: Colors.blue,
+                                                                    title:
+                                                                        '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            16.0,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                    value: calculatePercentageValue(
+                                                                        summaryData['resultsTotalNegative']
+                                                                            .toDouble(),
+                                                                        summaryData['resultsTotalSent']
+                                                                            .toDouble()),
+                                                                    radius: size.width >
+                                                                            size
+                                                                                .height
+                                                                        ? size.height *
+                                                                            0.2
+                                                                        : size.width *
+                                                                            0.2,
+                                                                    color: Colors
+                                                                        .blue,
                                                                   ),
                                                                 ],
                                                               ),
-                                                              swapAnimationDuration: Duration(milliseconds: 250),
-                                                              swapAnimationCurve: Curves.linear,
+                                                              swapAnimationDuration:
+                                                                  Duration(
+                                                                      milliseconds:
+                                                                          250),
+                                                              swapAnimationCurve:
+                                                                  Curves.linear,
                                                             ),
                                                           ),
                                                           SizedBox(width: 10),
                                                           Container(
                                                             child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               children: [
-                                                                ChartIndicator(indicatorColor: Colors.teal, label: 'MTB Detected'),
-                                                                SizedBox(height: 10),
-                                                                ChartIndicator(indicatorColor: Colors.blue, label: 'MTB Not Detected'),
+                                                                ChartIndicator(
+                                                                    indicatorColor:
+                                                                        Colors
+                                                                            .teal,
+                                                                    label:
+                                                                        'MTB Detected'),
+                                                                SizedBox(
+                                                                    height: 10),
+                                                                ChartIndicator(
+                                                                    indicatorColor:
+                                                                        Colors
+                                                                            .blue,
+                                                                    label:
+                                                                        'MTB Not Detected'),
                                                               ],
                                                             ),
                                                           ),
@@ -864,42 +1114,106 @@ class _ReportScreenState extends State<ReportScreen> {
                                                     : Row(
                                                         children: [
                                                           Container(
-                                                            height: size.width > 450 ? 300 : 200,
-                                                            width: size.width > 450 ? 300 : 200,
-                                                            margin: const EdgeInsets.all(10),
+                                                            height:
+                                                                size.width > 450
+                                                                    ? 300
+                                                                    : 200,
+                                                            width:
+                                                                size.width > 450
+                                                                    ? 300
+                                                                    : 200,
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .all(10),
                                                             child: PieChart(
                                                               PieChartData(
-                                                                sectionsSpace: 0,
+                                                                sectionsSpace:
+                                                                    0,
                                                                 sections: [
                                                                   PieChartSectionData(
-                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                                    value: calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                                                    radius: size.width > size.height ? size.height * 0.2 : size.width * 0.225,
-                                                                    color: Colors.teal,
+                                                                    title:
+                                                                        '${calculatePercentageValue(summaryData['resultsTotalPositive'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            16.0,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                    value: calculatePercentageValue(
+                                                                        summaryData['resultsTotalPositive']
+                                                                            .toDouble(),
+                                                                        summaryData['resultsTotalSent']
+                                                                            .toDouble()),
+                                                                    radius: size.width >
+                                                                            size
+                                                                                .height
+                                                                        ? size.height *
+                                                                            0.2
+                                                                        : size.width *
+                                                                            0.225,
+                                                                    color: Colors
+                                                                        .teal,
                                                                   ),
                                                                   PieChartSectionData(
-                                                                    title: '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
-                                                                    titleStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontWeight: FontWeight.bold),
-                                                                    value: calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble()),
-                                                                    radius: size.width > size.height ? size.height * 0.2 : size.width * 0.2,
-                                                                    color: Colors.blue,
+                                                                    title:
+                                                                        '${calculatePercentageValue(summaryData['resultsTotalNegative'].toDouble(), summaryData['resultsTotalSent'].toDouble())} %',
+                                                                    titleStyle: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            16.0,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                    value: calculatePercentageValue(
+                                                                        summaryData['resultsTotalNegative']
+                                                                            .toDouble(),
+                                                                        summaryData['resultsTotalSent']
+                                                                            .toDouble()),
+                                                                    radius: size.width >
+                                                                            size
+                                                                                .height
+                                                                        ? size.height *
+                                                                            0.2
+                                                                        : size.width *
+                                                                            0.2,
+                                                                    color: Colors
+                                                                        .blue,
                                                                   ),
                                                                 ],
                                                               ),
-                                                              swapAnimationDuration: Duration(milliseconds: 250),
-                                                              swapAnimationCurve: Curves.linear,
+                                                              swapAnimationDuration:
+                                                                  Duration(
+                                                                      milliseconds:
+                                                                          250),
+                                                              swapAnimationCurve:
+                                                                  Curves.linear,
                                                             ),
                                                           ),
                                                           SizedBox(width: 10),
                                                           Container(
                                                             child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
                                                               children: [
-                                                                ChartIndicator(indicatorColor: Colors.teal, label: 'MTB Detected'),
-                                                                SizedBox(height: 10),
-                                                                ChartIndicator(indicatorColor: Colors.blue, label: 'MTB Not Detected'),
+                                                                ChartIndicator(
+                                                                    indicatorColor:
+                                                                        Colors
+                                                                            .teal,
+                                                                    label:
+                                                                        'MTB Detected'),
+                                                                SizedBox(
+                                                                    height: 10),
+                                                                ChartIndicator(
+                                                                    indicatorColor:
+                                                                        Colors
+                                                                            .blue,
+                                                                    label:
+                                                                        'MTB Not Detected'),
                                                               ],
                                                             ),
                                                           ),
@@ -914,7 +1228,8 @@ class _ReportScreenState extends State<ReportScreen> {
 
                                   Container(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         // Padding(
                                         //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -925,18 +1240,27 @@ class _ReportScreenState extends State<ReportScreen> {
                                         //
                                         Container(
                                           decoration: BoxDecoration(),
-                                          margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
                                           child: DropDown(
-                                            items: ["Order Monitoring", "Specimen Referral", "Shipment"],
+                                            items: [
+                                              "Order Monitoring",
+                                              "Specimen Referral",
+                                              "Shipment"
+                                            ],
                                             dropDownType: DropDownType.Button,
                                             showUnderline: false,
-                                            hint: Text(selectedReportType, style: TextStyle(fontSize: 20.0)),
+                                            hint: Text(selectedReportType,
+                                                style:
+                                                    TextStyle(fontSize: 20.0)),
                                             icon: Container(
                                               child: Row(
                                                 children: [
                                                   Icon(Icons.bar_chart),
                                                   SizedBox(width: 10),
-                                                  Text('Select Report', style: TextStyle(fontSize: 18.0)),
+                                                  Text('Select Report',
+                                                      style: TextStyle(
+                                                          fontSize: 18.0)),
                                                 ],
                                               ),
                                             ),
@@ -944,20 +1268,27 @@ class _ReportScreenState extends State<ReportScreen> {
                                               switch (choice) {
                                                 case "Order Monitoring":
                                                   setState(() {
-                                                    currentReportType = reportType.orderMonitoringReport;
-                                                    selectedReportType = choice.toString();
+                                                    currentReportType = reportType
+                                                        .orderMonitoringReport;
+                                                    selectedReportType =
+                                                        choice.toString();
                                                   });
                                                   break;
                                                 case "Specimen Referral":
                                                   setState(() {
-                                                    currentReportType = reportType.specimenReferralReport;
-                                                    selectedReportType = choice.toString();
+                                                    currentReportType = reportType
+                                                        .specimenReferralReport;
+                                                    selectedReportType =
+                                                        choice.toString();
                                                   });
                                                   break;
                                                 case "Shipment":
                                                   setState(() {
-                                                    currentReportType = reportType.shipmentReport;
-                                                    selectedReportType = choice.toString();
+                                                    currentReportType =
+                                                        reportType
+                                                            .shipmentReport;
+                                                    selectedReportType =
+                                                        choice.toString();
                                                   });
                                                   break;
                                                 default:
@@ -970,53 +1301,112 @@ class _ReportScreenState extends State<ReportScreen> {
                                         SizedBox(height: 20),
 //TODO: change report export data
                                         //!Order Monitoring Table
-                                        currentReportType != reportType.orderMonitoringReport
+                                        currentReportType !=
+                                                reportType.orderMonitoringReport
                                             ? SizedBox.shrink()
                                             : Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 10.0),
                                                     child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        Text('Order Monitoring', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                                        Text('Order Monitoring',
+                                                            style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600)),
                                                         IconButton(
                                                           onPressed: () {
                                                             // print('Exporting order monitoring report');
-                                                            exportOrderMonitoringReport(selectedFilter == 'All' ? reports : filteredReports);
+                                                            exportOrderMonitoringReport(
+                                                                selectedFilter ==
+                                                                        'All'
+                                                                    ? reports
+                                                                    : filteredReports);
                                                           },
-                                                          icon: FaIcon(FontAwesomeIcons.fileExport),
+                                                          icon: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .fileExport),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                   SizedBox(height: 20),
                                                   SingleChildScrollView(
-                                                    scrollDirection: Axis.horizontal,
-                                                    child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    child:
+                                                        SingleChildScrollView(
                                                       child: DataTable(
                                                         border: TableBorder(
-                                                          left: BorderSide(color: Colors.grey.shade400),
-                                                          top: BorderSide(color: Colors.grey.shade400),
-                                                          right: BorderSide(color: Colors.grey.shade400),
-                                                          bottom: BorderSide(color: Colors.grey.shade400),
-                                                          horizontalInside: BorderSide(color: Colors.grey.shade400),
-                                                          verticalInside: BorderSide(color: Colors.grey.shade400),
+                                                          left: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          top: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          right: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          bottom: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          horizontalInside:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade400),
+                                                          verticalInside:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade400),
                                                         ),
                                                         columns: [
-                                                          DataColumn(label: Text("Order No")),
-                                                          DataColumn(label: Text("Referring Health Facility")),
-                                                          DataColumn(label: Text("Courier Name")),
-                                                          DataColumn(label: Text("Testing Health Facility")),
-                                                          DataColumn(label: Text("Region")),
-                                                          DataColumn(label: Text("Zone/Sub City")),
-                                                          DataColumn(label: Text("Woreda")),
-                                                          DataColumn(label: Text("Number of Sample")),
-                                                          DataColumn(label: Text("Order Created")),
-                                                          DataColumn(label: Text("Order Status")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Order No")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Referring Health Facility")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Courier Name")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Testing Health Facility")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Region")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Zone/Sub City")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Woreda")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Number of Sample")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Order Created")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Order Status")),
                                                         ],
-                                                        rows: getOrderMonitoringRows(selectedFilter == 'All' ? reports : filteredReports),
+                                                        rows: getOrderMonitoringRows(
+                                                            selectedFilter ==
+                                                                    'All'
+                                                                ? reports
+                                                                : filteredReports),
                                                       ),
                                                     ),
                                                   ),
@@ -1025,71 +1415,164 @@ class _ReportScreenState extends State<ReportScreen> {
                                               ),
 
                                         //!Specimen Referral Report Table
-                                        currentReportType != reportType.specimenReferralReport
+                                        currentReportType !=
+                                                reportType
+                                                    .specimenReferralReport
                                             ? SizedBox.shrink()
                                             : Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 10.0),
                                                     child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        Text('Specimen Referral Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                                        Text(
+                                                            'Specimen Referral Report',
+                                                            style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600)),
                                                         IconButton(
                                                           onPressed: () {
                                                             // print('Exporting Specimen Referring report');
-                                                            exportSpecimenReferralReport(selectedFilter == 'All' ? reports : filteredReports);
+                                                            exportSpecimenReferralReport(
+                                                                selectedFilter ==
+                                                                        'All'
+                                                                    ? reports
+                                                                    : filteredReports);
                                                           },
-                                                          icon: FaIcon(FontAwesomeIcons.fileExport),
+                                                          icon: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .fileExport),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                   SizedBox(height: 20),
                                                   SingleChildScrollView(
-                                                    scrollDirection: Axis.horizontal,
-                                                    child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    child:
+                                                        SingleChildScrollView(
                                                       child: DataTable(
                                                         border: TableBorder(
-                                                          left: BorderSide(color: Colors.grey.shade400),
-                                                          top: BorderSide(color: Colors.grey.shade400),
-                                                          right: BorderSide(color: Colors.grey.shade400),
-                                                          bottom: BorderSide(color: Colors.grey.shade400),
-                                                          horizontalInside: BorderSide(color: Colors.grey.shade400),
-                                                          verticalInside: BorderSide(color: Colors.grey.shade400),
+                                                          left: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          top: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          right: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          bottom: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          horizontalInside:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade400),
+                                                          verticalInside:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade400),
                                                         ),
                                                         columns: [
-                                                          DataColumn(label: Text("Order ID")),
-                                                          DataColumn(label: Text("Courier Name")),
-                                                          DataColumn(label: Text("Referring Health Facility")),
-                                                          DataColumn(label: Text("Testing Health Facility")),
-                                                          DataColumn(label: Text("Order Created")),
-                                                          DataColumn(label: Text("Patient's Name")),
-                                                          DataColumn(label: Text("MRN")),
-                                                          DataColumn(label: Text("Sex")),
-                                                          DataColumn(label: Text("Age")),
-                                                          DataColumn(label: Text("Age(Months)")),
-                                                          DataColumn(label: Text("Phone")),
-                                                          DataColumn(label: Text("Region")),
-                                                          DataColumn(label: Text("Zone")),
-                                                          DataColumn(label: Text("Woreda")),
-                                                          DataColumn(label: Text("Specimen Type")),
-                                                          DataColumn(label: Text("Site of Test")),
-                                                          DataColumn(label: Text("Requested Test")),
-                                                          DataColumn(label: Text("Reason for Test")),
-                                                          DataColumn(label: Text("Registration Group")),
-                                                          DataColumn(label: Text("Delivery Status")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Order ID")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Courier Name")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Referring Health Facility")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Testing Health Facility")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Order Created")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Patient's Name")),
+                                                          DataColumn(
+                                                              label:
+                                                                  Text("MRN")),
+                                                          DataColumn(
+                                                              label:
+                                                                  Text("Sex")),
+                                                          DataColumn(
+                                                              label:
+                                                                  Text("Age")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Age(Months)")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Phone")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Region")),
+                                                          DataColumn(
+                                                              label:
+                                                                  Text("Zone")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Woreda")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Specimen Type")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Site of Test")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Requested Test")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Reason for Test")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Registration Group")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Delivery Status")),
                                                           // getDataForSpecimenReferralReport
                                                           //TODO: add remaining columns
-                                                          DataColumn(label: Text("Turn around Time (H:M)")),
-                                                          DataColumn(label: Text("MTB Result")),
-                                                          DataColumn(label: Text("RR Result")),
-                                                          DataColumn(label: Text("Lab Registration Number")),
-                                                          DataColumn(label: Text("Specimen Condition")),
-                                                          DataColumn(label: Text("Transport Mode")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Turn around Time (H:M)")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "MTB Result")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "RR Result")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Lab Registration Number")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Specimen Condition")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Transport Mode")),
                                                         ],
-                                                        rows: getSpecimenReferalReport(selectedFilter == 'All' ? reports : filteredReports),
+                                                        rows: getSpecimenReferalReport(
+                                                            selectedFilter ==
+                                                                    'All'
+                                                                ? reports
+                                                                : filteredReports),
                                                       ),
                                                     ),
                                                   ),
@@ -1099,58 +1582,119 @@ class _ReportScreenState extends State<ReportScreen> {
 
                                         //!Shipment Report Table
 
-                                        currentReportType != reportType.shipmentReport
+                                        currentReportType !=
+                                                reportType.shipmentReport
                                             ? SizedBox.shrink()
                                             : Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 10.0),
                                                     child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        Text('Shipment Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                                        Text('Shipment Report',
+                                                            style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600)),
                                                         IconButton(
                                                           onPressed: () {
                                                             // print('Exporting Specimen Referring report');
-                                                            exportShipmentReport(selectedFilter == 'All' ? reports : filteredReports);
+                                                            exportShipmentReport(
+                                                                selectedFilter ==
+                                                                        'All'
+                                                                    ? reports
+                                                                    : filteredReports);
                                                           },
-                                                          icon: FaIcon(FontAwesomeIcons.fileExport),
+                                                          icon: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .fileExport),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                   SizedBox(height: 20),
                                                   SingleChildScrollView(
-                                                    scrollDirection: Axis.horizontal,
-                                                    child: SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    child:
+                                                        SingleChildScrollView(
                                                       child: DataTable(
                                                         border: TableBorder(
-                                                          left: BorderSide(color: Colors.grey.shade400),
-                                                          top: BorderSide(color: Colors.grey.shade400),
-                                                          right: BorderSide(color: Colors.grey.shade400),
-                                                          bottom: BorderSide(color: Colors.grey.shade400),
-                                                          horizontalInside: BorderSide(color: Colors.grey.shade400),
-                                                          verticalInside: BorderSide(color: Colors.grey.shade400),
+                                                          left: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          top: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          right: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          bottom: BorderSide(
+                                                              color: Colors.grey
+                                                                  .shade400),
+                                                          horizontalInside:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade400),
+                                                          verticalInside:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade400),
                                                         ),
                                                         columns: [
-                                                          DataColumn(label: Text("Order ID")),
-                                                          DataColumn(label: Text("Pick up Site")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Order ID")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Pick up Site")),
                                                           // DataColumn(label: Text("Region")),
                                                           // DataColumn(label: Text("Zone")),
                                                           // DataColumn(label: Text("Woreda")),
-                                                          DataColumn(label: Text("Courier Name")),
-                                                          DataColumn(label: Text("Recipient Site")),
-                                                          DataColumn(label: Text("Number of Patients")),
-                                                          DataColumn(label: Text("Order Created")),
-                                                          DataColumn(label: Text("Order Accepted")),
-                                                          DataColumn(label: Text("Shipment Duration (H:M)")),
-                                                          DataColumn(label: Text("Pick up Duration (H:M)")),
-                                                          DataColumn(label: Text("Drop off Date")),
-                                                          DataColumn(label: Text("Drop off Time")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Courier Name")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Recipient Site")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Number of Patients")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Order Created")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Order Accepted")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Shipment Duration (H:M)")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Pick up Duration (H:M)")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Drop off Date")),
+                                                          DataColumn(
+                                                              label: Text(
+                                                                  "Drop off Time")),
                                                           //shipmentReport
                                                         ],
-                                                        rows: getShipmentReport(selectedFilter == 'All' ? reports : filteredReports),
+                                                        rows: getShipmentReport(
+                                                            selectedFilter ==
+                                                                    'All'
+                                                                ? reports
+                                                                : filteredReports),
                                                       ),
                                                     ),
                                                   ),
@@ -1177,7 +1721,11 @@ String getDateFormatted(Timestamp? time) {
   if (time == null) {
     return "";
   } else {
-    return time.toDate().day.toString() + '/' + time.toDate().month.toString() + '/' + time.toDate().year.toString();
+    return time.toDate().day.toString() +
+        '/' +
+        time.toDate().month.toString() +
+        '/' +
+        time.toDate().year.toString();
   }
 }
 
@@ -1189,16 +1737,19 @@ String getAgeInMonth(int? age) {
   }
 }
 
-int? getOrderTurnAroundTime(Map<String, dynamic> order, Map<String, dynamic> specimen) {
+int? getOrderTurnAroundTime(
+    Map<String, dynamic> order, Map<String, dynamic> specimen) {
   int? time;
   DateTime? orderPlaced;
   DateTime? resultPlacementDate;
   if (specimen['testResultAddedAt'] != null) {
     // print('**********************************************');
-    if (order['order_placed'] != null && specimen['testResultAddedAt'] != null) {
+    if (order['order_placed'] != null &&
+        specimen['testResultAddedAt'] != null) {
       orderPlaced = order['order_placed'].toDate();
       resultPlacementDate = DateTime.parse(specimen['testResultAddedAt']);
-      if ((orderPlaced != null && orderPlaced.runtimeType == DateTime) && (resultPlacementDate.runtimeType == DateTime)) {
+      if ((orderPlaced != null && orderPlaced.runtimeType == DateTime) &&
+          (resultPlacementDate.runtimeType == DateTime)) {
         time = resultPlacementDate.difference(orderPlaced).inMinutes;
       }
     }
@@ -1239,7 +1790,8 @@ String getSpecimenLabRegistrationNum(Map<String, dynamic> specimen) {
   return res;
 }
 
-List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dynamic>> reportsData) {
+List<Map<String, dynamic>> getDataForSpecimenReferralReport(
+    List<Map<String, dynamic>> reportsData) {
   List<Map<String, dynamic>> finalData = [];
   Map<String, dynamic> patientInformation = {};
 //!data collector
@@ -1247,32 +1799,80 @@ List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dyn
     if (reportData['patients'] != null) {
       for (Map<String, dynamic> patient in reportData['patients']) {
         for (Map<String, dynamic> specimen in patient['specimens']) {
-          patientInformation['orderId'] = reportData['orderId'] != null ? reportData['orderId'] : "";
-          patientInformation['courier_name'] = reportData['courier_name'] != null ? reportData['courier_name'] : "";
-          patientInformation['sender_name'] = reportData['sender_name'] != null ? reportData['sender_name'] : "";
-          patientInformation['tester_name'] = reportData['tester_name'] != null ? reportData['tester_name'] : "";
-          patientInformation['order_created'] = getDateFormatted(reportData['order_created']);
-          patientInformation['patientName'] = patient['name'] != null ? patient['name'] : "";
-          patientInformation['mrn'] = patient['MR'] != null ? patient['MR'] : "";
-          patientInformation['sex'] = patient['sex'] != null ? patient['sex'] : "";
-          patientInformation['age'] = patient['age'] != null ? patient['age'] : "";
-          patientInformation['ageInMonths'] = patient['age'] != null ? getAgeInMonth(int.parse(patient['age'])) : "";
-          patientInformation['phone'] = patient['phone'] != null ? patient['phone'] : "";
-          patientInformation['region'] = patient['region']['name'] != null ? patient['region']['name'] : "";
-          patientInformation['zone'] = patient['region']['zones'][0]['name'] != null ? patient['region']['zones'][0]['name'] : "";
-          patientInformation['woreda'] = patient['region']['zones'][0]['woredas'][0]['name'] != null ? patient['region']['zones'][0]['woredas'][0]['name'] : "";
-          patientInformation['specimenType'] = specimen['type'] != null ? specimen['type'] : "";
-          patientInformation['siteOfTest'] = patient['anatomic_location'] != null ? patient['anatomic_location'] : "";
-          patientInformation['requestedTest'] = specimen['examination_type'] != null ? specimen['examination_type'] : "";
-          patientInformation['reasonForTest'] = patient['reason_for_test'] != null ? patient['reason_for_test'] : "";
-          patientInformation['registrationGroup'] = patient['registration_group'] != null ? patient['registration_group'] : "";
-          patientInformation['deliveryStatus'] = reportData['status'] != null ? reportData['status'] : "";
-          patientInformation['turnAroundTime'] = getOrderTurnAroundTime(reportData, specimen) != null ? getOrderTurnAroundTime(reportData, specimen) : "N/A";
+          patientInformation['orderId'] =
+              reportData['orderId'] != null ? reportData['orderId'] : "";
+          patientInformation['courier_name'] =
+              reportData['courier_name'] != null
+                  ? reportData['courier_name']
+                  : "";
+          patientInformation['sender_name'] = reportData['sender_name'] != null
+              ? reportData['sender_name']
+              : "";
+          patientInformation['tester_name'] = reportData['tester_name'] != null
+              ? reportData['tester_name']
+              : "";
+          patientInformation['order_created'] =
+              getDateFormatted(reportData['order_created']);
+          patientInformation['patientName'] =
+              patient['name'] != null ? patient['name'] : "";
+          patientInformation['mrn'] =
+              patient['MR'] != null ? patient['MR'] : "";
+          patientInformation['sex'] =
+              patient['sex'] != null ? patient['sex'] : "";
+          patientInformation['age'] =
+              patient['age'] != null ? patient['age'] : "";
+          patientInformation['ageInMonths'] = patient['age'] != null
+              ? getAgeInMonth(int.parse(patient['age']))
+              : "";
+          patientInformation['phone'] =
+              patient['phone'] != null ? patient['phone'] : "";
+          patientInformation['region'] = patient['region']['name'] != null
+              ? patient['region']['name']
+              : "";
+          patientInformation['zone'] =
+              patient['region']['zones'][0]['name'] != null
+                  ? patient['region']['zones'][0]['name']
+                  : "";
+          patientInformation['woreda'] =
+              patient['region']['zones'][0]['woredas'][0]['name'] != null
+                  ? patient['region']['zones'][0]['woredas'][0]['name']
+                  : "";
+          patientInformation['specimenType'] =
+              specimen['type'] != null ? specimen['type'] : "";
+          patientInformation['siteOfTest'] =
+              patient['anatomic_location'] != null
+                  ? patient['anatomic_location']
+                  : "";
+          patientInformation['requestedTest'] =
+              specimen['examination_type'] != null
+                  ? specimen['examination_type']
+                  : "";
+          patientInformation['reasonForTest'] =
+              patient['reason_for_test'] != null
+                  ? patient['reason_for_test']
+                  : "";
+          patientInformation['registrationGroup'] =
+              patient['registration_group'] != null
+                  ? patient['registration_group']
+                  : "";
+          patientInformation['deliveryStatus'] =
+              reportData['status'] != null ? reportData['status'] : "";
+          patientInformation['turnAroundTime'] =
+              getOrderTurnAroundTime(reportData, specimen) != null
+                  ? getOrderTurnAroundTime(reportData, specimen)
+                  : "N/A";
           patientInformation['mtb_result'] = getSpecimenMtbResult(specimen);
           patientInformation['result_rr'] = getSpecimenRrResult(specimen);
-          patientInformation['lab_registration_number'] = getSpecimenLabRegistrationNum(specimen);
-          patientInformation['specimenCondition'] = specimen['specimenCondition'] != null ? specimen['specimenCondition'] : 'N/A';
-          patientInformation['transportMode'] = specimen['transportMode'] != null ? specimen['transportMode'] : 'N/A';
+          patientInformation['lab_registration_number'] =
+              getSpecimenLabRegistrationNum(specimen);
+          patientInformation['specimenCondition'] =
+              specimen['specimenCondition'] != null
+                  ? specimen['specimenCondition']
+                  : 'N/A';
+          patientInformation['transportMode'] =
+              specimen['transportMode'] != null
+                  ? specimen['transportMode']
+                  : 'N/A';
 
           finalData.add(patientInformation);
           patientInformation = {};
@@ -1284,7 +1884,8 @@ List<Map<String, dynamic>> getDataForSpecimenReferralReport(List<Map<String, dyn
 }
 
 List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
-  List<Map<String, dynamic>> finalData = getDataForSpecimenReferralReport(reportsData);
+  List<Map<String, dynamic>> finalData =
+      getDataForSpecimenReferralReport(reportsData);
 
   return finalData.map((data) {
     return DataRow(
@@ -1309,7 +1910,9 @@ List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
         DataCell(Text(data['reasonForTest'].toString())),
         DataCell(Text(data['registrationGroup'].toString())),
         DataCell(Text(data['deliveryStatus'].toString())),
-        DataCell(Text(data['turnAroundTime'] == "N/A" ? "N/A" : durationToString((data['turnAroundTime'])))),
+        DataCell(Text(data['turnAroundTime'] == "N/A"
+            ? "N/A"
+            : durationToString((data['turnAroundTime'])))),
         DataCell(Text(data['mtb_result'].toString())),
         DataCell(Text(data['result_rr'].toString())),
         DataCell(Text(data['lab_registration_number'].toString())),
@@ -1320,7 +1923,8 @@ List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
   }).toList();
 }
 
-List<Map<String, dynamic>> getFilteredReports(List<Map<String, dynamic>> reportsData) {
+List<Map<String, dynamic>> getFilteredReports(
+    List<Map<String, dynamic>> reportsData) {
   List<Map<String, dynamic>> filteredReportsData = reportsData.where((data) {
     if (data['status'] != 'Draft') {
       return true;
@@ -1332,7 +1936,8 @@ List<Map<String, dynamic>> getFilteredReports(List<Map<String, dynamic>> reports
 }
 
 List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
-  List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
+  List<Map<String, dynamic>> filteredReportsData =
+      getFilteredReports(reportsData);
 
   return filteredReportsData.map((data) {
     DateTime? orderReceived;
@@ -1351,7 +1956,8 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
     }
 
     if (orderReceived != null && orderPickedUp != null) {
-      shipmentDurationInMinutes = orderReceived.difference(orderPickedUp).inMinutes;
+      shipmentDurationInMinutes =
+          orderReceived.difference(orderPickedUp).inMinutes;
     }
 
     if (orderPlaced != null && orderPickedUp != null) {
@@ -1367,14 +1973,32 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
         // DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
         DataCell(Text(data['courier_name'].toString())),
         DataCell(Text(data['tester_name'].toString())),
-        DataCell(Text(data['patients'] != null ? data['patients'].length.toString() : '0')),
-        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
-        orderReceived == null ? DataCell(Text('N/A')) : DataCell(Text(orderReceived.day.toString() + '/' + orderReceived.month.toString() + '/' + orderReceived.year.toString())),
-        shipmentDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('${durationToString(shipmentDurationInMinutes)}')),
+        DataCell(Text(data['patients'] != null
+            ? data['patients'].length.toString()
+            : '0')),
+        DataCell(Text(data['order_created'].toDate().day.toString() +
+            '/' +
+            data['order_created'].toDate().month.toString() +
+            '/' +
+            data['order_created'].toDate().year.toString())),
+        orderReceived == null
+            ? DataCell(Text('N/A'))
+            : DataCell(Text(orderReceived.day.toString() +
+                '/' +
+                orderReceived.month.toString() +
+                '/' +
+                orderReceived.year.toString())),
+        shipmentDurationInMinutes == null
+            ? DataCell(Text('N/A'))
+            : DataCell(Text('${durationToString(shipmentDurationInMinutes)}')),
         //!add pick up duration
-        pickupDurationInMinutes == null ? DataCell(Text('N/A')) : DataCell(Text('${durationToString(pickupDurationInMinutes)}')),
+        pickupDurationInMinutes == null
+            ? DataCell(Text('N/A'))
+            : DataCell(Text('${durationToString(pickupDurationInMinutes)}')),
         // shipmentReport
-        DataCell(Text(orderReceived != null ? '${orderReceived.year}/${orderReceived.month}/${orderReceived.day}' : 'N/A')),
+        DataCell(Text(orderReceived != null
+            ? '${orderReceived.year}/${orderReceived.month}/${orderReceived.day}'
+            : 'N/A')),
         DataCell(Text(orderReceived != null
             ? orderReceived.minute < 10
                 ? '${orderReceived.hour}:0${orderReceived.minute}'
@@ -1402,7 +2026,8 @@ int getOrderSpecimenCount(Map<String, dynamic> order) {
 }
 
 List<DataRow> getOrderMonitoringRows(List<Map<String, dynamic>> reportsData) {
-  List<Map<String, dynamic>> filteredReportsData = getFilteredReports(reportsData);
+  List<Map<String, dynamic>> filteredReportsData =
+      getFilteredReports(reportsData);
 
   return filteredReportsData.map((data) {
     return DataRow(
@@ -1413,11 +2038,18 @@ List<DataRow> getOrderMonitoringRows(List<Map<String, dynamic>> reportsData) {
         DataCell(Text(data['tester_name'].toString())),
         DataCell(Text(data['region']['name'].toString())),
         DataCell(Text(data['region']['zones'][0]['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
+        DataCell(
+            Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
         // DataCell(Text(data['patients'] != null ? data['patients'].length.toString() : '0')),
-        DataCell(Text(data['patients'] != null ? getOrderSpecimenCount(data).toString() : '0')),
+        DataCell(Text(data['patients'] != null
+            ? getOrderSpecimenCount(data).toString()
+            : '0')),
 
-        DataCell(Text(data['order_created'].toDate().day.toString() + '/' + data['order_created'].toDate().month.toString() + '/' + data['order_created'].toDate().year.toString())),
+        DataCell(Text(data['order_created'].toDate().day.toString() +
+            '/' +
+            data['order_created'].toDate().month.toString() +
+            '/' +
+            data['order_created'].toDate().year.toString())),
         DataCell(Text(data['status'].toString())),
       ],
     );
@@ -1425,7 +2057,9 @@ List<DataRow> getOrderMonitoringRows(List<Map<String, dynamic>> reportsData) {
 }
 
 class ChartIndicator extends StatelessWidget {
-  const ChartIndicator({Key? key, required this.indicatorColor, required this.label}) : super(key: key);
+  const ChartIndicator(
+      {Key? key, required this.indicatorColor, required this.label})
+      : super(key: key);
   final Color indicatorColor;
   final String label;
 
@@ -1436,17 +2070,21 @@ class ChartIndicator extends StatelessWidget {
         Container(
           height: 25,
           width: 25,
-          decoration: BoxDecoration(color: indicatorColor, borderRadius: BorderRadius.circular(2)),
+          decoration: BoxDecoration(
+              color: indicatorColor, borderRadius: BorderRadius.circular(2)),
         ),
         SizedBox(width: 10),
-        Text(label, style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600)),
+        Text(label,
+            style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600)),
       ],
     );
   }
 }
 
 class ReportSummaryCard extends StatelessWidget {
-  const ReportSummaryCard({Key? key, required this.title, required this.description}) : super(key: key);
+  const ReportSummaryCard(
+      {Key? key, required this.title, required this.description})
+      : super(key: key);
   final String title;
   final String description;
 
@@ -1455,19 +2093,27 @@ class ReportSummaryCard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Container(
-      margin: EdgeInsets.only(left: 8, right: size.width > 900 ? 100 : 10, top: 10, bottom: 10),
+      margin: EdgeInsets.only(
+          left: 8, right: size.width > 900 ? 100 : 10, top: 10, bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.grey.shade200, offset: Offset(2, 7), blurRadius: 20)],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.grey.shade200, offset: Offset(2, 7), blurRadius: 20)
+        ],
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
         children: [
           SizedBox(height: 5),
-          Text(title, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600)),
+          Text(title,
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600)),
           Divider(),
           SizedBox(height: 20),
-          Text(description, style: TextStyle(fontSize: size.width > 900 ? 26 : 24.0, fontWeight: FontWeight.w600)),
+          Text(description,
+              style: TextStyle(
+                  fontSize: size.width > 900 ? 26 : 24.0,
+                  fontWeight: FontWeight.w600)),
         ],
       ),
     );

@@ -47,7 +47,8 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
     final size = MediaQuery.of(context).size;
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
         orderBloc.add(LoadOrdersForTester());
       }
     }, builder: (context, snapshot) {
@@ -75,6 +76,19 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                   ),
                   elevation: 0,
                   actions: [
+                    kIsWeb
+                        ? IconButton(
+                            onPressed: () {
+                              orderBloc.add(LoadOrdersForTester());
+                              sl<TesterCourierBloc>()
+                                ..add(LoadTestersAndCouriers());
+                            },
+                            icon: Icon(
+                              Icons.refresh,
+                            ),
+                            color: Colors.white,
+                          )
+                        : SizedBox(),
                     IconButton(
                       onPressed: () {
                         Navigator.push(
@@ -92,7 +106,8 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                             margin: EdgeInsets.only(top: 7),
                             child: IconButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, ResetPasswordPage.resetPasswordPageName);
+                                  Navigator.pushNamed(context,
+                                      ResetPasswordPage.resetPasswordPageName);
                                 },
                                 icon: Icon(
                                   Icons.person,
@@ -100,18 +115,23 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                 )))
                         : SizedBox(),
                     StreamBuilder(
-                        stream: FirebaseFirestore.instance.collection('notifications').snapshots(),
-                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        stream: FirebaseFirestore.instance
+                            .collection('notifications')
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           int counter = 0;
                           if (snapshot.hasData) {
-                            counter = getUnseenNotificationsCount(snapshot.data);
+                            counter =
+                                getUnseenNotificationsCount(snapshot.data);
                           }
 
                           return Container(
                             padding: EdgeInsets.only(top: 10, right: 10),
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(context, NotificationsPage.notificationsRouteName);
+                                Navigator.pushNamed(context,
+                                    NotificationsPage.notificationsRouteName);
                               },
                               child: Badge(
                                 badgeContent: Text('${counter}'),
@@ -130,7 +150,8 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                     Center(
                       child: FutureBuilder(
                           future: AuthRepository.currentUser(),
-                          builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          builder: (context,
+                              AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
                               // print('snapshot data:');
                               // print(snapshot.data['']);
@@ -138,7 +159,9 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                   ? SizedBox.shrink()
                                   : Text(
                                       // 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
-                                      snapshot.data!['user'].email != null ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}' : '',
+                                      snapshot.data!['user'].email != null
+                                          ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}'
+                                          : '',
 
                                       style: TextStyle(
                                         // fontSize: 12,
@@ -164,12 +187,15 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                             builder: (builder) {
                               return AlertDialog(
                                 title: Text('Log Out'),
-                                content: Text('Are you sure you want to Log Out?'),
+                                content:
+                                    Text('Are you sure you want to Log Out?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pushNamed(context, LoginPage.loginPageRouteName);
-                                      BlocProvider.of<AuthBloc>(context).add(LogOutUser());
+                                      Navigator.pushNamed(context,
+                                          LoginPage.loginPageRouteName);
+                                      BlocProvider.of<AuthBloc>(context)
+                                          .add(LogOutUser());
                                     },
                                     child: Text('Yes'),
                                   ),
@@ -212,21 +238,32 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                 : Align(
                                     alignment: Alignment.center,
                                     child: Container(
-                                      constraints: BoxConstraints(maxWidth: 700),
+                                      constraints:
+                                          BoxConstraints(maxWidth: 700),
                                       child: ListView.builder(
                                           itemCount: state.orders.length,
                                           itemBuilder: (context, index) {
                                             return GestureDetector(
                                                 onTap: () async {
                                                   // print('${state.orders[index].orderId}');
-                                                  var load = await Navigator.pushNamed(context, OrderDetailTester.orderDetailTesterPageRouteName, arguments: state.orders[index].orderId);
+                                                  var load =
+                                                      await Navigator.pushNamed(
+                                                          context,
+                                                          OrderDetailTester
+                                                              .orderDetailTesterPageRouteName,
+                                                          arguments: state
+                                                              .orders[index]
+                                                              .orderId);
                                                   if (load == true) {
-                                                    orderBloc.add(LoadOrdersForTester());
+                                                    orderBloc.add(
+                                                        LoadOrdersForTester());
                                                   } else {
-                                                    orderBloc.add(LoadOrdersForTester());
+                                                    orderBloc.add(
+                                                        LoadOrdersForTester());
                                                   }
                                                 },
-                                                child: orderCard(state.orders[index]));
+                                                child: orderCard(
+                                                    state.orders[index]));
                                           }),
                                     ),
                                   ),
