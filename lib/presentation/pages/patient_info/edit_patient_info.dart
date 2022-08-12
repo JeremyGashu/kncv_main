@@ -1565,19 +1565,51 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                           return AssessSpecimen(ctx, e);
                                         });
 
-                                    print('I have inited the modal $create');
+                                    // print(
+                                    //     'Old patient Info ===> ${e.toJson()}');
 
                                     if (create == true && e.type == 'Sputum') {
+                                      print(
+                                          'Old specimen Info ===> ${e.toJson()}');
                                       e.assessed = true;
                                       e.rejected =
                                           'Mucoid Purulent' != sputumCondition;
+                                      // e.reason =
+                                      //     'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
+                                      e.specimenCondition =
+                                          sputumCondition ?? '';
+
+                                      if (inColdChain != null) {
+                                        if (inColdChain == 'Yes, end to end') {
+                                          e.transportMode =
+                                              'End to end in cold chain';
+                                        } else if (inColdChain ==
+                                            'Yes, partly') {
+                                          e.transportMode =
+                                              'Partly in cold chain';
+                                        } else {
+                                          e.transportMode =
+                                              'Not at all in cold chain';
+                                        }
+                                      }
+                                      // e.specimenCondition = sputumCondition ?? '';
+
                                       e.reason =
                                           'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
-                                      // e.specimenCondition = sputumCondition ?? '';
+
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
 
                                       setState(() {
                                         sendingFeedback = true;
                                       });
+
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
 
                                       try {
                                         bool success = await OrderRepository
@@ -1586,6 +1618,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                 order: state.order,
                                                 patient: state.order
                                                     .patients![widget.index]);
+
                                         print('Success => $success');
 
                                         if (success) {
@@ -1644,8 +1677,30 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                         e.type == 'Stool') {
                                       e.assessed = true;
                                       e.rejected = 'Formed' != stoolCondition;
+                                      e.specimenCondition =
+                                          stoolCondition ?? '';
+                                      // e.reason =
+                                      //     'Stool Specimen is in $stoolCondition type. Not in Formed State!';
+
+                                      if (inColdChain != null) {
+                                        if (inColdChain == 'Yes, end to end') {
+                                          e.transportMode =
+                                              'End to end in cold chain';
+                                        } else if (inColdChain ==
+                                            'Yes, partly') {
+                                          e.transportMode =
+                                              'Partly in cold chain';
+                                        } else {
+                                          e.transportMode =
+                                              'Not at all in cold chain';
+                                        }
+                                      }
                                       e.reason =
                                           'Stool Specimen is in $stoolCondition type. Not in Formed State!';
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
 
                                       setState(() {
                                         sendingFeedback = true;
@@ -1657,7 +1712,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                               order: state.order,
                                               patient: state.order
                                                   .patients![widget.index]);
-                                      print('Here is not the problem $success');
+                                      // print('Here is not the problem $success');
 
                                       if (success) {
                                         addNotification(
@@ -1717,6 +1772,26 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       e.rejected = false;
                                       e.reason = '';
 
+                                      if (inColdChain != null) {
+                                        if (inColdChain == 'Yes, end to end') {
+                                          e.transportMode =
+                                              'End to end in cold chain';
+                                        } else if (inColdChain ==
+                                            'Yes, partly') {
+                                          e.transportMode =
+                                              'Partly in cold chain';
+                                        } else {
+                                          e.transportMode =
+                                              'Not at all in cold chain';
+                                        }
+                                      }
+                                      e.reason = '';
+
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
+
                                       setState(() {
                                         sendingFeedback = true;
                                       });
@@ -1762,6 +1837,26 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
                                       e.rejected = false;
                                       e.reason = '';
+
+                                      if (inColdChain != null) {
+                                        if (inColdChain == 'Yes, end to end') {
+                                          e.transportMode =
+                                              'End to end in cold chain';
+                                        } else if (inColdChain ==
+                                            'Yes, partly') {
+                                          e.transportMode =
+                                              'Partly in cold chain';
+                                        } else {
+                                          e.transportMode =
+                                              'Not at all in cold chain';
+                                        }
+                                      }
+                                      e.reason = '';
+
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
 
                                       setState(() {
                                         sendingFeedback = true;

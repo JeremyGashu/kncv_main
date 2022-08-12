@@ -89,7 +89,6 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       }
     } else if (event is AcceptOrderCourier) {
       yield AcceptingOrderCourier();
-      //TODO: Fix error
       try {
         bool success = await orderRepository.acceptOrder(
           event.order.orderId,

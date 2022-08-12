@@ -26,7 +26,6 @@ import 'package:kncv_flutter/presentation/pages/report/report_page.dart';
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_courier_selector.dart';
 import '../../../service_locator.dart';
-import '../../../utils/string_utils.dart';
 import '../notificatins.dart';
 import 'widgets/item_cart.dart';
 

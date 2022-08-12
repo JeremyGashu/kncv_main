@@ -1299,8 +1299,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                         ),
 
                                         SizedBox(height: 20),
-//TODO: change report export data
-                                        //!Order Monitoring Table
+
                                         currentReportType !=
                                                 reportType.orderMonitoringReport
                                             ? SizedBox.shrink()
@@ -1547,8 +1546,6 @@ class _ReportScreenState extends State<ReportScreen> {
                                                           DataColumn(
                                                               label: Text(
                                                                   "Delivery Status")),
-                                                          // getDataForSpecimenReferralReport
-                                                          //TODO: add remaining columns
                                                           DataColumn(
                                                               label: Text(
                                                                   "Turn around Time (H:M)")),

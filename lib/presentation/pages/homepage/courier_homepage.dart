@@ -22,7 +22,6 @@ import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_courier.dart';
 
 import '../../../service_locator.dart';
-import '../../../utils/string_utils.dart';
 import '../report/report_page.dart';
 
 class CourierHomePage extends StatefulWidget {

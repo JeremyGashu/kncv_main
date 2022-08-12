@@ -23,7 +23,6 @@ import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_tester.
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 
 import '../../../service_locator.dart';
-import '../../../utils/string_utils.dart';
 import '../report/report_page.dart';
 
 class ReceiverHomePage extends StatefulWidget {
