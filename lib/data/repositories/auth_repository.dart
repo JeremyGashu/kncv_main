@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthRepository {
   final FirebaseAuth auth;
@@ -11,12 +12,14 @@ class AuthRepository {
     UserCredential user =
         await auth.signInWithEmailAndPassword(email: email, password: password);
 
-    FirebaseMessaging.instance.getToken().then((token) {
-      FirebaseFirestore.instance
-          .collection('tokens')
-          .doc(user.user!.uid)
-          .set({'deviceToken': token});
-    });
+    if (!kIsWeb) {
+      FirebaseMessaging.instance.getToken().then((token) {
+        FirebaseFirestore.instance
+            .collection('tokens')
+            .doc(user.user!.uid)
+            .set({'deviceToken': token});
+      });
+    }
 
     if (user.user != null) {
       return user.user;

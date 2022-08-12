@@ -39,14 +39,17 @@ void main() async {
       measurementId: "G-HRHNQJCVL3"
     }
   */
-
-  await Firebase.initializeApp(
-      options: FirebaseOptions(
-    apiKey: "AIzaSyAo62ZimMRMjmkwjhzwM-Ux_cpiOPAGT7A",
-    appId: '1:669099784203:web:b84c3187f51436382f2f0e',
-    messagingSenderId: '669099784203',
-    projectId: 'kncv-360',
-  ));
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
+      apiKey: "AIzaSyAo62ZimMRMjmkwjhzwM-Ux_cpiOPAGT7A",
+      appId: '1:669099784203:web:b84c3187f51436382f2f0e',
+      messagingSenderId: '669099784203',
+      projectId: 'kncv-360',
+    ));
+  } else {
+    await Firebase.initializeApp();
+  }
 
   requestPermission();
   loadFCM();
@@ -229,9 +232,7 @@ void listenFCM() async {
           android: AndroidNotificationDetails(
             channel!.id,
             channel!.name,
-            // TODO add a proper drawable resource to android, for now using
-            //      one that already exists in example app.
-            icon: 'launch_background',
+            icon: 'begize',
           ),
         ),
       );

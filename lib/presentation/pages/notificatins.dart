@@ -255,6 +255,8 @@ Future<bool> addNotification(
       });
     }
 
+    print('Send List ==> $sendList');
+
     sendList.forEach((element) async {
       NotificationModel newNotification = NotificationModel(
         content: testerContent ?? content,
@@ -269,12 +271,14 @@ Future<bool> addNotification(
       await FirebaseFirestore.instance
           .collection('notifications')
           .add(newNotification.toJson());
+      String? t = await getUserTokenFromUID(element);
+
+      if (t != null) {
+        sendPushMessage(testerContent ?? content, 'Order Update!', t);
+      }
     });
 
-    sendList.forEach((element) async {
-      sendPushMessage(testerContent ?? content, 'Order Update!',
-          await getUserTokenFromUID(element));
-    });
+    // sendList.forEach((element) async {});
 
     return true;
   } catch (e) {
@@ -295,9 +299,10 @@ Future<List<String?>> getTestCenterAdminsFromTestCenterId(String? id) async {
   return testCenterAdmins;
 }
 
-Future<String> getUserTokenFromUID(String? uid) async {
+Future<String?> getUserTokenFromUID(String? uid) async {
   DocumentSnapshot user =
       await FirebaseFirestore.instance.collection('tokens').doc(uid).get();
   Map? userData = user.data() as Map?;
+  print('User Data ==> $userData');
   return userData?['deviceToken'];
 }

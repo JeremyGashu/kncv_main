@@ -17,6 +17,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: kColorsOrangeDark,
+        title: Text('Reset Password',
+        style: TextStyle(fontSize: 17),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Align(
@@ -35,7 +41,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         'Specimen Referral System Ethiopia',
                         textAlign: TextAlign.left,
                         style: TextStyle(
-                          fontSize: 46,
+                          fontSize: 40,
                           fontWeight: FontWeight.w500,
                         ),
                       )),

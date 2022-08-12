@@ -18,11 +18,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event is LoginUser) {
       yield LoadingState();
       try {
-        User? user = await authRepository.loginUser(email: event.email, password: event.password);
+        User? user = await authRepository.loginUser(
+            email: event.email, password: event.password);
         String? type;
         String? uid = user?.uid;
         if (uid != null) {
-          var userData = await authRepository.database.collection('users').where('user_id', isEqualTo: uid).get();
+          var userData = await authRepository.database
+              .collection('users')
+              .where('user_id', isEqualTo: uid)
+              .get();
           if (userData.docs.isNotEmpty) {
             type = userData.docs[0].data()['type'];
           }
@@ -45,11 +49,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield LoadingState();
       try {
         User? user = authRepository.auth.currentUser;
+        await user?.reload();
+        user = authRepository.auth.currentUser;
+        print('User email => ${user?.email}');
         String? type;
         String? uid = user?.uid;
 
         if (uid != null) {
-          var userData = await authRepository.database.collection('users').where('user_id', isEqualTo: uid).get();
+          var userData = await authRepository.database
+              .collection('users')
+              .where('user_id', isEqualTo: uid)
+              .get();
 
           if (userData.docs.isNotEmpty) {
             type = userData.docs[0].data()['type'];
