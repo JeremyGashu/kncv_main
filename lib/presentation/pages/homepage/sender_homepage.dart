@@ -185,8 +185,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                   ? SizedBox.shrink()
                                   : Text(
                                       // 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
-                                      snapshot.data!['user'].email != null
-                                          ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}'
+                                      snapshot.data!['name'] != null
+                                          ? 'Logged in  as: \n${snapshot.data!['name'] ?? ''}'
                                           : '',
 
                                       style: TextStyle(

@@ -142,8 +142,8 @@ class _CourierHomePageState extends State<CourierHomePage> {
                               return size.width < 191
                                   ? SizedBox.shrink()
                                   : Text(
-                                      snapshot.data!['user'].email != null
-                                          ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}'
+                                      snapshot.data!['name'] != null
+                                          ? 'Logged in  as: \n${snapshot.data!['name'] ?? ''}'
                                           : '',
                                       style: TextStyle(
                                         // fontSize: 12,

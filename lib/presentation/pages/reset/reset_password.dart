@@ -19,8 +19,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: kColorsOrangeDark,
-        title: Text('Reset Password',
-        style: TextStyle(fontSize: 17),
+        title: Text(
+          'Reset Password',
+          style: TextStyle(fontSize: 17),
         ),
       ),
       body: SafeArea(
@@ -67,7 +68,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               obscureText: true,
                               controller: _passwordController,
                               decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.phone, color: kIconColors),
+                                  prefixIcon:
+                                      Icon(Icons.phone, color: kIconColors),
                                   labelText: 'New Password',
                                   labelStyle: TextStyle(color: Colors.grey),
                                   focusedBorder: UnderlineInputBorder(
@@ -80,7 +82,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                               autofocus: false,
                               obscureText: true,
                               decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.phone, color: kIconColors),
+                                  prefixIcon:
+                                      Icon(Icons.phone, color: kIconColors),
                                   labelText: 'Confirm New Password',
                                   labelStyle: TextStyle(color: Colors.grey),
                                   focusedBorder: UnderlineInputBorder(
@@ -98,31 +101,45 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                         changingPassword = true;
                                       });
 
-                                      String _password = _passwordController.value.text;
-                                      String _confirmPassword = _confirmPasswordController.value.text;
+                                      String _password =
+                                          _passwordController.value.text;
+                                      String _confirmPassword =
+                                          _confirmPasswordController.value.text;
                                       if (_password.length < 6) {
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Password must be at least 6 characters.')));
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Password must be at least 6 characters.')));
                                         setState(() {
                                           changingPassword = false;
                                         });
                                         return;
                                       }
                                       if (_password != _confirmPassword) {
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Password did not match.')));
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Password did not match.')));
                                         setState(() {
                                           changingPassword = false;
                                         });
                                         return;
                                       }
 
-                                      FirebaseAuth.instance.currentUser?.updatePassword(_password).then((value) async {
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Password changed successfully.')));
+                                      FirebaseAuth.instance.currentUser
+                                          ?.updatePassword(_password)
+                                          .then((value) async {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Password changed successfully.')));
 
                                         setState(() {
                                           changingPassword = false;
                                         });
 
-                                        await Future.delayed(Duration(seconds: 1));
+                                        await Future.delayed(
+                                            Duration(seconds: 1));
                                         Navigator.pop(context);
                                       });
 
@@ -141,7 +158,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                                       child: Center(
                                         child: Text(
                                           'Change Password',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              color: Colors.white),
                                         ),
                                       ),
                                     ),

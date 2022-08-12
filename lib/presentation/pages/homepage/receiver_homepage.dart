@@ -153,14 +153,15 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                           builder: (context,
                               AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
-                              // print('snapshot data:');
+                              print('Snapshot data => ${snapshot.data}:');
+
                               // print(snapshot.data['']);
                               return size.width < 191
                                   ? SizedBox.shrink()
                                   : Text(
                                       // 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
-                                      snapshot.data!['user'].email != null
-                                          ? 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}'
+                                      snapshot.data!['name'] != null
+                                          ? 'Logged in  as: \n${snapshot.data!['name'] ?? ''}'
                                           : '',
 
                                       style: TextStyle(

@@ -14,12 +14,13 @@ class LoadingState extends AuthState {
 }
 
 class AuthenticatedState extends AuthState {
-  final User user;
+  final User? user;
   final String type;
+  final String uid;
 
-  AuthenticatedState({required this.user, required this.type});
+  AuthenticatedState({this.user, required this.type, required this.uid});
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [uid];
 }
 
 class UnauthenticatedState extends AuthState {

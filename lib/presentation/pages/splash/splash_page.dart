@@ -123,7 +123,7 @@ class _SplashPageState extends State<SplashPage> {
                     children: [
                       Image(
                           image: AssetImage('assets/ephi_logo.jpg'),
-                          width: size.width * 0.25),
+                          width: 90),
                     ],
                   ),
                   SizedBox(height: 15,),
@@ -171,10 +171,10 @@ class _SplashPageState extends State<SplashPage> {
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold)),
                                 SizedBox(width: 20),
-                                Image(
-                                    image: AssetImage('assets/ephi_logo.jpg'),
-                                    width: 80),
-                                SizedBox(width: 20),
+                                // Image(
+                                //     image: AssetImage('assets/ephi_logo.jpg'),
+                                //     width: 80),
+                                // SizedBox(width: 20),
                                 SvgPicture.asset(
                                   'assets/Knvc.svg',
                                   width: 80,
