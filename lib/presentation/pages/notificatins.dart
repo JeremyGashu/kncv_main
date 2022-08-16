@@ -35,7 +35,7 @@ class NotificationsPage extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Container(
                   constraints: BoxConstraints(maxWidth: 700),
-                  child: ListView(
+                  child: notifications.length == 0 ? Text('No unread notification.', textAlign: TextAlign.center,) : ListView(
                     children: notifications.map((e) {
                       return GestureDetector(
                         onTap: () {
@@ -203,6 +203,7 @@ Future<bool> addNotification(
     var database = FirebaseFirestore.instance;
     var ordersCollection =
         await database.collection('orders').doc(orderId).get();
+        // print('loaded order ${ordersCollection.data()?['tester_id']}');
     Order order =
         Order.fromJson(ordersCollection.data() as Map<String, dynamic>);
     List<String?> sendList = [];
@@ -250,6 +251,7 @@ Future<bool> addNotification(
     if (tester) {
       var testers =
           await getTestCenterAdminsFromTestCenterId(order.testCenterId);
+      print('Test Center ID ==> ${order.testCenterId}');
       testers.forEach((element) {
         sendList.add(element);
       });

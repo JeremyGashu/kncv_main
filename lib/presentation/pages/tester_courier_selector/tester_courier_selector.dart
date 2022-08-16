@@ -45,7 +45,8 @@ class _SelectorPageState extends State<SelectorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TesterCourierBloc, TesterCourierStates>(listener: (ctx, state) {
+    return BlocConsumer<TesterCourierBloc, TesterCourierStates>(
+        listener: (ctx, state) {
       // print(state);
     }, builder: (context, state) {
       if (state is LoadedState) {
@@ -89,7 +90,9 @@ class _SelectorPageState extends State<SelectorPage> {
                       padding: EdgeInsets.only(left: 20),
                       child: Text(
                         date ?? 'Please Select Date',
-                        style: TextStyle(color: Colors.black87.withOpacity(0.8), fontSize: 15),
+                        style: TextStyle(
+                            color: Colors.black87.withOpacity(0.8),
+                            fontSize: 15),
                       ),
                     ),
                   ),
@@ -123,7 +126,8 @@ class _SelectorPageState extends State<SelectorPage> {
                         FocusScope.of(context).requestFocus(FocusNode());
                         setState(() {
                           courier = val;
-                          BlocProvider.of<TesterCourierBloc>(context).courier = val;
+                          BlocProvider.of<TesterCourierBloc>(context).courier =
+                              val;
                         });
                       },
                       value: courier,
@@ -153,36 +157,64 @@ class _SelectorPageState extends State<SelectorPage> {
                   ),
                 )),
             SizedBox(
-              height: 10,
+              height: 5,
             ),
+            // Container(
+            //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            //   width: double.infinity,
+            //   decoration: BoxDecoration(
+            //     color: Colors.grey.withOpacity(0.2),
+            //     borderRadius: BorderRadius.circular(7),
+            //   ),
+            //   child: DropdownButtonHideUnderline(
+            //       child: DropdownButton<Tester>(
+            //           onChanged: (val) {
+            //             FocusScope.of(context).requestFocus(FocusNode());
+            //             setState(() {
+            //               tester = val;
+            //               BlocProvider.of<TesterCourierBloc>(context).tester = tester;
+            //             });
+            //           },
+            //           value: tester,
+            //           hint: Text('Select Tester'),
+            //           items: state.data['testers']!
+            //               .map(
+            //                 (e) => DropdownMenuItem<Tester>(
+            //                   value: e as Tester,
+            //                   child: Text(
+            //                     e.toString(),
+            //                   ),
+            //                 ),
+            //               )
+            //               .toList())),
+            // ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(7),
+                borderRadius : BorderRadius.circular(6),
               ),
-              child: DropdownButtonHideUnderline(
-                  child: DropdownButton<Tester>(
-                      onChanged: (val) {
-                        FocusScope.of(context).requestFocus(FocusNode());
-                        setState(() {
-                          tester = val;
-                          BlocProvider.of<TesterCourierBloc>(context).tester = tester;
-                        });
-                      },
-                      value: tester,
-                      hint: Text('Select Tester'),
-                      items: state.data['testers']!
-                          .map(
-                            (e) => DropdownMenuItem<Tester>(
-                              value: e as Tester,
-                              child: Text(
-                                e.toString(),
-                              ),
-                            ),
-                          )
-                          .toList())),
+              padding: EdgeInsets.all(4),
+              child: Autocomplete<Tester>(
+
+                displayStringForOption: (t) => t.name,
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text == '') {
+                    return const Iterable<Tester>.empty();
+                  }
+                  return (state.data['testers']! as List<Tester>)
+                      .where((tester) {
+                    return tester.name
+                        .toLowerCase()
+                        .contains(textEditingValue.text.toLowerCase());
+                  });
+                },
+                onSelected: (Tester selection) {
+                  setState(() {
+                    tester = selection;
+                    BlocProvider.of<TesterCourierBloc>(context).tester = tester;
+                  });
+                },
+              ),
             ),
             SizedBox(
               height: 45,
@@ -190,7 +222,10 @@ class _SelectorPageState extends State<SelectorPage> {
             InkWell(
               onTap: () {
                 // print('Popping');
-                if (BlocProvider.of<TesterCourierBloc>(context).tester != null && BlocProvider.of<TesterCourierBloc>(context).courier != null) {
+                if (BlocProvider.of<TesterCourierBloc>(context).tester !=
+                        null &&
+                    BlocProvider.of<TesterCourierBloc>(context).courier !=
+                        null) {
                   Navigator.pop(context, true);
                 }
               },
@@ -205,7 +240,10 @@ class _SelectorPageState extends State<SelectorPage> {
                 child: Center(
                   child: Text(
                     widget.buttonText ?? 'Create Order',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white),
                   ),
                 ),
               ),

@@ -74,6 +74,8 @@ class OrderRepository {
       Map<String, dynamic>? testCenter =
           await getTestCenterByAdminUID(currentUserId ?? '');
 
+          print('Load order for test center => ${testCenter?['key']}');
+
       var orders = await ordersCollection
           .where('tester_id', isEqualTo: testCenter?['key'])
           .orderBy('order_created', descending: true)
@@ -98,7 +100,9 @@ class OrderRepository {
         .where('user_id', isEqualTo: id)
         .get();
     if (usersData.docs.length > 0) {
-      Map<String, dynamic> userData = usersData.docs[0].data()['test_center'];
+      Map<String, dynamic> userData = usersData.docs[0].data();
+      print('Test Center ID ===> ${userData['test_center_id']}');
+      userData['key'] = userData['test_center_id'];
       // print('test center => ${userData}');
       return userData;
     }
@@ -110,7 +114,7 @@ class OrderRepository {
   // @params{courier_id, tester_id, courier_name and tester_name}
 
   String? getInitials(String val) {
-    List<String> names = val.split(" ");
+    List<String> names = val.trim().split(" ");
     String initials = '';
     for (var i = 0; i < names.length; i++) {
       initials += '${names[i][0]}';

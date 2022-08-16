@@ -21,19 +21,35 @@ class TesterCourierRepository {
 
       var usersCollection = await database.collection('users');
 
-      var userData = await usersCollection.where('user_id', isEqualTo: currentUserId).get();
+      var userData = await usersCollection
+          .where('user_id', isEqualTo: currentUserId)
+          .get();
       List filteredUser = userData.docs.map((e) => e.data()).toList();
       if (filteredUser.length > 0) {
+        //TODO check zones before fetching the courier
         Map user = filteredUser[0];
-        var testCenterData = await database.collection('test_centers').where('zone', isEqualTo: user["institution.zone"]).get();
+        // print('Current Institution ==> ${user['institution']['zone']}');
+        var testCenterData = await database.collection('test_centers').get();
 
-        var couriersData = await database.collection('users').where('type', isEqualTo: 'COURIER_ADMIN').where('zone', isEqualTo: user['institution.zone']).get();
-        List<Tester> testers = testCenterData.docs.map((e) => Tester.fromJson({...e.data(), 'id': e.id})).toList();
+        var couriersData = await database
+            .collection('users')
+            .where('type', isEqualTo: 'COURIER_ADMIN')
+            .where('zone', isEqualTo: user['institution']?['zone'])
+            .get();
+
+        List<Tester> testers = testCenterData.docs
+            .map((e) => Tester.fromJson({...e.data(), 'id': e.id}))
+            .toList();
+
         data['testers'] = testers;
         await testerBox.clear();
         await testerBox.addAll(testers);
 
-        List<Courier> couriers = couriersData.docs.map((e) => Courier.fromJson({...e.data(), 'id': e.data()['user_id']})).toList();
+        List<Courier> couriers = couriersData.docs
+            .map((e) =>
+                Courier.fromJson({...e.data(), 'id': e.data()['user_id']}))
+            .toList();
+        print('Couriers ==> $couriers');
         data['couriers'] = couriers;
         await couriersBox.clear();
         await couriersBox.addAll(couriers);

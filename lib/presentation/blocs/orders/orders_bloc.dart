@@ -84,7 +84,8 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
             // woreda: event.woreda,
             sender_id: (await FirebaseAuth.instance.currentUser?.uid ?? ''));
         yield SentOrder(orderId: newOrderId);
-      } catch (e) {
+      } catch (e, stackTrace) {
+        print(stackTrace);
         yield ErrorState(message: '$e');
       }
     } else if (event is AcceptOrderCourier) {

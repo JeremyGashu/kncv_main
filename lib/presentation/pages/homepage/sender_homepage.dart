@@ -41,6 +41,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
   @override
   void initState() {
     orderBloc.add(LoadOrders());
+    sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
     super.initState();
   }
 
@@ -360,7 +361,12 @@ class _SenderHomePageState extends State<SenderHomePage> {
                         builder: (ctx) {
                           return Container(
                             padding: EdgeInsets.only(
-                                top: 30, left: 20, right: 20, bottom: 20),
+                              bottom:
+                                  MediaQuery.of(context).viewInsets.bottom + 20,
+                              top: 20,
+                              left: 20,
+                              right: 20,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.only(
@@ -387,9 +393,9 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 30,
-                                ),
+                                // SizedBox(
+                                //   height: 30,
+                                // ),
                                 SelectorPage(),
                               ],
                             ),

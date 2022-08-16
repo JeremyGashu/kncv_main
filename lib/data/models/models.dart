@@ -66,7 +66,7 @@ class Order {
         orderId: json["id"],
         senderId: json["sender_id"],
         courierId: json["courier_id"],
-        testCenterId: json["test_center_id"],
+        testCenterId: json["tester_id"],
         courier: json["courier"],
         testCenter: json["test_center"],
         sender_name: json['sender_name'],
@@ -80,7 +80,10 @@ class Order {
         created_at: json['created_at'],
         notified_arrival: json['notified_arrival'] ?? false,
         timestamp: json["timestamp"] ?? '',
-        patients: json["patients"] != null ? List<Patient>.from(json["patients"].map((x) => Patient.fromJson(x))) : [],
+        patients: json["patients"] != null
+            ? List<Patient>.from(
+                json["patients"].map((x) => Patient.fromJson(x)))
+            : [],
       );
 
   factory Order.fromJsonSMS(Map<String, dynamic> json) => Order(
@@ -101,7 +104,9 @@ class Order {
         created_at: json['created_at'],
         notified_arrival: json['notified_arrival'] ?? false,
         timestamp: json["timestamp"] ?? '',
-        patients: json["p"] != null ? List<Patient>.from(json["p"].map((x) => Patient.fromJson(x))) : [],
+        patients: json["p"] != null
+            ? List<Patient>.from(json["p"].map((x) => Patient.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJsonSMS() => {
@@ -115,13 +120,16 @@ class Order {
         'sn': sender_name,
         'tn': tester_name,
         'cn': courier_name,
-        "p": patients != null ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS())) : [],
+        "p": patients != null
+            ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS()))
+            : [],
       };
 
   Map<String, dynamic> toJson() => {
         "order_id": orderId,
         "sender_id": senderId,
         "courier_id": courierId,
+        "tester_id": testCenterId,
         "test_center_id": testCenterId,
         'sender_name': sender_name,
         "courier": courier,
@@ -132,7 +140,9 @@ class Order {
         'notified_arrival': notified_arrival,
         "sender": sender,
         "timestamp": timestamp,
-        "patients": patients != null ? List<dynamic>.from(patients!.map((x) => x.toJson())) : [],
+        "patients": patients != null
+            ? List<dynamic>.from(patients!.map((x) => x.toJson()))
+            : [],
       };
 }
 
@@ -262,14 +272,16 @@ class Patient {
         resultAvaiable: json['result_available'] ?? false,
         hiv: json["HIV"],
         pneumonia: json["pneumonia"],
-        testResult: json['result'] != null ? TestResult.fromJson(json['result']) : null,
+        testResult:
+            json['result'] != null ? TestResult.fromJson(json['result']) : null,
         recurrentPneumonia: json["recurrent_pneumonia"],
         malnutrition: json["malnutrition"],
         dm: json["DM"],
         doctorInCharge: json["doctor_in_charge"],
         siteOfTB: json["anatomic_location"],
         examPurpose: json["exam_purpose"],
-        specimens: List<Specimen>.from(json["specimens"].map((x) => Specimen.fromJson(x))),
+        specimens: List<Specimen>.from(
+            json["specimens"].map((x) => Specimen.fromJson(x))),
       );
 
   // Map<String, dynamic> toJsonSMS() => {
@@ -300,7 +312,9 @@ class Patient {
         'result_available': resultAvaiable,
         // "anatomic_location": siteOfTB,
         // "exam_purpose": examPurpose,
-        "specimens": specimens != null ? List<dynamic>.from(specimens!.map((x) => x.toJson())) : [],
+        "specimens": specimens != null
+            ? List<dynamic>.from(specimens!.map((x) => x.toJson()))
+            : [],
       };
 
   Map<String, dynamic> toJson() => {
@@ -335,24 +349,26 @@ class Patient {
         "doctor_in_charge": doctorInCharge,
         "anatomic_location": siteOfTB,
         "exam_purpose": examPurpose,
-        "specimens": specimens != null ? List<dynamic>.from(specimens!.map((x) => x.toJson())) : [],
+        "specimens": specimens != null
+            ? List<dynamic>.from(specimens!.map((x) => x.toJson()))
+            : [],
       };
 }
 
 @HiveType(typeId: 3)
 class Specimen {
-  Specimen(
-      {this.type,
-      this.id,
-      this.examinationType,
-      this.assessed = false,
-      this.rejected = false,
-      this.reason,
-      this.testResult,
-      this.testResultAddedAt,
-      this.specimenCondition,
-      this.transportMode,
-      });
+  Specimen({
+    this.type,
+    this.id,
+    this.examinationType,
+    this.assessed = false,
+    this.rejected = false,
+    this.reason,
+    this.testResult,
+    this.testResultAddedAt,
+    this.specimenCondition,
+    this.transportMode,
+  });
 
   @HiveField(0)
   String? type;
@@ -384,13 +400,15 @@ class Specimen {
         id: json["id"],
         examinationType: json['examination_type'],
         reason: json['reason'],
-        testResult: json["result"] != null ? TestResult.fromJson(json['result']) : null,
+        testResult:
+            json["result"] != null ? TestResult.fromJson(json['result']) : null,
         assessed: json['assessed'] ?? false,
         rejected: json['rejected'] ?? false,
-        testResultAddedAt: json["testResultAddedAt"] == null ? null : DateTime.parse(json["testResultAddedAt"]),
+        testResultAddedAt: json["testResultAddedAt"] == null
+            ? null
+            : DateTime.parse(json["testResultAddedAt"]),
         specimenCondition: json["specimenCondition"],
-        transportMode: json["transportMode"]
-        );
+        transportMode: json["transportMode"]);
   }
 
   Map<String, dynamic> toJson() => {
@@ -419,9 +437,11 @@ class Courier extends TesterCourier {
   final String id;
   Courier({required this.name, required this.id, required this.phone});
 
-  factory Courier.fromJson(Map<String, dynamic> json) => Courier(name: json['name'], phone: json['phone_number'], id: json['id']);
+  factory Courier.fromJson(Map<String, dynamic> json) =>
+      Courier(name: json['name'], phone: json['phone_number'], id: json['id']);
 
-  Map<String, dynamic> toJson() => {'name': name, 'phone_number': phone, 'id': id};
+  Map<String, dynamic> toJson() =>
+      {'name': name, 'phone_number': phone, 'id': id};
 
   @override
   String toString() {
@@ -441,7 +461,12 @@ class Tester extends TesterCourier {
   final Map? region;
   @HiveField(4)
   final Map? zone;
-  Tester({required this.name, required this.id, required this.phone, this.zone, this.region});
+  Tester(
+      {required this.name,
+      required this.id,
+      required this.phone,
+      this.zone,
+      this.region});
 
   factory Tester.fromJson(Map<String, dynamic> json) => Tester(
         name: json['name'],
@@ -451,7 +476,8 @@ class Tester extends TesterCourier {
         region: json['region'],
       );
 
-  Map<String, dynamic> toJson() => {'name': name, 'phone_number': phone, 'id': id};
+  Map<String, dynamic> toJson() =>
+      {'name': name, 'phone_number': phone, 'id': id};
 
   @override
   String toString() {
@@ -532,14 +558,17 @@ class NotificationModel {
   @HiveField(7)
   Map? payload;
 
-  factory NotificationModel.fromJson(Map<String, dynamic> json) => NotificationModel(
-      userId: json["user_id"],
-      timestamp: json["timestamp"],
-      content: json["content"],
-      seen: json["seen"],
-      id: json['id'],
-      action: json['action'] != null ? NotificationAction.values.elementAt(json['action']) : null,
-      payload: json['payload']);
+  factory NotificationModel.fromJson(Map<String, dynamic> json) =>
+      NotificationModel(
+          userId: json["user_id"],
+          timestamp: json["timestamp"],
+          content: json["content"],
+          seen: json["seen"],
+          id: json['id'],
+          action: json['action'] != null
+              ? NotificationAction.values.elementAt(json['action'])
+              : null,
+          payload: json['payload']);
 
   Map<String, dynamic> toJson() => {
         "user_id": userId,
@@ -571,7 +600,9 @@ class Region extends Equatable {
   factory Region.fromJson(Map<String, dynamic> json) => Region(
         code: json["code"],
         name: json["name"],
-        zones: json["zones"] != null ? List<Zone>.from(json["zones"].map((x) => Zone.fromJson(x))) : [],
+        zones: json["zones"] != null
+            ? List<Zone>.from(json["zones"].map((x) => Zone.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -607,7 +638,9 @@ class Zone extends Equatable {
   factory Zone.fromJson(Map<String, dynamic> json) => Zone(
         code: json["code"],
         name: json["name"],
-        woredas: json["woredas"] != null ? List<Woreda>.from(json["woredas"].map((x) => Woreda.fromJson(x))) : [],
+        woredas: json["woredas"] != null
+            ? List<Woreda>.from(json["woredas"].map((x) => Woreda.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {

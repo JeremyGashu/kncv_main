@@ -1,7 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +21,6 @@ import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_courier.dart';
 
 import '../../../service_locator.dart';
-import '../report/report_page.dart';
 
 class CourierHomePage extends StatefulWidget {
   static const courierHomePageRouteName = 'courier home page';
@@ -37,6 +35,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
   @override
   void initState() {
     orderBloc.add(LoadOrdersForCourier());
+    // sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
     super.initState();
   }
 
@@ -87,18 +86,18 @@ class _CourierHomePageState extends State<CourierHomePage> {
                             color: Colors.white,
                           )
                         : SizedBox(),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => ReportScreen(),
-                          ),
-                        );
-                      },
-                      icon: Icon(Icons.bar_chart),
-                      color: Colors.white,
-                    ),
+                    // IconButton(
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       CupertinoPageRoute(
+                    //         builder: (context) => ReportScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    //   icon: Icon(Icons.bar_chart),
+                    //   color: Colors.white,
+                    // ),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('notifications')

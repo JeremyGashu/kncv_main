@@ -127,6 +127,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
   final TextEditingController specimenIdController = TextEditingController();
 
+  bool isInvalidPhoneNumber = false;
+
   @override
   initState() {
     // print('ptient => ${widget.patient.siteOfTB}');
@@ -471,13 +473,93 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             //         widget.canEdit,
                             //     hint: 'Enter Your Address',Please
                             //     controller: addressController),
-                            _buildInputField(
-                              label: 'Phone',
-                              editable: !(widget.patient.status == 'Tested') &&
-                                  widget.canEdit,
-                              hint: 'Enter Patient\'s Phone',
-                              controller: phoneController,
+                            // _buildInputField(
+                            //   label: 'Phone',
+                            //   editable: !(widget.patient.status == 'Tested') &&
+                            //       widget.canEdit,
+                            //   hint: 'Enter Patient\'s Phone',
+                            //   controller: phoneController,
+                            // ),
+
+                            Column(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: Text(
+                                    'Phone',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(top: 10),
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, bottom: 4, top: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: TextFormField(
+                                    enabled:
+                                        !(widget.patient.status == 'Tested') &&
+                                            widget.canEdit,
+                                    autofocus: false,
+                                    // validator: (value) {
+                                    //   if (TextInputType.phone ==
+                                    //       TextInputType.phone) {
+                                    //     bool isValidPhoneNumber(
+                                    //             String? value) =>
+                                    //         RegExp(r'(^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$)')
+                                    //             .hasMatch(value ?? '');
+                                    //     if (isValidPhoneNumber(value)) {
+                                    //       return 'Please enter valid phone number.';
+                                    //     }
+                                    //   }
+
+                                    //   if (value == null || value.isEmpty) {
+                                    //     return 'Value cannot be empty!';
+                                    //   }
+                                    //   return null;
+                                    // },
+                                    onChanged: (val) {
+                                      setState(() {
+                                        isInvalidPhoneNumber =
+                                            !validatePhoneNumber(val);
+                                      });
+                                    },
+                                    controller: phoneController,
+                                    style: TextStyle(color: Colors.black),
+                                    keyboardType: TextInputType.phone,
+                                    decoration: InputDecoration(
+                                      hintText: 'Enter phone number',
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.only(
+                                        left: 10,
+                                        top: 2,
+                                        bottom: 3,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
+
+                            isInvalidPhoneNumber
+                                ? Container(
+                                    width: double.infinity,
+                                    margin: EdgeInsets.only(top: 5, left: 5),
+                                    child: Text(
+                                      'Please enter valid phone number',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  )
+                                : SizedBox(),
 
                             _tobLabelBuilder('Observation'),
 

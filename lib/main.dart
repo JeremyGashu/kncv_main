@@ -17,6 +17,7 @@ import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_event.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_event.dart';
+// import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
 import 'package:kncv_flutter/service_locator.dart';
 import 'package:kncv_flutter/simple_bloc_observer.dart';
@@ -70,6 +71,9 @@ void main() async {
   Hive.registerAdapter(OrderAdapter());
 
   await serviceLocatorInit();
+
+  // List<String?> value = await getTestCenterAdminsFromTestCenterId('p05PNEoP0w8Zurbs9JXB');
+  // print('Test Center Admin for Test Center 1 $value');
 
   runApp(
     MultiBlocProvider(

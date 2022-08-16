@@ -38,6 +38,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
   @override
   void initState() {
     orderBloc.add(LoadOrdersForTester());
+    sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
     super.initState();
   }
 
@@ -244,26 +245,29 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                           itemCount: state.orders.length,
                                           itemBuilder: (context, index) {
                                             return GestureDetector(
-                                                onTap: () async {
-                                                  // print('${state.orders[index].orderId}');
-                                                  var load =
-                                                      await Navigator.pushNamed(
-                                                          context,
-                                                          OrderDetailTester
-                                                              .orderDetailTesterPageRouteName,
-                                                          arguments: state
-                                                              .orders[index]
-                                                              .orderId);
-                                                  if (load == true) {
-                                                    orderBloc.add(
-                                                        LoadOrdersForTester());
-                                                  } else {
-                                                    orderBloc.add(
-                                                        LoadOrdersForTester());
-                                                  }
-                                                },
-                                                child: orderCard(
-                                                    state.orders[index]));
+                                              onTap: () async {
+                                                // print('${state.orders[index].orderId}');
+                                                var load =
+                                                    await Navigator.pushNamed(
+                                                        context,
+                                                        OrderDetailTester
+                                                            .orderDetailTesterPageRouteName,
+                                                        arguments: state
+                                                            .orders[index]
+                                                            .orderId);
+                                                if (load == true) {
+                                                  orderBloc.add(
+                                                      LoadOrdersForTester());
+                                                } else {
+                                                  orderBloc.add(
+                                                      LoadOrdersForTester());
+                                                }
+                                              },
+                                              child: orderCard(
+                                                state.orders[index],
+                                                isTester: true,
+                                              ),
+                                            );
                                           }),
                                     ),
                                   ),

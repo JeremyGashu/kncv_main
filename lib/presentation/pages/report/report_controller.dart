@@ -26,7 +26,7 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
         .get();
     final userData = querySnapshot.docs[0].data();
     Map<String, dynamic> userReportPermissions = userData['permission'];
-    // print('permission: $userReportPermissions');
+    print('permission type : ${userReportPermissions['type']}');
 
     //!get order report based on permission
     // ignore: unnecessary_null_comparison
@@ -102,7 +102,30 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
         case 'Facility':
           Map<String, dynamic>? permissionFacility =
               userReportPermissions['facility'] as Map<String, dynamic>;
-          print('$permissionFacility');
+          print('Permission Facility === > $userReportPermissions');
+          for (Map<String, dynamic> order in allOrders) {
+            String testCenterName = order['tester_name'];
+            String senderName = order['sender_name'];
+            // ignore: unnecessary_null_comparison
+            if (testCenterName != null && senderName != null) {
+              if ((permissionFacility['name'] == testCenterName) ||
+                  (permissionFacility['name'] == senderName)) {
+                reports.add(order);
+              }
+              // print(region['zones']);
+              // for (Map<String, dynamic> zone in region['zones']) {
+              // print('zone: $zone');
+              // print('permissionZone: ${permissionZone.replaceAll("\"", "")}  || zone name: ${zone['name']}');
+
+              // }
+            }
+          }
+          break;
+
+        case null:
+          Map<String, dynamic>? permissionFacility =
+              userReportPermissions['facility'] as Map<String, dynamic>;
+          // print('Permission Facility === > $userReportPermissions');
           for (Map<String, dynamic> order in allOrders) {
             String testCenterName = order['tester_name'];
             String senderName = order['sender_name'];
