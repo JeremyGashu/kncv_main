@@ -4,6 +4,7 @@ import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/data/repositories/orders_repository.dart';
 import 'package:kncv_flutter/presentation/blocs/locations/location_bloc.dart';
+import 'package:kncv_flutter/presentation/blocs/locations/location_event.dart';
 import 'package:kncv_flutter/presentation/blocs/locations/location_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
@@ -38,6 +39,7 @@ class EditPatientInfoPage extends StatefulWidget {
 }
 
 class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
+  LocationBloc locationBloc = sl<LocationBloc>();
   bool sendingFeedback = false;
 
   Region? selectedRegion;
@@ -212,6 +214,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
       orderId: widget.orderId,
     ));
 
+    locationBloc.add(LoadLocations());
+
     super.initState();
   }
 
@@ -350,120 +354,126 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             ),
 
                             BlocBuilder<LocationBloc, LocationStates>(
+                                bloc: locationBloc,
                                 builder: (ctx, s) {
-                              if (s is LoadingLocationsState) {
-                                return CircularProgressIndicator();
-                              } else if (s is LoadedLocationsState) {
-                                return Column(
-                                  children: [
-                                    //regions
-                                    _labelBuilder(
-                                      'Region',
-                                      required: true,
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(7),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<Region>(
-                                        value: selectedRegion,
-                                        hint: Text('Region'),
-                                        items: s.regions.map((Region value) {
-                                          return DropdownMenuItem<Region>(
-                                            value: value,
-                                            child: Text(value.name),
-                                          );
-                                        }).toList(),
-                                        onChanged: (val) {
-                                          FocusScope.of(context)
-                                              .requestFocus(FocusNode());
-                                          setState(() {
-                                            selectedRegion = val;
-                                            selectedZone = null;
-                                            selectedWoreda = null;
-                                          });
-                                        },
-                                      )),
-                                    ),
+                                  if (s is LoadingLocationsState) {
+                                    return CircularProgressIndicator();
+                                  } else if (s is LoadedLocationsState) {
+                                    return Column(
+                                      children: [
+                                        //regions
+                                        _labelBuilder(
+                                          'Region',
+                                          required: true,
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.withOpacity(0.2),
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<Region>(
+                                            value: selectedRegion,
+                                            hint: Text('Region'),
+                                            items:
+                                                s.regions.map((Region value) {
+                                              return DropdownMenuItem<Region>(
+                                                value: value,
+                                                child: Text(value.name),
+                                              );
+                                            }).toList(),
+                                            onChanged: (val) {
+                                              FocusScope.of(context)
+                                                  .requestFocus(FocusNode());
+                                              setState(() {
+                                                selectedRegion = val;
+                                                selectedZone = null;
+                                                selectedWoreda = null;
+                                              });
+                                            },
+                                          )),
+                                        ),
 
-                                    //zones
-                                    _labelBuilder('Zone', required: true),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(7),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<Zone>(
-                                        value: selectedZone,
-                                        hint: Text('Zones'),
-                                        items: selectedRegion?.zones
-                                            .map((Zone value) {
-                                          return DropdownMenuItem<Zone>(
-                                            enabled: !widget
-                                                    .patient.resultAvaiable &&
-                                                widget.canEdit,
-                                            value: value,
-                                            child: Text(value.name),
-                                          );
-                                        }).toList(),
-                                        onChanged: (val) {
-                                          FocusScope.of(context)
-                                              .requestFocus(FocusNode());
-                                          setState(() {
-                                            selectedZone = val;
-                                            selectedWoreda = null;
-                                          });
-                                        },
-                                      )),
-                                    ),
+                                        //zones
+                                        _labelBuilder('Zone', required: true),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.withOpacity(0.2),
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<Zone>(
+                                            value: selectedZone,
+                                            hint: Text('Zones'),
+                                            items: selectedRegion?.zones
+                                                .map((Zone value) {
+                                              return DropdownMenuItem<Zone>(
+                                                enabled: !widget.patient
+                                                        .resultAvaiable &&
+                                                    widget.canEdit,
+                                                value: value,
+                                                child: Text(value.name),
+                                              );
+                                            }).toList(),
+                                            onChanged: (val) {
+                                              FocusScope.of(context)
+                                                  .requestFocus(FocusNode());
+                                              setState(() {
+                                                selectedZone = val;
+                                                selectedWoreda = null;
+                                              });
+                                            },
+                                          )),
+                                        ),
 
-                                    //woredas
-                                    _labelBuilder('Woredas', required: true),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(7),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<Woreda>(
-                                        value: selectedWoreda,
-                                        hint: Text('Woredas'),
-                                        items: selectedZone?.woredas
-                                            .map((Woreda value) {
-                                          return DropdownMenuItem<Woreda>(
-                                            enabled: !widget
-                                                    .patient.resultAvaiable &&
-                                                widget.canEdit,
-                                            value: value,
-                                            child: Text(value.name),
-                                          );
-                                        }).toList(),
-                                        onChanged: (val) {
-                                          FocusScope.of(context)
-                                              .requestFocus(FocusNode());
-                                          setState(() {
-                                            selectedWoreda = val;
-                                          });
-                                        },
-                                      )),
-                                    ),
-                                  ],
-                                );
-                              }
-                              return Text('Not One');
-                            }),
+                                        //woredas
+                                        _labelBuilder('Woredas',
+                                            required: true),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5),
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.withOpacity(0.2),
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<Woreda>(
+                                            value: selectedWoreda,
+                                            hint: Text('Woredas'),
+                                            items: selectedZone?.woredas
+                                                .map((Woreda value) {
+                                              return DropdownMenuItem<Woreda>(
+                                                enabled: !widget.patient
+                                                        .resultAvaiable &&
+                                                    widget.canEdit,
+                                                value: value,
+                                                child: Text(value.name),
+                                              );
+                                            }).toList(),
+                                            onChanged: (val) {
+                                              FocusScope.of(context)
+                                                  .requestFocus(FocusNode());
+                                              setState(() {
+                                                selectedWoreda = val;
+                                              });
+                                            },
+                                          )),
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                  return Text('Not One');
+                                }),
 
                             // _tobLabelBuilder('Address'),
 

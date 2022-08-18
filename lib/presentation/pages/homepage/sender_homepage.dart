@@ -84,7 +84,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
             return RefreshIndicator(
               onRefresh: () async {
                 orderBloc.add(LoadOrders());
-                sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
+                sl<TesterCourierBloc>().add(LoadTestersAndCouriers());
               },
               child: Scaffold(
                 backgroundColor: kPageBackground,

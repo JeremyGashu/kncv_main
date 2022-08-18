@@ -26,7 +26,6 @@ class TesterCourierRepository {
           .get();
       List filteredUser = userData.docs.map((e) => e.data()).toList();
       if (filteredUser.length > 0) {
-        //TODO check zones before fetching the courier
         Map user = filteredUser[0];
         // print('Current Institution ==> ${user['institution']['zone']}');
         var testCenterData = await database.collection('test_centers').get();
