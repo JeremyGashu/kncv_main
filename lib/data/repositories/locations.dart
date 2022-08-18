@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:kncv_flutter/core/hear_beat.dart';
 import 'package:kncv_flutter/data/models/models.dart';
@@ -12,7 +11,7 @@ class LocationsRepository {
     Box<Region> regionBox = Hive.box<Region>('regions');
     bool internetIsAvailable = await isConnectedToTheInternet();
     if (internetIsAvailable) {
-      debugPrint('Regions from internet');
+      // debugPrint('Regions from internet');
       var regionsCollection = await database.collection('regions');
       var collectionsData = await regionsCollection.get();
       List<Region> regions = collectionsData.docs.map((e) {
@@ -23,7 +22,7 @@ class LocationsRepository {
 
       return regions;
     } else {
-      debugPrint('Regions from Cache');
+      // debugPrint('Regions from Cache');
 
       return regionBox.values.toList();
     }

@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kncv_flutter/core/colors.dart';
@@ -34,11 +35,13 @@ class _CourierHomePageState extends State<CourierHomePage> {
   @override
   void initState() {
     orderBloc.add(LoadOrdersForCourier());
+    // sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
         ScaffoldMessenger.of(context)
@@ -65,11 +68,36 @@ class _CourierHomePageState extends State<CourierHomePage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                   elevation: 0,
                   actions: [
+                    kIsWeb
+                        ? IconButton(
+                            onPressed: () {
+                              orderBloc.add(LoadOrdersForCourier());
+                              sl<TesterCourierBloc>()
+                                ..add(LoadTestersAndCouriers());
+                            },
+                            icon: Icon(
+                              Icons.refresh,
+                            ),
+                            color: Colors.white,
+                          )
+                        : SizedBox(),
+                    // IconButton(
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       CupertinoPageRoute(
+                    //         builder: (context) => ReportScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    //   icon: Icon(Icons.bar_chart),
+                    //   color: Colors.white,
+                    // ),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('notifications')
@@ -97,7 +125,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
 
                                 child: Icon(
                                   Icons.notifications_outlined,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -109,12 +137,21 @@ class _CourierHomePageState extends State<CourierHomePage> {
                           builder: (context,
                               AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
-                              return Text(
-                                'Logged in  as: ${snapshot.data?['name'] ?? ''}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ),
-                              );
+                              return size.width < 191
+                                  ? SizedBox.shrink()
+                                  : Text(
+                                      snapshot.data!['name'] != null
+                                          ? 'Logged in  as: \n${snapshot.data!['name'] ?? ''}'
+                                          : '',
+                                      style: TextStyle(
+                                        // fontSize: 12,
+                                        fontSize: size.width < 290
+                                            ? size.width * 0.03
+                                            : size.width > 320
+                                                ? 12
+                                                : size.width * 0.03,
+                                      ),
+                                    );
                             }
                             return Container();
                           }),
@@ -122,7 +159,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                     IconButton(
                       icon: Icon(
                         Icons.logout,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                       onPressed: () {
                         showDialog(
@@ -191,8 +228,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
                                             itemBuilder: (context, index) {
                                               return GestureDetector(
                                                   onTap: () async {
-                                                    print(
-                                                        '${state.orders[index].orderId}');
+                                                    // print('${state.orders[index].orderId}');
                                                     var load = await Navigator
                                                         .pushNamed(
                                                             context,

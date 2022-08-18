@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-
 import '../../presentation/pages/notificatins.dart';
-
 part 'models.g.dart';
 
 @HiveType(typeId: 1)
@@ -69,7 +66,7 @@ class Order {
         orderId: json["id"],
         senderId: json["sender_id"],
         courierId: json["courier_id"],
-        testCenterId: json["test_center_id"],
+        testCenterId: json["tester_id"],
         courier: json["courier"],
         testCenter: json["test_center"],
         sender_name: json['sender_name'],
@@ -132,6 +129,7 @@ class Order {
         "order_id": orderId,
         "sender_id": senderId,
         "courier_id": courierId,
+        "tester_id": testCenterId,
         "test_center_id": testCenterId,
         'sender_name': sender_name,
         "courier": courier,
@@ -359,15 +357,18 @@ class Patient {
 
 @HiveType(typeId: 3)
 class Specimen {
-  Specimen(
-      {this.type,
-      this.id,
-      this.examinationType,
-      this.assessed = false,
-      this.rejected = false,
-      this.reason,
-      this.testResult,
-      this.testResultAddedAt});
+  Specimen({
+    this.type,
+    this.id,
+    this.examinationType,
+    this.assessed = false,
+    this.rejected = false,
+    this.reason,
+    this.testResult,
+    this.testResultAddedAt,
+    this.specimenCondition,
+    this.transportMode,
+  });
 
   @HiveField(0)
   String? type;
@@ -385,24 +386,29 @@ class Specimen {
   TestResult? testResult;
   @HiveField(7)
   DateTime? testResultAddedAt;
+  @HiveField(8)
+  String? specimenCondition;
+  @HiveField(9)
+  String? transportMode;
 
   factory Specimen.fromJson(Map<String, dynamic> json) {
     // Timestamp? timestamp = json['testResultAddedAt'];
     // DateTime? dateTime = timestamp?.toDate();
 
     return Specimen(
-      type: json["type"],
-      id: json["id"],
-      examinationType: json['examination_type'],
-      reason: json['reason'],
-      testResult:
-          json["result"] != null ? TestResult.fromJson(json['result']) : null,
-      assessed: json['assessed'] ?? false,
-      rejected: json['rejected'] ?? false,
-      testResultAddedAt: json["testResultAddedAt"] == null
-          ? null
-          : DateTime.parse(json["testResultAddedAt"]),
-    );
+        type: json["type"],
+        id: json["id"],
+        examinationType: json['examination_type'],
+        reason: json['reason'],
+        testResult:
+            json["result"] != null ? TestResult.fromJson(json['result']) : null,
+        assessed: json['assessed'] ?? false,
+        rejected: json['rejected'] ?? false,
+        testResultAddedAt: json["testResultAddedAt"] == null
+            ? null
+            : DateTime.parse(json["testResultAddedAt"]),
+        specimenCondition: json["specimenCondition"],
+        transportMode: json["transportMode"]);
   }
 
   Map<String, dynamic> toJson() => {
@@ -414,6 +420,8 @@ class Specimen {
         'result': testResult?.toJson(),
         'reason': reason,
         'testResultAddedAt': testResultAddedAt?.toIso8601String(),
+        'specimenCondition': specimenCondition,
+        'transportMode': transportMode
       };
 }
 

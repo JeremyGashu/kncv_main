@@ -127,9 +127,11 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
   final TextEditingController specimenIdController = TextEditingController();
 
+  bool isInvalidPhoneNumber = false;
+
   @override
   initState() {
-    print('ptient => ${widget.patient.siteOfTB}');
+    // print('ptient => ${widget.patient.siteOfTB}');
     childhood = widget.patient.childhood;
     tb = widget.patient.tb;
     pneumonia = widget.patient.pneumonia;
@@ -160,9 +162,9 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
       });
     }
 
-    print(selectedRegion?.toJson());
-    print(selectedZone?.toJson());
-    print(selectedWoreda?.toJson());
+    // print(selectedRegion?.toJson());
+    // print(selectedZone?.toJson());
+    // print(selectedWoreda?.toJson());
 
     MRController.text = widget.patient.mr ?? '';
     nameController.text = widget.patient.name ?? '';
@@ -469,15 +471,95 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                             //     label: 'Address',
                             //     editable: !(widget.patient.status == 'Tested') &&
                             //         widget.canEdit,
-                            //     hint: 'Enter Your Address',
+                            //     hint: 'Enter Your Address',Please
                             //     controller: addressController),
-                            _buildInputField(
-                                label: 'Phone',
-                                editable:
-                                    !(widget.patient.status == 'Tested') &&
-                                        widget.canEdit,
-                                hint: 'Enter Patient\'s Phone',
-                                controller: phoneController),
+                            // _buildInputField(
+                            //   label: 'Phone',
+                            //   editable: !(widget.patient.status == 'Tested') &&
+                            //       widget.canEdit,
+                            //   hint: 'Enter Patient\'s Phone',
+                            //   controller: phoneController,
+                            // ),
+
+                            Column(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: Text(
+                                    'Phone',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(top: 10),
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, bottom: 4, top: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: TextFormField(
+                                    enabled:
+                                        !(widget.patient.status == 'Tested') &&
+                                            widget.canEdit,
+                                    autofocus: false,
+                                    // validator: (value) {
+                                    //   if (TextInputType.phone ==
+                                    //       TextInputType.phone) {
+                                    //     bool isValidPhoneNumber(
+                                    //             String? value) =>
+                                    //         RegExp(r'(^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$)')
+                                    //             .hasMatch(value ?? '');
+                                    //     if (isValidPhoneNumber(value)) {
+                                    //       return 'Please enter valid phone number.';
+                                    //     }
+                                    //   }
+
+                                    //   if (value == null || value.isEmpty) {
+                                    //     return 'Value cannot be empty!';
+                                    //   }
+                                    //   return null;
+                                    // },
+                                    onChanged: (val) {
+                                      setState(() {
+                                        isInvalidPhoneNumber =
+                                            !validatePhoneNumber(val);
+                                      });
+                                    },
+                                    controller: phoneController,
+                                    style: TextStyle(color: Colors.black),
+                                    keyboardType: TextInputType.phone,
+                                    decoration: InputDecoration(
+                                      hintText: 'Enter phone number',
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.only(
+                                        left: 10,
+                                        top: 2,
+                                        bottom: 3,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            isInvalidPhoneNumber
+                                ? Container(
+                                    width: double.infinity,
+                                    margin: EdgeInsets.only(top: 5, left: 5),
+                                    child: Text(
+                                      'Please enter valid phone number',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  )
+                                : SizedBox(),
 
                             _tobLabelBuilder('Observation'),
 
@@ -951,11 +1033,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                     .resultAvaiable
                                                                 ? GestureDetector(
                                                                     onTap: () {
-                                                                      print(
-                                                                          specimenType);
-                                                                      print(specimenIdController
-                                                                          .value
-                                                                          .text);
+                                                                      // print(specimenType);
+                                                                      // print(specimenIdController.value.text);
                                                                       if (specimenIdController.value.text ==
                                                                               '' ||
                                                                           specimenType ==
@@ -998,8 +1077,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                           specimen
                                                                         ];
                                                                       });
-                                                                      print(specimens
-                                                                          .length);
+                                                                      // print(specimens.length);
                                                                       specimenIdController
                                                                           .text = '';
                                                                       specimenType =
@@ -1109,6 +1187,30 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                             Text('Please enter zone region and woreda')));
                                                             return;
                                                           }
+                                                          if (!validatePhoneNumber(
+                                                              phoneController
+                                                                  .value.text
+                                                                  .trim())) {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                  'Please enter a valid phone number: start with 09!',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                                backgroundColor:
+                                                                    Colors.red
+                                                                        .shade700,
+                                                              ),
+                                                            );
+                                                            return;
+                                                          }
 
                                                           String mr =
                                                               MRController
@@ -1136,7 +1238,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                   .value.text;
                                                           String phone =
                                                               phoneController
-                                                                  .value.text;
+                                                                  .value.text
+                                                                  .trim();
                                                           String
                                                               doctorInCharge =
                                                               doctorInChargeController
@@ -1351,6 +1454,35 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
     );
   }
 
+  bool validatePhoneNumber(String phoneNumber) {
+    if (phoneNumber != "") {
+      if (phoneNumber[0] == "0") {
+        if (phoneNumber.length == 10) {
+          if (phoneNumber[1] == "9") {
+            return true;
+          }
+        }
+      }
+      // else if (phoneNumber[0] == "+") {
+      //   if (phoneNumber.length == 13) {
+      //     if (phoneNumber.substring(1, 5) == "2519") {
+      //       return true;
+      //     }
+      //   }
+      // } else if (phoneNumber[0] == "9") {
+      //   if (phoneNumber.length == 9) {
+      //     return true;
+      //   }
+      // }
+      else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+    return false;
+  }
+
   Widget getSpecimensFromState(
     OrderState state,
   ) {
@@ -1433,13 +1565,14 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                         (state is LoadedSingleOrder &&
                                     state.order.status == 'Received') &&
                                 (!e.rejected) &&
-                                widget.canAddResult && (e.testResult == null)
+                                widget.canAddResult &&
+                                (e.testResult == null)
                             ? Align(
                                 alignment: AlignmentDirectional.centerEnd,
                                 child: IconButton(
                                     color: Colors.green,
                                     onPressed: () async {
-                                      debugPrint(e.id);
+                                      // debugPrint(e.id);
                                       var success = await Navigator.pushNamed(
                                           context,
                                           AddTestResultPage
@@ -1466,13 +1599,14 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
                         (state is LoadedSingleOrder &&
                                     state.order.status == 'Received') &&
-                                (!e.rejected) && (e.testResult != null)
+                                (!e.rejected) &&
+                                (e.testResult != null)
                             ? Align(
                                 alignment: AlignmentDirectional.centerEnd,
                                 child: IconButton(
                                   color: Colors.green,
                                   onPressed: () async {
-                                    debugPrint(e.id);
+                                    // debugPrint(e.id);
                                     var success = await Navigator.pushNamed(
                                         context,
                                         AddTestResultPage
@@ -1513,75 +1647,142 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                           return AssessSpecimen(ctx, e);
                                         });
 
+                                    // print(
+                                    //     'Old patient Info ===> ${e.toJson()}');
+
                                     if (create == true && e.type == 'Sputum') {
+                                      print(
+                                          'Old specimen Info ===> ${e.toJson()}');
                                       e.assessed = true;
                                       e.rejected =
                                           'Mucoid Purulent' != sputumCondition;
+                                      // e.reason =
+                                      //     'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
+                                      e.specimenCondition =
+                                          sputumCondition ?? '';
+
+                                      if (inColdChain != null) {
+                                        if (inColdChain == 'Yes, end to end') {
+                                          e.transportMode =
+                                              'End to end in cold chain';
+                                        } else if (inColdChain ==
+                                            'Yes, partly') {
+                                          e.transportMode =
+                                              'Partly in cold chain';
+                                        } else {
+                                          e.transportMode =
+                                              'Not at all in cold chain';
+                                        }
+                                      }
+                                      // e.specimenCondition = sputumCondition ?? '';
+
                                       e.reason =
                                           'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
+
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
 
                                       setState(() {
                                         sendingFeedback = true;
                                       });
 
-                                      bool success = await OrderRepository
-                                          .editSpecimenFeedback(
-                                              index: widget.index,
-                                              order: state.order,
-                                              patient: state.order
-                                                  .patients![widget.index]);
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
 
-                                      if (success) {
-                                        addNotification(
-                                          orderId: state.order.orderId!,
-                                          testerContent:
-                                              'You Accepted Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent:
-                                              '${state.order.patients![widget.index].name}\'s Sputum Specimen have accepted by ${state.order.tester_name}.',
-                                          content:
-                                              'One specimen got accepted by courier!',
-                                          courier: false,
-                                          testerAction: NotificationAction
-                                              .NavigateToOrderDetalTester,
-                                          senderAction: NotificationAction
-                                              .NavigateToOrderDetalSender,
-                                          payload: {'orderId': widget.orderId},
-                                        );
-                                        orderBloc.add(LoadSingleOrder(
-                                            orderId: widget.orderId));
+                                      try {
+                                        bool success = await OrderRepository
+                                            .editSpecimenFeedback(
+                                                index: widget.index,
+                                                order: state.order,
+                                                patient: state.order
+                                                    .patients![widget.index]);
+
+                                        print('Success => $success');
+
+                                        if (success) {
+                                          addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent:
+                                                'You Accepted Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent:
+                                                '${state.order.patients![widget.index].name}\'s Sputum Specimen have accepted by ${state.order.tester_name}.',
+                                            content:
+                                                'One specimen got accepted by courier!',
+                                            courier: false,
+                                            testerAction: NotificationAction
+                                                .NavigateToOrderDetalTester,
+                                            senderAction: NotificationAction
+                                                .NavigateToOrderDetalSender,
+                                            payload: {
+                                              'orderId': widget.orderId
+                                            },
+                                          );
+                                          orderBloc.add(LoadSingleOrder(
+                                              orderId: widget.orderId));
+                                        }
+
+                                        if ('Mucoid Purulent' !=
+                                            sputumCondition) {
+                                          addNotification(
+                                            orderId: state.order.orderId!,
+                                            testerContent:
+                                                'You Rejected Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
+                                            senderContent:
+                                                '${state.order.patients![widget.index].name}\'s Sputum Specimen have been rejected by ${state.order.tester_name}.',
+                                            content:
+                                                'One specimen got rejected by tester!',
+                                            courier: false,
+                                            testerAction: NotificationAction
+                                                .NavigateToOrderDetalTester,
+                                            senderAction: NotificationAction
+                                                .NavigateToOrderDetalSender,
+                                            payload: {
+                                              'orderId': widget.orderId
+                                            },
+                                          );
+                                        }
+
+                                        setState(() {
+                                          inColdChain = null;
+                                          stoolCondition = null;
+                                          sputumCondition = null;
+                                          sendingFeedback = false;
+                                        });
+                                      } catch (e) {
+                                        print(e);
                                       }
-
-                                      if ('Mucoid Purulent' !=
-                                          sputumCondition) {
-                                        addNotification(
-                                          orderId: state.order.orderId!,
-                                          testerContent:
-                                              'You Rejected Sputum specimen for ${state.order.patients![widget.index].name} from ${state.order.sender_name}',
-                                          senderContent:
-                                              '${state.order.patients![widget.index].name}\'s Sputum Specimen have been rejected by ${state.order.tester_name}.',
-                                          content:
-                                              'One specimen got rejected by tester!',
-                                          courier: false,
-                                          testerAction: NotificationAction
-                                              .NavigateToOrderDetalTester,
-                                          senderAction: NotificationAction
-                                              .NavigateToOrderDetalSender,
-                                          payload: {'orderId': widget.orderId},
-                                        );
-                                      }
-
-                                      setState(() {
-                                        inColdChain = null;
-                                        stoolCondition = null;
-                                        sputumCondition = null;
-                                        sendingFeedback = false;
-                                      });
                                     } else if (create == true &&
                                         e.type == 'Stool') {
                                       e.assessed = true;
                                       e.rejected = 'Formed' != stoolCondition;
+                                      e.specimenCondition =
+                                          stoolCondition ?? '';
+                                      // e.reason =
+                                      //     'Stool Specimen is in $stoolCondition type. Not in Formed State!';
+
+                                      if (inColdChain != null) {
+                                        if (inColdChain == 'Yes, end to end') {
+                                          e.transportMode =
+                                              'End to end in cold chain';
+                                        } else if (inColdChain ==
+                                            'Yes, partly') {
+                                          e.transportMode =
+                                              'Partly in cold chain';
+                                        } else {
+                                          e.transportMode =
+                                              'Not at all in cold chain';
+                                        }
+                                      }
                                       e.reason =
                                           'Stool Specimen is in $stoolCondition type. Not in Formed State!';
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
 
                                       setState(() {
                                         sendingFeedback = true;
@@ -1593,6 +1794,7 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                               order: state.order,
                                               patient: state.order
                                                   .patients![widget.index]);
+                                      // print('Here is not the problem $success');
 
                                       if (success) {
                                         addNotification(
@@ -1652,6 +1854,26 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                       e.rejected = false;
                                       e.reason = '';
 
+                                      if (inColdChain != null) {
+                                        if (inColdChain == 'Yes, end to end') {
+                                          e.transportMode =
+                                              'End to end in cold chain';
+                                        } else if (inColdChain ==
+                                            'Yes, partly') {
+                                          e.transportMode =
+                                              'Partly in cold chain';
+                                        } else {
+                                          e.transportMode =
+                                              'Not at all in cold chain';
+                                        }
+                                      }
+                                      e.reason = '';
+
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
+
                                       setState(() {
                                         sendingFeedback = true;
                                       });
@@ -1697,6 +1919,26 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
 
                                       e.rejected = false;
                                       e.reason = '';
+
+                                      if (inColdChain != null) {
+                                        if (inColdChain == 'Yes, end to end') {
+                                          e.transportMode =
+                                              'End to end in cold chain';
+                                        } else if (inColdChain ==
+                                            'Yes, partly') {
+                                          e.transportMode =
+                                              'Partly in cold chain';
+                                        } else {
+                                          e.transportMode =
+                                              'Not at all in cold chain';
+                                        }
+                                      }
+                                      e.reason = '';
+
+                                      print(
+                                          'New specimen Info ===> ${e.toJson()}');
+                                      state.order.patients![widget.index]
+                                          .specimens?[specimens.indexOf(e)] = e;
 
                                       setState(() {
                                         sendingFeedback = true;

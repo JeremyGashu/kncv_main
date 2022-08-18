@@ -73,9 +73,15 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
   GlobalKey<FormState> _form = GlobalKey<FormState>();
 
   OrderBloc orderBloc = sl<OrderBloc>();
+  bool isInvalidPhoneNumber = false;
 
   @override
   void initState() {
+    phoneController.addListener(() {
+      print(
+        'Phone Number ===> ${phoneController.value.text}',
+      );
+    });
     orderBloc.add(LoadSingleOrder(
       orderId: widget.orderId,
     ));
@@ -97,7 +103,6 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
         child: Container(
           constraints: BoxConstraints(maxWidth: 700),
           height: double.infinity,
-      
           child: BlocConsumer<OrderBloc, OrderState>(
               bloc: orderBloc,
               listener: (ctx, state) async {
@@ -111,15 +116,15 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                   );
                 }
                 if (state is ErrorState) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('${state.message}')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${state.message}')));
                 }
               },
               builder: (context, state) {
                 return SafeArea(
                   child: Container(
-                    padding:
-                        EdgeInsets.only(bottom: 15, left: 25, top: 10, right: 25),
+                    padding: EdgeInsets.only(
+                        bottom: 15, left: 25, top: 10, right: 25),
                     child: SingleChildScrollView(
                       child: Form(
                         key: _form,
@@ -182,7 +187,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 )),
                               ),
                             ),
-      
+
                             _buildInputField(
                                 label: 'Age in Years',
                                 inputType: TextInputType.numberWithOptions(
@@ -191,7 +196,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 hint: 'Age (Years)...',
                                 controller: ageYearsController,
                                 required: true),
-      
+
                             ageYearsController.value.text == '0'
                                 ? _buildInputField(
                                     label: 'Age in Months',
@@ -203,7 +208,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                     controller: ageMonthsController,
                                     required: true)
                                 : SizedBox(),
-      
+
                             BlocBuilder<LocationBloc, LocationStates>(
                                 builder: (ctx, s) {
                               if (s is LoadingLocationsState) {
@@ -242,7 +247,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                         },
                                       )),
                                     ),
-      
+
                                     //zones
                                     _labelBuilder('Zone', required: true),
                                     Container(
@@ -274,7 +279,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                         },
                                       )),
                                     ),
-      
+
                                     //woredas
                                     _labelBuilder('Woreda', required: true),
                                     Container(
@@ -310,7 +315,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                               }
                               return Text('Not One');
                             }),
-      
+
                             // _tobLabelBuilder('Address'),
                             // _buildInputField(
                             //   label: 'Zone',
@@ -330,13 +335,91 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                             //   controller: addressController,
                             //   required: true,
                             // ),
-                            _buildInputField(
-                              label: 'Phone',
-                              hint: 'Enter Your Phone',
-                              inputType: TextInputType.phone,
-                              controller: phoneController,
+                            // _buildInputField(
+                            //   label: 'Phone',
+                            //   hint: 'Enter Phone number',
+                            //   inputType: TextInputType.phone,
+                            //   controller: phoneController,
+                            // ),
+
+                            Column(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.only(top: 20),
+                                  child: Text(
+                                    'Phone',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(top: 10),
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, bottom: 4, top: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: TextFormField(
+                                    enabled: true,
+                                    autofocus: false,
+                                    // validator: (value) {
+                                    //   if (TextInputType.phone ==
+                                    //       TextInputType.phone) {
+                                    //     bool isValidPhoneNumber(
+                                    //             String? value) =>
+                                    //         RegExp(r'(^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$)')
+                                    //             .hasMatch(value ?? '');
+                                    //     if (isValidPhoneNumber(value)) {
+                                    //       return 'Please enter valid phone number.';
+                                    //     }
+                                    //   }
+
+                                    //   if (value == null || value.isEmpty) {
+                                    //     return 'Value cannot be empty!';
+                                    //   }
+                                    //   return null;
+                                    // },
+                                    onChanged: (val) {
+                                      setState(() {
+                                        isInvalidPhoneNumber =
+                                            !validatePhoneNumber(val);
+                                      });
+                                    },
+                                    controller: phoneController,
+                                    style: TextStyle(color: Colors.black),
+                                    keyboardType: TextInputType.phone,
+                                    decoration: InputDecoration(
+                                      hintText: 'Enter phone number',
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.only(
+                                        left: 10,
+                                        top: 2,
+                                        bottom: 3,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-      
+
+                            isInvalidPhoneNumber
+                                ? Container(
+                                    width: double.infinity,
+                                    margin: EdgeInsets.only(top: 5, left: 5),
+                                    child: Text(
+                                      'Please enter valid phone number',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  )
+                                : SizedBox(),
+
                             _labelBuilder('Site of TB'),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -369,7 +452,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             siteOfTB == 'Other'
                                 ? TextField(
                                     controller: siteOfTBController,
@@ -378,7 +461,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                         hintText: 'Enter site of TB...'),
                                   )
                                 : SizedBox(),
-      
+
                             _labelBuilder('Registration Group'),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -414,16 +497,17 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             registrationGroup == 'Other'
                                 ? TextField(
                                     controller: registrationGroupController,
                                     autofocus: false,
                                     decoration: InputDecoration(
-                                        hintText: 'Enter registration group...'),
+                                        hintText:
+                                            'Enter registration group...'),
                                   )
                                 : SizedBox(),
-      
+
                             _labelBuilder('Previous TB Drug use'),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -457,7 +541,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             _labelBuilder('Reason for Test'),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -493,29 +577,33 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             reasonForTest == 'At X months during treatment'
                                 ? TextField(
                                     controller: xMonthsDuringController,
                                     autofocus: false,
-                                    keyboardType: TextInputType.numberWithOptions(
-                                        decimal: false, signed: false),
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: false, signed: false),
                                     decoration: InputDecoration(
-                                        hintText: 'X Months during treatment...'),
+                                        hintText:
+                                            'X Months during treatment...'),
                                   )
                                 : SizedBox(),
-      
+
                             reasonForTest == 'At X months after treatment'
                                 ? TextField(
                                     controller: xMonthsAfterController,
                                     autofocus: false,
-                                    keyboardType: TextInputType.numberWithOptions(
-                                        decimal: false, signed: false),
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: false, signed: false),
                                     decoration: InputDecoration(
-                                        hintText: 'X Months after treatment...'),
+                                        hintText:
+                                            'X Months after treatment...'),
                                   )
                                 : SizedBox(),
-      
+
                             _labelBuilder('Requested Tests'),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -550,29 +638,29 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 },
                               )),
                             ),
-      
+
                             // buildRemarkField(
                             //   label: 'Remark',
                             //   hint: 'Pateint Remark',
                             //   controller: patientRemarkController,
                             // ),
-      
+
                             // _buildInputField(
                             //     label: 'Doctor in charge',
                             //     hint: 'Doctor in charge',
                             //     controller: doctorInChargeController),
-      
+
                             // _buildInputField(
                             //   label: 'Exam Purpose',
                             //   hint: 'Please enter exam pupose',
                             //   controller: examPurposeController,
                             //   required: true,
                             // ),
-      
+
                             SizedBox(
                               height: 15,
                             ),
-      
+
                             GestureDetector(
                               onTap: () {
                                 showModalBottomSheet(
@@ -580,7 +668,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                     isScrollControlled: true,
                                     context: context,
                                     builder: (ctx) {
-                                      return StatefulBuilder(builder: (ctx, ss) {
+                                      return StatefulBuilder(
+                                          builder: (ctx, ss) {
                                         return SingleChildScrollView(
                                           child: Container(
                                             padding: EdgeInsets.only(
@@ -615,7 +704,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontSize: 32,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                 ),
@@ -638,7 +728,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     color: Colors.grey
                                                         .withOpacity(0.2),
                                                     borderRadius:
-                                                        BorderRadius.circular(7),
+                                                        BorderRadius.circular(
+                                                            7),
                                                   ),
                                                   child:
                                                       DropdownButtonHideUnderline(
@@ -665,7 +756,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                           .requestFocus(
                                                               FocusNode());
                                                       ss(() => 1 == 1);
-      
+
                                                       setState(() {
                                                         examinationType = null;
                                                         specimenType = val;
@@ -673,7 +764,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     },
                                                   )),
                                                 ),
-                                                _labelBuilder('Examination Type'),
+                                                _labelBuilder(
+                                                    'Examination Type'),
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 10,
@@ -683,15 +775,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     color: Colors.grey
                                                         .withOpacity(0.2),
                                                     borderRadius:
-                                                        BorderRadius.circular(7),
+                                                        BorderRadius.circular(
+                                                            7),
                                                   ),
                                                   child:
                                                       DropdownButtonHideUnderline(
                                                           child: DropdownButton<
                                                               String>(
                                                     value: examinationType,
-                                                    hint:
-                                                        Text('Examination Type'),
+                                                    hint: Text(
+                                                        'Examination Type'),
                                                     items: (examinationTypesList[
                                                                 specimenType] ??
                                                             [])
@@ -707,7 +800,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                           .requestFocus(
                                                               FocusNode());
                                                       ss(() => 1 == 1);
-      
+
                                                       setState(() {
                                                         examinationType = val;
                                                       });
@@ -719,13 +812,13 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                 ),
                                                 GestureDetector(
                                                     onTap: () {
-                                                      print(specimenType);
-                                                      print(specimenIdController
-                                                          .value.text);
+                                                      // print(specimenType);
+                                                      // print(specimenIdController.value.text);
                                                       if (specimenIdController
                                                                   .value.text ==
                                                               '' ||
-                                                          specimenType == null ||
+                                                          specimenType ==
+                                                              null ||
                                                           examinationType ==
                                                               null) {
                                                         ScaffoldMessenger.of(
@@ -736,7 +829,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                         Navigator.pop(context);
                                                         return;
                                                       }
-      
+
                                                       if (specimenExists(
                                                           specimens,
                                                           specimenIdController
@@ -750,7 +843,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                         Navigator.pop(context);
                                                         return;
                                                       }
-      
+
                                                       Specimen specimen =
                                                           Specimen(
                                                         id: specimenIdController
@@ -765,15 +858,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                           specimen
                                                         ];
                                                       });
-                                                      specimenIdController.text =
-                                                          '';
+                                                      specimenIdController
+                                                          .text = '';
                                                       specimenType = null;
                                                       examinationType = null;
                                                       Navigator.pop(context);
                                                       return;
                                                     },
                                                     child: Container(
-                                                        decoration: BoxDecoration(
+                                                        decoration:
+                                                            BoxDecoration(
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
@@ -790,8 +884,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                                     FontWeight
                                                                         .bold,
                                                                 fontSize: 20,
-                                                                color:
-                                                                    Colors.white),
+                                                                color: Colors
+                                                                    .white),
                                                           ),
                                                         ))),
                                               ],
@@ -820,19 +914,19 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                 ),
                               ),
                             ),
-      
+
                             SizedBox(
                               height: 15,
                             ),
-      
+
                             _labelBuilder('Specimens'),
-      
+
                             getSpecimensFromState(state),
-      
+
                             SizedBox(
                               height: 15,
                             ),
-      
+
                             Container(
                               // padding: EdgeInsets.all(10),
                               color: kPageBackground,
@@ -852,33 +946,55 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                         'Please enter zone region and woreda')));
                                             return;
                                           }
+                                          if (!validatePhoneNumber(
+                                              phoneController.value.text
+                                                  .trim())) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Please enter a valid phone number: start with 09!',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                backgroundColor:
+                                                    Colors.red.shade700,
+                                              ),
+                                            );
+                                            return;
+                                          }
                                           String mr = MRController.value.text;
-                                          String name = nameController.value.text;
+                                          String name =
+                                              nameController.value.text;
                                           //sex, childhood, pneumonic, tb, r pn, mal, dm, loc
                                           String age =
                                               ageYearsController.value.text;
                                           String ageMonths =
                                               ageMonthsController.value.text;
-      
+
                                           String? zone = selectedZone?.code;
                                           String? woreda = selectedWoreda?.code;
-      
+
                                           String address =
                                               addressController.value.text;
                                           String phone =
-                                              phoneController.value.text;
+                                              phoneController.value.text.trim();
                                           String doctorInCharge =
-                                              doctorInChargeController.value.text;
+                                              doctorInChargeController
+                                                  .value.text;
                                           String patientRemark =
-                                              patientRemarkController.value.text;
-      
+                                              patientRemarkController
+                                                  .value.text;
+
                                           String? regGroup =
                                               registrationGroup == 'Other'
                                                   ? registrationGroupController
                                                       .value.text
                                                   : registrationGroup;
                                           regGroup = regGroup ?? 'Other';
-      
+
                                           String? reason = reasonForTest ==
                                                   'At X months during treatment'
                                               ? 'At ${xMonthsDuringController.value.text} months during treatment'
@@ -889,7 +1005,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                           String? site = siteOfTB == 'Other'
                                               ? siteOfTBController.value.text
                                               : siteOfTB;
-      
+
                                           Patient patient = Patient(
                                             age: age,
                                             ageMonths:
@@ -913,7 +1029,7 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                             requestedTest: requestedTests,
                                             previousDrugUse: previousTBDrugUse,
                                           );
-      
+
                                           orderBloc.add(AddPatientToOrder(
                                               orderId: widget.orderId,
                                               patient: patient));
@@ -922,7 +1038,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                       borderRadius: BorderRadius.circular(37),
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                           color: kColorsOrangeDark,
                                         ),
                                         height: 62,
@@ -1032,6 +1149,35 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
     );
   }
 
+  bool validatePhoneNumber(String phoneNumber) {
+    if (phoneNumber != "") {
+      if (phoneNumber[0] == "0") {
+        if (phoneNumber.length == 10) {
+          if (phoneNumber[1] == "9") {
+            return true;
+          }
+        }
+      }
+      // else if (phoneNumber[0] == "+") {
+      //   if (phoneNumber.length == 13) {
+      //     if (phoneNumber.substring(1, 5) == "2519") {
+      //       return true;
+      //     }
+      //   }
+      // } else if (phoneNumber[0] == "9") {
+      //   if (phoneNumber.length == 9) {
+      //     return true;
+      //   }
+      // }
+      else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+    return false;
+  }
+
   Widget _labelBuilder(String label, {bool required = false}) {
     return Container(
       width: double.infinity,
@@ -1090,6 +1236,14 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
             validator: (value) {
               if (!required) {
                 return null;
+              }
+              if (TextInputType.phone == inputType) {
+                bool isValidPhoneNumber(String? value) => RegExp(
+                        r'(^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$)')
+                    .hasMatch(value ?? '');
+                if (isValidPhoneNumber(value)) {
+                  return 'Please enter valid phone number.';
+                }
               }
               if (maxValue != null && num.parse(value ?? '') > maxValue) {
                 return 'Value cannot exceed ${maxValue}';

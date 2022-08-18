@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,9 +16,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this.authRepository) : super(InitialState());
 
   @override
-  Stream<AuthState> mapEventToState(
-    AuthEvent event,
-  ) async* {
+  Stream<AuthState> mapEventToState(AuthEvent event) async* {
     if (event is LoginUser) {
       yield LoadingState();
       try {
@@ -36,11 +36,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (user != null) {
           SharedPreferences preferences = sl<SharedPreferences>();
           await preferences.setString('user_type', type ?? '');
+          await preferences.setString(
+              'authData',
+              jsonEncode({
+                'email': user.email,
+                'displayName': user.displayName,
+                'uid': user.uid
+              }));
           if (type == 'COURIER_ADMIN' && kIsWeb) {
             yield UnauthenticatedState();
             return;
           }
-          yield AuthenticatedState(user: user, type: type ?? '');
+          yield AuthenticatedState(user: user, type: type ?? '', uid: user.uid);
         } else {
           yield UnauthenticatedState();
         }
@@ -50,29 +57,64 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is CheckAuth) {
       yield LoadingState();
       try {
-        User? user = authRepository.auth.currentUser;
-        String? type;
-        String? uid = user?.uid;
+        if (kIsWeb) {
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          String? userJson = preferences.getString('authData');
 
-        if (uid != null) {
-          var userData = await authRepository.database
-              .collection('users')
-              .where('user_id', isEqualTo: uid)
-              .get();
-
-          if (userData.docs.isNotEmpty) {
-            type = userData.docs[0].data()['type'];
-          }
-        }
-
-        if (user != null) {
-          if (type == 'COURIER_ADMIN' && kIsWeb) {
+          if (userJson == null) {
             yield UnauthenticatedState();
-            return;
+          } else {
+            print('Her.... ${jsonDecode(userJson)}');
+            Map user = jsonDecode(userJson);
+            String? uid = user['uid'];
+            String? type;
+
+            if (uid != null) {
+              var userData = await authRepository.database
+                  .collection('users')
+                  .where('user_id', isEqualTo: uid)
+                  .get();
+
+              if (userData.docs.isNotEmpty) {
+                type = userData.docs[0].data()['type'];
+                print('User type for $uid is $type');
+              }
+            }
+
+            if (type == 'COURIER_ADMIN' && kIsWeb) {
+              yield UnauthenticatedState();
+              return;
+            }
+            print('Authenticated state with data $type');
+            yield AuthenticatedState(type: type ?? '', uid: uid ?? '');
           }
-          yield AuthenticatedState(user: user, type: type ?? '');
         } else {
-          yield UnauthenticatedState();
+          User? user = authRepository.auth.currentUser;
+          print('User email => ${user?.email}');
+          String? type;
+          String? uid = user?.uid;
+
+          if (uid != null) {
+            var userData = await authRepository.database
+                .collection('users')
+                .where('user_id', isEqualTo: uid)
+                .get();
+
+            if (userData.docs.isNotEmpty) {
+              type = userData.docs[0].data()['type'];
+            }
+          }
+
+          if (user != null) {
+            if (type == 'COURIER_ADMIN' && kIsWeb) {
+              yield UnauthenticatedState();
+              return;
+            }
+            yield AuthenticatedState(
+                user: user, type: type ?? '', uid: user.uid);
+          } else {
+            yield UnauthenticatedState();
+          }
         }
       } catch (e) {
         print(e.toString());
@@ -81,6 +123,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     if (event is LogOutUser) {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.remove('authData');
       yield LoadingState();
       await authRepository.logoutUser();
       yield InitialState();

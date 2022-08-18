@@ -237,13 +237,15 @@ class SpecimenAdapter extends TypeAdapter<Specimen> {
       reason: fields[5] as String?,
       testResult: fields[6] as TestResult?,
       testResultAddedAt: fields[7] as DateTime?,
+      specimenCondition: fields[8] as String?,
+      transportMode: fields[9] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Specimen obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.type)
       ..writeByte(1)
@@ -259,7 +261,11 @@ class SpecimenAdapter extends TypeAdapter<Specimen> {
       ..writeByte(6)
       ..write(obj.testResult)
       ..writeByte(7)
-      ..write(obj.testResultAddedAt);
+      ..write(obj.testResultAddedAt)
+      ..writeByte(8)
+      ..write(obj.specimenCondition)
+      ..writeByte(9)
+      ..write(obj.transportMode);
   }
 
   @override

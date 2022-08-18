@@ -224,7 +224,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                   // backgroundColor: kColorsOrangeLight,
                                                   // elevation: 0,
                                                   onPressed: () async {
-                                                    print('here');
+                                                    // print('here');
                                                     var create =
                                                         await showModalBottomSheet(
                                                             backgroundColor:
@@ -235,15 +235,18 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                             context: context,
                                                             builder: (ctx) {
                                                               return Container(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        top: 30,
-                                                                        left:
-                                                                            20,
-                                                                        right:
-                                                                            20,
-                                                                        bottom:
-                                                                            20),
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .only(
+                                                                  bottom: MediaQuery.of(
+                                                                              context)
+                                                                          .viewInsets
+                                                                          .bottom +
+                                                                      20,
+                                                                  top: 20,
+                                                                  left: 20,
+                                                                  right: 20,
+                                                                ),
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   color: Colors
@@ -299,7 +302,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                               );
                                                             });
 
-                                                    print('create');
+                                                    // print('create');
                                                     if (create == true) {
                                                       Tester? tester = BlocProvider
                                                               .of<TesterCourierBloc>(
@@ -310,13 +313,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                                       TesterCourierBloc>(
                                                                   context)
                                                               .courier;
-                                                      String? date = BlocProvider
-                                                              .of<TesterCourierBloc>(
-                                                                  context)
-                                                          .date;
-                                                      print(tester?.name);
-                                                      print(courier?.name);
-                                                      print(date);
+                                                      // String? date = BlocProvider.of<TesterCourierBloc>(context).date;
+                                                      // print(tester?.name);
+                                                      // print(courier?.name);
+                                                      // print(date);
                                                       ordersBloc.add(
                                                         EditOrder(
                                                           courier_id:
@@ -579,8 +579,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                               return;
                                             }
 
-                                            debugPrint(
-                                                '${Order.fromJsonSMS(state.order.toJsonSMS()).orderId}');
+                                            // debugPrint('${Order.fromJsonSMS(state.order.toJsonSMS()).orderId}');
 
                                             ordersBloc.add(
                                                 PlaceOrder(order: state.order));
@@ -972,9 +971,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      print(index);
-                      print(patient);
-                      print(orderId);
+                      // print(index);
+                      // print(patient);
+                      // print(orderId);
                       // if (!deletable) {
                       //             ScaffoldMessenger.of(context).showSnackBar(
                       //                 SnackBar(

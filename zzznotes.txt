@@ -1,0 +1,269 @@
+ //TODO: fix scrolling issue
+                                // loadingReports
+                                //     ? Container(
+                                //         margin: const EdgeInsets.symmetric(vertical: 50),
+                                //         child: Center(child: CircularProgressIndicator()),
+                                //       )
+                                //     : Expanded(
+                                //         child: ListView.builder(
+                                //           itemCount: selectedFilter != 'All' ? filteredReports.length : reports.length,
+                                //           itemBuilder: (context, index) {
+                                //             List<Map<String, dynamic>> finalReports = selectedFilter != 'All' ? filteredReports : reports;
+                                //             return Center(
+                                //               child: Container(
+                                //                 margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                                //                 width: 600,
+                                //                 padding: const EdgeInsets.all(20.0),
+                                //                 decoration: BoxDecoration(
+                                //                   color: Colors.white,
+                                //                   boxShadow: [BoxShadow(color: Colors.grey.shade300, offset: Offset(2, 7), blurRadius: 20)],
+                                //                   borderRadius: BorderRadius.circular(10),
+                                //                 ),
+                                //                 child: Column(
+                                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                                //                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                //                   children: [
+                                //                     Text('Order', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                //                     Divider(),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Created At', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['created_at']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Sender Name', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['sender_name']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Sender Phone', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['sender_phone']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Tester Name', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['tester_name']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Receiver Courier', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['receiver_courier']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Ordered For', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['ordered_for']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Courier Name', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['courier_name']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                     //!
+                                //                     Row(
+                                //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //                       children: [
+                                //                         Text('Courier Phone', style: TextStyle(fontSize: 16.0)),
+                                //                         Text(finalReports[index]['courier_phone']),
+                                //                       ],
+                                //                     ),
+                                //                     SizedBox(height: 10),
+                                //                   ],
+                                //                 ),
+                                //               ),
+                                //             );
+                                //           },
+                                //         ),
+                                //       ),
+
+
+
+                                //Lazy data table
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Text('Order Monitoring', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                ),
+                                SizedBox(height: 10),
+                                SizedBox(
+                                  height: size.height * 0.35,
+                                  child: LazyDataTable(
+                                    tableTheme: MyTableTheme(),
+                                    rows: selectedFilter == 'All' ? reports.length : filteredReports.length,
+                                    columns: 9,
+                                    tableDimensions: LazyDataTableDimensions(
+                                      cellHeight: 80,
+                                      cellWidth: 130,
+                                      topHeaderHeight: 80,
+                                      leftHeaderWidth: 130,
+                                    ),
+                                    topHeaderBuilder: (i) {
+                                      if (i == 0) return Center(child: Text("Referring Health Facility"));
+                                      if (i == 1) return Center(child: Text("Courier Name"));
+                                      if (i == 2) return Center(child: Text("Testing Health Facility"));
+                                      if (i == 3) return Center(child: Text("Region"));
+                                      if (i == 4) return Center(child: Text("Zone/Sub City"));
+                                      if (i == 5) return Center(child: Text("Woreda"));
+                                      if (i == 6) return Center(child: Text("Number of Patients"));
+                                      if (i == 7) return Center(child: Text("Order Created"));
+                                      if (i == 8) return Center(child: Text("Order Status"));
+
+                                      return Center(child: Text("Column: ${i + 1}"));
+                                    },
+                                    leftHeaderBuilder: (i) {
+                                      // List<Map<String, dynamic>> finalReports = selectedFilter == 'All' ? reports : filteredReports;
+                                      // return Center(child: Text(finalReports[i]['']));
+                                      return Center(
+                                        child: Text('row'),
+                                      );
+                                    },
+                                    dataCellBuilder: (i, j) => Center(child: Text("Cell: $i, $j")),
+                                    topLeftCornerWidget: Center(child: Text("Order No")),
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+
+                                //!Specimen Referral Report
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Text('Specimen Referral Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                ),
+                                SizedBox(height: 10),
+                                SizedBox(
+                                  height: size.height * 0.35,
+                                  child: LazyDataTable(
+                                    tableTheme: MyTableTheme(),
+                                    rows: selectedFilter == 'All' ? reports.length : filteredReports.length,
+                                    columns: 19,
+                                    tableDimensions: LazyDataTableDimensions(
+                                      cellHeight: 50,
+                                      cellWidth: 100,
+                                      topHeaderHeight: 50,
+                                      leftHeaderWidth: 75,
+                                    ),
+                                    topHeaderBuilder: (i) {
+                                      if (i == 0) return Center(child: Text("Courier Name"));
+                                      if (i == 1) return Center(child: Text("Referring Health Facility"));
+                                      if (i == 2) return Center(child: Text("Testing Health Facility"));
+                                      if (i == 3) return Center(child: Text("Order Created"));
+                                      if (i == 4) return Center(child: Text("Patient's Name"));
+                                      if (i == 5) return Center(child: Text("MRN"));
+                                      if (i == 6) return Center(child: Text("Sex"));
+                                      if (i == 7) return Center(child: Text("Age"));
+                                      if (i == 8) return Center(child: Text("Age(Months)"));
+                                      if (i == 9) return Center(child: Text("Phone"));
+                                      if (i == 10) return Center(child: Text("Region"));
+                                      if (i == 11) return Center(child: Text("Zone"));
+                                      if (i == 12) return Center(child: Text("Woreda"));
+                                      if (i == 13) return Center(child: Text("Specimen Type"));
+                                      if (i == 14) return Center(child: Text("Site of Test"));
+                                      if (i == 15) return Center(child: Text("Requested Test"));
+                                      if (i == 16) return Center(child: Text("Reason for Test"));
+                                      if (i == 17) return Center(child: Text("Registration Group"));
+                                      if (i == 18) return Center(child: Text("Delivery Status"));
+
+                                      return Center(child: Text("Column: ${i + 1}"));
+                                    },
+                                    leftHeaderBuilder: (i) {
+                                      // List<Map<String, dynamic>> finalReports = selectedFilter == 'All' ? reports : filteredReports;
+                                      // return Center(child: Text(finalReports[i]['']));
+                                      return Center(
+                                        child: Text('row'),
+                                      );
+                                    },
+                                    dataCellBuilder: (i, j) => Center(child: Text("Cell: $i, $j")),
+                                    topLeftCornerWidget: Center(child: Text("Order ID")),
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+
+                                //!Shipment Report Table
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Text('Shipment Report', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600)),
+                                ),
+                                SizedBox(height: 10),
+                                SizedBox(
+                                  height: size.height * 0.35,
+                                  child: LazyDataTable(
+                                    tableTheme: MyTableTheme(),
+                                    rows: selectedFilter == 'All' ? reports.length : filteredReports.length,
+                                    columns: 10,
+                                    tableDimensions: LazyDataTableDimensions(
+                                      cellHeight: 50,
+                                      cellWidth: 100,
+                                      topHeaderHeight: 50,
+                                      leftHeaderWidth: 75,
+                                    ),
+                                    topHeaderBuilder: (i) {
+                                      if (i == 0) return Center(child: Text("Pick up Site"));
+                                      if (i == 1) return Center(child: Text("Region"));
+                                      if (i == 2) return Center(child: Text("Zone"));
+                                      if (i == 3) return Center(child: Text("Woreda"));
+                                      if (i == 4) return Center(child: Text("Courier Name"));
+                                      if (i == 5) return Center(child: Text("Recipient Site"));
+                                      if (i == 6) return Center(child: Text("Number of Patients"));
+                                      if (i == 7) return Center(child: Text("Order Created"));
+                                      if (i == 8) return Center(child: Text("Order Accepted"));
+                                      if (i == 9) return Center(child: Text("Shipment Duration"));
+
+                                      return Center(child: Text("Column: ${i + 1}"));
+                                    },
+                                    leftHeaderBuilder: (i) {
+                                      // List<Map<String, dynamic>> finalReports = selectedFilter == 'All' ? reports : filteredReports;
+                                      // return Center(child: Text(finalReports[i]['']));
+                                      return Center(
+                                        child: Text('row'),
+                                      );
+                                    },
+                                    dataCellBuilder: (i, j) => Center(child: Text("Cell: $i, $j")),
+                                    topLeftCornerWidget: Center(child: Text("Order ID")),
+                                  ),
+                                ),
+
+                                  LazyDataTableTheme MyTableTheme() {
+    return LazyDataTableTheme(
+      rowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      alternateCellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      cellBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      cornerBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      columnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      alternateRowHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      alternateColumnHeaderBorder: Border.fromBorderSide(BorderSide(color: Colors.grey.shade300)),
+      rowHeaderColor: Colors.white,
+      columnHeaderColor: Colors.white,
+      cornerColor: Colors.white,
+      cellColor: Colors.white,
+      alternateCellColor: Colors.white,
+      alternateRowHeaderColor: Colors.white,
+      alternateColumnHeaderColor: Colors.white,
+    );
+  }

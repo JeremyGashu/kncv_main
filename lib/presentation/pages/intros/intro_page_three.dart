@@ -9,6 +9,8 @@ class InstroPageThree extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: GestureDetector(
         onHorizontalDragUpdate: (details) {
@@ -38,17 +40,17 @@ class InstroPageThree extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
+              Expanded(
                 flex: 1,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                   ),
-                  child: Center(
-                      child: Image.asset('assets/images/phone_image.png')),
+                  // child: Center( child: Image.asset('assets/images/phone_image.png')),
+                  child: Center(child: Image.asset('assets/images/phone_image.png', height: size.height * 0.35)),
                 ),
               ),
-              Flexible(
+              Expanded(
                 flex: 1,
                 child: Container(
                   width: double.infinity,
@@ -120,8 +122,7 @@ class InstroPageThree extends StatelessWidget {
                       ),
                       //
                       Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20.0, left: 20.0, right: 20.0),
+                        padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
                         child: Container(
                             width: double.infinity,
                             margin: EdgeInsets.only(top: 30),
@@ -130,24 +131,24 @@ class InstroPageThree extends StatelessWidget {
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 25,
+                                // fontSize: 25,
+                                fontSize: size.width < 563 ? size.width * 0.04 : 25,
                               ),
                             )),
                       ),
                       Container(
                           padding: EdgeInsets.all(20),
                           width: double.infinity,
-                          child: Text(
-                              'As a Testing Health Facilty the app allows to confirm receipt of samples, inspect the quality of samples, and input the test result.',
+                          child: Text('As a Testing Health Facilty the app allows to confirm receipt of samples, inspect the quality of samples, and input the test result.',
                               style: TextStyle(
                                 color: kTextColorLight.withOpacity(0.7),
-                                fontSize: 18,
+                                // fontSize: 18,
+                                fontSize: size.width < 563 ? size.width * 0.04 : 20,
                               ))),
 
                       InkWell(
                         onTap: () {
-                          Navigator.pushNamed(
-                              context, LoginPage.loginPageRouteName);
+                          Navigator.pushNamed(context, LoginPage.loginPageRouteName);
                         },
                         borderRadius: BorderRadius.circular(37),
                         child: Container(
@@ -155,15 +156,17 @@ class InstroPageThree extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                             color: kColorsOrangeDark,
                           ),
-                          height: 62,
+                          // height: 62,
+                          height: size.width < 563 ? 55 : 62,
                           margin: EdgeInsets.all(20),
                           child: Center(
                             child: Text(
                               'Log In',
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.white),
+                                fontWeight: FontWeight.bold,
+                                fontSize: size.width < 563 ? 15 : 20,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),

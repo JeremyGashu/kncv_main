@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,7 @@ import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_tester.
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 
 import '../../../service_locator.dart';
+import '../report/report_page.dart';
 
 class ReceiverHomePage extends StatefulWidget {
   static const receiverHomepageRouteName = 'receiver home page rout ename';
@@ -36,11 +38,13 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
   @override
   void initState() {
     orderBloc.add(LoadOrdersForTester());
+    sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
         ScaffoldMessenger.of(context)
@@ -67,11 +71,36 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                   elevation: 0,
                   actions: [
+                    kIsWeb
+                        ? IconButton(
+                            onPressed: () {
+                              orderBloc.add(LoadOrdersForTester());
+                              sl<TesterCourierBloc>()
+                                ..add(LoadTestersAndCouriers());
+                            },
+                            icon: Icon(
+                              Icons.refresh,
+                            ),
+                            color: Colors.white,
+                          )
+                        : SizedBox(),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => ReportScreen(),
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.bar_chart),
+                      color: Colors.white,
+                    ),
                     kIsWeb
                         ? Container(
                             margin: EdgeInsets.only(top: 7),
@@ -82,7 +111,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                 },
                                 icon: Icon(
                                   Icons.person,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 )))
                         : SizedBox(),
                     StreamBuilder(
@@ -112,7 +141,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
 
                                 child: Icon(
                                   Icons.notifications_outlined,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -124,12 +153,26 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                           builder: (context,
                               AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
-                              return Text(
-                                'Logged in  as: ${snapshot.data?['name'] ?? ''}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ),
-                              );
+                              print('Snapshot data => ${snapshot.data}:');
+
+                              // print(snapshot.data['']);
+                              return size.width < 191
+                                  ? SizedBox.shrink()
+                                  : Text(
+                                      // 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
+                                      snapshot.data!['name'] != null
+                                          ? 'Logged in  as: \n${snapshot.data!['name'] ?? ''}'
+                                          : '',
+
+                                      style: TextStyle(
+                                        // fontSize: 12,
+                                        fontSize: size.width < 290
+                                            ? size.width * 0.03
+                                            : size.width > 320
+                                                ? 12
+                                                : size.width * 0.03,
+                                      ),
+                                    );
                             }
                             return Container();
                           }),
@@ -202,27 +245,29 @@ class _ReceiverHomePageState extends State<ReceiverHomePage> {
                                           itemCount: state.orders.length,
                                           itemBuilder: (context, index) {
                                             return GestureDetector(
-                                                onTap: () async {
-                                                  print(
-                                                      '${state.orders[index].orderId}');
-                                                  var load =
-                                                      await Navigator.pushNamed(
-                                                          context,
-                                                          OrderDetailTester
-                                                              .orderDetailTesterPageRouteName,
-                                                          arguments: state
-                                                              .orders[index]
-                                                              .orderId);
-                                                  if (load == true) {
-                                                    orderBloc.add(
-                                                        LoadOrdersForTester());
-                                                  } else {
-                                                    orderBloc.add(
-                                                        LoadOrdersForTester());
-                                                  }
-                                                },
-                                                child: orderCard(
-                                                    state.orders[index]));
+                                              onTap: () async {
+                                                // print('${state.orders[index].orderId}');
+                                                var load =
+                                                    await Navigator.pushNamed(
+                                                        context,
+                                                        OrderDetailTester
+                                                            .orderDetailTesterPageRouteName,
+                                                        arguments: state
+                                                            .orders[index]
+                                                            .orderId);
+                                                if (load == true) {
+                                                  orderBloc.add(
+                                                      LoadOrdersForTester());
+                                                } else {
+                                                  orderBloc.add(
+                                                      LoadOrdersForTester());
+                                                }
+                                              },
+                                              child: orderCard(
+                                                state.orders[index],
+                                                isTester: true,
+                                              ),
+                                            );
                                           }),
                                     ),
                                   ),

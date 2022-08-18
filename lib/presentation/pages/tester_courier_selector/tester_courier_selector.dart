@@ -47,7 +47,7 @@ class _SelectorPageState extends State<SelectorPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<TesterCourierBloc, TesterCourierStates>(
         listener: (ctx, state) {
-      print(state);
+      // print(state);
     }, builder: (context, state) {
       if (state is LoadedState) {
         return Column(
@@ -65,7 +65,7 @@ class _SelectorPageState extends State<SelectorPage> {
                       int year = t.year;
 
                       String d = '$day-$month-$year';
-                      print(d);
+                      // print(d);
                       setState(() {
                         date = d;
                         BlocProvider.of<TesterCourierBloc>(context).date = date;
@@ -157,44 +157,71 @@ class _SelectorPageState extends State<SelectorPage> {
                   ),
                 )),
             SizedBox(
-              height: 10,
+              height: 5,
             ),
+            // Container(
+            //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            //   width: double.infinity,
+            //   decoration: BoxDecoration(
+            //     color: Colors.grey.withOpacity(0.2),
+            //     borderRadius: BorderRadius.circular(7),
+            //   ),
+            //   child: DropdownButtonHideUnderline(
+            //       child: DropdownButton<Tester>(
+            //           onChanged: (val) {
+            //             FocusScope.of(context).requestFocus(FocusNode());
+            //             setState(() {
+            //               tester = val;
+            //               BlocProvider.of<TesterCourierBloc>(context).tester = tester;
+            //             });
+            //           },
+            //           value: tester,
+            //           hint: Text('Select Tester'),
+            //           items: state.data['testers']!
+            //               .map(
+            //                 (e) => DropdownMenuItem<Tester>(
+            //                   value: e as Tester,
+            //                   child: Text(
+            //                     e.toString(),
+            //                   ),
+            //                 ),
+            //               )
+            //               .toList())),
+            // ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(7),
+                borderRadius : BorderRadius.circular(6),
               ),
-              child: DropdownButtonHideUnderline(
-                  child: DropdownButton<Tester>(
-                      onChanged: (val) {
-                        FocusScope.of(context).requestFocus(FocusNode());
-                        setState(() {
-                          tester = val;
-                          BlocProvider.of<TesterCourierBloc>(context).tester =
-                              tester;
-                        });
-                      },
-                      value: tester,
-                      hint: Text('Select Tester'),
-                      items: state.data['testers']!
-                          .map(
-                            (e) => DropdownMenuItem<Tester>(
-                              value: e as Tester,
-                              child: Text(
-                                e.toString(),
-                              ),
-                            ),
-                          )
-                          .toList())),
+              padding: EdgeInsets.all(4),
+              child: Autocomplete<Tester>(
+
+                displayStringForOption: (t) => t.name,
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text == '') {
+                    return const Iterable<Tester>.empty();
+                  }
+                  return (state.data['testers']! as List<Tester>)
+                      .where((tester) {
+                    return tester.name
+                        .toLowerCase()
+                        .contains(textEditingValue.text.toLowerCase());
+                  });
+                },
+                onSelected: (Tester selection) {
+                  setState(() {
+                    tester = selection;
+                    BlocProvider.of<TesterCourierBloc>(context).tester = tester;
+                  });
+                },
+              ),
             ),
             SizedBox(
               height: 45,
             ),
             InkWell(
               onTap: () {
-                print('Popping');
+                // print('Popping');
                 if (BlocProvider.of<TesterCourierBloc>(context).tester !=
                         null &&
                     BlocProvider.of<TesterCourierBloc>(context).courier !=

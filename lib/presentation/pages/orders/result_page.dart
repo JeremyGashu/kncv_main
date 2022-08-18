@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -10,7 +8,6 @@ import 'package:kncv_flutter/presentation/blocs/orders/order_state.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/orders_bloc.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/report.dart';
 import 'package:kncv_flutter/service_locator.dart';
-
 import '../notificatins.dart';
 
 class AddTestResultPage extends StatefulWidget {
@@ -51,7 +48,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
 
   @override
   void initState() {
-    debugPrint('Selected specimen ${widget.specimen.id}');
+    // debugPrint('Selected specimen ${widget.specimen.id}');
 
     var d = DateTime.now();
     int month = d.month;
@@ -111,7 +108,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                 addNotification(
                   orderId: widget.orderId,
                   content: 'Added Test Result!',
-                  senderContent:  
+                  senderContent:
                       'Patient result has been added to patient ${state.patient.name}',
                   testerContent:
                       'You have added test result to patient ${state.patient.name}.',
@@ -185,7 +182,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                             onPressed: () {
                                               setState(() {
                                                 editingResult = !editingResult;
-                                                print('plrase');
+                                                // print('plrase');
                                               });
                                             },
                                             icon: Icon(
@@ -343,7 +340,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                             onPressed: () {
                                               setState(() {
                                                 editingResult = !editingResult;
-                                                print('plrase');
+                                                // print('plrase');
                                               });
                                             },
                                             icon: Icon(
@@ -354,11 +351,8 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   ],
                                 ),
                               ),
-
                               _tobLabelBuilder('Test Result'),
-
                               _labelBuilder('Select Date'),
-
                               GestureDetector(
                                   onTap: !widget.canEdit
                                       ? () {}
@@ -400,9 +394,7 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       ),
                                     ),
                                   )),
-
                               _labelBuilder('Select Time'),
-
                               GestureDetector(
                                 onTap: !widget.canEdit
                                     ? () {}
@@ -441,14 +433,12 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                   ),
                                 ),
                               ),
-
                               _buildInputField(
                                 label: 'Lab Resitration Number',
                                 hint: 'Lab Registration Number',
                                 controller: resitrationNumberController,
                                 disabled: !widget.canEdit,
                               ),
-
                               _labelBuilder('MTB Result'),
                               Container(
                                 padding: EdgeInsets.symmetric(
@@ -480,13 +470,12 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                         resultRR = null;
                                         quantity = null;
                                       }
-                                      print(val == 'MTB Not Detected');
+                                      // print(val == 'MTB Not Detected');
                                       mtbResult = val;
                                     });
                                   },
                                 )),
                               ),
-
                               mtbResult == 'MTB Detected'
                                   ? _labelBuilder('Quantity')
                                   : SizedBox(),
@@ -526,7 +515,6 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       )),
                                     )
                                   : SizedBox(),
-
                               mtbResult == 'MTB Detected'
                                   ? _labelBuilder('Result RR')
                                   : SizedBox(),
@@ -564,31 +552,9 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                       )),
                                     )
                                   : SizedBox(),
-
-                              // _buildInputField(
-                              //   label: 'MTB Result',
-                              //   hint: 'MTB Result',
-                              //   controller: mtbResultController,
-                              //   disabled: widget.patient.resultAvaiable,
-                              // ),
-                              // _buildInputField(
-                              //   label: 'Quantity',
-                              //   hint: 'Quantity',
-                              //   controller: quantityController,
-                              //   disabled: widget.patient.resultAvaiable,
-                              // ),
-
-                              // _buildInputField(
-                              //   label: 'Result RR',
-                              //   hint: 'Result RR',
-                              //   controller: resultRRController,
-                              //   disabled: widget.patient.resultAvaiable,
-                              // ),
-
                               SizedBox(
                                 height: 35,
                               ),
-
                               !widget.patient.resultAvaiable
                                   ? Container(
                                       // padding: EdgeInsets.all(10),
@@ -600,18 +566,37 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                             )
                                           : InkWell(
                                               onTap: () async {
-                                                // String resultRR =
-                                                //     resultRRController.value.text;
-                                                // String mtbResult =
-                                                //     mtbResultController.value.text;
-                                                // String quantity =
-                                                //     quantityController.value.text;
                                                 String registrationNumber =
                                                     resitrationNumberController
                                                         .value.text;
+                                                if (mtbResult ==
+                                                        'MTB Detected' &&
+                                                    (quantity == null ||
+                                                        resultRR == null)) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please enter Result RR and Quantity.')));
+                                                  return;
+                                                }
 
-                                                print(
-                                                    '$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
+                                                if (registrationNumber == '') {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please enter Lab Registratin number.')));
+                                                  return;
+                                                }
+
+                                                if (date == null ||
+                                                    time == null) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please select test result date and time.')));
+                                                  return;
+                                                }
+
                                                 TestResult result = TestResult(
                                                   labRegistratinNumber:
                                                       registrationNumber,
@@ -680,7 +665,6 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                             ),
                                     )
                                   : Container(),
-
                               widget.patient.resultAvaiable && widget.canEdit
                                   ? Container(
                                       // padding: EdgeInsets.all(10),
@@ -696,8 +680,36 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                     resitrationNumberController
                                                         .value.text;
 
-                                                print(
-                                                    '$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
+                                                // print('$date \n $time $resultRR \n $mtbResult \n $quantity \n $registrationNumber');
+
+                                                if (mtbResult ==
+                                                        'MTB Detected' &&
+                                                    (quantity == null ||
+                                                        resultRR == null)) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please enter Result RR and Quantity.')));
+                                                  return;
+                                                }
+
+                                                if (registrationNumber == '') {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please enter Lab Registratin number.')));
+                                                  return;
+                                                }
+
+                                                if (date == null ||
+                                                    time == null) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please select test result date and time.')));
+                                                  return;
+                                                }
+
                                                 TestResult result = TestResult(
                                                   labRegistratinNumber:
                                                       registrationNumber,

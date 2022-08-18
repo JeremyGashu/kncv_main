@@ -53,7 +53,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
           bloc: ordersBloc,
           listener: (ctx, state) async {
             if (state is LoadedSingleOrder) {
-              print(state.order.status);
+              // print(state.order.status);
             } else if (state is CourierApprovedArrivalTester) {
               addNotification(
                 orderId: widget.orderId,
@@ -443,246 +443,322 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                     trailing: !order.patients![index].specimens![i].assessed
                         ? TextButton(
                             onPressed: () async {
-                              bool create = await showModalBottomSheet(
-                                  backgroundColor: Colors.transparent,
-                                  isScrollControlled: true,
-                                  context: context,
-                                  builder: (ctx) {
-                                    return AssessSpecimen(ctx,
-                                        order.patients![index].specimens![i]);
+                              try {
+                                bool create = await showModalBottomSheet(
+                                    backgroundColor: Colors.transparent,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (ctx) {
+                                      return AssessSpecimen(ctx,
+                                          order.patients![index].specimens![i]);
+                                    });
+
+                                print(
+                                    'Old patient Info ===> ${order.patients![index].toJson()}');
+
+                                if (create == true &&
+                                    order.patients![index].specimens![i].type ==
+                                        'Sputum') {
+                                  order.patients![index].specimens![i]
+                                      .assessed = true;
+                                  order.patients![index].specimens![i]
+                                          .rejected =
+                                      'Mucoid Purulent' != sputumCondition;
+                                  order.patients![index].specimens![i]
+                                          .specimenCondition =
+                                      sputumCondition ?? '';
+                                  if (inColdChain != null) {
+                                    if (inColdChain == 'Yes, end to end') {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'End to end in cold chain';
+                                    } else if (inColdChain == 'Yes, partly') {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'Partly in cold chain';
+                                    } else {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'Not at all in cold chain';
+                                    }
+                                  }
+                                  order.patients![index].specimens![i].reason =
+                                      'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
+
+                                  setState(() {
+                                    sendingFeedback = true;
                                   });
 
-                              if (create == true &&
-                                  order.patients![index].specimens![i].type ==
-                                      'Sputum') {
-                                order.patients![index].specimens![i].assessed =
-                                    true;
-                                order.patients![index].specimens![i].rejected =
-                                    'Mucoid Purulent' != sputumCondition;
-                                order.patients![index].specimens![i].reason =
-                                    'Specimen is in $sputumCondition type. Not Mucoid Purulent.';
+                                  print(
+                                      'New patient info ===> ${order.patients![index].toJson()}');
 
-                                setState(() {
-                                  sendingFeedback = true;
-                                });
+                                  // print();
 
-                                bool success =
-                                    await OrderRepository.editSpecimenFeedback(
-                                        index: index,
-                                        order: order,
-                                        patient: order.patients![index]);
+                                  bool success = await OrderRepository
+                                      .editSpecimenFeedback(
+                                          index: index,
+                                          order: order,
+                                          patient: order.patients![index]);
 
-                                if (success) {
-                                  addNotification(
-                                    orderId: order.orderId!,
-                                    testerContent:
-                                        'You Accepted Sputum specimen for ${order.patients![index].name} from ${order.sender_name}',
-                                    senderContent:
-                                        '${order.patients![index].name}\'s Sputum Specimen have accepted by ${order.tester_name}.',
-                                    content:
-                                        'One specimen got accepted by courier!',
-                                    courier: false,
-                                    testerAction: NotificationAction
-                                        .NavigateToOrderDetalTester,
-                                    senderAction: NotificationAction
-                                        .NavigateToOrderDetalSender,
-                                    payload: {'orderId': widget.orderId},
-                                  );
-                                  ordersBloc.add(
-                                      LoadSingleOrder(orderId: widget.orderId));
-                                }
+                                  if (success) {
+                                    addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Accepted Sputum specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Sputum Specimen have accepted by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got accepted by courier!',
+                                      courier: false,
+                                      testerAction: NotificationAction
+                                          .NavigateToOrderDetalTester,
+                                      senderAction: NotificationAction
+                                          .NavigateToOrderDetalSender,
+                                      payload: {'orderId': widget.orderId},
+                                    );
+                                    ordersBloc.add(LoadSingleOrder(
+                                        orderId: widget.orderId));
+                                  }
 
-                                if ('Mucoid Purulent' != sputumCondition) {
-                                  addNotification(
-                                    orderId: order.orderId!,
-                                    testerContent:
-                                        'You Rejected Sputum specimen for ${order.patients![index].name} from ${order.sender_name}',
-                                    senderContent:
-                                        '${order.patients![index].name}\'s Sputum Specimen have been rejected by ${order.tester_name}.',
-                                    content:
-                                        'One specimen got rejected by tester!',
-                                    courier: false,
-                                    testerAction: NotificationAction
-                                        .NavigateToOrderDetalTester,
-                                    senderAction: NotificationAction
-                                        .NavigateToOrderDetalSender,
-                                    payload: {'orderId': widget.orderId},
-                                  );
-                                }
+                                  if ('Mucoid Purulent' != sputumCondition) {
+                                    addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Rejected Sputum specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Sputum Specimen have been rejected by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got rejected by tester!',
+                                      courier: false,
+                                      testerAction: NotificationAction
+                                          .NavigateToOrderDetalTester,
+                                      senderAction: NotificationAction
+                                          .NavigateToOrderDetalSender,
+                                      payload: {'orderId': widget.orderId},
+                                    );
+                                  }
 
-                                setState(() {
-                                  inColdChain = null;
-                                  stoolCondition = null;
-                                  sputumCondition = null;
-                                  sendingFeedback = false;
-                                });
-                              } else if (create == true &&
-                                  order.patients![index].specimens![i].type ==
-                                      'Stool') {
-                                order.patients![index].specimens![i].assessed =
-                                    true;
-                                order.patients![index].specimens![i].rejected =
-                                    'Formed' != stoolCondition;
-                                order.patients![index].specimens![i].reason =
-                                    'Stool Specimen is in $stoolCondition type. Not in Formed State!';
-
-                                setState(() {
-                                  sendingFeedback = true;
-                                });
-
-                                bool success =
-                                    await OrderRepository.editSpecimenFeedback(
-                                        index: index,
-                                        order: order,
-                                        patient: order.patients![index]);
-
-                                if (success) {
-                                  addNotification(
-                                    orderId: order.orderId!,
-                                    testerContent:
-                                        'You Accepted Stool specimen for ${order.patients![index].name} from ${order.sender_name}',
-                                    senderContent:
-                                        '${order.patients![index].name}\'s Stool Specimen is accepted by ${order.tester_name}.',
-                                    content:
-                                        'One specimen got accepted by tester!',
-                                    courier: false,
-                                    testerAction: NotificationAction
-                                        .NavigateToOrderDetalTester,
-                                    senderAction: NotificationAction
-                                        .NavigateToOrderDetalSender,
-                                    payload: {'orderId': widget.orderId},
-                                  );
                                   setState(() {
+                                    inColdChain = null;
+                                    stoolCondition = null;
+                                    sputumCondition = null;
                                     sendingFeedback = false;
                                   });
-                                  ordersBloc.add(
-                                      LoadSingleOrder(orderId: widget.orderId));
-                                }
-                                if ('Formed' != stoolCondition) {
-                                  addNotification(
-                                    orderId: order.orderId!,
-                                    testerContent:
-                                        'You Rejected Stool specimen for ${order.patients![index].name} from ${order.sender_name}',
-                                    senderContent:
-                                        '${order.patients![index].name}\'s Stool Specimen have been rejected by ${order.tester_name}.',
-                                    content:
-                                        'One specimen got rejected by tester!',
-                                    courier: false,
-                                    testerAction: NotificationAction
-                                        .NavigateToOrderDetalTester,
-                                    senderAction: NotificationAction
-                                        .NavigateToOrderDetalSender,
-                                    payload: {'orderId': widget.orderId},
-                                  );
+                                } else if (create == true &&
+                                    order.patients![index].specimens![i].type ==
+                                        'Stool') {
+                                  order.patients![index].specimens![i]
+                                      .assessed = true;
+                                  order.patients![index].specimens![i]
+                                      .rejected = 'Formed' != stoolCondition;
+                                  order.patients![index].specimens![i]
+                                      .specimenCondition = stoolCondition ?? '';
+                                  if (inColdChain != null) {
+                                    if (inColdChain == 'Yes, end to end') {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'End to end in cold chain';
+                                    } else if (inColdChain == 'Yes, partly') {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'Partly in cold chain';
+                                    } else {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'Not at all in cold chain';
+                                    }
+                                  }
+                                  order.patients![index].specimens![i].reason =
+                                      'Stool Specimen is in $stoolCondition type. Not in Formed State!';
 
-                                  ordersBloc.add(
-                                      LoadSingleOrder(orderId: widget.orderId));
-                                }
-
-                                setState(() {
-                                  inColdChain = null;
-                                  stoolCondition = null;
-                                  sendingFeedback = false;
-                                  sputumCondition = null;
-                                });
-                              } else if (create == true &&
-                                  order.patients![index].specimens![i].type ==
-                                      'Urine') {
-                                order.patients![index].specimens![i].assessed =
-                                    true;
-
-                                order.patients![index].specimens![i].rejected =
-                                    false;
-                                order.patients![index].specimens![i].reason =
-                                    '';
-
-                                setState(() {
-                                  sendingFeedback = true;
-                                });
-
-                                bool success =
-                                    await OrderRepository.editSpecimenFeedback(
-                                        index: index,
-                                        order: order,
-                                        patient: order.patients![index]);
-
-                                if (success) {
-                                  addNotification(
-                                    orderId: order.orderId!,
-                                    testerContent:
-                                        'You Accepted Urine specimen for ${order.patients![index].name} from ${order.sender_name}',
-                                    senderContent:
-                                        '${order.patients![index].name}\'s Urine Specimen is accepted by ${order.tester_name}.',
-                                    content:
-                                        'One specimen got accepted by courier!',
-                                    courier: false,
-                                    testerAction: NotificationAction
-                                        .NavigateToOrderDetalTester,
-                                    senderAction: NotificationAction
-                                        .NavigateToOrderDetalSender,
-                                    payload: {'orderId': widget.orderId},
-                                  );
                                   setState(() {
-                                    sendingFeedback = false;
+                                    sendingFeedback = true;
                                   });
-                                  ordersBloc.add(
-                                      LoadSingleOrder(orderId: widget.orderId));
-                                }
 
-                                setState(() {
-                                  inColdChain = null;
-                                  stoolCondition = null;
-                                  sendingFeedback = false;
-                                  sputumCondition = null;
-                                });
-                              } else if (create == true) {
-                                order.patients![index].specimens![i].assessed =
-                                    true;
+                                  bool success = await OrderRepository
+                                      .editSpecimenFeedback(
+                                          index: index,
+                                          order: order,
+                                          patient: order.patients![index]);
 
-                                order.patients![index].specimens![i].rejected =
-                                    false;
-                                order.patients![index].specimens![i].reason =
-                                    '';
+                                  if (success) {
+                                    addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Accepted Stool specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Stool Specimen is accepted by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got accepted by tester!',
+                                      courier: false,
+                                      testerAction: NotificationAction
+                                          .NavigateToOrderDetalTester,
+                                      senderAction: NotificationAction
+                                          .NavigateToOrderDetalSender,
+                                      payload: {'orderId': widget.orderId},
+                                    );
+                                    setState(() {
+                                      sendingFeedback = false;
+                                    });
+                                    ordersBloc.add(LoadSingleOrder(
+                                        orderId: widget.orderId));
+                                  }
+                                  if ('Formed' != stoolCondition) {
+                                    addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Rejected Stool specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Stool Specimen have been rejected by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got rejected by tester!',
+                                      courier: false,
+                                      testerAction: NotificationAction
+                                          .NavigateToOrderDetalTester,
+                                      senderAction: NotificationAction
+                                          .NavigateToOrderDetalSender,
+                                      payload: {'orderId': widget.orderId},
+                                    );
 
-                                setState(() {
-                                  sendingFeedback = true;
-                                });
+                                    ordersBloc.add(LoadSingleOrder(
+                                        orderId: widget.orderId));
+                                  }
 
-                                bool success =
-                                    await OrderRepository.editSpecimenFeedback(
-                                        index: index,
-                                        order: order,
-                                        patient: order.patients![index]);
-
-                                if (success) {
-                                  addNotification(
-                                    orderId: order.orderId!,
-                                    testerContent:
-                                        'You Accepted Urine specimen for ${order.patients![index].name} from ${order.sender_name}',
-                                    senderContent:
-                                        '${order.patients![index].name}\'s Urine Specimen is accepted by ${order.tester_name}.',
-                                    content:
-                                        'One specimen got accepted by courier!',
-                                    courier: false,
-                                    testerAction: NotificationAction
-                                        .NavigateToOrderDetalTester,
-                                    senderAction: NotificationAction
-                                        .NavigateToOrderDetalSender,
-                                    payload: {'orderId': widget.orderId},
-                                  );
                                   setState(() {
+                                    inColdChain = null;
+                                    stoolCondition = null;
                                     sendingFeedback = false;
+                                    sputumCondition = null;
                                   });
-                                  ordersBloc.add(
-                                      LoadSingleOrder(orderId: widget.orderId));
-                                }
+                                } else if (create == true &&
+                                    order.patients![index].specimens![i].type ==
+                                        'Urine') {
+                                  order.patients![index].specimens![i]
+                                      .assessed = true;
+                                  order.patients![index].specimens![i]
+                                      .rejected = false;
+                                  if (inColdChain != null) {
+                                    if (inColdChain == 'Yes, end to end') {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'End to end in cold chain';
+                                    } else if (inColdChain == 'Yes, partly') {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'Partly in cold chain';
+                                    } else {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'Not at all in cold chain';
+                                    }
+                                  }
+                                  order.patients![index].specimens![i].reason =
+                                      '';
 
-                                setState(() {
-                                  inColdChain = null;
-                                  stoolCondition = null;
-                                  sendingFeedback = false;
-                                  sputumCondition = null;
-                                });
+                                  setState(() {
+                                    sendingFeedback = true;
+                                  });
+
+                                  bool success = await OrderRepository
+                                      .editSpecimenFeedback(
+                                          index: index,
+                                          order: order,
+                                          patient: order.patients![index]);
+
+                                  if (success) {
+                                    addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Accepted Urine specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Urine Specimen is accepted by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got accepted by courier!',
+                                      courier: false,
+                                      testerAction: NotificationAction
+                                          .NavigateToOrderDetalTester,
+                                      senderAction: NotificationAction
+                                          .NavigateToOrderDetalSender,
+                                      payload: {'orderId': widget.orderId},
+                                    );
+                                    setState(() {
+                                      sendingFeedback = false;
+                                    });
+                                    ordersBloc.add(LoadSingleOrder(
+                                        orderId: widget.orderId));
+                                  }
+
+                                  setState(() {
+                                    inColdChain = null;
+                                    stoolCondition = null;
+                                    sendingFeedback = false;
+                                    sputumCondition = null;
+                                  });
+                                } else if (create == true) {
+                                  order.patients![index].specimens![i]
+                                      .assessed = true;
+                                  order.patients![index].specimens![i]
+                                      .rejected = false;
+                                  if (inColdChain != null) {
+                                    if (inColdChain == 'Yes, end to end') {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'End to end in cold chain';
+                                    } else if (inColdChain == 'Yes, partly') {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'Partly in cold chain';
+                                    } else {
+                                      order.patients![index].specimens![i]
+                                              .transportMode =
+                                          'Not at all in cold chain';
+                                    }
+                                  }
+                                  order.patients![index].specimens![i].reason =
+                                      '';
+
+                                  setState(() {
+                                    sendingFeedback = true;
+                                  });
+
+                                  bool success = await OrderRepository
+                                      .editSpecimenFeedback(
+                                          index: index,
+                                          order: order,
+                                          patient: order.patients![index]);
+
+                                  if (success) {
+                                    addNotification(
+                                      orderId: order.orderId!,
+                                      testerContent:
+                                          'You Accepted Urine specimen for ${order.patients![index].name} from ${order.sender_name}',
+                                      senderContent:
+                                          '${order.patients![index].name}\'s Urine Specimen is accepted by ${order.tester_name}.',
+                                      content:
+                                          'One specimen got accepted by courier!',
+                                      courier: false,
+                                      testerAction: NotificationAction
+                                          .NavigateToOrderDetalTester,
+                                      senderAction: NotificationAction
+                                          .NavigateToOrderDetalSender,
+                                      payload: {'orderId': widget.orderId},
+                                    );
+                                    setState(() {
+                                      sendingFeedback = false;
+                                    });
+                                    ordersBloc.add(LoadSingleOrder(
+                                        orderId: widget.orderId));
+                                  }
+
+                                  setState(() {
+                                    inColdChain = null;
+                                    stoolCondition = null;
+                                    sendingFeedback = false;
+                                    sputumCondition = null;
+                                  });
+                                }
+                              } catch (e) {
+                                print(e);
                               }
                             },
                             child: Text(
@@ -1077,9 +1153,9 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
               if (stoolCondition != null &&
                   sputumCondition != null &&
                   inColdChain != null) {
-                print(stoolCondition);
-                print(sputumCondition);
-                print(inColdChain);
+                // print(stoolCondition);
+                // print(sputumCondition);
+                // print(inColdChain);
                 // ordersBloc.add(event)
                 Navigator.pop(context, true);
               }
@@ -1111,15 +1187,14 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
   Container buildPatients(
       BuildContext context, Patient patient, String orderId, int index,
       [bool isFromCourier = false]) {
-
-        String message = '';
-        int counter = 0;
-        patient.specimens?.forEach((specimen) {
-          if(specimen.testResult != null){
-            counter++;
-          }
-        });
-        message = 'Tested: $counter/${patient.specimens?.length ?? ''}';
+    String message = '';
+    int counter = 0;
+    patient.specimens?.forEach((specimen) {
+      if (specimen.testResult != null) {
+        counter++;
+      }
+    });
+    message = 'Tested: $counter/${patient.specimens?.length ?? ''}';
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -1186,7 +1261,6 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
-
                         ),
                       ),
                     ),

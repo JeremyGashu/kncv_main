@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
+import 'package:kncv_flutter/data/repositories/push_notification.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_tester.dart';
+import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 
 import 'orders/order_detail_page_courier.dart';
 
@@ -33,27 +35,52 @@ class NotificationsPage extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Container(
                   constraints: BoxConstraints(maxWidth: 700),
-                  child: ListView(
+                  child: notifications.length == 0 ? Text('No unread notification.', textAlign: TextAlign.center,) : ListView(
                     children: notifications.map((e) {
                       return GestureDetector(
                         onTap: () {
                           switch (e.action) {
                             case NotificationAction.NavigateToOrderDetalCourier:
                               Navigator.pushNamed(
-                                  context,
-                                  OrderDetailCourier
-                                      .orderDetailCourierPageRouteName,
-                                  arguments: e.payload?['orderId']);
+                                      context,
+                                      OrderDetailCourier
+                                          .orderDetailCourierPageRouteName,
+                                      arguments: e.payload?['orderId'])
+                                  .then((value) => {
+                                        FirebaseFirestore.instance
+                                            .collection('notifications')
+                                            .doc(e.id)
+                                            .update({'seen': true}).then(
+                                                (value) => {})
+                                      });
+
                               break;
                             case NotificationAction.NavigateToOrderDetalSender:
                               Navigator.pushNamed(context,
-                                  OrderDetailTester.orderDetailTesterPageRouteName,
-                                  arguments: e.payload?['orderId']);
+                                      OrderDetailPage.orderDetailPageRouteName,
+                                      arguments: e.payload?['orderId'])
+                                  .then((value) => {
+                                        FirebaseFirestore.instance
+                                            .collection('notifications')
+                                            .doc(e.id)
+                                            .update({'seen': true}).then(
+                                                (value) => {})
+                                      });
+
                               break;
                             case NotificationAction.NavigateToOrderDetalTester:
-                              Navigator.pushNamed(context,
-                                  OrderDetailTester.orderDetailTesterPageRouteName,
-                                  arguments: e.payload?['orderId']);
+                              Navigator.pushNamed(
+                                      context,
+                                      OrderDetailTester
+                                          .orderDetailTesterPageRouteName,
+                                      arguments: e.payload?['orderId'])
+                                  .then((value) => {
+                                        FirebaseFirestore.instance
+                                            .collection('notifications')
+                                            .doc(e.id)
+                                            .update({'seen': true})
+                                      });
+
                               break;
                             default:
                               return;
@@ -128,7 +155,7 @@ Widget notificationCard(NotificationModel notificationModel) {
                       .collection('notifications')
                       .doc(notificationModel.id)
                       .update({'seen': true});
-                  print(notificationModel.id);
+                  // print(notificationModel.id);
                 },
                 child: Container(
                     width: 30,
@@ -176,6 +203,7 @@ Future<bool> addNotification(
     var database = FirebaseFirestore.instance;
     var ordersCollection =
         await database.collection('orders').doc(orderId).get();
+        // print('loaded order ${ordersCollection.data()?['tester_id']}');
     Order order =
         Order.fromJson(ordersCollection.data() as Map<String, dynamic>);
     List<String?> sendList = [];
@@ -199,6 +227,9 @@ Future<bool> addNotification(
       await FirebaseFirestore.instance
           .collection('notifications')
           .add(newNotification.toJson());
+
+      sendPushMessage(senderContent ?? content, 'Order Update!',
+          await getUserTokenFromUID(order.senderId));
     }
     if (courier) {
       NotificationModel newNotification = NotificationModel(
@@ -213,29 +244,43 @@ Future<bool> addNotification(
       await FirebaseFirestore.instance
           .collection('notifications')
           .add(newNotification.toJson());
+
+      sendPushMessage(testerContent ?? content, 'Order Update!',
+          await getUserTokenFromUID(order.courierId));
     }
     if (tester) {
       var testers =
           await getTestCenterAdminsFromTestCenterId(order.testCenterId);
+      print('Test Center ID ==> ${order.testCenterId}');
       testers.forEach((element) {
         sendList.add(element);
       });
     }
 
+    print('Send List ==> $sendList');
+
     sendList.forEach((element) async {
       NotificationModel newNotification = NotificationModel(
-          content: testerContent ?? content,
-          seen: false,
-          userId: element,
-          timestamp: '$day-$month-$year at $hour:$minutes',
-          date: DateTime.now(),
-          action: testerAction,
-          payload: payload);
+        content: testerContent ?? content,
+        seen: false,
+        userId: element,
+        timestamp: '$day-$month-$year at $hour:$minutes',
+        date: DateTime.now(),
+        action: testerAction,
+        payload: payload,
+      );
 
       await FirebaseFirestore.instance
           .collection('notifications')
           .add(newNotification.toJson());
+      String? t = await getUserTokenFromUID(element);
+
+      if (t != null) {
+        sendPushMessage(testerContent ?? content, 'Order Update!', t);
+      }
     });
+
+    // sendList.forEach((element) async {});
 
     return true;
   } catch (e) {
@@ -254,4 +299,12 @@ Future<List<String?>> getTestCenterAdminsFromTestCenterId(String? id) async {
   testCenterAdmins =
       testCenters.docs.map((e) => e.data()['user_id'] as String).toList();
   return testCenterAdmins;
+}
+
+Future<String?> getUserTokenFromUID(String? uid) async {
+  DocumentSnapshot user =
+      await FirebaseFirestore.instance.collection('tokens').doc(uid).get();
+  Map? userData = user.data() as Map?;
+  print('User Data ==> $userData');
+  return userData?['deviceToken'];
 }

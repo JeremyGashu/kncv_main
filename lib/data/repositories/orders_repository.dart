@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kncv_flutter/core/hear_beat.dart';
 import 'package:kncv_flutter/core/message_codes.dart';
@@ -24,6 +23,7 @@ class OrderRepository {
       String? currentUserId = auth.currentUser?.uid;
       var orders = await ordersCollection
           .where('sender_id', isEqualTo: currentUserId)
+          .orderBy('order_created', descending: true)
           .get();
 
       List<Order> os = orders.docs
@@ -49,6 +49,7 @@ class OrderRepository {
       String? currentUserId = auth.currentUser?.uid;
       var orders = await ordersCollection
           .where('courier_id', isEqualTo: currentUserId)
+          .orderBy('order_created', descending: true)
           .get();
       List<Order> os = orders.docs
           .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
@@ -73,8 +74,11 @@ class OrderRepository {
       Map<String, dynamic>? testCenter =
           await getTestCenterByAdminUID(currentUserId ?? '');
 
+          print('Load order for test center => ${testCenter?['key']}');
+
       var orders = await ordersCollection
           .where('tester_id', isEqualTo: testCenter?['key'])
+          .orderBy('order_created', descending: true)
           .get();
       List<Order> os = orders.docs
           .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
@@ -96,8 +100,10 @@ class OrderRepository {
         .where('user_id', isEqualTo: id)
         .get();
     if (usersData.docs.length > 0) {
-      Map<String, dynamic> userData = usersData.docs[0].data()['test_center'];
-      print('test center => ${userData}');
+      Map<String, dynamic> userData = usersData.docs[0].data();
+      print('Test Center ID ===> ${userData['test_center_id']}');
+      userData['key'] = userData['test_center_id'];
+      // print('test center => ${userData}');
       return userData;
     }
 
@@ -108,7 +114,7 @@ class OrderRepository {
   // @params{courier_id, tester_id, courier_name and tester_name}
 
   String? getInitials(String val) {
-    List<String> names = val.split(" ");
+    List<String> names = val.trim().split(" ");
     String initials = '';
     for (var i = 0; i < names.length; i++) {
       initials += '${names[i][0]}';
@@ -157,7 +163,7 @@ class OrderRepository {
       String? sender_phone;
       var userData =
           await usersCollection.where('user_id', isEqualTo: sender_id).get();
-      debugPrint('Sender data from user id  ======== ${userData.docs.length}');
+      // debugPrint('Sender data from user id  ======== ${userData.docs.length}');
 
       if (userData.docs.length > 0) {
         sender_name = userData.docs[0].data()['institution']['name'];
@@ -234,7 +240,7 @@ class OrderRepository {
       //send sms here
       await sendSMS(
         // context,
-        to: '0931057901',
+        to: '0941998907',
         payload: {
           'oid': id,
           'cid': courier_id,
@@ -288,7 +294,7 @@ class OrderRepository {
       await ordersBox.addAll(orders);
       await sendSMS(
         // context,
-        to: '0931057901',
+        to: '0941998907',
         payload: {
           'oid': orderId,
           'cid': courier_id,
@@ -388,7 +394,7 @@ class OrderRepository {
       //send sms
       await sendSMS(
         // context,
-        to: '0931057901',
+        to: '0941998907',
         payload: {
           'oid': orderId,
           'p': patient.toJsonSMS(),
@@ -404,16 +410,59 @@ class OrderRepository {
       {required Order order,
       required Patient patient,
       required int index}) async {
-    bool internetAvailable = await isConnectedToTheInternet();
-    Box<Order> ordersBox = Hive.box<Order>('orders');
+    try {
+      bool internetAvailable = await isConnectedToTheInternet();
+      Box<Order> ordersBox = Hive.box<Order>('orders');
 
-    if (internetAvailable) {
-      var orderRef = await FirebaseFirestore.instance
-          .collection('orders')
-          .doc(order.orderId);
-      var or = await orderRef.get();
-      if (or.exists) {
-        List patientsList = or.data()?['patients'];
+      if (internetAvailable) {
+        var orderRef = await FirebaseFirestore.instance
+            .collection('orders')
+            .doc(order.orderId);
+        var or = await orderRef.get();
+        print('To be edited ===> ${or.data()}');
+        print('Edited patient ===> ${patient.toJson()}');
+        if (or.exists) {
+          List patientsList = or.data()?['patients'];
+          bool finishedAssessingPatient = true;
+          patient.specimens?.forEach((specimen) {
+            if (!specimen.assessed) {
+              finishedAssessingPatient = false;
+            }
+          });
+
+          if (finishedAssessingPatient) {
+            patient.status = 'Inspected';
+          }
+
+          patientsList[index] = patient.toJson();
+
+          bool assessed = allSpecimensAssessed(order);
+          await orderRef.update({
+            'patients': patientsList,
+            'status': assessed ? 'Received' : 'Delivered',
+          });
+
+          //RESPONSE SPECIMEN_EDITED
+          await sendSmsViaListenerToEndUser(
+            to: order.sender_phone ?? '',
+            payload: {
+              'oid': order.orderId,
+              'p': patient.toJsonSMS(),
+              'i': index,
+            },
+            action: SPECIMEN_EDITED,
+          );
+
+          return true;
+        }
+        return false;
+      } else {
+        List<Order> orders = await ordersBox.values.toList();
+        Order order =
+            orders.firstWhere((order) => order.orderId == order.orderId);
+        orders.removeWhere((order) => order.orderId == order.orderId);
+
+        List<Patient>? patientsList = order.patients;
         bool finishedAssessingPatient = true;
         patient.specimens?.forEach((specimen) {
           if (!specimen.assessed) {
@@ -425,69 +474,33 @@ class OrderRepository {
           patient.status = 'Inspected';
         }
 
-        patientsList[index] = patient.toJson();
+        patientsList?[index] = patient;
 
         bool assessed = allSpecimensAssessed(order);
-        await orderRef.update({
-          'patients': patientsList,
-          'status': assessed ? 'Received' : 'Delivered',
-        });
 
-        //RESPONSE SPECIMEN_EDITED
-        await sendSmsViaListenerToEndUser(
-          to: order.sender_phone ?? '',
+        order.status = assessed ? 'Received' : 'Delivered';
+        order.patients = patientsList;
+
+        order.patients?[index] = patient;
+        orders.add(order);
+        await ordersBox.clear();
+        await ordersBox.addAll(orders);
+
+        await sendSMS(
+          to: '0941998907',
           payload: {
             'oid': order.orderId,
             'p': patient.toJsonSMS(),
             'i': index,
           },
-          action: SPECIMEN_EDITED,
+          action: EDIT_SPECIMEN_FEEDBACK,
         );
 
         return true;
       }
+    } catch (e) {
+      print(e);
       return false;
-    } else {
-      List<Order> orders = await ordersBox.values.toList();
-      Order order =
-          orders.firstWhere((order) => order.orderId == order.orderId);
-      orders.removeWhere((order) => order.orderId == order.orderId);
-
-      List<Patient>? patientsList = order.patients;
-      bool finishedAssessingPatient = true;
-      patient.specimens?.forEach((specimen) {
-        if (!specimen.assessed) {
-          finishedAssessingPatient = false;
-        }
-      });
-
-      if (finishedAssessingPatient) {
-        patient.status = 'Inspected';
-      }
-
-      patientsList?[index] = patient;
-
-      bool assessed = allSpecimensAssessed(order);
-
-      order.status = assessed ? 'Received' : 'Delivered';
-      order.patients = patientsList;
-
-      order.patients?[index] = patient;
-      orders.add(order);
-      await ordersBox.clear();
-      await ordersBox.addAll(orders);
-
-      await sendSMS(
-        to: '0931057901',
-        payload: {
-          'oid': order.orderId,
-          'p': patient.toJsonSMS(),
-          'i': index,
-        },
-        action: EDIT_SPECIMEN_FEEDBACK,
-      );
-
-      return true;
     }
   }
 
@@ -562,7 +575,7 @@ class OrderRepository {
       await ordersBox.addAll(orders);
 
       await sendSMS(
-          to: '0931057901',
+          to: '0941998907',
           payload: {
             'oid': orderId,
             'i': index,
@@ -622,7 +635,7 @@ class OrderRepository {
       await ordersBox.addAll(orders);
 
       await sendSMS(
-          to: '0931057901',
+          to: '0941998907',
           payload: {
             'oid': orderId,
             'i': index,
@@ -661,7 +674,7 @@ class OrderRepository {
 
       await sendSMS(
         // context,
-        to: '0931057901',
+        to: '0941998907',
         payload: {
           'oid': orderId,
           'i': index,
@@ -704,7 +717,7 @@ class OrderRepository {
         await ordersBox.addAll(orders);
         await sendSMS(
           // context,
-          to: '0931057901',
+          to: '0941998907',
           payload: {
             'oid': orderId,
           },
@@ -742,7 +755,7 @@ class OrderRepository {
 
       await sendSMS(
         // context,
-        to: '0931057901',
+        to: '0941998907',
         payload: {
           'oid': orderId,
           'p': patient.toJsonSMS(),
@@ -778,25 +791,29 @@ class OrderRepository {
           'status': 'Waiting for Confirmation',
           'order_placed': DateTime.now()
         });
+        // print('************************order placed***************');
 
         order.status = 'Waiting for Confirmation';
-        debugPrint('please sms ${order.orderId}');
-        //RESPONSE ORDER_PLACED
-        await sendSmsViaListenerToEndUser(
-          to: order.courier_phone ?? '',
-          payload: {
-            'o': order.toJsonSMS(),
-            'response': true,
-          },
-          action: ORDER_PLACED,
-        );
-
-        //RESPONSE ORDER_PLACED
-        await sendSmsViaListenerToEndUser(
-          to: order.tester_phone ?? '',
-          payload: {'o': order.toJsonSMS(), 'response': true},
-          action: ORDER_PLACED,
-        );
+        // debugPrint('please sms ${order.orderId}');
+        try {
+          //RESPONSE ORDER_PLACED
+          await sendSmsViaListenerToEndUser(
+            to: order.courier_phone ?? '',
+            payload: {
+              'o': order.toJsonSMS(),
+              'response': true,
+            },
+            action: ORDER_PLACED,
+          );
+          //RESPONSE ORDER_PLACED
+          await sendSmsViaListenerToEndUser(
+            to: order.tester_phone ?? '',
+            payload: {'o': order.toJsonSMS(), 'response': true},
+            action: ORDER_PLACED,
+          );
+        } catch (e) {
+          print(e);
+        }
 
         sendCustomSMS(
             to: order.courier_phone ?? '',
@@ -823,7 +840,7 @@ class OrderRepository {
         await ordersBox.clear();
         await ordersBox.addAll(orders);
         await sendSMS(
-            to: '0931057901',
+            to: '0941998907',
             payload: {
               'oid': order.orderId,
             },
@@ -836,71 +853,79 @@ class OrderRepository {
   }
 
   Future<bool> acceptOrder(String? orderId, String? time, String? date) async {
-    bool internetAvailable = await isConnectedToTheInternet();
-    Box<Order> ordersBox = Hive.box<Order>('orders');
+    try {
+      bool internetAvailable = await isConnectedToTheInternet();
+      Box<Order> ordersBox = Hive.box<Order>('orders');
 
-    if (internetAvailable) {
-      var orderRef = database.collection('orders').doc(orderId);
-      var order = await orderRef.get();
-      if (order.exists &&
-          order.data()!['status'] == 'Waiting for Confirmation') {
-        await orderRef.update({
-          'status': 'Confirmed',
-          'will_reach_at': '$date-$time',
-          'order_confirmed': DateTime.now()
-        });
+      if (internetAvailable) {
+        // Waiting for Confirmation
+        var orderRef = database.collection('orders').doc(orderId);
+        var order = await orderRef.get();
 
-        Order o = Order.fromJson(order.data()!);
+        if (order.exists &&
+            order.data()!['status'] == 'Waiting for Confirmation') {
+          await orderRef.update({
+            'status': 'Confirmed',
+            'will_reach_at': '$date-$time',
+            'order_confirmed': DateTime.now()
+          });
 
-        //RESPONSE ORDER_ACCEPTED
-        await sendSmsViaListenerToEndUser(
-          to: o.sender_phone ?? '',
-          payload: {'oid': orderId, 'response': true},
-          action: ORDER_ACCEPTED,
-        );
+          Order o = Order.fromJson(order.data()!);
 
-        //RESPONSE ORDER_ACCEPTED
-        await sendSmsViaListenerToEndUser(
-          to: o.tester_phone ?? '',
-          payload: {'oid': orderId, 'response': true},
-          action: ORDER_ACCEPTED,
-        );
-
-        sendCustomSMS(
+          //RESPONSE ORDER_ACCEPTED
+          await sendSmsViaListenerToEndUser(
             to: o.sender_phone ?? '',
-            body:
-                'One order got accepted. The selected courier\'s will notify you when they get at your place.');
+            payload: {'oid': orderId, 'response': true},
+            action: ORDER_ACCEPTED,
+          );
 
-        return true;
+          //RESPONSE ORDER_ACCEPTED
+          await sendSmsViaListenerToEndUser(
+            to: o.tester_phone ?? '',
+            payload: {'oid': orderId, 'response': true},
+            action: ORDER_ACCEPTED,
+          );
+
+          sendCustomSMS(
+              to: o.sender_phone ?? '',
+              body:
+                  'One order got accepted. The selected courier\'s will notify you when they get at your place.');
+
+          return true;
+        } else {
+          return false;
+        }
       } else {
+        List<Order> orders = await ordersBox.values.toList();
+        Order order =
+            orders.firstWhere((element) => element.orderId == orderId);
+        if (order.status == 'Waiting for Confirmation') {
+          orders.removeWhere((element) => element.orderId == orderId);
+          order.status = 'Confirmed';
+          orders.add(order);
+          await ordersBox.clear();
+          await ordersBox.addAll(orders);
+          await sendSMS(
+              to: '0941998907',
+              payload: {
+                'oid': orderId,
+                'date': date ?? '',
+                'time': time ?? '',
+              },
+              action: COURIER_ACCEPT_ORDER);
+
+          return true;
+        }
         return false;
       }
-    } else {
-      List<Order> orders = await ordersBox.values.toList();
-      Order order = orders.firstWhere((element) => element.orderId == orderId);
-      if (order.status == 'Waiting for Confirmation') {
-        orders.removeWhere((element) => element.orderId == orderId);
-        order.status = 'Confirmed';
-        orders.add(order);
-        await ordersBox.clear();
-        await ordersBox.addAll(orders);
-        await sendSMS(
-            to: '0931057901',
-            payload: {
-              'oid': orderId,
-              'date': date ?? '',
-              'time': time ?? '',
-            },
-            action: COURIER_ACCEPT_ORDER);
 
-        return true;
-      }
-      return false;
-    }
-
-    /*
+      /*
 
     */
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   Future<bool> approveArrival(String? orderId, String receiver) async {
@@ -952,7 +977,7 @@ class OrderRepository {
         await ordersBox.addAll(orders);
 
         await sendSMS(
-            to: '0931057901',
+            to: '0941998907',
             payload: {'oid': orderId, 'cn': receiver},
             action: SENDER_APPROVE_COURIER_ARRIVAL);
       }
@@ -1011,7 +1036,7 @@ class OrderRepository {
         await ordersBox.addAll(orders);
 
         await sendSMS(
-            to: '0931057901',
+            to: '0941998907',
             payload: {
               'oid': orderId,
               'rn': receiver,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kncv_flutter/core/colors.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 
-Widget orderCard(Order order) {
+Widget orderCard(Order order, {bool isTester = false}) {
   return Container(
     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -21,7 +21,7 @@ Widget orderCard(Order order) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                order.tester_name ?? '',
+                isTester ? order.sender_name ?? '' : order.tester_name ?? '',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

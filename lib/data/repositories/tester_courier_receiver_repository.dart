@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kncv_flutter/core/hear_beat.dart';
 import 'package:kncv_flutter/data/models/models.dart';
@@ -18,7 +17,7 @@ class TesterCourierRepository {
 
     bool internetAvailable = await isConnectedToTheInternet();
     if (internetAvailable) {
-      debugPrint('Courier and Test Centers From Internet');
+      // debugPrint('Courier and Test Centers From Internet');
 
       var usersCollection = await database.collection('users');
 
@@ -27,20 +26,21 @@ class TesterCourierRepository {
           .get();
       List filteredUser = userData.docs.map((e) => e.data()).toList();
       if (filteredUser.length > 0) {
+        //TODO check zones before fetching the courier
         Map user = filteredUser[0];
-        var testCenterData = await database
-            .collection('test_centers')
-            .where('region', isEqualTo: user["institution.region"])
-            .get();
+        // print('Current Institution ==> ${user['institution']['zone']}');
+        var testCenterData = await database.collection('test_centers').get();
 
         var couriersData = await database
             .collection('users')
             .where('type', isEqualTo: 'COURIER_ADMIN')
-            .where('region', isEqualTo: user['institution.region'])
+            .where('zone', isEqualTo: user['institution']?['zone'])
             .get();
+
         List<Tester> testers = testCenterData.docs
             .map((e) => Tester.fromJson({...e.data(), 'id': e.id}))
             .toList();
+
         data['testers'] = testers;
         await testerBox.clear();
         await testerBox.addAll(testers);
@@ -49,13 +49,14 @@ class TesterCourierRepository {
             .map((e) =>
                 Courier.fromJson({...e.data(), 'id': e.data()['user_id']}))
             .toList();
+        print('Couriers ==> $couriers');
         data['couriers'] = couriers;
         await couriersBox.clear();
         await couriersBox.addAll(couriers);
       }
       return data;
     } else {
-      debugPrint('Couriers and Test Centers From Cache');
+      // debugPrint('Couriers and Test Centers From Cache');
       List<Tester> testers = testerBox.values.toList();
       List<Courier> couriers = couriersBox.values.toList();
       data['couriers'] = couriers;

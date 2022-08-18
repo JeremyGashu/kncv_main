@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kncv_flutter/core/colors.dart';
-import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   static const String resetPasswordPageName = 'reset password route name';
@@ -18,6 +17,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: kColorsOrangeDark,
+        title: Text(
+          'Reset Password',
+          style: TextStyle(fontSize: 17),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Align(
@@ -36,7 +42,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         'Specimen Referral System Ethiopia',
                         textAlign: TextAlign.left,
                         style: TextStyle(
-                          fontSize: 46,
+                          fontSize: 40,
                           fontWeight: FontWeight.w500,
                         ),
                       )),

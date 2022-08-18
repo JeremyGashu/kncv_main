@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_states.dart';
 import 'package:kncv_flutter/presentation/pages/homepage/courier_homepage.dart';
@@ -27,68 +28,166 @@ class _SplashPageState extends State<SplashPage> {
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
     initMessaging();
     super.initState();
   }
 
+  //seconds
+  final int splashTime = 3;
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: BlocConsumer<AuthBloc, AuthState>(listener: (context, state) async {
-        if (state is UnauthenticatedState || state is InitialState) {
-          await Future.delayed(Duration(seconds: 2));
-          Navigator.pushNamedAndRemoveUntil(
-              context, IntroPageOne.introPageOneRouteName, (route) => false);
-        } else if (state is AuthenticatedState) {
-          print('type => ${state.type}');
-          if (state.type == 'COURIER_ADMIN') {
-            await Future.delayed(Duration(seconds: 2));
-
-            Navigator.pushNamedAndRemoveUntil(context,
-                CourierHomePage.courierHomePageRouteName, (route) => false);
-          } else if (state.type == 'INSTITUTIONAL_ADMIN') {
-            await Future.delayed(Duration(seconds: 2));
-
-            Navigator.pushNamedAndRemoveUntil(context,
-                SenderHomePage.senderHomePageRouteName, (route) => false);
-          } else if (state.type == 'TEST_CENTER_ADMIN') {
-            await Future.delayed(Duration(seconds: 2));
-
-            Navigator.pushNamedAndRemoveUntil(context,
-                ReceiverHomePage.receiverHomepageRouteName, (route) => false);
-          } else {
-            await Future.delayed(Duration(seconds: 2));
+      backgroundColor: Colors.white,
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) async {
+          if (state is UnauthenticatedState || state is InitialState) {
+            await Future.delayed(Duration(seconds: splashTime));
             Navigator.pushNamedAndRemoveUntil(
-                context, LoginPage.loginPageRouteName, (route) => false);
+                context, IntroPageOne.introPageOneRouteName, (route) => false);
+          } else if (state is AuthenticatedState) {
+            // print('type => ${state.type}');
+            if (state.type == 'COURIER_ADMIN') {
+              await Future.delayed(Duration(seconds: splashTime));
+              Navigator.pushNamedAndRemoveUntil(context,
+                  CourierHomePage.courierHomePageRouteName, (route) => false);
+            } else if (state.type == 'INSTITUTIONAL_ADMIN') {
+              await Future.delayed(Duration(seconds: splashTime));
+              Navigator.pushNamedAndRemoveUntil(context,
+                  SenderHomePage.senderHomePageRouteName, (route) => false);
+            } else if (state.type == 'TEST_CENTER_ADMIN') {
+              await Future.delayed(Duration(seconds: splashTime));
+              Navigator.pushNamedAndRemoveUntil(context,
+                  ReceiverHomePage.receiverHomepageRouteName, (route) => false);
+            } else {
+              await Future.delayed(Duration(seconds: splashTime));
+              Navigator.pushNamedAndRemoveUntil(
+                  context, LoginPage.loginPageRouteName, (route) => false);
+            }
           }
-        }
-      }, builder: (context, state) {
-        return Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+        },
+        builder: (context, state) {
+          // return Center(
+          //   child: Column(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: [
+          //           Container(child: Image.asset('assets/images/hand.png')),
+          //           SizedBox(
+          //             width: 10,
+          //           ),
+          //           Container(child: Image.asset('assets/images/KNCV.png')),
+          //         ],
+          //       ),
+          //       SizedBox(
+          //         height: 15,
+          //       ),
+          //       Container(child: Image.asset('assets/images/TBtext.png')),
+          //     ],
+          //   ),
+          // );
+          return Container(
+            height: size.height,
+            width: size.width,
+            padding: const EdgeInsets.all(20.0),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(child: Image.asset('assets/images/hand.png')),
-                  SizedBox(
-                    width: 10,
+                  SizedBox(height: size.height * 0.2),
+                  SvgPicture.asset(
+                    'assets/Begize.svg',
+                    height: size.height * 0.15,
+                    // width: size.width * 0.4,
                   ),
-                  Container(child: Image.asset('assets/images/KNCV.png')),
+                  SizedBox(height: 15,),
+                  Text(
+                    'E-Specimen referral system Ethiopia',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Spacer(),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image(
+                          image: AssetImage('assets/ephi_logo.jpg'),
+                          width: 90),
+                    ],
+                  ),
+                  SizedBox(height: 15,),
+                  size.width < 330
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text("Powered By",
+                                style: TextStyle(
+                                    fontSize: size.width * 0.06,
+                                    fontWeight: FontWeight.bold)),
+                            SizedBox(width: size.width * 0.04),
+                            SizedBox(width: size.width * 0.04),
+                            SvgPicture.asset('assets/Knvc.svg',
+                                width: size.width * 0.1),
+                          ],
+                        )
+                      : size.width < 420
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text("Powered By",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold)),
+                                // SizedBox(width: 20),
+                                // Image(
+                                //     image: AssetImage('assets/ephi_logo.jpg'),
+                                //     width: size.width * 0.2),
+                                SizedBox(width: 20),
+                                SvgPicture.asset(
+                                  'assets/Knvc.svg',
+                                  width: size.width * 0.2,
+                                ),
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text("Powered By",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
+                                SizedBox(width: 20),
+                                // Image(
+                                //     image: AssetImage('assets/ephi_logo.jpg'),
+                                //     width: 80),
+                                // SizedBox(width: 20),
+                                SvgPicture.asset(
+                                  'assets/Knvc.svg',
+                                  width: 80,
+                                ),
+                              ],
+                            ),
+                  SizedBox(height: size.height * 0.05),
                 ],
               ),
-              SizedBox(
-                height: 15,
-              ),
-              Container(child: Image.asset('assets/images/TBtext.png')),
-            ],
-          ),
-        );
-      }),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -136,15 +235,15 @@ class _SplashPageState extends State<SplashPage> {
       provisional: false,
       sound: true,
     );
-    String? token = await messaging.getToken();
-    print("USER TOKEN:" + token!);
+    // String? token = await messaging.getToken();
+    // print("USER TOKEN:" + token!);
 
     FirebaseMessaging.onMessage.listen((message) {
       //todo => use flutter local notification to show notification in the background
-      print('NOTIFICATION RECEIVED');
+      // print('NOTIFICATION RECEIVED');
       showNotification(message.notification?.title, message.notification?.body);
-      print('TITLE => ${message.notification?.title}');
-      print('TITLE => ${message.notification?.body}');
+      // print('TITLE => ${message.notification?.title}');
+      // print('TITLE => ${message.notification?.body}');
     });
   }
 }

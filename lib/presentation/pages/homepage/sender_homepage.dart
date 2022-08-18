@@ -1,8 +1,8 @@
 import 'dart:math';
-
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,9 +22,9 @@ import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_ev
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detailpage.dart';
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
+import 'package:kncv_flutter/presentation/pages/report/report_page.dart';
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
 import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_courier_selector.dart';
-
 import '../../../service_locator.dart';
 import '../notificatins.dart';
 import 'widgets/item_cart.dart';
@@ -41,6 +41,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
   @override
   void initState() {
     orderBloc.add(LoadOrders());
+    sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
     super.initState();
   }
 
@@ -50,6 +51,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
   String testerName = '';
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
         ScaffoldMessenger.of(context)
@@ -75,7 +77,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
               // ScaffoldMessenger.of(context)
               //     .showSnackBar(SnackBar(content: Text('Creating order...')));
             } else if (state is LaodedState) {
-              print(state.orders);
+              // print(state.orders);
             }
           },
           builder: (context, state) {
@@ -94,11 +96,36 @@ class _SenderHomePageState extends State<SenderHomePage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
                   elevation: 0,
                   actions: [
+                    kIsWeb
+                        ? IconButton(
+                            onPressed: () {
+                              orderBloc.add(LoadOrders());
+                              sl<TesterCourierBloc>()
+                                ..add(LoadTestersAndCouriers());
+                            },
+                            icon: Icon(
+                              Icons.refresh,
+                            ),
+                            color: Colors.white,
+                          )
+                        : SizedBox(),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => ReportScreen(),
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.bar_chart),
+                      color: Colors.white,
+                    ),
                     kIsWeb
                         ? Container(
                             margin: EdgeInsets.only(top: 7),
@@ -109,7 +136,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                 },
                                 icon: Icon(
                                   Icons.person,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 )))
                         : SizedBox(),
                     StreamBuilder(
@@ -139,7 +166,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
 
                                 child: Icon(
                                   Icons.notifications_outlined,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -152,12 +179,25 @@ class _SenderHomePageState extends State<SenderHomePage> {
                           builder: (context,
                               AsyncSnapshot<Map<String, dynamic>> snapshot) {
                             if (snapshot.hasData) {
-                              return Text(
-                                'Logged in  as: ${snapshot.data?['name'] ?? ''}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ),
-                              );
+                              // print('snapshot data:');
+                              // print(snapshot.data);
+                              return size.width < 191
+                                  ? SizedBox.shrink()
+                                  : Text(
+                                      // 'Logged in  as: \n${getUserName(snapshot.data) ?? ''}',
+                                      snapshot.data!['name'] != null
+                                          ? 'Logged in  as: \n${snapshot.data!['name'] ?? ''}'
+                                          : '',
+
+                                      style: TextStyle(
+                                        // fontSize: 12,
+                                        fontSize: size.width < 290
+                                            ? size.width * 0.03
+                                            : size.width > 320
+                                                ? 12
+                                                : size.width * 0.03,
+                                      ),
+                                    );
                             }
                             return Container();
                           }),
@@ -165,7 +205,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                     IconButton(
                       icon: Icon(
                         Icons.logout,
-                        color: Colors.black,
+                        color: Colors.white,
                       ),
                       onPressed: () {
                         showDialog(
@@ -255,8 +295,7 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                           itemBuilder: (context, index) {
                                             return GestureDetector(
                                                 onTap: () async {
-                                                  print(
-                                                      '${state.orders[index].orderId}');
+                                                  // print('${state.orders[index].orderId}');
                                                   var load =
                                                       await Navigator.pushNamed(
                                                           context,
@@ -322,7 +361,12 @@ class _SenderHomePageState extends State<SenderHomePage> {
                         builder: (ctx) {
                           return Container(
                             padding: EdgeInsets.only(
-                                top: 30, left: 20, right: 20, bottom: 20),
+                              bottom:
+                                  MediaQuery.of(context).viewInsets.bottom + 20,
+                              top: 20,
+                              left: 20,
+                              right: 20,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.only(
@@ -349,9 +393,9 @@ class _SenderHomePageState extends State<SenderHomePage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 30,
-                                ),
+                                // SizedBox(
+                                //   height: 30,
+                                // ),
                                 SelectorPage(),
                               ],
                             ),
