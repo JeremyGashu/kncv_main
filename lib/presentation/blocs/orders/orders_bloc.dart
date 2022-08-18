@@ -18,6 +18,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
 
   static Future<bool> approveArrivalFromCourier(Order order) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {

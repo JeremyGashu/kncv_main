@@ -266,6 +266,7 @@ class OrderRepository {
       required String tester_name,
       required String orderId}) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -371,6 +372,7 @@ class OrderRepository {
       required Patient patient,
       required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -412,6 +414,7 @@ class OrderRepository {
       required int index}) async {
     try {
       bool internetAvailable = await isConnectedToTheInternet();
+      //TODO : Needs refactor
       Box<Order> ordersBox = Hive.box<Order>('orders');
 
       if (internetAvailable) {
@@ -532,6 +535,7 @@ class OrderRepository {
       required Patient patient,
       required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -594,6 +598,7 @@ class OrderRepository {
       required Patient patient,
       required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
       var orderRef = await database.collection('orders').doc(orderId);
@@ -650,6 +655,7 @@ class OrderRepository {
   Future<bool> deletePatientInfo(
       {required String orderId, required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -690,6 +696,7 @@ class OrderRepository {
 
   Future<Map<String, dynamic>> deleteOrder({required String orderId}) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -732,6 +739,7 @@ class OrderRepository {
 
   Future addPatient({required String orderId, required Patient patient}) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
     List<Order> orders = await ordersBox.values.toList();
 
@@ -783,6 +791,7 @@ class OrderRepository {
 
   Future placeOrder({required Order order}) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
       var orderRef = database.collection('orders').doc(order.orderId);
@@ -855,6 +864,7 @@ class OrderRepository {
   Future<bool> acceptOrder(String? orderId, String? time, String? date) async {
     try {
       bool internetAvailable = await isConnectedToTheInternet();
+      //TODO : Needs refactor
       Box<Order> ordersBox = Hive.box<Order>('orders');
 
       if (internetAvailable) {
@@ -930,6 +940,7 @@ class OrderRepository {
 
   Future<bool> approveArrival(String? orderId, String receiver) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
       var orderRef = database.collection('orders').doc(orderId);
@@ -988,6 +999,7 @@ class OrderRepository {
   Future<bool> courierApproveArrivalTester(
       String? orderId, String receiver, String phone) async {
     bool internetAvailable = await isConnectedToTheInternet();
+    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {

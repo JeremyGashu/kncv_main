@@ -17,7 +17,6 @@ class TesterCourierRepository {
 
     bool internetAvailable = await isConnectedToTheInternet();
     if (internetAvailable) {
-      // debugPrint('Courier and Test Centers From Internet');
 
       var usersCollection = await database.collection('users');
 
