@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,17 +24,18 @@ import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_tester.dart';
 import 'package:kncv_flutter/presentation/pages/reset/reset_password.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+// import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+// import '../../../data/repositories/orders_repository.dart';
 import '../../../data/repositories/orders_repository.dart';
 import '../../../service_locator.dart';
 import '../report/report_page.dart';
 
-const String URL = 'https://frozen-tundra-74972.herokuapp.com';
+// const String URL = 'https://frozen-tundra-74972.herokuapp.com';
 
-IO.Socket socket = IO.io(URL, <String, dynamic>{
-  "transports": ["websocket"],
-});
+// IO.Socket socket = IO.io(URL, <String, dynamic>{
+//   "transports": ["websocket"],
+// });
 
 class ReceiverHomePage extends StatefulWidget {
   static const receiverHomepageRouteName = 'receiver home page rout ename';
@@ -55,37 +59,57 @@ class _ReceiverHomePageState extends State<ReceiverHomePage>
   @override
   void initState() {
     // socket.io
-    print('test center called');
+    // print('test center called');
 
     orderBloc.add(LoadOrdersForTester());
     sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
     super.initState();
 
-    socket.onConnect((_) {
-      print('===== Connected to socket =====');
-      print('Connected => ${socket.connected}');
-
-      AuthRepository.currentUser().then((value) {
-        String type = value['type'];
-        if (type != 'TEST_CENTER_ADMIN') {
-          socket.emit('SEND_USER_STATUS', value['phone']);
-          print('Update phone number status of ${value['phone']}');
-        } else {
-          OrderRepository.getTestCenterFromAdminId(value['uid']).then((tc) {
-            socket.emit('SEND_USER_STATUS', tc?['phone']);
-            print('Update phone number status of ${tc?['phone']}');
+    AuthRepository.currentUser().then((value) {
+      String type = value['type'];
+      if (type != 'TEST_CENTER_ADMIN') {
+        Timer.periodic(Duration(seconds: 15), (timer) {
+          FirebaseDatabase.instance
+              .ref(value['phone'])
+              .set({'timestamp': DateTime.now().millisecondsSinceEpoch, 'isOnline': true});
+        });
+        print('Update phone number status of ${value['phone']}');
+      } else {
+        OrderRepository.getTestCenterFromAdminId(value['uid']).then((tc) {
+          print('Test Center Info ${tc?['test_center']}');
+          Timer.periodic(Duration(seconds: 15), (timer) {
+            FirebaseDatabase.instance.ref(tc?['test_center']?['phone']).set(
+                {'timestamp': DateTime.now().millisecondsSinceEpoch, 'isOnline': true});
           });
-        }
-      });
+        });
+      }
     });
 
-    socket.on('UPDATE_TIMER', (data) {
-      debugPrint('Timer updated $data');
-    });
+    // socket.onConnect((_) {
+    //   print('===== Connected to socket =====');
+    //   print('Connected => ${socket.connected}');
 
-    socket.onDisconnect((_) {
-      print('Disconnected from socket');
-    });
+    //   AuthRepository.currentUser().then((value) {
+    //     String type = value['type'];
+    //     if (type != 'TEST_CENTER_ADMIN') {
+    //       socket.emit('SEND_USER_STATUS', value['phone']);
+    //       print('Update phone number status of ${value['phone']}');
+    //     } else {
+    //       OrderRepository.getTestCenterFromAdminId(value['uid']).then((tc) {
+    //         socket.emit('SEND_USER_STATUS', tc?['phone']);
+    //         print('Update phone number status of ${tc?['phone']}');
+    //       });
+    //     }
+    //   });
+    // });
+
+    // socket.on('UPDATE_TIMER', (data) {
+    //   debugPrint('Timer updated $data');
+    // });
+
+    // socket.onDisconnect((_) {
+    //   print('Disconnected from socket');
+    // });
   }
 
   @override

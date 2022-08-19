@@ -39,7 +39,6 @@ void main() async {
     await Firebase.initializeApp();
   }
 
-
   requestPermission();
   loadFCM();
   listenFCM();

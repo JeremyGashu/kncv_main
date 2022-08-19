@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,16 +22,17 @@ import 'package:kncv_flutter/presentation/pages/homepage/widgets/item_cart.dart'
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_courier.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+// import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+// import '../../../data/repositories/orders_repository.dart';
 import '../../../data/repositories/orders_repository.dart';
 import '../../../service_locator.dart';
 
-const String URL = 'https://frozen-tundra-74972.herokuapp.com';
+// const String URL = 'https://frozen-tundra-74972.herokuapp.com';
 
-IO.Socket socket = IO.io(URL, <String, dynamic>{
-  "transports": ["websocket"],
-});
+// IO.Socket socket = IO.io(URL, <String, dynamic>{
+//   "transports": ["websocket"],
+// });
 
 class CourierHomePage extends StatefulWidget {
   static const courierHomePageRouteName = 'courier home page';
@@ -46,27 +50,46 @@ class _CourierHomePageState extends State<CourierHomePage> {
     // sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
     super.initState();
 
-    socket.onConnect((_) {
-      print('===== Connected to socket =====');
-      print('Connected => ${socket.connected}');
-
-      AuthRepository.currentUser().then((value) {
-        String type = value['type'];
-        if (type != 'TEST_CENTER_ADMIN') {
-          socket.emit('SEND_USER_STATUS', value['phone']);
-          print('Update phone number status of ${value['phone']}');
-        } else {
-          OrderRepository.getTestCenterFromAdminId(value['uid']).then((tc) {
-            socket.emit('SEND_USER_STATUS', tc?['phone']);
-            print('Update phone number status of ${value['phone']}');
+    AuthRepository.currentUser().then((value) {
+      String type = value['type'];
+      if (type != 'TEST_CENTER_ADMIN') {
+        Timer.periodic(Duration(seconds: 15), (timer) {
+          FirebaseDatabase.instance
+              .ref(value['phone'])
+              .set({'timestamp': DateTime.now().millisecondsSinceEpoch, 'isOnline': true});
+        });
+        print('Update phone number status of ${value['phone']}');
+      } else {
+        OrderRepository.getTestCenterFromAdminId(value['uid']).then((tc) {
+          Timer.periodic(Duration(seconds: 15), (timer) {
+            FirebaseDatabase.instance.ref(tc?['phone']).set(
+                {'timestamp': DateTime.now().millisecondsSinceEpoch, 'isOnline': true});
           });
-          // print('Get the test center he is operating in...');
-        }
-      });
+        });
+      }
     });
-    socket.onDisconnect((_) {
-      print('Disconnected from socket');
-    });
+
+    // socket.onConnect((_) {
+    //   print('===== Connected to socket =====');
+    //   print('Connected => ${socket.connected}');
+
+    //   AuthRepository.currentUser().then((value) {
+    //     String type = value['type'];
+    //     if (type != 'TEST_CENTER_ADMIN') {
+    //       socket.emit('SEND_USER_STATUS', value['phone']);
+    //       print('Update phone number status of ${value['phone']}');
+    //     } else {
+    //       OrderRepository.getTestCenterFromAdminId(value['uid']).then((tc) {
+    //         socket.emit('SEND_USER_STATUS', tc?['phone']);
+    //         print('Update phone number status of ${value['phone']}');
+    //       });
+    //       // print('Get the test center he is operating in...');
+    //     }
+    //   });
+    // });
+    // socket.onDisconnect((_) {
+    //   print('Disconnected from socket');
+    // });
   }
 
   @override
