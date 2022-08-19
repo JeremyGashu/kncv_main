@@ -17,29 +17,16 @@ import 'package:kncv_flutter/presentation/blocs/sms/sms_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/sms/sms_event.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_event.dart';
-// import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/splash/splash_page.dart';
 import 'package:kncv_flutter/service_locator.dart';
 import 'package:kncv_flutter/simple_bloc_observer.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:telephony/telephony.dart';
-
 import 'presentation/blocs/orders/orders_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /*
-{
-      apiKey: "AIzaSyAo62ZimMRMjmkwjhzwM-Ux_cpiOPAGT7A",
-      authDomain: "kncv-360.firebaseapp.com",
-      projectId: "kncv-360",
-      storageBucket: "kncv-360.appspot.com",
-      messagingSenderId: "669099784203",
-      appId: "1:669099784203:web:b84c3187f51436382f2f0e",
-      measurementId: "G-HRHNQJCVL3"
-    }
-  */
   if (kIsWeb) {
     await Firebase.initializeApp(
         options: FirebaseOptions(
@@ -51,6 +38,7 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
+
 
   requestPermission();
   loadFCM();

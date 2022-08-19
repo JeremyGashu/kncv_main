@@ -35,6 +35,7 @@ class AuthRepository {
     String? uid = user?.uid;
     String? type;
     String? name;
+    String? phone;
     // print('uid => $uid');
 
     if (kIsWeb) {
@@ -50,12 +51,15 @@ class AuthRepository {
         if (userData.docs.isNotEmpty) {
           type = userData.docs[0].data()['type'];
           name = userData.docs[0].data()['name'];
+          phone = userData.docs[0].data()['phone'];
         }
 
         return {
           'user': userJson,
           'type': type,
           'name': name,
+          'phone': phone,
+          'uid': uid,
         };
       }
       return {};
@@ -68,12 +72,15 @@ class AuthRepository {
         if (userData.docs.isNotEmpty) {
           type = userData.docs[0].data()['type'];
           name = userData.docs[0].data()['name'];
+          phone = userData.docs[0].data()['phone'];
         }
       }
       return {
         'user': user,
         'type': type,
         'name': name,
+        'phone': phone,
+        'uid': uid,
       };
     }
   }

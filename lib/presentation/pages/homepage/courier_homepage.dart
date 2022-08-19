@@ -19,8 +19,16 @@ import 'package:kncv_flutter/presentation/pages/homepage/widgets/item_cart.dart'
 import 'package:kncv_flutter/presentation/pages/login/login_page.dart';
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/presentation/pages/orders/order_detail_page_courier.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import '../../../data/repositories/orders_repository.dart';
 import '../../../service_locator.dart';
+
+const String URL = 'https://frozen-tundra-74972.herokuapp.com';
+
+IO.Socket socket = IO.io(URL, <String, dynamic>{
+  "transports": ["websocket"],
+});
 
 class CourierHomePage extends StatefulWidget {
   static const courierHomePageRouteName = 'courier home page';
@@ -37,6 +45,34 @@ class _CourierHomePageState extends State<CourierHomePage> {
     orderBloc.add(LoadOrdersForCourier());
     // sl<TesterCourierBloc>()..add(LoadTestersAndCouriers());
     super.initState();
+
+    socket.onConnect((_) {
+      print('===== Connected to socket =====');
+      print('Connected => ${socket.connected}');
+
+      AuthRepository.currentUser().then((value) {
+        String type = value['type'];
+        if (type != 'TEST_CENTER_ADMIN') {
+          socket.emit('SEND_USER_STATUS', value['phone']);
+          print('Update phone number status of ${value['phone']}');
+        } else {
+          OrderRepository.getTestCenterFromAdminId(value['uid']).then((tc) {
+            socket.emit('SEND_USER_STATUS', tc?['phone']);
+            print('Update phone number status of ${value['phone']}');
+          });
+          // print('Get the test center he is operating in...');
+        }
+      });
+    });
+    socket.onDisconnect((_) {
+      print('Disconnected from socket');
+    });
+  }
+
+  @override
+  void dispose() {
+    // socket.disconnect();
+    super.dispose();
   }
 
   @override

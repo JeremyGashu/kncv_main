@@ -21,8 +21,10 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
   @override
   void initState() {
+
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = new IOSInitializationSettings();
@@ -31,6 +33,7 @@ class _SplashPageState extends State<SplashPage> {
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
     initMessaging();
+
     super.initState();
   }
 
@@ -107,13 +110,12 @@ class _SplashPageState extends State<SplashPage> {
                     height: size.height * 0.15,
                     // width: size.width * 0.4,
                   ),
-                  SizedBox(height: 15,),
+                  SizedBox(
+                    height: 15,
+                  ),
                   Text(
                     'E-Specimen referral system Ethiopia',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   Spacer(),
@@ -122,11 +124,12 @@ class _SplashPageState extends State<SplashPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image(
-                          image: AssetImage('assets/ephi_logo.jpg'),
-                          width: 90),
+                          image: AssetImage('assets/ephi_logo.jpg'), width: 90),
                     ],
                   ),
-                  SizedBox(height: 15,),
+                  SizedBox(
+                    height: 15,
+                  ),
                   size.width < 330
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,

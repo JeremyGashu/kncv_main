@@ -37,7 +37,8 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
     if (event is InitSMSListening) {
       // debugPrint('============Listening to SMS============');
       try {
-        bool? permissionsGranted = await Telephony.instance.requestSmsPermissions;
+        bool? permissionsGranted =
+            await Telephony.instance.requestSmsPermissions;
         print('SMS Persmission => $permissionsGranted');
 
         // print('Saved messages ${await preferences.getString('messages')}');
@@ -96,7 +97,8 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
         if (!internetAvailable) {
           // print('Listening to SMS Entry');
           List<Order> orders = await ordersBox.values.toList();
-          Order order = orders.firstWhere((element) => element.orderId == body['payload']['oid']);
+          Order order = orders.firstWhere(
+              (element) => element.orderId == body['payload']['oid']);
           orders.removeWhere((element) => element.orderId == order.orderId);
           order.status = 'Confirmed';
           orders.add(order);
@@ -109,7 +111,8 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
         if (!internetAvailable) {
           // print('Listening to SMS Entry');
           List<Order> orders = await ordersBox.values.toList();
-          Order order = orders.firstWhere((element) => element.orderId == body['payload']['oid']);
+          Order order = orders.firstWhere(
+              (element) => element.orderId == body['payload']['oid']);
           orders.removeWhere((element) => element.orderId == order.orderId);
           order.status = 'Picked Up';
           orders.add(order);
@@ -122,7 +125,8 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
         if (!internetAvailable) {
           // print('Listening to SMS Entry');
           List<Order> orders = await ordersBox.values.toList();
-          Order order = orders.firstWhere((element) => element.orderId == body['payload']['oid']);
+          Order order = orders.firstWhere(
+              (element) => element.orderId == body['payload']['oid']);
           orders.removeWhere((element) => element.orderId == order.orderId);
           order.status = 'Delivered';
           orders.add(order);
@@ -133,9 +137,11 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
       } else if (body['action'] == SPECIMEN_EDITED) {
         // print('Listening to SMS Entry');
         List<Order> orders = await ordersBox.values.toList();
-        Order order = orders.firstWhere((element) => element.orderId == body['payload']['oid']);
+        Order order = orders
+            .firstWhere((element) => element.orderId == body['payload']['oid']);
         orders.removeWhere((element) => element.orderId == order.orderId);
-        order.patients![body['payload']?['i']] = Patient.fromJson(body['payload']['p']);
+        order.patients![body['payload']?['i']] =
+            Patient.fromJson(body['payload']['p']);
 
         bool finishedAssessingPatient = true;
         order.patients![body['payload']?['i']].specimens?.forEach((specimen) {
@@ -155,6 +161,30 @@ class SMSBloc extends Bloc<SMSEvent, SMSState> {
         orders.add(order);
         await ordersBox.clear();
         await ordersBox.addAll(orders);
+        add(UpdatedDatabaseEvent());
+      } else if (body['action'] == ADD_OR_UPDATE_ORDER) {
+        List<Order> orders = ordersBox.values.toList();
+        Order? order = Order.fromJsonSMS(body['payload']);
+        debugPrint('Beore order add $orders');
+
+        orders.removeWhere((element) => element.orderId == order.orderId);
+        orders.add(order);
+        await ordersBox.clear();
+        ordersBox.addAll(orders);
+        orders = ordersBox.values.toList();
+        debugPrint('After order add $orders');
+        add(UpdatedDatabaseEvent());
+      } else if (body['action'] == DELETE_ORDER) {
+        List<Order> orders = ordersBox.values.toList();
+        String orderID = body['payload'];
+        debugPrint('Beore order delete $orders');
+
+        orders.removeWhere((element) => element.orderId == orderID);
+        // orders.add(order);
+        await ordersBox.clear();
+        ordersBox.addAll(orders);
+        orders = ordersBox.values.toList();
+        debugPrint('After order delete $orders');
         add(UpdatedDatabaseEvent());
       } else {
         debugPrint('received another sms');

@@ -63,7 +63,7 @@ class Order {
   bool notified_arrival;
   @HiveField(18)
   factory Order.fromJson(Map<String, dynamic> json) => Order(
-        orderId: json["id"],
+        orderId: json["order_id"],
         senderId: json["sender_id"],
         courierId: json["courier_id"],
         testCenterId: json["tester_id"],

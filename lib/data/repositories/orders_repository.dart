@@ -5,7 +5,6 @@ import 'package:kncv_flutter/core/hear_beat.dart';
 import 'package:kncv_flutter/core/message_codes.dart';
 import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
-import 'package:kncv_flutter/presentation/blocs/sms/sms_response_codes.dart';
 
 class OrderRepository {
   final FirebaseFirestore database;
@@ -27,7 +26,7 @@ class OrderRepository {
           .get();
 
       List<Order> os = orders.docs
-          .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
+          .map((e) => Order.fromJson({...e.data(), 'order_id': e.id}))
           .toList();
 
       await ordersBox.clear();
@@ -52,7 +51,7 @@ class OrderRepository {
           .orderBy('order_created', descending: true)
           .get();
       List<Order> os = orders.docs
-          .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
+          .map((e) => Order.fromJson({...e.data(), 'order_id': e.id}))
           .toList();
       await ordersBox.clear();
       await ordersBox.addAll(os);
@@ -74,14 +73,14 @@ class OrderRepository {
       Map<String, dynamic>? testCenter =
           await getTestCenterByAdminUID(currentUserId ?? '');
 
-          print('Load order for test center => ${testCenter?['key']}');
+      print('Load order for test center => ${testCenter?['key']}');
 
       var orders = await ordersCollection
           .where('tester_id', isEqualTo: testCenter?['key'])
           .orderBy('order_created', descending: true)
           .get();
       List<Order> os = orders.docs
-          .map((e) => Order.fromJson({...e.data(), 'id': e.id}))
+          .map((e) => Order.fromJson({...e.data(), 'order_id': e.id}))
           .toList();
       await ordersBox.clear();
       await ordersBox.addAll(os);
@@ -96,6 +95,24 @@ class OrderRepository {
   Future<Map<String, dynamic>?> getTestCenterByAdminUID(String id) async {
     //no need to check since it is called when internet is available
     var usersData = await database
+        .collection('users')
+        .where('user_id', isEqualTo: id)
+        .get();
+    if (usersData.docs.length > 0) {
+      Map<String, dynamic> userData = usersData.docs[0].data();
+      print('Test Center ID ===> ${userData['test_center_id']}');
+      userData['key'] = userData['test_center_id'];
+      // print('test center => ${userData}');
+      return userData;
+    }
+
+    return null;
+  }
+
+  static Future<Map<String, dynamic>?> getTestCenterFromAdminId(
+      String id) async {
+    //no need to check since it is called when internet is available
+    var usersData = await FirebaseFirestore.instance
         .collection('users')
         .where('user_id', isEqualTo: id)
         .get();
@@ -266,7 +283,6 @@ class OrderRepository {
       required String tester_name,
       required String orderId}) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -358,7 +374,7 @@ class OrderRepository {
     if (internetAvailable) {
       var orderRef = await database.collection('orders').doc(orderId);
       var order = await orderRef.get();
-      return Order.fromJson({...?order.data(), 'id': order.id});
+      return Order.fromJson({...?order.data(), 'order_id': order.id});
     } else {
       List<Order> orders = await ordersBox.values.toList();
       return orders.firstWhere((order) => order.orderId == orderId);
@@ -372,7 +388,6 @@ class OrderRepository {
       required Patient patient,
       required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -414,7 +429,6 @@ class OrderRepository {
       required int index}) async {
     try {
       bool internetAvailable = await isConnectedToTheInternet();
-      //TODO : Needs refactor
       Box<Order> ordersBox = Hive.box<Order>('orders');
 
       if (internetAvailable) {
@@ -446,15 +460,15 @@ class OrderRepository {
           });
 
           //RESPONSE SPECIMEN_EDITED
-          await sendSmsViaListenerToEndUser(
-            to: order.sender_phone ?? '',
-            payload: {
-              'oid': order.orderId,
-              'p': patient.toJsonSMS(),
-              'i': index,
-            },
-            action: SPECIMEN_EDITED,
-          );
+          // await sendSmsViaListenerToEndUser(
+          //   to: order.sender_phone ?? '',
+          //   payload: {
+          //     'oid': order.orderId,
+          //     'p': patient.toJsonSMS(),
+          //     'i': index,
+          //   },
+          //   action: SPECIMEN_EDITED,
+          // );
 
           return true;
         }
@@ -535,7 +549,6 @@ class OrderRepository {
       required Patient patient,
       required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -547,18 +560,18 @@ class OrderRepository {
         await orderRef.update(
             {'patients': patientsList, 'test_result_added': DateTime.now()});
 
-        Order o = Order.fromJson(order.data()!);
+        Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
         //RESPONSE SPECIMEN_EDITED
-        await sendSmsViaListenerToEndUser(
-          to: o.sender_phone ?? '',
-          payload: {
-            'oid': orderId,
-            'p': patient.toJsonSMS(),
-            'i': index,
-          },
-          action: SPECIMEN_EDITED,
-        );
+        // await sendSmsViaListenerToEndUser(
+        //   to: o.sender_phone ?? '',
+        //   payload: {
+        //     'oid': orderId,
+        //     'p': patient.toJsonSMS(),
+        //     'i': index,
+        //   },
+        //   action: SPECIMEN_EDITED,
+        // );
 
         sendCustomSMS(
             to: o.sender_phone ?? '',
@@ -598,7 +611,6 @@ class OrderRepository {
       required Patient patient,
       required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
       var orderRef = await database.collection('orders').doc(orderId);
@@ -609,17 +621,17 @@ class OrderRepository {
         await orderRef.update(
             {'patients': patientsList, 'updated_test_result': DateTime.now()});
 
-        Order o = Order.fromJson(order.data()!);
+        Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
-        await sendSmsViaListenerToEndUser(
-          to: o.sender_phone ?? '',
-          payload: {
-            'oid': orderId,
-            'p': patient.toJsonSMS(),
-            'i': index,
-          },
-          action: SPECIMEN_EDITED,
-        );
+        // await sendSmsViaListenerToEndUser(
+        //   to: o.sender_phone ?? '',
+        //   payload: {
+        //     'oid': orderId,
+        //     'p': patient.toJsonSMS(),
+        //     'i': index,
+        //   },
+        //   action: SPECIMEN_EDITED,
+        // );
 
         sendCustomSMS(
             to: o.sender_phone ?? '',
@@ -655,7 +667,6 @@ class OrderRepository {
   Future<bool> deletePatientInfo(
       {required String orderId, required int index}) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -696,7 +707,6 @@ class OrderRepository {
 
   Future<Map<String, dynamic>> deleteOrder({required String orderId}) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -739,7 +749,6 @@ class OrderRepository {
 
   Future addPatient({required String orderId, required Patient patient}) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
     List<Order> orders = await ordersBox.values.toList();
 
@@ -791,7 +800,6 @@ class OrderRepository {
 
   Future placeOrder({required Order order}) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
       var orderRef = database.collection('orders').doc(order.orderId);
@@ -806,20 +814,20 @@ class OrderRepository {
         // debugPrint('please sms ${order.orderId}');
         try {
           //RESPONSE ORDER_PLACED
-          await sendSmsViaListenerToEndUser(
-            to: order.courier_phone ?? '',
-            payload: {
-              'o': order.toJsonSMS(),
-              'response': true,
-            },
-            action: ORDER_PLACED,
-          );
+          // await sendSmsViaListenerToEndUser(
+          //   to: order.courier_phone ?? '',
+          //   payload: {
+          //     'o': order.toJsonSMS(),
+          //     'response': true,
+          //   },
+          //   action: ORDER_PLACED,
+          // );
           //RESPONSE ORDER_PLACED
-          await sendSmsViaListenerToEndUser(
-            to: order.tester_phone ?? '',
-            payload: {'o': order.toJsonSMS(), 'response': true},
-            action: ORDER_PLACED,
-          );
+          // await sendSmsViaListenerToEndUser(
+          //   to: order.tester_phone ?? '',
+          //   payload: {'o': order.toJsonSMS(), 'response': true},
+          //   action: ORDER_PLACED,
+          // );
         } catch (e) {
           print(e);
         }
@@ -864,7 +872,6 @@ class OrderRepository {
   Future<bool> acceptOrder(String? orderId, String? time, String? date) async {
     try {
       bool internetAvailable = await isConnectedToTheInternet();
-      //TODO : Needs refactor
       Box<Order> ordersBox = Hive.box<Order>('orders');
 
       if (internetAvailable) {
@@ -880,21 +887,21 @@ class OrderRepository {
             'order_confirmed': DateTime.now()
           });
 
-          Order o = Order.fromJson(order.data()!);
+          Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
           //RESPONSE ORDER_ACCEPTED
-          await sendSmsViaListenerToEndUser(
-            to: o.sender_phone ?? '',
-            payload: {'oid': orderId, 'response': true},
-            action: ORDER_ACCEPTED,
-          );
+          // await sendSmsViaListenerToEndUser(
+          //   to: o.sender_phone ?? '',
+          //   payload: {'oid': orderId, 'response': true},
+          //   action: ORDER_ACCEPTED,
+          // );
 
           //RESPONSE ORDER_ACCEPTED
-          await sendSmsViaListenerToEndUser(
-            to: o.tester_phone ?? '',
-            payload: {'oid': orderId, 'response': true},
-            action: ORDER_ACCEPTED,
-          );
+          // await sendSmsViaListenerToEndUser(
+          //   to: o.tester_phone ?? '',
+          //   payload: {'oid': orderId, 'response': true},
+          //   action: ORDER_ACCEPTED,
+          // );
 
           sendCustomSMS(
               to: o.sender_phone ?? '',
@@ -940,7 +947,6 @@ class OrderRepository {
 
   Future<bool> approveArrival(String? orderId, String receiver) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
     if (internetAvailable) {
       var orderRef = database.collection('orders').doc(orderId);
@@ -952,21 +958,21 @@ class OrderRepository {
           'order_pickedup': DateTime.now(),
         });
 
-        Order o = Order.fromJson(order.data()!);
+        Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
-        await sendSmsViaListenerToEndUser(
-          to: o.tester_phone ?? '',
-          payload: {'oid': orderId},
-          action: SENDER_APPROVED_COURIER_DEPARTURE,
-        );
+        // await sendSmsViaListenerToEndUser(
+        //   to: o.tester_phone ?? '',
+        //   payload: {'oid': orderId},
+        //   action: SENDER_APPROVED_COURIER_DEPARTURE,
+        // );
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
-        await sendSmsViaListenerToEndUser(
-          to: o.courier_phone ?? '',
-          payload: {'oid': orderId, 'response': true},
-          action: SENDER_APPROVED_COURIER_DEPARTURE,
-        );
+        // await sendSmsViaListenerToEndUser(
+        //   to: o.courier_phone ?? '',
+        //   payload: {'oid': orderId, 'response': true},
+        //   action: SENDER_APPROVED_COURIER_DEPARTURE,
+        // );
 
         sendCustomSMS(
             to: o.tester_phone ?? '',
@@ -999,7 +1005,6 @@ class OrderRepository {
   Future<bool> courierApproveArrivalTester(
       String? orderId, String receiver, String phone) async {
     bool internetAvailable = await isConnectedToTheInternet();
-    //TODO : Needs refactor
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
@@ -1013,21 +1018,21 @@ class OrderRepository {
           'order_received': DateTime.now(),
         });
 
-        Order o = Order.fromJson(order.data()!);
+        Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
-        await sendSmsViaListenerToEndUser(
-          to: o.courier_phone ?? '',
-          payload: {'oid': orderId, 'response': true},
-          action: TESTER_APPROVED_COURIER_ARRIVAL,
-        );
+        // await sendSmsViaListenerToEndUser(
+        //   to: o.courier_phone ?? '',
+        //   payload: {'oid': orderId, 'response': true},
+        //   action: TESTER_APPROVED_COURIER_ARRIVAL,
+        // );
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
-        await sendSmsViaListenerToEndUser(
-          to: o.sender_phone ?? '',
-          payload: {'oid': orderId, 'response': true},
-          action: TESTER_APPROVED_COURIER_ARRIVAL,
-        );
+        // await sendSmsViaListenerToEndUser(
+        //   to: o.sender_phone ?? '',
+        //   payload: {'oid': orderId, 'response': true},
+        //   action: TESTER_APPROVED_COURIER_ARRIVAL,
+        // );
 
         sendCustomSMS(
             to: o.sender_phone ?? '',

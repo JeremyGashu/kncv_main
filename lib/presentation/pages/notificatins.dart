@@ -205,7 +205,7 @@ Future<bool> addNotification(
         await database.collection('orders').doc(orderId).get();
         // print('loaded order ${ordersCollection.data()?['tester_id']}');
     Order order =
-        Order.fromJson(ordersCollection.data() as Map<String, dynamic>);
+        Order.fromJson({...?ordersCollection.data(), 'order_id' : ordersCollection.id});
     List<String?> sendList = [];
     var dateTime = DateTime.now();
     int month = dateTime.month;
