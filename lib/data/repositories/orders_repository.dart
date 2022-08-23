@@ -621,7 +621,7 @@ class OrderRepository {
         await orderRef.update(
             {'patients': patientsList, 'updated_test_result': DateTime.now()});
 
-        Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
+        // Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
         // await sendSmsViaListenerToEndUser(
         //   to: o.sender_phone ?? '',
@@ -633,9 +633,9 @@ class OrderRepository {
         //   action: SPECIMEN_EDITED,
         // );
 
-        sendCustomSMS(
-            to: o.sender_phone ?? '',
-            body: 'Test Result has been edited to patient ${patient.name}.');
+        // sendCustomSMS(
+        //     to: o.sender_phone ?? '',
+        //     body: 'Test Result has been edited to patient ${patient.name}.');
 
         return true;
       }
@@ -832,15 +832,15 @@ class OrderRepository {
           print(e);
         }
 
-        sendCustomSMS(
-            to: order.courier_phone ?? '',
-            body:
-                'New order is plaed for you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
+        // sendCustomSMS(
+        //     to: order.courier_phone ?? '',
+        //     body:
+        //         'New order is plaed for you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
 
-        sendCustomSMS(
-            to: order.tester_phone ?? '',
-            body:
-                'New order is being transported to you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
+        // sendCustomSMS(
+        //     to: order.tester_phone ?? '',
+        //     body:
+        //         'New order is being transported to you from ${order.sender_name}. The order contains ${order.patients?.length} patient\'s specimen.');
 
         return true;
       } else {
@@ -887,7 +887,7 @@ class OrderRepository {
             'order_confirmed': DateTime.now()
           });
 
-          Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
+          // Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
           //RESPONSE ORDER_ACCEPTED
           // await sendSmsViaListenerToEndUser(
@@ -903,10 +903,10 @@ class OrderRepository {
           //   action: ORDER_ACCEPTED,
           // );
 
-          sendCustomSMS(
-              to: o.sender_phone ?? '',
-              body:
-                  'One order got accepted. The selected courier\'s will notify you when they get at your place.');
+          // sendCustomSMS(
+          //     to: o.sender_phone ?? '',
+          //     body:
+          //         'One order got accepted. The selected courier\'s will notify you when they get at your place.');
 
           return true;
         } else {
@@ -958,7 +958,7 @@ class OrderRepository {
           'order_pickedup': DateTime.now(),
         });
 
-        Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
+        // Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
         // await sendSmsViaListenerToEndUser(
@@ -974,10 +974,10 @@ class OrderRepository {
         //   action: SENDER_APPROVED_COURIER_DEPARTURE,
         // );
 
-        sendCustomSMS(
-            to: o.tester_phone ?? '',
-            body:
-                'One order is picked up. It will be deliverd by ${o.courier_name}');
+        // sendCustomSMS(
+        //     to: o.tester_phone ?? '',
+        //     body:
+        //         'One order is picked up. It will be deliverd by ${o.courier_name}');
 
         return true;
       } else {
@@ -1018,7 +1018,7 @@ class OrderRepository {
           'order_received': DateTime.now(),
         });
 
-        Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
+        // Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
         //RESPONSE SENDER_APPROVE_COURIER_DEPARTURE
         // await sendSmsViaListenerToEndUser(
@@ -1034,9 +1034,9 @@ class OrderRepository {
         //   action: TESTER_APPROVED_COURIER_ARRIVAL,
         // );
 
-        sendCustomSMS(
-            to: o.sender_phone ?? '',
-            body: 'The order sent to ${o.tester_name} has been accepted!');
+        // sendCustomSMS(
+        //     to: o.sender_phone ?? '',
+        //     body: 'The order sent to ${o.tester_name} has been accepted!');
 
         return true;
       } else {

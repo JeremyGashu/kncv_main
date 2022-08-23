@@ -53,7 +53,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
     AuthRepository.currentUser().then((value) {
       String type = value['type'];
       if (type != 'TEST_CENTER_ADMIN') {
-        Timer.periodic(Duration(seconds: 15), (timer) {
+        Timer.periodic(Duration(seconds: 5), (timer) {
           FirebaseDatabase.instance
               .ref(value['phone'])
               .set({'timestamp': DateTime.now().millisecondsSinceEpoch, 'isOnline': true});
@@ -61,7 +61,7 @@ class _CourierHomePageState extends State<CourierHomePage> {
         print('Update phone number status of ${value['phone']}');
       } else {
         OrderRepository.getTestCenterFromAdminId(value['uid']).then((tc) {
-          Timer.periodic(Duration(seconds: 15), (timer) {
+          Timer.periodic(Duration(seconds: 5), (timer) {
             FirebaseDatabase.instance.ref(tc?['phone']).set(
                 {'timestamp': DateTime.now().millisecondsSinceEpoch, 'isOnline': true});
           });
