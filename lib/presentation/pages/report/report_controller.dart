@@ -36,13 +36,13 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
           {
             // statements;
             String permissionRegion = userReportPermissions['region'];
-            for (Map<String, dynamic> order in allOrders) {
-              Map<String, dynamic> region = order['region'];
+            for (Map<String, dynamic>? order in allOrders) {
+              Map<String, dynamic>? region = order?['region'];
               // ignore: unnecessary_null_comparison
               if (region != null) {
                 // print('permissionRegion: ${permissionRegion.replaceAll("\"", "")}  || zone name: ${region['name']}');
                 if (permissionRegion.replaceAll("\"", "") == region['name']) {
-                  reports.add(order);
+                  reports.add(order!);
                 }
               }
               // print(region);
@@ -56,16 +56,16 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
           {
             //statements;
             String permissionZone = userReportPermissions['zone'];
-            for (Map<String, dynamic> order in allOrders) {
-              Map<String, dynamic> region = order['region'];
+            for (Map<String, dynamic>? order in allOrders) {
+              Map<String, dynamic>? region = order?['region'];
               // ignore: unnecessary_null_comparison
               if (region != null) {
                 // print(region['zones']);
-                for (Map<String, dynamic> zone in region['zones']) {
+                for (Map<String, dynamic>? zone in region['zones']) {
                   // print('zone: $zone');
                   // print('permissionZone: ${permissionZone.replaceAll("\"", "")}  || zone name: ${zone['name']}');
-                  if (zone['name'] == permissionZone.replaceAll("\"", "")) {
-                    reports.add(order);
+                  if (zone?['name'] == permissionZone.replaceAll("\"", "")) {
+                    reports.add(order!);
                   }
                 }
               }
@@ -78,18 +78,18 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
           {
             //statements;
             String permissionWoreda = userReportPermissions['woreda'];
-            for (Map<String, dynamic> order in allOrders) {
-              Map<String, dynamic> region = order['region'];
+            for (Map<String, dynamic>? order in allOrders) {
+              Map<String, dynamic>? region = order?['region'];
               // ignore: unnecessary_null_comparison
               if (region != null) {
                 // print(region['zones']);
-                for (Map<String, dynamic> zone in region['zones']) {
+                for (Map<String, dynamic>? zone in region['zones']) {
                   // print('zone: $zone');
-                  for (Map<String, dynamic> woreda in zone['woredas']) {
+                  for (Map<String, dynamic>? woreda in zone?['woredas']) {
                     // print('permissionWoreda: ${permissionWoreda.replaceAll("\"", "")}  || woreda name: ${woreda['name']}');
                     if (permissionWoreda.replaceAll("\"", "") ==
-                        woreda['name']) {
-                      reports.add(order);
+                        woreda?['name']) {
+                      reports.add(order!);
                     }
                   }
                 }
@@ -103,14 +103,14 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
           Map<String, dynamic>? permissionFacility =
               userReportPermissions['facility'] as Map<String, dynamic>;
           print('Permission Facility === > $userReportPermissions');
-          for (Map<String, dynamic> order in allOrders) {
-            String testCenterName = order['tester_name'];
-            String senderName = order['sender_name'];
+          for (Map<String, dynamic>? order in allOrders) {
+            String testCenterName = order?['tester_name'];
+            String senderName = order?['sender_name'];
             // ignore: unnecessary_null_comparison
             if (testCenterName != null && senderName != null) {
               if ((permissionFacility['name'] == testCenterName) ||
                   (permissionFacility['name'] == senderName)) {
-                reports.add(order);
+                reports.add(order!);
               }
               // print(region['zones']);
               // for (Map<String, dynamic> zone in region['zones']) {
@@ -126,14 +126,14 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
           Map<String, dynamic>? permissionFacility =
               userReportPermissions['facility'] as Map<String, dynamic>;
           // print('Permission Facility === > $userReportPermissions');
-          for (Map<String, dynamic> order in allOrders) {
-            String testCenterName = order['tester_name'];
-            String senderName = order['sender_name'];
+          for (Map<String, dynamic>? order in allOrders) {
+            String testCenterName = order?['tester_name'];
+            String senderName = order?['sender_name'];
             // ignore: unnecessary_null_comparison
             if (testCenterName != null && senderName != null) {
               if ((permissionFacility['name'] == testCenterName) ||
                   (permissionFacility['name'] == senderName)) {
-                reports.add(order);
+                reports.add(order!);
               }
               // print(region['zones']);
               // for (Map<String, dynamic> zone in region['zones']) {

@@ -161,82 +161,88 @@ class _ReportScreenState extends State<ReportScreen> {
     sheet.getRangeByName('Y1').setText('Specimen Condition');
     sheet.getRangeByName('Z1').setText('Transport Mode');
 
-    List<Map<String, dynamic>> finalData =
+    List<Map<String, dynamic>?> finalData =
         getDataForSpecimenReferralReport(reportsData);
     for (int i = 0; i < finalData.length; i++) {
       sheet
           .getRangeByName('A${i + 2}')
-          .setText(finalData[i]['orderId'].toString());
+          .setText(finalData[i]?['orderId'].toString());
       sheet
           .getRangeByName('B${i + 2}')
-          .setText(finalData[i]['courier_name'].toString());
+          .setText(finalData[i]?['courier_name'].toString());
       sheet
           .getRangeByName('C${i + 2}')
-          .setText(finalData[i]['sender_name'].toString());
+          .setText(finalData[i]?['sender_name'].toString());
       sheet
           .getRangeByName('D${i + 2}')
-          .setText(finalData[i]['tester_name'].toString());
+          .setText(finalData[i]?['tester_name'].toString());
       sheet
           .getRangeByName('E${i + 2}')
-          .setText(finalData[i]['order_created'].toString());
+          .setText(finalData[i]?['order_created'].toString());
       sheet
           .getRangeByName('F${i + 2}')
-          .setText(finalData[i]['patientName'].toString());
-      sheet.getRangeByName('G${i + 2}').setText(finalData[i]['mrn'].toString());
-      sheet.getRangeByName('H${i + 2}').setText(finalData[i]['sex'].toString());
-      sheet.getRangeByName('I${i + 2}').setText(finalData[i]['age'].toString());
+          .setText(finalData[i]?['patientName'].toString());
+      sheet
+          .getRangeByName('G${i + 2}')
+          .setText(finalData[i]?['mrn'].toString());
+      sheet
+          .getRangeByName('H${i + 2}')
+          .setText(finalData[i]?['sex'].toString());
+      sheet
+          .getRangeByName('I${i + 2}')
+          .setText(finalData[i]?['age'].toString());
       sheet
           .getRangeByName('J${i + 2}')
-          .setText(finalData[i]['ageInMonths'].toString());
+          .setText(finalData[i]?['ageInMonths'].toString());
       sheet
           .getRangeByName('K${i + 2}')
-          .setText(finalData[i]['phone'].toString());
+          .setText(finalData[i]?['phone'].toString());
       sheet
           .getRangeByName('L${i + 2}')
-          .setText(finalData[i]['region'].toString());
+          .setText(finalData[i]?['region'].toString());
       sheet
           .getRangeByName('M${i + 2}')
-          .setText(finalData[i]['zone'].toString());
+          .setText(finalData[i]?['zone'].toString());
       sheet
           .getRangeByName('N${i + 2}')
-          .setText(finalData[i]['woreda'].toString());
+          .setText(finalData[i]?['woreda'].toString());
       sheet
           .getRangeByName('O${i + 2}')
-          .setText(finalData[i]['specimenType'].toString());
+          .setText(finalData[i]?['specimenType'].toString());
       sheet
           .getRangeByName('P${i + 2}')
-          .setText(finalData[i]['siteOfTest'].toString());
+          .setText(finalData[i]?['siteOfTest'].toString());
       sheet
           .getRangeByName('Q${i + 2}')
-          .setText(finalData[i]['requestedTest'].toString());
+          .setText(finalData[i]?['requestedTest'].toString());
       sheet
           .getRangeByName('R${i + 2}')
-          .setText(finalData[i]['reasonForTest'].toString());
+          .setText(finalData[i]?['reasonForTest'].toString());
       sheet
           .getRangeByName('S${i + 2}')
-          .setText(finalData[i]['registrationGroup'].toString());
+          .setText(finalData[i]?['registrationGroup'].toString());
       sheet
           .getRangeByName('T${i + 2}')
-          .setText(finalData[i]['deliveryStatus'].toString());
+          .setText(finalData[i]?['deliveryStatus'].toString());
       sheet.getRangeByName('U${i + 2}').setText(
-          finalData[i]['turnAroundTime'] == "N/A"
+          finalData[i]?['turnAroundTime'] == "N/A"
               ? "N/A"
-              : durationToString(finalData[i]['turnAroundTime']));
+              : durationToString(finalData[i]?['turnAroundTime']));
       sheet
           .getRangeByName('V${i + 2}')
-          .setText(finalData[i]['mtb_result'].toString());
+          .setText(finalData[i]?['mtb_result'].toString());
       sheet
           .getRangeByName('W${i + 2}')
-          .setText(finalData[i]['result_rr'].toString());
+          .setText(finalData[i]?['result_rr'].toString());
       sheet
           .getRangeByName('X${i + 2}')
-          .setText(finalData[i]['lab_registration_number'].toString());
+          .setText(finalData[i]?['lab_registration_number'].toString());
       sheet
           .getRangeByName('Y${i + 2}')
-          .setText(finalData[i]['specimenCondition'].toString());
+          .setText(finalData[i]?['specimenCondition'].toString());
       sheet
           .getRangeByName('Z${i + 2}')
-          .setText(finalData[i]['transportMode'].toString());
+          .setText(finalData[i]?['transportMode'].toString());
     }
     final List<int> bytes = workbook.saveAsStream();
     String date = DateTime.now().toString();
@@ -1735,7 +1741,10 @@ String getAgeInMonth(int? age) {
 }
 
 int? getOrderTurnAroundTime(
-    Map<String, dynamic> order, Map<String, dynamic> specimen) {
+    Map<String, dynamic>? order, Map<String, dynamic>? specimen) {
+  if (order == null || specimen == null) {
+    return 0;
+  }
   int? time;
   DateTime? orderPlaced;
   DateTime? resultPlacementDate;
@@ -1776,7 +1785,7 @@ String getSpecimenRrResult(Map<String, dynamic> specimen) {
   return res;
 }
 
-String getSpecimenLabRegistrationNum(Map<String, dynamic> specimen) {
+String? getSpecimenLabRegistrationNum(Map<String, dynamic> specimen) {
   String res = "N/A";
   if (specimen['result'] != null) {
     Map<String, dynamic> result = specimen['result'];
@@ -1787,86 +1796,90 @@ String getSpecimenLabRegistrationNum(Map<String, dynamic> specimen) {
   return res;
 }
 
-List<Map<String, dynamic>> getDataForSpecimenReferralReport(
-    List<Map<String, dynamic>> reportsData) {
-  List<Map<String, dynamic>> finalData = [];
-  Map<String, dynamic> patientInformation = {};
+List<Map<String, dynamic>?> getDataForSpecimenReferralReport(
+    List<Map<String, dynamic>?> reportsData) {
+  List<Map<String, dynamic>?> finalData = [];
+  Map<String, dynamic>? patientInformation = {};
 //!data collector
-  for (Map<String, dynamic> reportData in reportsData) {
-    if (reportData['patients'] != null) {
-      for (Map<String, dynamic> patient in reportData['patients']) {
+  for (Map<String, dynamic>? reportData in reportsData) {
+    if (reportData?['patients'] != null) {
+      for (Map<String, dynamic> patient in reportData?['patients']) {
         for (Map<String, dynamic> specimen in patient['specimens']) {
-          patientInformation['orderId'] =
-              reportData['orderId'] != null ? reportData['orderId'] : "";
-          patientInformation['courier_name'] =
-              reportData['courier_name'] != null
-                  ? reportData['courier_name']
+          patientInformation?['orderId'] = reportData?['orderId'] != null
+              ? (reportData?['orderId'] ?? '')
+              : "";
+          patientInformation?['courier_name'] =
+              reportData?['courier_name'] != null
+                  ? (reportData?['courier_name'] ?? '')
                   : "";
-          patientInformation['sender_name'] = reportData['sender_name'] != null
-              ? reportData['sender_name']
-              : "";
-          patientInformation['tester_name'] = reportData['tester_name'] != null
-              ? reportData['tester_name']
-              : "";
-          patientInformation['order_created'] =
-              getDateFormatted(reportData['order_created']);
-          patientInformation['patientName'] =
+          patientInformation?['sender_name'] =
+              reportData?['sender_name'] != null
+                  ? (reportData?['sender_name'] ?? '')
+                  : "";
+          patientInformation?['tester_name'] =
+              reportData?['tester_name'] != null
+                  ? (reportData?['tester_name'] ?? '')
+                  : "";
+          patientInformation?['order_created'] =
+              getDateFormatted(reportData?['order_created']);
+          patientInformation?['patientName'] =
               patient['name'] != null ? patient['name'] : "";
-          patientInformation['mrn'] =
+          patientInformation?['mrn'] =
               patient['MR'] != null ? patient['MR'] : "";
-          patientInformation['sex'] =
+          patientInformation?['sex'] =
               patient['sex'] != null ? patient['sex'] : "";
-          patientInformation['age'] =
+          patientInformation?['age'] =
               patient['age'] != null ? patient['age'] : "";
-          patientInformation['ageInMonths'] = patient['age'] != null
-              ? getAgeInMonth(int.parse(patient['age']))
+          patientInformation?['ageInMonths'] = patient['age'] != null
+              ? getAgeInMonth(int.parse(patient['age'] ?? 0))
               : "";
-          patientInformation['phone'] =
+          patientInformation?['phone'] =
               patient['phone'] != null ? patient['phone'] : "";
-          patientInformation['region'] = patient['region']['name'] != null
-              ? patient['region']['name']
+          patientInformation?['region'] = patient['region']?['name'] != null
+              ? (patient['region']?['name'] ?? '')
               : "";
-          patientInformation['zone'] =
-              patient['region']['zones'][0]['name'] != null
+          patientInformation?['zone'] =
+              patient['region']?['zones']?[0]?['name'] != null
                   ? patient['region']['zones'][0]['name']
                   : "";
-          patientInformation['woreda'] =
-              patient['region']['zones'][0]['woredas'][0]['name'] != null
+          patientInformation?['woreda'] =
+              patient['region']?['zones']?[0]?['woredas']?[0]?['name'] != null
                   ? patient['region']['zones'][0]['woredas'][0]['name']
                   : "";
-          patientInformation['specimenType'] =
+          patientInformation?['specimenType'] =
               specimen['type'] != null ? specimen['type'] : "";
-          patientInformation['siteOfTest'] =
+          patientInformation?['siteOfTest'] =
               patient['anatomic_location'] != null
                   ? patient['anatomic_location']
                   : "";
-          patientInformation['requestedTest'] =
+          patientInformation?['requestedTest'] =
               specimen['examination_type'] != null
                   ? specimen['examination_type']
                   : "";
-          patientInformation['reasonForTest'] =
+          patientInformation?['reasonForTest'] =
               patient['reason_for_test'] != null
                   ? patient['reason_for_test']
                   : "";
-          patientInformation['registrationGroup'] =
+          patientInformation?['registrationGroup'] =
               patient['registration_group'] != null
                   ? patient['registration_group']
                   : "";
-          patientInformation['deliveryStatus'] =
-              reportData['status'] != null ? reportData['status'] : "";
-          patientInformation['turnAroundTime'] =
+          patientInformation?['deliveryStatus'] = reportData?['status'] != null
+              ? (reportData?['status'] ?? '')
+              : "";
+          patientInformation?['turnAroundTime'] =
               getOrderTurnAroundTime(reportData, specimen) != null
                   ? getOrderTurnAroundTime(reportData, specimen)
                   : "N/A";
-          patientInformation['mtb_result'] = getSpecimenMtbResult(specimen);
-          patientInformation['result_rr'] = getSpecimenRrResult(specimen);
-          patientInformation['lab_registration_number'] =
+          patientInformation?['mtb_result'] = getSpecimenMtbResult(specimen);
+          patientInformation?['result_rr'] = getSpecimenRrResult(specimen);
+          patientInformation?['lab_registration_number'] =
               getSpecimenLabRegistrationNum(specimen);
-          patientInformation['specimenCondition'] =
+          patientInformation?['specimenCondition'] =
               specimen['specimenCondition'] != null
                   ? specimen['specimenCondition']
                   : 'N/A';
-          patientInformation['transportMode'] =
+          patientInformation?['transportMode'] =
               specimen['transportMode'] != null
                   ? specimen['transportMode']
                   : 'N/A';
@@ -1881,40 +1894,42 @@ List<Map<String, dynamic>> getDataForSpecimenReferralReport(
 }
 
 List<DataRow> getSpecimenReferalReport(List<Map<String, dynamic>> reportsData) {
-  List<Map<String, dynamic>> finalData =
+  List<Map<String, dynamic>?> finalData =
       getDataForSpecimenReferralReport(reportsData);
 
   return finalData.map((data) {
     return DataRow(
       cells: [
-        DataCell(Text(data['orderId'].toString())),
-        DataCell(Text(data['courier_name'].toString())),
-        DataCell(Text(data['sender_name'].toString())),
-        DataCell(Text(data['tester_name'].toString())),
-        DataCell(Text(data['order_created'].toString())),
-        DataCell(Text(data['patientName'].toString())),
-        DataCell(Text(data['mrn'].toString())),
-        DataCell(Text(data['sex'].toString())),
-        DataCell(Text(data['age'].toString())),
-        DataCell(Text(data['ageInMonths'].toString())),
-        DataCell(Text(data['phone'].toString())),
-        DataCell(Text(data['region'].toString())),
-        DataCell(Text(data['zone'].toString())),
-        DataCell(Text(data['woreda'].toString())),
-        DataCell(Text(data['specimenType'].toString())),
-        DataCell(Text(data['siteOfTest'].toString())),
-        DataCell(Text(data['requestedTest'].toString())),
-        DataCell(Text(data['reasonForTest'].toString())),
-        DataCell(Text(data['registrationGroup'].toString())),
-        DataCell(Text(data['deliveryStatus'].toString())),
-        DataCell(Text(data['turnAroundTime'] == "N/A"
-            ? "N/A"
-            : durationToString((data['turnAroundTime'])))),
-        DataCell(Text(data['mtb_result'].toString())),
-        DataCell(Text(data['result_rr'].toString())),
-        DataCell(Text(data['lab_registration_number'].toString())),
-        DataCell(Text(data['specimenCondition'].toString())),
-        DataCell(Text(data['transportMode'].toString())),
+        DataCell(Text(data?['orderId']?.toString() ?? '')),
+        DataCell(Text(data?['courier_name']?.toString() ?? '')),
+        DataCell(Text(data?['sender_name']?.toString() ?? '')),
+        DataCell(Text(data?['tester_name']?.toString() ?? '')),
+        DataCell(Text(data?['order_created']?.toString() ?? '')),
+        DataCell(Text(data?['patientName']?.toString() ?? '')),
+        DataCell(Text(data?['mrn']?.toString() ?? '')),
+        DataCell(Text(data?['sex']?.toString() ?? '')),
+        DataCell(Text(data?['age']?.toString() ?? '')),
+        DataCell(Text(data?['ageInMonths']?.toString() ?? '')),
+        DataCell(Text(data?['phone']?.toString() ?? '')),
+        DataCell(Text(data?['region']?.toString() ?? '')),
+        DataCell(Text(data?['zone']?.toString() ?? '')),
+        DataCell(Text(data?['woreda']?.toString() ?? '')),
+        DataCell(Text(data?['specimenType']?.toString() ?? '')),
+        DataCell(Text(data?['siteOfTest']?.toString() ?? '')),
+        DataCell(Text(data?['requestedTest']?.toString() ?? '')),
+        DataCell(Text(data?['reasonForTest']?.toString() ?? '')),
+        DataCell(Text(data?['registrationGroup']?.toString() ?? '')),
+        DataCell(Text(data?['deliveryStatus']?.toString() ?? '')),
+        DataCell(Text((data == null || data['turnAroundTime'] == null)
+            ? ''
+            : data['turnAroundTime'] == "N/A"
+                ? "N/A"
+                : durationToString((data['turnAroundTime'])))),
+        DataCell(Text(data?['mtb_result']?.toString() ?? '')),
+        DataCell(Text(data?['result_rr']?.toString() ?? '')),
+        DataCell(Text(data?['lab_registration_number']?.toString() ?? '')),
+        DataCell(Text(data?['specimenCondition']?.toString() ?? '')),
+        DataCell(Text(data?['transportMode']?.toString() ?? '')),
       ],
     );
   }).toList();
@@ -1933,7 +1948,7 @@ List<Map<String, dynamic>> getFilteredReports(
 }
 
 List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
-  List<Map<String, dynamic>> filteredReportsData =
+  List<Map<String, dynamic>?> filteredReportsData =
       getFilteredReports(reportsData);
 
   return filteredReportsData.map((data) {
@@ -1942,14 +1957,14 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
     DateTime? orderPlaced;
     int? shipmentDurationInMinutes;
     int? pickupDurationInMinutes;
-    if (data['order_received'] != null) {
-      orderReceived = data['order_received'].toDate();
+    if (data?['order_received'] != null) {
+      orderReceived = data?['order_received'].toDate();
     }
-    if (data['order_pickedup'] != null) {
-      orderPickedUp = data['order_pickedup'].toDate();
+    if (data?['order_pickedup'] != null) {
+      orderPickedUp = data?['order_pickedup'].toDate();
     }
-    if (data['order_placed'] != null) {
-      orderPlaced = data['order_placed'].toDate();
+    if (data?['order_placed'] != null) {
+      orderPlaced = data?['order_placed'].toDate();
     }
 
     if (orderReceived != null && orderPickedUp != null) {
@@ -1963,21 +1978,22 @@ List<DataRow> getShipmentReport(List<Map<String, dynamic>> reportsData) {
 
     return DataRow(
       cells: [
-        DataCell(Text(data['orderId'])),
-        DataCell(Text(data['sender_name'].toString())),
+        DataCell(Text(data?['orderId'] ?? '')),
+        DataCell(Text(data?['sender_name']?.toString() ?? '')),
         // DataCell(Text(data['region']['name'].toString())),
         // DataCell(Text(data['region']['zones'][0]['name'].toString())),
         // DataCell(Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
-        DataCell(Text(data['courier_name'].toString())),
-        DataCell(Text(data['tester_name'].toString())),
-        DataCell(Text(data['patients'] != null
-            ? data['patients'].length.toString()
+        DataCell(Text(data?['courier_name']?.toString() ?? '')),
+        DataCell(Text(data?['tester_name']?.toString() ?? '')),
+        DataCell(Text((data != null && data['patients'] != null)
+            ? data['patients']?.length?.toString() ?? ''
             : '0')),
-        DataCell(Text(data['order_created'].toDate().day.toString() +
-            '/' +
-            data['order_created'].toDate().month.toString() +
-            '/' +
-            data['order_created'].toDate().year.toString())),
+        DataCell(Text(data?['order_created']?.toDate()?.day?.toString() ??
+            '' +
+                '/' +
+                (data?['order_created']?.toDate()?.month?.toString() ?? '') +
+                '/' +
+                (data?['order_created']?.toDate()?.year?.toString() ?? ''))),
         orderReceived == null
             ? DataCell(Text('N/A'))
             : DataCell(Text(orderReceived.day.toString() +
@@ -2023,31 +2039,33 @@ int getOrderSpecimenCount(Map<String, dynamic> order) {
 }
 
 List<DataRow> getOrderMonitoringRows(List<Map<String, dynamic>> reportsData) {
-  List<Map<String, dynamic>> filteredReportsData =
+  List<Map<String, dynamic>?> filteredReportsData =
       getFilteredReports(reportsData);
 
   return filteredReportsData.map((data) {
     return DataRow(
       cells: [
-        DataCell(Text(data['orderId'])),
-        DataCell(Text(data['sender_name'].toString())),
-        DataCell(Text(data['courier_name'].toString())),
-        DataCell(Text(data['tester_name'].toString())),
-        DataCell(Text(data['region']['name'].toString())),
-        DataCell(Text(data['region']['zones'][0]['name'].toString())),
-        DataCell(
-            Text(data['region']['zones'][0]['woredas'][0]['name'].toString())),
+        DataCell(Text(data?['orderId'])),
+        DataCell(Text(data?['sender_name']?.toString() ?? '')),
+        DataCell(Text(data?['courier_name']?.toString() ?? '')),
+        DataCell(Text(data?['tester_name']?.toString() ?? '')),
+        DataCell(Text(data?['region']?['name']?.toString() ?? '')),
+        DataCell(Text(data?['region']?['zones'][0]?['name']?.toString() ?? '')),
+        DataCell(Text(data?['region']?['zones']?[0]?['woredas']?[0]?['name']
+                ?.toString() ??
+            '')),
         // DataCell(Text(data['patients'] != null ? data['patients'].length.toString() : '0')),
-        DataCell(Text(data['patients'] != null
-            ? getOrderSpecimenCount(data).toString()
+        DataCell(Text(data?['patients'] != null
+            ? getOrderSpecimenCount(data!).toString()
             : '0')),
 
-        DataCell(Text(data['order_created'].toDate().day.toString() +
-            '/' +
-            data['order_created'].toDate().month.toString() +
-            '/' +
-            data['order_created'].toDate().year.toString())),
-        DataCell(Text(data['status'].toString())),
+        DataCell(Text(data?['order_created']?.toDate()?.day?.toString() ??
+            '' +
+                '/' +
+                (data?['order_created']?.toDate()?.month?.toString() ?? '') +
+                '/' +
+                (data?['order_created']?.toDate()?.year?.toString() ?? ''))),
+        DataCell(Text(data?['status']?.toString() ?? '')),
       ],
     );
   }).toList();
