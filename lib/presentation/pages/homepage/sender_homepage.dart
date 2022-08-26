@@ -114,8 +114,8 @@ class _SenderHomePageState extends State<SenderHomePage> {
     final size = MediaQuery.of(context).size;
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        // ScaffoldMessenger.of(context)
+        //     .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
         orderBloc.add(LoadOrders());
       }
     }, builder: (context, snapshot) {

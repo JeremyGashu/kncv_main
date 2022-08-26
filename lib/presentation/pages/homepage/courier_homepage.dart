@@ -106,8 +106,8 @@ class _CourierHomePageState extends State<CourierHomePage> {
     final size = MediaQuery.of(context).size;
     return BlocConsumer<SMSBloc, SMSState>(listener: (ctx, state) {
       if (state is UpdatedDatabase) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        // ScaffoldMessenger.of(context)
+        //     .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
         orderBloc.add(LoadOrdersForCourier());
       }
     }, builder: (context, snapshot) {

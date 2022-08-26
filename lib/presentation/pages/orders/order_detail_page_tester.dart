@@ -44,8 +44,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
   Widget build(BuildContext context) {
     return BlocConsumer<SMSBloc, smsState.SMSState>(listener: (ctx, state) {
       if (state is smsState.UpdatedDatabase) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
+        // ScaffoldMessenger.of(context)
+        //     .showSnackBar(SnackBar(content: Text('Order has been Updated!')));
         ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
       }
     }, builder: (context, snapshot) {
