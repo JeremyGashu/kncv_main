@@ -560,7 +560,7 @@ class OrderRepository {
         await orderRef.update(
             {'patients': patientsList, 'test_result_added': DateTime.now()});
 
-        Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
+        // Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
 
         //RESPONSE SPECIMEN_EDITED
         // await sendSmsViaListenerToEndUser(
@@ -573,9 +573,9 @@ class OrderRepository {
         //   action: SPECIMEN_EDITED,
         // );
 
-        sendCustomSMS(
-            to: o.sender_phone ?? '',
-            body: 'Test Result has been added to patient ${patient.name}.');
+        // sendCustomSMS(
+        //     to: o.sender_phone ?? '',
+        //     body: 'Test Result has been added to patient ${patient.name}.');
 
         return true;
       }
