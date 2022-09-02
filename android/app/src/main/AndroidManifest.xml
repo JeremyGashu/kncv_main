@@ -13,9 +13,9 @@
 
 
    <application
-        android:label="kncv_flutter"
+        android:label="Begize"
         android:requestLegacyExternalStorage="true"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:showWhenLocked="true"
             android:turnScreenOn="true"

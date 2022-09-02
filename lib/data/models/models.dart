@@ -101,7 +101,7 @@ class Order {
         courier_phone: json['cp'],
         tester_name: json['tn'],
         courier_name: json['cn'],
-        created_at: json['created_at'],
+        created_at: json['cat'],
         notified_arrival: json['notified_arrival'] ?? false,
         timestamp: json["timestamp"] ?? '',
         patients: json["p"] != null
@@ -121,11 +121,11 @@ class Order {
         'sn': sender_name,
         'tn': tester_name,
         'cn': courier_name,
+        'cat': created_at,
         "p": patients != null
             ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS()))
             : [],
       };
-
 
   Map<String, dynamic> toJson() => {
         "order_id": orderId,
