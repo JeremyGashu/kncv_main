@@ -68,7 +68,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage>
     AuthRepository.currentUser().then((value) {
       String type = value['type'];
       if (type != 'TEST_CENTER_ADMIN') {
-        Timer.periodic(Duration(minutes : 1), (timer) {
+        Timer.periodic(Duration(seconds: 30), (timer) {
           FirebaseDatabase.instance
               .ref(value['phone'])
               .set({'timestamp': DateTime.now().millisecondsSinceEpoch, 'isOnline': true});
@@ -77,7 +77,7 @@ class _ReceiverHomePageState extends State<ReceiverHomePage>
       } else {
         OrderRepository.getTestCenterFromAdminId(value['uid']).then((tc) {
           print('Test Center Info ${tc?['test_center']}');
-          Timer.periodic(Duration(minutes : 1), (timer) {
+          Timer.periodic(Duration(seconds: 30), (timer) {
             FirebaseDatabase.instance.ref(tc?['test_center']?['phone']).set(
                 {'timestamp': DateTime.now().millisecondsSinceEpoch, 'isOnline': true});
           });
