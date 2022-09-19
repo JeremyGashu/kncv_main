@@ -77,7 +77,7 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
         case 'Woreda':
           {
             //statements;
-            String permissionWoreda = userReportPermissions['woreda'];
+            String? permissionWoreda = userReportPermissions['woreda'];
             for (Map<String, dynamic>? order in allOrders) {
               Map<String, dynamic>? region = order?['region'];
               // ignore: unnecessary_null_comparison
@@ -87,7 +87,7 @@ Future<List<Map<String, dynamic>>?> getUserReport() async {
                   // print('zone: $zone');
                   for (Map<String, dynamic>? woreda in zone?['woredas']) {
                     // print('permissionWoreda: ${permissionWoreda.replaceAll("\"", "")}  || woreda name: ${woreda['name']}');
-                    if (permissionWoreda.replaceAll("\"", "") ==
+                    if (permissionWoreda?.replaceAll("\"", "") ==
                         woreda?['name']) {
                       reports.add(order!);
                     }

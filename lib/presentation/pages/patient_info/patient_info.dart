@@ -954,9 +954,11 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                         'Please enter zone region and woreda')));
                                             return;
                                           }
-                                          if (!validatePhoneNumber(
-                                              phoneController.value.text
-                                                  .trim())) {
+                                          if (phoneController.value.text !=
+                                                  '' &&
+                                              !validatePhoneNumber(
+                                                  phoneController.value.text
+                                                      .trim())) {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(

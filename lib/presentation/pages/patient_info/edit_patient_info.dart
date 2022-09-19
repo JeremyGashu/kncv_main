@@ -535,10 +535,13 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                     //   return null;
                                     // },
                                     onChanged: (val) {
-                                      setState(() {
-                                        isInvalidPhoneNumber =
-                                            !validatePhoneNumber(val);
-                                      });
+                                      print(val);
+                                      if (val != '') {
+                                        setState(() {
+                                          isInvalidPhoneNumber =
+                                              !validatePhoneNumber(val);
+                                        });
+                                      }
                                     },
                                     controller: phoneController,
                                     style: TextStyle(color: Colors.black),
@@ -557,7 +560,8 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                               ],
                             ),
 
-                            isInvalidPhoneNumber
+                            isInvalidPhoneNumber &&
+                                    phoneController.value.text != ''
                                 ? Container(
                                     width: double.infinity,
                                     margin: EdgeInsets.only(top: 5, left: 5),
@@ -1197,10 +1201,15 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                                             Text('Please enter zone region and woreda')));
                                                             return;
                                                           }
-                                                          if (!validatePhoneNumber(
-                                                              phoneController
-                                                                  .value.text
-                                                                  .trim())) {
+                                                          if (phoneController
+                                                                      .value
+                                                                      .text !=
+                                                                  '' &&
+                                                              !validatePhoneNumber(
+                                                                  phoneController
+                                                                      .value
+                                                                      .text
+                                                                      .trim())) {
                                                             ScaffoldMessenger
                                                                     .of(context)
                                                                 .showSnackBar(

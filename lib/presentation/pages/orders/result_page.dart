@@ -710,6 +710,34 @@ class _AddTestResultPageState extends State<AddTestResultPage> {
                                                   return;
                                                 }
 
+                                                if (mtbResult == null) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please add MTB Result.')));
+                                                  return;
+                                                }
+
+                                                if (mtbResult ==
+                                                        'MTB Detected' &&
+                                                    quantity == null) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please add add quantity.')));
+                                                  return;
+                                                }
+
+                                                if (mtbResult ==
+                                                        'MTB Detected' &&
+                                                    resultRR == null) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              'Please add add Result RR.')));
+                                                  return;
+                                                }
+
                                                 TestResult result = TestResult(
                                                   labRegistratinNumber:
                                                       registrationNumber,
