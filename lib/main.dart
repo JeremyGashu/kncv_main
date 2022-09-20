@@ -1,5 +1,6 @@
 import 'dart:isolate';
 import 'dart:ui';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -29,12 +30,13 @@ void main() async {
 
   if (kIsWeb) {
     await Firebase.initializeApp(
-        options: FirebaseOptions(
-      apiKey: "AIzaSyAo62ZimMRMjmkwjhzwM-Ux_cpiOPAGT7A",
-      appId: '1:669099784203:web:b84c3187f51436382f2f0e',
-      messagingSenderId: '669099784203',
-      projectId: 'kncv-360',
-    ));
+      options: FirebaseOptions(
+        apiKey: "AIzaSyAo62ZimMRMjmkwjhzwM-Ux_cpiOPAGT7A",
+        appId: '1:669099784203:web:b84c3187f51436382f2f0e',
+        messagingSenderId: '669099784203',
+        projectId: 'kncv-360',
+      ),
+    );
   } else {
     await Firebase.initializeApp();
   }

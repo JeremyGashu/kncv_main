@@ -14,6 +14,7 @@ import 'package:kncv_flutter/presentation/pages/patient_info/edit_patient_info.d
 import 'package:kncv_flutter/presentation/pages/patient_info/patient_info.dart';
 import 'package:kncv_flutter/presentation/pages/tester_courier_selector/tester_courier_selector.dart';
 import 'package:kncv_flutter/service_locator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../notificatins.dart';
 
@@ -359,12 +360,30 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                                 ),
                                               ),
                                             ),
-                                            title: Text(
-                                              '${state.order.sender_name ?? ""}',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
+                                            title: FutureBuilder(
+                                                future: SharedPreferences
+                                                    .getInstance(),
+                                                builder: (context,
+                                                    AsyncSnapshot<
+                                                            SharedPreferences>
+                                                        snapshot) {
+                                                  if (!snapshot.hasData) {
+                                                    return Text(
+                                                      '${state.order.sender_name ?? ""}',
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    );
+                                                  }
+                                                  return Text(
+                                                    '${snapshot.data?.getString('sender_name') ?? ''}',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  );
+                                                }),
                                             trailing: Text(
                                               'Referring Health Facilty',
                                               style: TextStyle(

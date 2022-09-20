@@ -70,6 +70,8 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
 
   final TextEditingController specimenIdController = TextEditingController();
 
+  final TextEditingController specimenTypeController = TextEditingController();
+
   List<Specimen> specimens = [];
 
   GlobalKey<FormState> _form = GlobalKey<FormState>();
@@ -772,6 +774,16 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                     },
                                                   )),
                                                 ),
+                                                specimenType == 'Other'
+                                                    ? TextField(
+                                                        controller:
+                                                            specimenTypeController,
+                                                        autofocus: false,
+                                                        decoration: InputDecoration(
+                                                            hintText:
+                                                                'Please specify specimen type'),
+                                                      )
+                                                    : SizedBox(),
                                                 _labelBuilder(
                                                     'Examination Type'),
                                                 Container(
@@ -851,12 +863,29 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                         Navigator.pop(context);
                                                         return;
                                                       }
+                                                      if (specimenType ==
+                                                              'Other' &&
+                                                          specimenTypeController
+                                                                  .value.text ==
+                                                              '') {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(SnackBar(
+                                                                content: Text(
+                                                                    'Please enter specimen type')));
+                                                        // Navigator.pop(context);
+                                                        return;
+                                                      }
 
                                                       Specimen specimen =
                                                           Specimen(
                                                         id: specimenIdController
                                                             .value.text,
-                                                        type: specimenType,
+                                                        type: specimenType ==
+                                                                'Other'
+                                                            ? specimenTypeController
+                                                                .value.text
+                                                            : specimenType,
                                                         examinationType:
                                                             examinationType,
                                                       );
@@ -965,16 +994,87 @@ class _PatientInfoPageState extends State<PatientInfoPage> {
                                                 content: Text(
                                                   'Please enter a valid phone number: start with 09!',
                                                   style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
-                                                backgroundColor:
-                                                    Colors.red.shade700,
                                               ),
                                             );
                                             return;
                                           }
+
+                                          if (reasonForTest ==
+                                                  'At X months after treatment' &&
+                                              xMonthsAfterController
+                                                      .value.text ==
+                                                  '') {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Please enter X months after treatment.',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          if (reasonForTest ==
+                                                  'At X months during treatment' &&
+                                              xMonthsDuringController
+                                                      .value.text ==
+                                                  '') {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Please enter X months during treatment.',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          if (siteOfTB == 'Other' &&
+                                              siteOfTBController.value.text ==
+                                                  '') {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Please enter site of TB',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          if (registrationGroup == 'Other' &&
+                                              registrationGroupController
+                                                      .value.text ==
+                                                  '') {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Please enter registration group',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
                                           String mr = MRController.value.text;
                                           String name =
                                               nameController.value.text;

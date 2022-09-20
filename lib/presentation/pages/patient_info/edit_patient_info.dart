@@ -1216,16 +1216,104 @@ class _EditPatientInfoPageState extends State<EditPatientInfoPage> {
                                                               SnackBar(
                                                                 content: Text(
                                                                   'Please enter a valid phone number: start with 09!',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
                                                                 ),
-                                                                backgroundColor:
-                                                                    Colors.red
-                                                                        .shade700,
+                                                              ),
+                                                            );
+                                                            return;
+                                                          }
+
+                                                          if (siteOfTB ==
+                                                                  'Other' &&
+                                                              siteOfTBController
+                                                                      .value
+                                                                      .text ==
+                                                                  '') {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                  'Please enter site of TB',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                            return;
+                                                          }
+
+                                                          if (registrationGroup ==
+                                                                  'Other' &&
+                                                              registrationGroupController
+                                                                      .value
+                                                                      .text ==
+                                                                  '') {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                  'Please enter registration group',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                            return;
+                                                          }
+
+                                                          if (reasonForTest ==
+                                                                  'At X months after treatment' &&
+                                                              xMonthsAfterController
+                                                                      .value
+                                                                      .text ==
+                                                                  '') {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                  'Please enter X months after treatment.',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                            return;
+                                                          }
+
+                                                          if (reasonForTest ==
+                                                                  'At X months during treatment' &&
+                                                              xMonthsDuringController
+                                                                      .value
+                                                                      .text ==
+                                                                  '') {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                  'Please enter X months during treatment.',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
                                                               ),
                                                             );
                                                             return;

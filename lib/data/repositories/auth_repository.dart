@@ -25,6 +25,26 @@ class AuthRepository {
     }
 
     if (user.user != null) {
+      // var ordersCollection = await database.collection('orders');
+
+      var usersCollection = database.collection('users');
+      String? sender_name;
+      String? sender_phone;
+
+      usersCollection
+          .where('user_id', isEqualTo: user.user?.uid)
+          .get()
+          .then((userData) async {
+        if (userData.docs.length > 0) {
+          sender_name = userData.docs[0].data()['institution']['name'];
+          sender_phone = userData.docs[0].data()['phone_number'];
+        }
+        SharedPreferences.getInstance().then((value) {
+          value.setString('sender_name', sender_name ?? '');
+          value.setString('sender_phone', sender_phone ?? '');
+        });
+      });
+
       return user.user;
     }
     return null;
@@ -87,6 +107,9 @@ class AuthRepository {
 
   Future<bool?> logoutUser() async {
     await auth.signOut();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.remove('sender_name');
+    preferences.remove('sender_phone');
     return true;
   }
 }

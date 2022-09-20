@@ -102,7 +102,7 @@ class ReportPage extends StatelessWidget {
                         ),
                         pw.SizedBox(height: 10),
                         pw.Text(
-                          'Zone : ${getAreaInfo(patient.region, patient.zone, patient.woreda)['woreda'] ?? ''}',
+                          'Woreda : ${getAreaInfo(patient.region, patient.zone, patient.woreda)['woreda'] ?? ''}',
                           style: pw.TextStyle(
                             // color: Colors.black87,
                             fontSize: 13,
@@ -339,17 +339,25 @@ class ReportPage extends StatelessWidget {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            'Zone : ${patient.zone ?? ''}',
+                            'Region : ${getAreaInfo(patient.region, patient.zone, patient.woreda)['region'] ?? ''}',
                             style: TextStyle(
-                              color: Colors.black87,
+                              // color: Colors.black87,
                               fontSize: 13,
                             ),
                           ),
                           SizedBox(height: 10),
                           Text(
-                            'Woreda : ${patient.woreda ?? ''}',
+                            'Zone : ${getAreaInfo(patient.region, patient.zone, patient.woreda)['zone'] ?? ''}',
                             style: TextStyle(
-                              color: Colors.black87,
+                              // color: Colors.black87,
+                              fontSize: 13,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'Woreda : ${getAreaInfo(patient.region, patient.zone, patient.woreda)['woreda'] ?? ''}',
+                            style: TextStyle(
+                              // color: Colors.black87,
                               fontSize: 13,
                             ),
                           ),
@@ -399,7 +407,7 @@ class ReportPage extends StatelessWidget {
                               fontSize: 13,
                             ),
                           ),
-          
+
                           Text(
                             'Remark : ${patient.remark ?? ''}',
                             style: TextStyle(

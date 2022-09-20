@@ -26,21 +26,24 @@ class AppRouter {
       case IntroPageOne.introPageOneRouteName:
         return PageRouteBuilder(
           pageBuilder: (c, a1, a2) => IntroPageOne(),
-          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+          transitionsBuilder: (c, anim, a2, child) =>
+              FadeTransition(opacity: anim, child: child),
           transitionDuration: Duration(milliseconds: 200),
         );
 
       case InstroPageTwo.introPageTwoName:
         return PageRouteBuilder(
           pageBuilder: (c, a1, a2) => InstroPageTwo(),
-          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+          transitionsBuilder: (c, anim, a2, child) =>
+              FadeTransition(opacity: anim, child: child),
           transitionDuration: Duration(milliseconds: 200),
         );
 
       case InstroPageThree.introPageThreeName:
         return PageRouteBuilder(
           pageBuilder: (c, a1, a2) => InstroPageThree(),
-          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+          transitionsBuilder: (c, anim, a2, child) =>
+              FadeTransition(opacity: anim, child: child),
           transitionDuration: Duration(milliseconds: 200),
         );
 
@@ -59,10 +62,12 @@ class AppRouter {
       case SplashPage.splashPageRouteName:
         return MaterialPageRoute(builder: (_) => SplashPage());
       case PatientInfoPage.patientInfoPageRouteName:
-        return MaterialPageRoute(builder: (_) => PatientInfoPage(orderId: args));
+        return MaterialPageRoute(
+            builder: (_) => PatientInfoPage(orderId: args));
 
       case SelectorPage.selectorPageRouteName:
-        return MaterialPageRoute(builder: (_) => Scaffold(body: SelectorPage()));
+        return MaterialPageRoute(
+            builder: (_) => Scaffold(body: SelectorPage()));
 
       case EditPatientInfoPage.editPatientInfoRouteName:
         return MaterialPageRoute(
@@ -86,7 +91,8 @@ class AppRouter {
                 ));
 
       case OrderDetailTester.orderDetailTesterPageRouteName:
-        return MaterialPageRoute(builder: (_) => OrderDetailTester(orderId: args));
+        return MaterialPageRoute(
+            builder: (_) => OrderDetailTester(orderId: args));
 
       case AddTestResultPage.addTestResultPageRouteName:
         return MaterialPageRoute(

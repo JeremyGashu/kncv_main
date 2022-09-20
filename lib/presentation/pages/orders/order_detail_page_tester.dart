@@ -166,7 +166,7 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             trailing: Text(
-                                              'Referring Health Facilty',
+                                              'Referring Health Facility',
                                               style: TextStyle(
                                                   color: Colors.green,
                                                   fontSize: 14),

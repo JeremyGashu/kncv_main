@@ -5,6 +5,7 @@ import 'package:kncv_flutter/core/hear_beat.dart';
 import 'package:kncv_flutter/core/message_codes.dart';
 import 'package:kncv_flutter/core/sms_handler.dart';
 import 'package:kncv_flutter/data/models/models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderRepository {
   final FirebaseFirestore database;
@@ -152,40 +153,35 @@ class OrderRepository {
     required Map zone,
     // required Map woreda,
   }) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    String? sender_name = preferences.getString('sender_name');
+    String? sender_phone = preferences.getString('sender_phone');
+
+    int month = DateTime.now().month;
+    int day = DateTime.now().day;
+    int year = DateTime.now().year;
+    List<String> months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+
     bool internetAvailable = await isConnectedToTheInternet();
     Box<Order> ordersBox = Hive.box<Order>('orders');
 
     if (internetAvailable) {
       String sender_id = auth.currentUser!.uid;
       var ordersCollection = await database.collection('orders');
-      int month = DateTime.now().month;
-      int day = DateTime.now().day;
-      int year = DateTime.now().year;
-      List<String> months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ];
-      var usersCollection = database.collection('users');
-      String? sender_name;
-      String? sender_phone;
-      var userData =
-          await usersCollection.where('user_id', isEqualTo: sender_id).get();
-      // debugPrint('Sender data from user id  ======== ${userData.docs.length}');
-
-      if (userData.docs.length > 0) {
-        sender_name = userData.docs[0].data()['institution']['name'];
-        sender_phone = userData.docs[0].data()['phone_number'];
-      }
       var orders =
           await ordersCollection.where('sender_id', isEqualTo: sender_id).get();
       int length = orders.docs.length;
@@ -215,64 +211,94 @@ class OrderRepository {
       });
       return id;
     } else {
-      int month = DateTime.now().month;
-      int day = DateTime.now().day;
-      int year = DateTime.now().year;
-      List<String> months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ];
+      try {
+        String id = '${DateTime.now().toIso8601String().replaceAll('T', '_')}';
+        String sender_id = auth.currentUser!.uid;
+        CollectionReference ordersCollection = database.collection('orders');
 
-      String id = '${DateTime.now().toIso8601String().replaceAll('T', '_')}';
+        ordersCollection.doc(id).set({
+          'courier_id': courier_id,
+          'sender_id': sender_id,
+          'sender_name': sender_name,
+          'tester_id': tester_id,
+          'status': 'Draft',
+          'created_at': '$day ${months[month - 1]} $year',
+          'ordered_for': date,
+          'tester_name': tester_name,
+          'courier_name': courier_name,
+          'tester_phone': tester_phone,
+          'sender_phone': sender_phone,
+          'courier_phone': courier_phone,
+          'order_created': DateTime.now(),
+          'region': region,
+          'zone': zone,
+          // 'woreda' : woreda,
+        });
 
-      Order order = Order(
-        orderId: id,
-        courierId: courier_id,
-        senderId: sender_id,
-        // sender_name: sender_name,
-        testCenterId: tester_id,
-        status: 'Draft',
-        created_at: '$day ${months[month - 1]} $year',
-        tester_name: tester_name,
-        courier_name: courier_name,
-        tester_phone: tester_phone,
-        // sender_phone: sender_phone,
-        courier_phone: courier_phone,
-        patients: [],
-        sender: '',
-        timestamp: '$day ${months[month - 1]} $year',
-      );
-      await ordersBox.add(order);
+        Order order = Order(
+          orderId: id,
+          courierId: courier_id,
+          senderId: sender_id,
+          // sender_name: sender_name,
+          testCenterId: tester_id,
+          status: 'Draft',
+          created_at: '$day ${months[month - 1]} $year',
+          tester_name: tester_name,
+          courier_name: courier_name,
+          tester_phone: tester_phone,
+          // sender_phone: sender_phone,
+          courier_phone: courier_phone,
+          patients: [],
+          sender: '',
+          timestamp: '$day ${months[month - 1]} $year',
+        );
+        await ordersBox.add(order);
 
-      //send sms here
-      await sendSMS(
-        // context,
-        to: '0931057901',
-        payload: {
-          'oid': id,
-          'cid': courier_id,
-          'tid': tester_id,
-          'cn': courier_name,
-          'tn': tester_name,
-          'd': '$day ${months[month - 1]} $year',
-          'cp': courier_phone,
-          'tp': tester_phone,
-          'sid': sender_id,
-        },
-        action: ADD_ORDER,
-      );
+        //send sms here
+        await sendSMS(
+          // context,
+          to: '0931057901',
+          payload: {
+            'oid': id,
+            'cid': courier_id,
+            'tid': tester_id,
+            'cn': courier_name,
+            'tn': tester_name,
+            'd': '$day ${months[month - 1]} $year',
+            'cp': courier_phone,
+            'tp': tester_phone,
+            'sid': sender_id,
+          },
+          action: ADD_ORDER,
+        );
 
-      return id;
+        return id;
+
+        // debugPrint('Sender data from user id  ======== ${userData.docs.length}');
+
+      } catch (e) {
+        // print('Error saving to firebase =====$e');
+        String id = '${DateTime.now().toIso8601String().replaceAll('T', '_')}';
+
+        await sendSMS(
+          // context,
+          to: '0931057901',
+          payload: {
+            'oid': id,
+            'cid': courier_id,
+            'tid': tester_id,
+            'cn': courier_name,
+            'tn': tester_name,
+            'd': '$day ${months[month - 1]} $year',
+            'cp': courier_phone,
+            'tp': tester_phone,
+            'sid': sender_id,
+          },
+          action: ADD_ORDER,
+        );
+
+        return id;
+      }
     }
   }
 
@@ -401,6 +427,17 @@ class OrderRepository {
       }
       return false;
     } else {
+      try {
+        var orderRef = database.collection('orders').doc(orderId);
+        orderRef.get().then((order) {
+          List patientsList = order.data()?['patients'];
+          patientsList[index] = patient.toJson();
+          orderRef.update({'patients': patientsList});
+        });
+      } catch (e) {
+        // print(err);
+      }
+
       List<Order> orders = await ordersBox.values.toList();
       Order order = orders.firstWhere((order) => order.orderId == orderId);
       orders.removeWhere((order) => order.orderId == orderId);
@@ -431,13 +468,12 @@ class OrderRepository {
       bool internetAvailable = await isConnectedToTheInternet();
       Box<Order> ordersBox = Hive.box<Order>('orders');
 
+      bool assessed = allSpecimensAssessed(order);
+      DocumentReference<Map<String, dynamic>> orderRef =
+          FirebaseFirestore.instance.collection('orders').doc(order.orderId);
+
       if (internetAvailable) {
-        var orderRef = await FirebaseFirestore.instance
-            .collection('orders')
-            .doc(order.orderId);
-        var or = await orderRef.get();
-        print('To be edited ===> ${or.data()}');
-        print('Edited patient ===> ${patient.toJson()}');
+        DocumentSnapshot<Map> or = await orderRef.get();
         if (or.exists) {
           List patientsList = or.data()?['patients'];
           bool finishedAssessingPatient = true;
@@ -452,24 +488,10 @@ class OrderRepository {
           }
 
           patientsList[index] = patient.toJson();
-
-          bool assessed = allSpecimensAssessed(order);
           await orderRef.update({
             'patients': patientsList,
             'status': assessed ? 'Received' : 'Delivered',
           });
-
-          //RESPONSE SPECIMEN_EDITED
-          // await sendSmsViaListenerToEndUser(
-          //   to: order.sender_phone ?? '',
-          //   payload: {
-          //     'oid': order.orderId,
-          //     'p': patient.toJsonSMS(),
-          //     'i': index,
-          //   },
-          //   action: SPECIMEN_EDITED,
-          // );
-
           return true;
         }
         return false;
@@ -493,7 +515,7 @@ class OrderRepository {
 
         patientsList?[index] = patient;
 
-        bool assessed = allSpecimensAssessed(order);
+        // bool assessed = allSpecimensAssessed(order);
 
         order.status = assessed ? 'Received' : 'Delivered';
         order.patients = patientsList;
@@ -512,6 +534,26 @@ class OrderRepository {
           },
           action: EDIT_SPECIMEN_FEEDBACK,
         );
+
+        orderRef.get().then((or) {
+          List pl = or.data()?['patients'];
+          bool finishedAssesmenet = true;
+          patient.specimens?.forEach((specimen) {
+            if (!specimen.assessed) {
+              finishedAssessingPatient = false;
+            }
+          });
+
+          if (finishedAssesmenet) {
+            patient.status = 'Inspected';
+          }
+
+          pl[index] = patient.toJson();
+          orderRef.update({
+            'patients': patientsList,
+            'status': assessed ? 'Received' : 'Delivered',
+          });
+        });
 
         return true;
       }
@@ -559,24 +601,6 @@ class OrderRepository {
         patientsList[index] = patient.toJson();
         await orderRef.update(
             {'patients': patientsList, 'test_result_added': DateTime.now()});
-
-        // Order o = Order.fromJson({...?order.data(), 'order_id': order.id});
-
-        //RESPONSE SPECIMEN_EDITED
-        // await sendSmsViaListenerToEndUser(
-        //   to: o.sender_phone ?? '',
-        //   payload: {
-        //     'oid': orderId,
-        //     'p': patient.toJsonSMS(),
-        //     'i': index,
-        //   },
-        //   action: SPECIMEN_EDITED,
-        // );
-
-        // sendCustomSMS(
-        //     to: o.sender_phone ?? '',
-        //     body: 'Test Result has been added to patient ${patient.name}.');
-
         return true;
       }
       return false;
@@ -599,6 +623,16 @@ class OrderRepository {
             'p': patient.toJsonSMS(),
           },
           action: TESTER_ADD_TEST_RESULT);
+
+      var orderRef = database.collection('orders').doc(orderId);
+      orderRef.get().then((value) {
+        if (value.exists) {
+          List patientsList = value.data()?['patients'];
+          patientsList[index] = patient.toJson();
+          orderRef.update(
+              {'patients': patientsList, 'test_result_added': DateTime.now()});
+        }
+      });
 
       return true;
     }
@@ -659,6 +693,18 @@ class OrderRepository {
             'p': patient.toJsonSMS(),
           },
           action: EDIT_TEST_RESULT);
+
+      var orderRef = await database.collection('orders').doc(orderId);
+      orderRef.get().then((o) {
+        if (o.exists) {
+          List patientsList = o.data()?['patients'];
+          patientsList[index] = patient.toJson();
+          orderRef.update({
+            'patients': patientsList,
+            'updated_test_result': DateTime.now()
+          });
+        }
+      });
 
       return true;
     }
@@ -765,11 +811,6 @@ class OrderRepository {
       await ordersBox.clear();
       await ordersBox.addAll(orders);
     } else {
-      Order order = orders.firstWhere((element) => element.orderId == orderId);
-      orders.removeWhere((element) => element.orderId == orderId);
-      order.patients?.add(patient);
-      orders.add(order);
-
       await sendSMS(
         // context,
         to: '0931057901',
@@ -779,6 +820,36 @@ class OrderRepository {
         },
         action: ADD_PATIENT,
       );
+
+      database.collection('orders').doc(orderId).get().then((value) {
+        if (value.data() != null) {
+          Order order = Order.fromJson(value.data()!);
+          List<Patient> patients = order.patients ?? [];
+          int index =
+              patients.indexWhere((element) => element.mr == patient.mr);
+          if (index == -1) {
+            database.collection('orders').doc(orderId).update({
+              "patients": FieldValue.arrayUnion([patient.toJson()])
+            });
+          } else {
+            List<Map> ps = patients.map((p) {
+              if (patient.mr == p.mr) {
+                return patient.toJson();
+              }
+              return p.toJson();
+            }).toList();
+            database.collection('orders').doc(orderId).update({'patients': ps});
+          }
+        }
+      });
+      // database.collection('orders').doc(orderId).update({
+      //   "patients": FieldValue.arrayUnion([patient.toJson()])
+      // });
+
+      Order order = orders.firstWhere((element) => element.orderId == orderId);
+      orders.removeWhere((element) => element.orderId == orderId);
+      order.patients?.add(patient);
+      orders.add(order);
 
       await ordersBox.clear();
       await ordersBox.addAll(orders);
