@@ -214,26 +214,28 @@ class OrderRepository {
       try {
         String id = '${DateTime.now().toIso8601String().replaceAll('T', '_')}';
         String sender_id = auth.currentUser!.uid;
-        CollectionReference ordersCollection = database.collection('orders');
 
-        ordersCollection.doc(id).set({
-          'courier_id': courier_id,
-          'sender_id': sender_id,
-          'sender_name': sender_name,
-          'tester_id': tester_id,
-          'status': 'Draft',
-          'created_at': '$day ${months[month - 1]} $year',
-          'ordered_for': date,
-          'tester_name': tester_name,
-          'courier_name': courier_name,
-          'tester_phone': tester_phone,
-          'sender_phone': sender_phone,
-          'courier_phone': courier_phone,
-          'order_created': DateTime.now(),
-          'region': region,
-          'zone': zone,
-          // 'woreda' : woreda,
-        });
+        // TODO - check order and set unsent data
+        // CollectionReference ordersCollection = database.collection('orders');
+
+        // ordersCollection.doc(id).set({
+        //   'courier_id': courier_id,
+        //   'sender_id': sender_id,
+        //   'sender_name': sender_name,
+        //   'tester_id': tester_id,
+        //   'status': 'Draft',
+        //   'created_at': '$day ${months[month - 1]} $year',
+        //   'ordered_for': date,
+        //   'tester_name': tester_name,
+        //   'courier_name': courier_name,
+        //   'tester_phone': tester_phone,
+        //   'sender_phone': sender_phone,
+        //   'courier_phone': courier_phone,
+        //   'order_created': DateTime.now(),
+        //   'region': region,
+        //   'zone': zone,
+        //   // 'woreda' : woreda,
+        // });
 
         Order order = Order(
           orderId: id,
@@ -428,12 +430,14 @@ class OrderRepository {
       return false;
     } else {
       try {
-        var orderRef = database.collection('orders').doc(orderId);
-        orderRef.get().then((order) {
-          List patientsList = order.data()?['patients'];
-          patientsList[index] = patient.toJson();
-          orderRef.update({'patients': patientsList});
-        });
+        //TODO - update patients list from cache and delete cache
+
+        // var orderRef = database.collection('orders').doc(orderId);
+        // orderRef.get().then((order) {
+        //   List patientsList = order.data()?['patients'];
+        //   patientsList[index] = patient.toJson();
+        //   orderRef.update({'patients': patientsList});
+        // });
       } catch (e) {
         // print(err);
       }
@@ -535,25 +539,27 @@ class OrderRepository {
           action: EDIT_SPECIMEN_FEEDBACK,
         );
 
-        orderRef.get().then((or) {
-          List pl = or.data()?['patients'];
-          bool finishedAssesmenet = true;
-          patient.specimens?.forEach((specimen) {
-            if (!specimen.assessed) {
-              finishedAssessingPatient = false;
-            }
-          });
+        //TODO - update patients list from cache and delete cache
 
-          if (finishedAssesmenet) {
-            patient.status = 'Inspected';
-          }
+        // orderRef.get().then((or) {
+        //   List pl = or.data()?['patients'];
+        //   bool finishedAssesmenet = true;
+        //   patient.specimens?.forEach((specimen) {
+        //     if (!specimen.assessed) {
+        //       finishedAssessingPatient = false;
+        //     }
+        //   });
 
-          pl[index] = patient.toJson();
-          orderRef.update({
-            'patients': patientsList,
-            'status': assessed ? 'Received' : 'Delivered',
-          });
-        });
+        //   if (finishedAssesmenet) {
+        //     patient.status = 'Inspected';
+        //   }
+
+        //   pl[index] = patient.toJson();
+        //   orderRef.update({
+        //     'patients': patientsList,
+        //     'status': assessed ? 'Received' : 'Delivered',
+        //   });
+        // });
 
         return true;
       }
@@ -625,14 +631,17 @@ class OrderRepository {
           action: TESTER_ADD_TEST_RESULT);
 
       var orderRef = database.collection('orders').doc(orderId);
-      orderRef.get().then((value) {
-        if (value.exists) {
-          List patientsList = value.data()?['patients'];
-          patientsList[index] = patient.toJson();
-          orderRef.update(
-              {'patients': patientsList, 'test_result_added': DateTime.now()});
-        }
-      });
+
+      //TODO - update patients list from cache and delete cache
+
+      // orderRef.get().then((value) {
+      //   if (value.exists) {
+      //     List patientsList = value.data()?['patients'];
+      //     patientsList[index] = patient.toJson();
+      //     orderRef.update(
+      //         {'patients': patientsList, 'test_result_added': DateTime.now()});
+      //   }
+      // });
 
       return true;
     }
@@ -694,17 +703,19 @@ class OrderRepository {
           },
           action: EDIT_TEST_RESULT);
 
-      var orderRef = await database.collection('orders').doc(orderId);
-      orderRef.get().then((o) {
-        if (o.exists) {
-          List patientsList = o.data()?['patients'];
-          patientsList[index] = patient.toJson();
-          orderRef.update({
-            'patients': patientsList,
-            'updated_test_result': DateTime.now()
-          });
-        }
-      });
+      //TODO - update patients list from cache and delete cache
+
+      // var orderRef = await database.collection('orders').doc(orderId);
+      // orderRef.get().then((o) {
+      //   if (o.exists) {
+      //     List patientsList = o.data()?['patients'];
+      //     patientsList[index] = patient.toJson();
+      //     orderRef.update({
+      //       'patients': patientsList,
+      //       'updated_test_result': DateTime.now()
+      //     });
+      //   }
+      // });
 
       return true;
     }
@@ -821,27 +832,29 @@ class OrderRepository {
         action: ADD_PATIENT,
       );
 
-      database.collection('orders').doc(orderId).get().then((value) {
-        if (value.data() != null) {
-          Order order = Order.fromJson(value.data()!);
-          List<Patient> patients = order.patients ?? [];
-          int index =
-              patients.indexWhere((element) => element.mr == patient.mr);
-          if (index == -1) {
-            database.collection('orders').doc(orderId).update({
-              "patients": FieldValue.arrayUnion([patient.toJson()])
-            });
-          } else {
-            List<Map> ps = patients.map((p) {
-              if (patient.mr == p.mr) {
-                return patient.toJson();
-              }
-              return p.toJson();
-            }).toList();
-            database.collection('orders').doc(orderId).update({'patients': ps});
-          }
-        }
-      });
+      //TODO - update patients list from cache and delete cache
+
+      // database.collection('orders').doc(orderId).get().then((value) {
+      //   if (value.data() != null) {
+      //     Order order = Order.fromJson(value.data()!);
+      //     List<Patient> patients = order.patients ?? [];
+      //     int index =
+      //         patients.indexWhere((element) => element.mr == patient.mr);
+      //     if (index == -1) {
+      //       database.collection('orders').doc(orderId).update({
+      //         "patients": FieldValue.arrayUnion([patient.toJson()])
+      //       });
+      //     } else {
+      //       List<Map> ps = patients.map((p) {
+      //         if (patient.mr == p.mr) {
+      //           return patient.toJson();
+      //         }
+      //         return p.toJson();
+      //       }).toList();
+      //       database.collection('orders').doc(orderId).update({'patients': ps});
+      //     }
+      //   }
+      // });
       // database.collection('orders').doc(orderId).update({
       //   "patients": FieldValue.arrayUnion([patient.toJson()])
       // });
@@ -993,18 +1006,25 @@ class OrderRepository {
           orders.add(order);
           await ordersBox.clear();
           await ordersBox.addAll(orders);
-          await sendSMS(
-              to: '0931057901',
-              payload: {
-                'oid': orderId,
-                'date': date ?? '',
-                'time': time ?? '',
-              },
-              action: COURIER_ACCEPT_ORDER);
+          print('Here....');
+          try {
+            print('$orderId $date $time');
+            sendSMS(
+                to: '0931057901',
+                payload: {
+                  'oid': orderId ?? '',
+                  'date': date ?? '',
+                  'time': time ?? '',
+                },
+                action: COURIER_ACCEPT_ORDER);
+          } catch (e, st) {
+            print(st);
+            throw new Exception(e);
+          }
 
           return true;
         }
-        return false;
+        return true;
       }
 
       /*

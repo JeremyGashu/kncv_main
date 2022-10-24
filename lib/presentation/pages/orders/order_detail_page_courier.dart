@@ -16,7 +16,7 @@ import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_bl
 import 'package:kncv_flutter/presentation/blocs/tester_courier/tester_courier_event.dart';
 import 'package:kncv_flutter/presentation/pages/notificatins.dart';
 import 'package:kncv_flutter/service_locator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderDetailCourier extends StatefulWidget {
   final String orderId;
@@ -148,30 +148,12 @@ class _OrderDetailCourierState extends State<OrderDetailCourier> {
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            trailing: FutureBuilder(
-                                                future: SharedPreferences
-                                                    .getInstance(),
-                                                builder: (context,
-                                                    AsyncSnapshot<
-                                                            SharedPreferences>
-                                                        snapshot) {
-                                                  if (!snapshot.hasData) {
-                                                    return Text(
-                                                      '${state.order.sender_name ?? ""}',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    );
-                                                  }
-                                                  return Text(
-                                                    '${snapshot.data?.getString('sender_name') ?? ''}',
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  );
-                                                }),
+                                            trailing: Text(
+                                              'Referring Health Facility',
+                                              style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 14),
+                                            ),
                                           ),
 
                                           //courier
