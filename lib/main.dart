@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:isolate';
 import 'dart:ui';
 // import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -11,6 +13,7 @@ import 'package:kncv_flutter/core/app_router.dart';
 import 'package:kncv_flutter/data/models/models.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/auth/auth_events.dart';
+import 'package:kncv_flutter/presentation/blocs/cache/cache_listener.dart';
 import 'package:kncv_flutter/presentation/blocs/locations/location_bloc.dart';
 import 'package:kncv_flutter/presentation/blocs/locations/location_event.dart';
 import 'package:kncv_flutter/presentation/blocs/orders/order_events.dart';
@@ -58,6 +61,7 @@ void main() async {
   Hive.registerAdapter(SpecimenAdapter());
   Hive.registerAdapter(PatientAdapter());
   Hive.registerAdapter(OrderAdapter());
+  Hive.registerAdapter(TimestampAdapter());
 
   await serviceLocatorInit();
 
@@ -112,11 +116,13 @@ class SMSListener extends StatefulWidget {
 class _SMSListenerState extends State<SMSListener> with WidgetsBindingObserver {
   SMSBloc smsBloc = sl<SMSBloc>();
 
+  StreamSubscription<ConnectivityResult>? result;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
-
+    result = startListeningInternet();
     ReceivePort receivePort = ReceivePort();
     IsolateNameServer.registerPortWithName(receivePort.sendPort, 'main_port');
 
@@ -135,6 +141,7 @@ class _SMSListenerState extends State<SMSListener> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
+    result?.cancel();
     super.dispose();
   }
 

@@ -6,9 +6,25 @@ part of 'models.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
+class TimestampAdapter extends TypeAdapter<Timestamp> {
+  @override
+  final typeId = 1;
+
+  @override
+  Timestamp read(BinaryReader reader) {
+    final micros = reader.readInt();
+    return Timestamp.fromMicrosecondsSinceEpoch(micros);
+  }
+
+  @override
+  void write(BinaryWriter writer, Timestamp obj) {
+    writer.writeInt(obj.microsecondsSinceEpoch);
+  }
+}
+
 class OrderAdapter extends TypeAdapter<Order> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   Order read(BinaryReader reader) {
@@ -35,13 +51,16 @@ class OrderAdapter extends TypeAdapter<Order> {
       notified_arrival: fields[17] as bool,
       created_at: fields[13] as String?,
       courier_name: fields[12] as String?,
+      order_created: fields[20] as Timestamp,
+      region: (fields[19] as Map?)?.cast<dynamic, dynamic>(),
+      zone: (fields[18] as Map?)?.cast<dynamic, dynamic>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Order obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(21)
       ..writeByte(0)
       ..write(obj.orderId)
       ..writeByte(1)
@@ -77,7 +96,13 @@ class OrderAdapter extends TypeAdapter<Order> {
       ..writeByte(16)
       ..write(obj.courier_phone)
       ..writeByte(17)
-      ..write(obj.notified_arrival);
+      ..write(obj.notified_arrival)
+      ..writeByte(18)
+      ..write(obj.zone)
+      ..writeByte(19)
+      ..write(obj.region)
+      ..writeByte(20)
+      ..write(obj.order_created);
   }
 
   @override
@@ -93,7 +118,7 @@ class OrderAdapter extends TypeAdapter<Order> {
 
 class PatientAdapter extends TypeAdapter<Patient> {
   @override
-  final int typeId = 2;
+  final int typeId = 3;
 
   @override
   Patient read(BinaryReader reader) {
@@ -220,7 +245,7 @@ class PatientAdapter extends TypeAdapter<Patient> {
 
 class SpecimenAdapter extends TypeAdapter<Specimen> {
   @override
-  final int typeId = 3;
+  final int typeId = 4;
 
   @override
   Specimen read(BinaryReader reader) {
@@ -281,7 +306,7 @@ class SpecimenAdapter extends TypeAdapter<Specimen> {
 
 class CourierAdapter extends TypeAdapter<Courier> {
   @override
-  final int typeId = 4;
+  final int typeId = 5;
 
   @override
   Courier read(BinaryReader reader) {
@@ -321,7 +346,7 @@ class CourierAdapter extends TypeAdapter<Courier> {
 
 class TesterAdapter extends TypeAdapter<Tester> {
   @override
-  final int typeId = 5;
+  final int typeId = 6;
 
   @override
   Tester read(BinaryReader reader) {
@@ -367,7 +392,7 @@ class TesterAdapter extends TypeAdapter<Tester> {
 
 class TestResultAdapter extends TypeAdapter<TestResult> {
   @override
-  final int typeId = 6;
+  final int typeId = 7;
 
   @override
   TestResult read(BinaryReader reader) {
@@ -416,7 +441,7 @@ class TestResultAdapter extends TypeAdapter<TestResult> {
 
 class NotificationModelAdapter extends TypeAdapter<NotificationModel> {
   @override
-  final int typeId = 7;
+  final int typeId = 8;
 
   @override
   NotificationModel read(BinaryReader reader) {
@@ -471,7 +496,7 @@ class NotificationModelAdapter extends TypeAdapter<NotificationModel> {
 
 class RegionAdapter extends TypeAdapter<Region> {
   @override
-  final int typeId = 8;
+  final int typeId = 9;
 
   @override
   Region read(BinaryReader reader) {
@@ -511,7 +536,7 @@ class RegionAdapter extends TypeAdapter<Region> {
 
 class ZoneAdapter extends TypeAdapter<Zone> {
   @override
-  final int typeId = 9;
+  final int typeId = 10;
 
   @override
   Zone read(BinaryReader reader) {
@@ -551,7 +576,7 @@ class ZoneAdapter extends TypeAdapter<Zone> {
 
 class WoredaAdapter extends TypeAdapter<Woreda> {
   @override
-  final int typeId = 10;
+  final int typeId = 11;
 
   @override
   Woreda read(BinaryReader reader) {

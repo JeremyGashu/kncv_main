@@ -28,7 +28,8 @@ Future<void> serviceLocatorInit() async {
   /// Repositories
   sl.registerFactory<OrderRepository>(() => OrderRepository(sl(), sl()));
   sl.registerFactory<AuthRepository>(() => AuthRepository(sl(), sl()));
-  sl.registerFactory<TesterCourierRepository>(() => TesterCourierRepository(sl(), sl()));
+  sl.registerFactory<TesterCourierRepository>(
+      () => TesterCourierRepository(sl(), sl()));
   sl.registerFactory<LocationsRepository>(() => LocationsRepository(sl()));
 
   /// FirebaseAuth instance
@@ -64,6 +65,8 @@ Future<void> serviceLocatorInit() async {
 
   await Hive.openBox('notified_orders');
   // debugPrint('Opened ordered id boxes!');
+
+  await Hive.openBox<Order>('cached_orders');
 
   SharedPreferences preferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => preferences);

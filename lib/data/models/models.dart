@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import '../../presentation/pages/notificatins.dart';
+
 part 'models.g.dart';
 
 @HiveType(typeId: 1)
@@ -23,7 +25,10 @@ class Order {
       this.tester_phone,
       this.notified_arrival = false,
       this.created_at,
-      this.courier_name});
+      this.courier_name,
+      required this.order_created,
+      this.region,
+      this.zone});
 
   @HiveField(0)
   String? orderId;
@@ -62,6 +67,11 @@ class Order {
   @HiveField(17)
   bool notified_arrival;
   @HiveField(18)
+  Map? zone;
+  @HiveField(19)
+  Map? region;
+  @HiveField(20)
+  Timestamp order_created;
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         orderId: json["order_id"],
         senderId: json["sender_id"],
@@ -78,8 +88,11 @@ class Order {
         tester_name: json['tester_name'],
         courier_name: json['courier_name'],
         created_at: json['created_at'],
+        order_created: json['order_created'] ?? Timestamp.now(),
         notified_arrival: json['notified_arrival'] ?? false,
         timestamp: json["timestamp"] ?? '',
+        zone: json['zone'],
+        region: json['region'],
         patients: json["patients"] != null
             ? List<Patient>.from(
                 json["patients"].map((x) => Patient.fromJson(x)))
@@ -102,6 +115,7 @@ class Order {
         tester_name: json['tn'],
         courier_name: json['cn'],
         created_at: json['cat'],
+        order_created: json['order_created'] ?? Timestamp.now(),
         notified_arrival: json['notified_arrival'] ?? false,
         timestamp: json["timestamp"] ?? '',
         patients: json["p"] != null
@@ -137,12 +151,15 @@ class Order {
         'status': status,
         "courier": courier,
         "test_center": testCenter,
+        'order_created': order_created,
         'sender_phone': sender_phone,
         'tester_phone': tester_phone,
         'courier_phone': courier_phone,
         'notified_arrival': notified_arrival,
         "sender": sender,
         "timestamp": timestamp,
+        'zone': zone,
+        'region': region,
         "patients": patients != null
             ? List<dynamic>.from(patients!.map((x) => x.toJson()))
             : [],
