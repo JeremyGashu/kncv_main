@@ -24,6 +24,7 @@ class Order {
       this.courier_phone,
       this.tester_phone,
       this.notified_arrival = false,
+      this.notified_referrer = false,
       this.created_at,
       this.courier_name,
       required this.order_created,
@@ -72,6 +73,8 @@ class Order {
   Map? region;
   @HiveField(20)
   Timestamp order_created;
+  @HiveField(21)
+  bool? notified_referrer;
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         orderId: json["order_id"],
         senderId: json["sender_id"],
@@ -90,6 +93,7 @@ class Order {
         created_at: json['created_at'],
         order_created: json['order_created'] ?? Timestamp.now(),
         notified_arrival: json['notified_arrival'] ?? false,
+        notified_referrer: json['notified_referrer'] ?? false,
         timestamp: json["timestamp"] ?? '',
         zone: json['zone'],
         region: json['region'],
@@ -117,6 +121,7 @@ class Order {
         created_at: json['cat'],
         order_created: json['order_created'] ?? Timestamp.now(),
         notified_arrival: json['notified_arrival'] ?? false,
+        notified_referrer: json['notified_referrer'] ?? false,
         timestamp: json["timestamp"] ?? '',
         patients: json["p"] != null
             ? List<Patient>.from(json["p"].map((x) => Patient.fromJson(x)))
@@ -136,6 +141,7 @@ class Order {
         'tn': tester_name,
         'cn': courier_name,
         'cat': created_at,
+        'no': notified_referrer,
         "p": patients != null
             ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS()))
             : [],
@@ -156,6 +162,7 @@ class Order {
         'tester_phone': tester_phone,
         'courier_phone': courier_phone,
         'notified_arrival': notified_arrival,
+        'notified_referrer': notified_referrer,
         "sender": sender,
         "timestamp": timestamp,
         'zone': zone,

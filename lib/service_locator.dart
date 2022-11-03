@@ -66,6 +66,9 @@ Future<void> serviceLocatorInit() async {
   await Hive.openBox('notified_orders');
   // debugPrint('Opened ordered id boxes!');
 
+  await Hive.openBox('referrer_notified');
+  // debugPrint('Opened ordered id boxes!');
+
   await Hive.openBox<Order>('cached_orders');
 
   SharedPreferences preferences = await SharedPreferences.getInstance();

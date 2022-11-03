@@ -58,8 +58,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               Navigator.pushReplacementNamed(
                   context, SenderHomePage.senderHomePageRouteName);
             } else if (state is ErrorState) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+              // ScaffoldMessenger.of(context)
+              //     .showSnackBar(SnackBar(content: Text(state.message)));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
               // Navigator.pop(context, true);
             } else if (state is DeletedPatient) {
@@ -627,7 +627,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                                       ),
                                     )
                                   : Container(),
-                              state.order.status == 'Confirmed'
+                              state.order.status == 'Confirmed' &&
+                                      (state.order.notified_referrer ?? false)
                                   ? Positioned(
                                       bottom: 0,
                                       left: 10,

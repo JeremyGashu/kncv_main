@@ -73,8 +73,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
             }
 
             if (state is ErrorState) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+              // ScaffoldMessenger.of(context)
+              //     .showSnackBar(SnackBar(content: Text(state.message)));
               await Future.delayed(Duration(seconds: 1));
               ordersBloc.add(LoadSingleOrder(orderId: widget.orderId));
             } else if (state is AcceptedOrderCourier) {
@@ -310,7 +310,8 @@ class _OrderDetailTesterState extends State<OrderDetailTester> {
                                   ],
                                 ),
                               ),
-                              state.order.status == 'Picked Up'
+                              state.order.status == 'Picked Up' &&
+                                      state.order.notified_arrival
                                   ? Positioned(
                                       left: 10,
                                       bottom: 0,

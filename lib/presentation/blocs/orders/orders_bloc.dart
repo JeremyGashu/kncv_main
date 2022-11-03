@@ -40,13 +40,13 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       );
     } else {
       List<Order> orders = await ordersBox.values.toList();
-      Order order =
-          orders.firstWhere((order) => order.orderId == order.orderId);
-      orders.removeWhere((order) => order.orderId == order.orderId);
+      Order t =
+          orders.firstWhere((o) => order.orderId == o.orderId);
+      orders.removeWhere((o) => o.orderId == order.orderId);
 
-      order.notified_arrival = true;
+      t.notified_arrival = true;
 
-      orders.add(order);
+      orders.add(t);
       await ordersBox.clear();
       await ordersBox.addAll(orders);
 
@@ -58,6 +58,61 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
         action: COURIER_NOTIFY_ARRIVAL_TESTER,
       );
       return true;
+    }
+  }
+
+  static Future<bool> approveArrivalFromCourierToReferrer(Order order) async {
+    bool internetAvailable = await isConnectedToTheInternet();
+    Box<Order> ordersBox = Hive.box<Order>('orders');
+
+    if (internetAvailable) {
+      var orderRef = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(order.orderId);
+      await orderRef.update({'notified_referrer': true});
+      return await addNotification(
+        orderId: order.orderId!,
+        senderContent:
+            'Courier has reached at your location to transport the order to ${order.tester_name}',
+        courierContent:
+            'You notified the order confirmation from ${order.sender_name} to ${order.tester_name}.',
+        testerContent:
+            'Courier has reached at ${order.sender_name} order to you.',
+        content: 'One order got accepted by courier!',
+        sender: false,
+        courierAction: NotificationAction.NavigateToOrderDetalCourier,
+        testerAction: NotificationAction.NavigateToOrderDetalTester,
+        senderAction: NotificationAction.NavigateToOrderDetalSender,
+        payload: {'orderId': order.orderId},
+      );
+    } else {
+      try {
+        List<Order> orders = await ordersBox.values.toList();
+        print('Current orders ===> ${ordersBox.values.length}');
+        Order t = orders.firstWhere((o) => o.orderId == order.orderId);
+        orders.removeWhere((o) => o.orderId == order.orderId);
+
+        t.notified_referrer = true;
+
+        orders.add(t);
+        await ordersBox.clear();
+        await ordersBox.addAll(orders);
+
+        await sendSMS(
+          to: '0931057901',
+          payload: {
+            'oid': order.orderId,
+          },
+          action: COURIER_NOTIFY_ARRIVAL_SENDER,
+        );
+        print('Current orders ===> ${ordersBox.values.length}');
+        print('SENT SMS');
+        return true;
+      } catch (e, src) {
+        print('Error sending sms $e');
+        print(src);
+        return false;
+      }
     }
   }
 
@@ -211,6 +266,7 @@ class OrderBloc extends Bloc<OrderEvents, OrderState> {
       } catch (e) {
         // throw Exception(e);
         // debugPrint('Error loading order =>${e.toString()}');
+        print('Error here ====> $e');
 
         yield ErrorState(message: 'Error Loading Order!');
       }

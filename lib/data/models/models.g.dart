@@ -52,6 +52,7 @@ class OrderAdapter extends TypeAdapter<Order> {
       created_at: fields[13] as String?,
       courier_name: fields[12] as String?,
       order_created: fields[20] as Timestamp,
+      notified_referrer: fields[21] as bool?,
       region: (fields[19] as Map?)?.cast<dynamic, dynamic>(),
       zone: (fields[18] as Map?)?.cast<dynamic, dynamic>(),
     );
@@ -102,7 +103,9 @@ class OrderAdapter extends TypeAdapter<Order> {
       ..writeByte(19)
       ..write(obj.region)
       ..writeByte(20)
-      ..write(obj.order_created);
+      ..write(obj.order_created)
+      ..writeByte(21)
+      ..write(obj.notified_referrer ?? false);
   }
 
   @override

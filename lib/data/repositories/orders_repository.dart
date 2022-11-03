@@ -68,7 +68,15 @@ class OrderRepository {
       await ordersBox.addAll(os);
       return os;
     } else {
-      return ordersBox.values.toList();
+      List<Order> orders = ordersBox.values.toList();
+      orders.sort((a, b) {
+        print('Timestamp created ===> ${a.order_created}');
+        print('Timestamp created ===> ${b.order_created}');
+        return b.order_created.toDate().compareTo(a.order_created.toDate());
+        // return DateTime.parse(a.created_at!)
+        //     .compareTo(DateTime.parse(b.created_at!));
+      });
+      return orders;
     }
   }
 
@@ -97,7 +105,15 @@ class OrderRepository {
       await ordersBox.addAll(os);
       return os;
     } else {
-      return ordersBox.values.toList();
+      List<Order> orders = ordersBox.values.toList();
+      orders.sort((a, b) {
+        print('Timestamp created ===> ${a.order_created}');
+        print('Timestamp created ===> ${b.order_created}');
+        return b.order_created.toDate().compareTo(a.order_created.toDate());
+        // return DateTime.parse(a.created_at!)
+        //     .compareTo(DateTime.parse(b.created_at!));
+      });
+      return orders;
     }
   }
 
