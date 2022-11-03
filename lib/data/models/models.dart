@@ -120,8 +120,8 @@ class Order {
         courier_name: json['cn'],
         created_at: json['cat'],
         order_created: json['order_created'] ?? Timestamp.now(),
-        notified_arrival: json['notified_arrival'] ?? false,
-        notified_referrer: json['notified_referrer'] ?? false,
+        notified_arrival: json['na'] ?? false,
+        notified_referrer: json['nr'] ?? false,
         timestamp: json["timestamp"] ?? '',
         patients: json["p"] != null
             ? List<Patient>.from(json["p"].map((x) => Patient.fromJson(x)))
@@ -141,7 +141,8 @@ class Order {
         'tn': tester_name,
         'cn': courier_name,
         'cat': created_at,
-        'no': notified_referrer,
+        'nr': notified_referrer,
+        'na': notified_arrival,
         "p": patients != null
             ? List<dynamic>.from(patients!.map((x) => x.toJsonSMS()))
             : [],
